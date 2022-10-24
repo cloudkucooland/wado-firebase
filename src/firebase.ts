@@ -1,10 +1,10 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getAnalytics, logEvent } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
-import { notifyInfo, notifyWarn, registerToast } from "./notify";
-import { Hymn, Lection, Prayer, Psalm } from "./model";
+// import { notifyInfo, notifyWarn, registerToast } from "./notify";
+// import { Hymn, Lection, Prayer, Psalm } from "./model";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtVBGVEjDM50VXljFFV-g_xltotL878b8",
@@ -29,3 +29,7 @@ const rootDir =
 const sw = navigator.serviceWorker.register(rootDir + "sw.js", {
   scope: rootDir,
 });
+
+export function recordEvent(name: string) {
+  logEvent(analytics, name);
+}
