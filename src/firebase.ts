@@ -1,13 +1,8 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import {
-  getMessaging,
-  getToken,
-  // MessagePayload,
-  // onMessage,
-} from "firebase/messaging";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { notifyInfo, notifyWarn, registerToast } from "./notify";
 import { Hymn, Lection, Prayer, Psalm } from "./model";
 
@@ -22,10 +17,9 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const messaging = getMessaging(app);
 const analytics = getAnalytics(app);
-// onMessage(messaging, onFBMessage);
 const auth = getAuth(app);
+const firestore = getFirestore(app);
 
 const rootDir =
   location.pathname +
@@ -35,18 +29,3 @@ const rootDir =
 const sw = navigator.serviceWorker.register(rootDir + "sw.js", {
   scope: rootDir,
 });
-
-let firebaseToken: string = null;
-sw.then((sw) => {
-  getToken(messaging, {
-    serviceWorkerRegistration: sw,
-  })
-    .then((token) => {
-      firebaseToken = token;
-    })
-    .catch(console.error);
-}).catch(console.error);
-
-export function sendTokenToServer() {
-  // if (firebaseToken) return sendTokenToWasabee(firebaseToken);
-}
