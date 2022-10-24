@@ -3,11 +3,8 @@
   // import { Nav, NavLink } from "sveltestrap";
   import { FlatToast, ToastContainer } from "svelte-toasts";
   // import { notifyError } from "../notify";
-  import { recordEvent } from "../firebase";
 
   // export const dispatch = createEventDispatcher();
-
-  recordEvent("page_view");
 </script>
 
 <main role="main" class="cover-container text-center mx-auto">
@@ -15,15 +12,9 @@
     <FlatToast {data} />
   </ToastContainer>
   <h1 class="display-2 font-weight-bold">WADO</h1>
-  <p class="h2">Web-Amplified Daily Office</p>
+  <p class="h2">Settings</p>
   <hr />
   <ol>
-    <li>Determine Date from systemclock/query</li>
-    <li>Determine season/proper/year/etc from date</li>
-    <li>Determine Office from date/query</li>
-    <li>Load svelte component for office</li>
-    <li>Query associations for office, loading from firestore</li>
-    <li>...</li>
-    <li>Draw it</li>
+    <li>settings</li>
   </ol>
 </main>

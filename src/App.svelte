@@ -13,15 +13,18 @@
     Input,
   } from "sveltestrap";
 
+  import { recordEvent } from "./firebase";
   import HomePage from "./components/HomePage.svelte";
+  import Settings from "./components/Settings.svelte";
 
   const routes = {
     // Exact path
     "/": HomePage,
     "/:office/*": HomePage,
+    "/settings": Settings,
   };
 
-  async function onLogin(ev: { detail: any }) {}
+  recordEvent("startup");
 </script>
 
 <svelte:head />
@@ -31,8 +34,11 @@
     <NavbarToggler id="main-toggler" />
     <Collapse toggler="#main-toggler" navbar expand="lg">
       <Nav navbar>
-        <NavItem><NavLink href="#/teams">Teams</NavLink></NavItem>
-        <NavItem><NavLink href="#/operations">Operations</NavLink></NavItem>
+        <NavItem
+          ><NavLink href="https://saint-luke.net"
+            >OSL (App.svelte navbar)</NavLink
+          ></NavItem
+        >
       </Nav>
     </Collapse>
   </Navbar>
@@ -47,7 +53,8 @@
 <footer class="mastfoot mx-5 mt-auto">
   <div class="p-5">
     <p class="text-muted small">
-      This site uses cookies for authentication purposes.
+      (footer from App.svelte) This site uses cookies for authentication
+      purposes.
     </p>
     <p class="text-muted text-right small">
       Copyright &copy; The Order of St. Luke 2022. All Rights Reserved
