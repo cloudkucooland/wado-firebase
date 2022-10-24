@@ -15,8 +15,6 @@
 
   import HomePage from "./components/HomePage.svelte";
 
-  import { sendTokenToServer } from "./firebase";
-
   const routes = {
     // Exact path
     "/": HomePage,
