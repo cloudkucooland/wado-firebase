@@ -9,7 +9,8 @@
     "serve": "rollup -c -w",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "install": "cp public/build/* /www/osl/wado/build/"
   },
   "repository": {
     "type": "git",
