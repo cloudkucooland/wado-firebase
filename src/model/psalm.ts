@@ -1,4 +1,4 @@
-export default class Prayer {
+export default class Psalm {
   id: number;
   name: string;
 
