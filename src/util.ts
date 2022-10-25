@@ -1,5 +1,5 @@
 // Convert cardinal number to friendly ordinal numbers for display (English)
-export function cardToOrd(card: int) {
+export function cardToOrd(card: number) {
   const lut = new Map([
     [0, ""],
     [1, "First"],

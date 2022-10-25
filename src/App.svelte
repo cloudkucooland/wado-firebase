@@ -30,7 +30,11 @@
 
   recordEvent("startup");
 </script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
+
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+/>
 <svelte:head />
 
 <header>
@@ -58,9 +62,7 @@
 
 <footer class="mastfoot mx-5 mt-auto">
   <div class="p-5">
-    <p class="small">
-      This site uses cookies for authentication purposes.
-    </p>
+    <p class="small">This site uses cookies for authentication purposes.</p>
     <p class="text-muted text-right small">
       Copyright &copy; The Order of St. Luke 2022. All Rights Reserved
     </p>

@@ -1,8 +1,8 @@
 // https://gist.github.com/johndyer/0dffbdd98c2046f41180c051f378f343
-export function getEaster(year: int) {
+export function getEaster(year: number) {
   var f = Math.floor,
     // Golden Number - 1
-    G = year % 19,
+    G: number = year % 19,
     C = f(year / 100),
     // related to Epact
     H = (C - f(C / 4) - f((8 * C + 13) / 25) + 19 * G + 15) % 30,
