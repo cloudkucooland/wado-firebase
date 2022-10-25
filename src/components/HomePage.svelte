@@ -14,9 +14,6 @@
   <ToastContainer let:data>
     <FlatToast {data} />
   </ToastContainer>
-  <h1 class="display-2 font-weight-bold">WADO</h1>
-  <p class="h2">Web-Amplified Daily Office</p>
-  <hr />
   <ol>
     <li>Determine Date from systemclock/query</li>
     <li>Determine season/proper/year/etc from date</li>
