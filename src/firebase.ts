@@ -2,8 +2,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
-// import { notifyInfo, notifyWarn, registerToast } from "./notify";
+import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import { notifyInfo, notifyWarn, registerToast } from "./notify";
 // import { Hymn, Lection, Prayer, Psalm } from "./model";
 
 const firebaseConfig = {
@@ -20,6 +20,20 @@ const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const firestore = getFirestore(app);
+
+enableIndexedDbPersistence(firestore).catch((err) => {
+  if (err.code == "failed-precondition") {
+    notifyInfo("Unable to start persistence");
+    // Multiple tabs open, persistence can only be enabled
+    // in one tab at a a time.
+    // ...
+  } else if (err.code == "unimplemented") {
+    notifyWarn("Browser cannot start persistence");
+    // The current browser does not support all of the
+    // features required to enable persistence
+    // ...
+  }
+});
 
 const rootDir =
   location.pathname +
