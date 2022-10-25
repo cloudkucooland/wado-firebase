@@ -10,23 +10,27 @@
     Nav,
     NavItem,
     NavLink,
-    Input,
+    Styles,
   } from "sveltestrap";
 
   import { recordEvent } from "./firebase";
   import HomePage from "./components/HomePage.svelte";
   import Settings from "./components/Settings.svelte";
+  import Login from "./components/Login.svelte";
+  import Admin from "./components/Admin.svelte";
 
   const routes = {
     // Exact path
     "/": HomePage,
     "/:office/*": HomePage,
     "/settings": Settings,
+    "/login": Login,
+    "/admin": Admin,
   };
 
   recordEvent("startup");
 </script>
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css">
 <svelte:head />
 
 <header>
@@ -34,11 +38,13 @@
     <NavbarToggler id="main-toggler" />
     <Collapse toggler="#main-toggler" navbar expand="lg">
       <Nav navbar>
-        <NavItem
-          ><NavLink href="https://saint-luke.net"
-            >OSL (App.svelte navbar)</NavLink
-          ></NavItem
-        >
+        <NavItem><NavLink href="#/">WADO</NavLink></NavItem>
+        <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
+        <NavItem><NavLink href="#/login">Login</NavLink></NavItem>
+        <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
+        <NavItem>
+          <NavLink href="https://saint-luke.net">OSL</NavLink>
+        </NavItem>
       </Nav>
     </Collapse>
   </Navbar>
@@ -52,9 +58,8 @@
 
 <footer class="mastfoot mx-5 mt-auto">
   <div class="p-5">
-    <p class="text-muted small">
-      (footer from App.svelte) This site uses cookies for authentication
-      purposes.
+    <p class="small">
+      This site uses cookies for authentication purposes.
     </p>
     <p class="text-muted text-right small">
       Copyright &copy; The Order of St. Luke 2022. All Rights Reserved
