@@ -18,7 +18,7 @@
   import Settings from "./components/Settings.svelte";
   import Login from "./components/Login.svelte";
   import Admin from "./components/Admin.svelte";
-  import Search from "./components/Search.svelte";
+  import Browse from "./components/Browse.svelte";
 
   const routes = {
     // Exact path
@@ -27,7 +27,8 @@
     "/settings": Settings,
     "/login": Login,
     "/admin": Admin,
-    "/search": Search,
+    "/search": Browse,
+    "/browse": Browse,
   };
 
   recordEvent("startup");
