@@ -19,9 +19,9 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
-const firestore = getFirestore(app);
+export const db = getFirestore(app);
 
-enableIndexedDbPersistence(firestore).catch((err) => {
+enableIndexedDbPersistence(db).catch((err) => {
   if (err.code == "failed-precondition") {
     notifyInfo("Unable to start persistence");
     // Multiple tabs open, persistence can only be enabled
