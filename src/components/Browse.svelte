@@ -1,4 +1,5 @@
 <script>
+  import { tick } from "svelte";
   import {
     Container,
     Col,
@@ -15,15 +16,17 @@
   import { collection, query, where, getDocs } from "firebase/firestore";
   import { db } from "../firebase";
   import BrowseItem from "./BrowseItem.svelte";
+  import Association from "../model/association";
 
   let isOpen = false;
   let location = "Any";
-  let prayers = [];
+  let associations = [];
 
   async function requery(e) {
     isOpen = false;
-    prayers = [];
+    associations = [];
     console.log(location);
+    // await tick();
 
     const q = query(
       collection(db, "associations"),
@@ -31,8 +34,9 @@
     );
 
     const res = await getDocs(q);
-    res.forEach((doc) => {
-      prayers.push(doc.data().Reference)
+    res.forEach((a) => {
+      const ax = new Association(a);
+      associations.push(ax);
     });
 
     isOpen = true;
@@ -79,10 +83,10 @@
         </Card>
       </Col>
     </Row>
-    {#each prayers as p}
+    {#each associations as a}
       <Row>
         <Col>
-          <BrowseItem ref={p} />
+          <BrowseItem association={a} />
         </Col>
       </Row>
     {/each}
