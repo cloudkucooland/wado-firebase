@@ -46,11 +46,11 @@
 <Container>
   <Row>
     <Col>
-      <Card class="mb-2">
+      <Card>
         <CardHeader>
-          <h1>Search</h1>
+          <h1>Browse</h1>
         </CardHeader>
-        <CardBody class="card-body">
+        <CardBody>
           <Form>
             <FormGroup>
               <Label for="locations">Location</Label>
@@ -75,11 +75,11 @@
   {#if isOpen}
     <Row>
       <Col>
-        <Card class="mb-2">
+        <Card>
           <CardHeader>
             <h1>Results in {location}</h1>
           </CardHeader>
-          <CardBody class="card-body" id="resultbody" />
+          <CardBody />
         </Card>
       </Col>
     </Row>
