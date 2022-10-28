@@ -1,16 +1,15 @@
-export default class Hymn {
-  id: number;
+export default class hymn {
   name: string;
+  body: string;
+  reviewed: boolean;
+  license: boolean;
+  lastEditor: string;
+  lastEdited: string;
 
   constructor(obj: any) {
-    this.id = Number(obj.id);
-    this.name = obj.name;
-  }
-
-  toJSON() {
-    return {
-      id: Number(this.id),
-      name: `${this.name}`,
-    };
+    this.name = obj.Name;
+    this.body = obj.Body;
+    this.reviewed = obj.Reviewed ? obj.Reviewed : false;
+    this.license = obj.License ? obj.License : false;
   }
 }

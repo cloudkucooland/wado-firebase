@@ -1,5 +1,4 @@
 <script>
-  import { tick } from "svelte";
   import {
     Container,
     Col,
@@ -16,17 +15,15 @@
   import { collection, query, where, getDocs } from "firebase/firestore";
   import { db } from "../firebase";
   import BrowseItem from "./BrowseItem.svelte";
-  import Association from "../model/association";
+  import association from "../model/association";
 
   let isOpen = false;
   let location = "Any";
   let associations = [];
 
-  async function requery(e) {
+  async function requery() {
     isOpen = false;
     associations = [];
-    console.log(location);
-    // await tick();
 
     const q = query(
       collection(db, "associations"),
@@ -35,7 +32,7 @@
 
     const res = await getDocs(q);
     res.forEach((a) => {
-      const ax = new Association(a);
+      const ax = new association(a);
       associations.push(ax);
     });
 
@@ -58,8 +55,8 @@
                 type="select"
                 name="locations"
                 id="locations"
-                on:change={requery}
                 bind:value={location}
+                on:change={requery}
               >
                 <option>Any</option>
                 {#each locations as L}

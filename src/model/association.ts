@@ -1,4 +1,4 @@
-export default class Association {
+export default class association {
   id: string;
   name: string;
   weight: number;

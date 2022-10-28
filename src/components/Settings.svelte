@@ -7,7 +7,7 @@
   // export const dispatch = createEventDispatcher();
 </script>
 
-<main role="main" class="cover-container text-center mx-auto">
+<main class="cover-container text-center mx-auto">
   <ToastContainer let:data>
     <FlatToast {data} />
   </ToastContainer>
