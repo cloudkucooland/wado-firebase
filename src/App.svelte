@@ -10,7 +10,6 @@
     Nav,
     NavItem,
     NavLink,
-    Styles,
   } from "sveltestrap";
 
   import { recordEvent } from "./firebase";
