@@ -1,10 +1,5 @@
-<script lang="ts">
-  // import { createEventDispatcher } from "svelte";
-  // import { Nav, NavLink } from "sveltestrap";
+<script>
   import { FlatToast, ToastContainer } from "svelte-toasts";
-  // import { notifyError } from "../notify";
-
-  // export const dispatch = createEventDispatcher();
 </script>
 
 <main class="cover-container text-center mx-auto">

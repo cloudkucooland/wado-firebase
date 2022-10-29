@@ -2,8 +2,9 @@
   import psalm from "../model/psalm";
 
   export let data;
+  export let bold = false;
+
   const p = new psalm(data);
-  console.debug(p);
 </script>
 
-<div>{@html p.body}</div>
+<div class="psalm">{@html p.body}</div>

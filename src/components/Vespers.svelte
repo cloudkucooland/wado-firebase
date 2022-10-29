@@ -2,6 +2,7 @@
   import Location from "./Location.svelte";
 
   export let proper;
+  console.debug("Terce with Proper: ", proper);
 </script>
 
 <div class="rubric">
@@ -11,7 +12,7 @@
 <div class="rubric">Be still, aware of God’s presence within and around.</div>
 
 <h3>Opening Sentences</h3>
-<Location name="DIURNAL-OPENING" {proper} max="1" />
+<association>DIURNAL-OPENING</association>
 
 <h3>Prayer</h3>
 <Location name="GENERAL-WITHYOU" {proper} max="1" />
@@ -27,8 +28,8 @@
 <div class="silence">a brief time of silent prayer</div>
 
 <h3>The Lord's Prayer</h3>
-<Location bold="true" name="GENERAL-LORDS" {proper} max="1" />
+<Location bold="true" name="GENERAL-LORDS" max="1" />
 
 <h3>Concluding Prayer</h3>
-<Location name="TERCE-CONCLUDING" {proper} max="1" />
-<Location name="GENERAL-DISMISSAL" {proper} max="1" />
+<Location name="TERCE-CONCLUDING" max="1" />
+<Location name="GENERAL-DISMISSAL" max="1" />

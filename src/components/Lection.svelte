@@ -2,8 +2,8 @@
   import lection from "../model/lection";
 
   export let data;
+  export let bold = flase;
   const l = new lection(data);
-  console.debug(l);
 </script>
 
-<div>{@html l.body}</div>
+<div class="lection">{@html l.body}</div>
