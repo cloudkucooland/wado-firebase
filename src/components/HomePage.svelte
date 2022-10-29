@@ -24,8 +24,9 @@
   import Compline from "./Compline.svelte";
 
   export let params = { officeName: currentOffice() };
-  let officeName = params.officeName ? params.officeName : currentOffice();
+  $: officeName = params.officeName ? params.officeName : currentOffice();
 
+  // link office name with component for drawing menu and switching
   const lut = new Map([
     ["Lauds", Lauds],
     ["Terce", Terce],
@@ -38,11 +39,21 @@
   if (!lut.has(officeName)) {
     officeName = currentOffice();
   }
+  $: office = lut.get(officeName);
 
   recordEvent(officeName);
 
-  const forProper = new proper({ caldate: "12-22", season: "advent", week: 4 }); // determine from clock or query
-  const office = lut.get(officeName);
+  const now = new Date();
+  const nowString =
+    now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+  $: forProper = new proper(nowString); // default to now, will be updated if a querystring is set before loading content
+
+  $: {
+    let parsed = parse($querystring); // when querystring updates, update parsed, which updates forProper
+    if (typeof parsed !== "object") parsed = { t: nowString }; // unparsable?
+    if (!parsed.hasOwnProperty("t")) parsed.t = nowString; // no t set
+    forProper = new proper(parsed.t); // update forProper with the results of the query
+  }
 </script>
 
 <Container class="cover-container mx-auto">
@@ -51,12 +62,9 @@
   </ToastContainer>
 
   <Nav>
-    <NavLink href="/wado/#/office/Lauds">Lauds</NavLink>
-    <NavLink href="#/office/Terce">Terce</NavLink>
-    <NavLink href="#/office/Sext">Sext</NavLink>
-    <NavLink href="#/office/None">None</NavLink>
-    <NavLink href="#/office/Vespers">Vespers</NavLink>
-    <NavLink href="#/office/Compline">Compline</NavLink>
+    {#each [...lut.keys()] as o}
+      <NavLink href="#/office/{o}?{$querystring}">{o}</NavLink>
+    {/each}
   </Nav>
 
   <Container>

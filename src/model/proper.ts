@@ -2,24 +2,37 @@ export default class proper {
   caldate: string;
   proper: number;
   season: string;
-  week: number;
+  weekday: number;
+  year: string;
 
-  constructor(obj: any) {
-    this.caldate = obj.caldate ? obj.caldate : "";
-    this.proper = obj.proper ? obj.proper : 0;
-    this.season = obj.season ? obj.season : "";
-    this.week = obj.week ? obj.week : 0;
-  }
+  // incoming format yyyy-mm-dd
+  constructor(simple: string) {
+    console.debug("new proper()", simple);
+    const s = simple.split("-");
+    const d = new Date(s[0], s[1], s[2]);
 
-  default() {
-    this.proper = 1;
-    this.season = "advent";
-    this.week = 1;
+    this.caldate = s[1] + "-" + s[2]; // stored in Firestore as m-d / mm-dd
+    this.weekday = d.getDay();
+
+    const years = ["A", "B", "C"];
+    this.year = years[(+s[0] + 2) % 3];
+
+    this.proper = 1; // tbd
+    this.season = "advent"; // tbd
   }
 
   toString() {
     return (
-      this.caldate + "-" + this.proper + "-" + this.season + "-" + this.week
+      "(" +
+      this.caldate +
+      ") (" +
+      this.season +
+      "-" +
+      this.proper +
+      ") - " +
+      this.weekday +
+      " " +
+      this.year
     );
   }
 }

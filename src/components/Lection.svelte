@@ -2,7 +2,9 @@
   import lection from "../model/lection";
 
   export let data;
-  export let bold = flase;
+  export let bold;
+  export let showall;
+
   const l = new lection(data);
 </script>
 

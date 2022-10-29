@@ -1,20 +1,20 @@
 <script>
-  import prayer from "../model/prayer";
+  import heartword from "../model/heartword";
 
   export let data;
   export let bold;
   export let showall;
 
-  const p = new prayer(data);
+  const hw = new heartword(data);
 </script>
 
-<div class="prayer">{@html p.body}</div>
+<div class="heartword">{@html p.body}</div>
 {#if typeof p.author !== "undefined"}
   <div class="credit">{p.author}</div>
 {/if}
 
 <style>
-  div.prayer {
+  div.heartword {
     font-family: Georgia, serif;
     line-height: 1.5em;
     margin-bottom: 1em;

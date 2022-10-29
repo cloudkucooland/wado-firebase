@@ -1,4 +1,4 @@
-export default class prayer {
+export default class lection {
   name: string;
   body: string;
   reviewed: boolean;
@@ -11,5 +11,7 @@ export default class prayer {
     this.body = obj.Body;
     this.reviewed = obj.Reviewed ? obj.Reviewed : false;
     this.license = obj.License ? obj.License : false;
+    this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
+    this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
   }
 }

@@ -5,15 +5,15 @@ export default class prayer {
   license: boolean;
   lastEditor: string;
   lastEdited: string;
-  credit: string;
+  author: string;
 
   constructor(obj: any) {
     this.name = obj.Name;
     this.body = obj.Body;
-    this.credit = obj.Credit;
+    this.author = obj.Author;
     this.reviewed = obj.Reviewed ? obj.Reviewed : false;
     this.license = obj.License ? obj.License : false;
-    // this.lastEditor = obj."Last Editor";
-    // this.lastEdited = obj."Last Edited";
+    this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
+    this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
   }
 }
