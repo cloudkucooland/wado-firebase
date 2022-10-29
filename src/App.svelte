@@ -125,28 +125,9 @@
     margin-bottom: 1em;
   }
 
-  :global(div.hymn) {
-    font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 2em;
-  }
-
-  :global(div.psalm) {
-    font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 2em;
-  }
-
   :global(div.title) {
     font-family: Georgia, serif;
     font-weight: bold;
-  }
-
-  :global(div.credit) {
-    font-family: Georgia, serif;
-    font-style: italic;
-    text-align: right;
-    font-variant: small-caps;
   }
 
   :global(div.rubric) {
