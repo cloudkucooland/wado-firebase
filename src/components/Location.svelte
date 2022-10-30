@@ -69,6 +69,7 @@
       where("Location", "==", name),
       where("Season", "==", proper.season),
       where("Proper", "==", proper.proper),
+      where("Weekday", "==", proper.weekday),
       orderBy(order),
       limit(max - prayers.length)
     );
@@ -79,7 +80,47 @@
       prayers.push(doc.data());
     }
     if (prayers.length >= max) {
-      console.debug("season and proper", prayers.length);
+      console.debug("season, proper, weekday", prayers.length);
+      return prayers;
+    }
+
+    // season & proper
+    q = query(
+      collection(db, "associations"),
+      where("Location", "==", name),
+      where("Season", "==", proper.season),
+      where("Proper", "==", proper.proper),
+      orderBy(order),
+      limit(max - prayers.length)
+    );
+
+    res = await getDocs(q);
+    for (const a of res.docs) {
+      const doc = await getDoc(a.data().Reference);
+      prayers.push(doc.data());
+    }
+    if (prayers.length >= max) {
+      console.debug("season, proper, weekday", prayers.length);
+      return prayers;
+    }
+
+    // season & weekday
+    q = query(
+      collection(db, "associations"),
+      where("Location", "==", name),
+      where("Season", "==", proper.season),
+      where("Weekday", "==", proper.weekday),
+      orderBy(order),
+      limit(max - prayers.length)
+    );
+
+    res = await getDocs(q);
+    for (const a of res.docs) {
+      const doc = await getDoc(a.data().Reference);
+      prayers.push(doc.data());
+    }
+    if (prayers.length >= max) {
+      console.debug("season, proper, weekday", prayers.length);
       return prayers;
     }
 

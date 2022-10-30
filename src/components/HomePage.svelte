@@ -8,6 +8,9 @@
     CardBody,
     Nav,
     NavLink,
+    FormGroup,
+    Label,
+    Input,
   } from "sveltestrap";
   import { FlatToast, ToastContainer } from "svelte-toasts";
   import { querystring } from "svelte-spa-router";
@@ -54,6 +57,11 @@
     if (!parsed.hasOwnProperty("t")) parsed.t = nowString; // no t set
     forProper = new proper(parsed.t); // update forProper with the results of the query
   }
+
+  function setDate(e) {
+    forProper = new proper(e.srcElement.value);
+    office = lut.get(officeName); // trigger a redraw
+  }
 </script>
 
 <Container class="cover-container mx-auto">
@@ -65,6 +73,16 @@
     {#each [...lut.keys()] as o}
       <NavLink href="#/office/{o}?{$querystring}">{o}</NavLink>
     {/each}
+    <FormGroup>
+      <!-- <Label for="t">Date</Label> -->
+      <Input
+        type="date"
+        name="t"
+        id="t"
+        placeholder={nowString}
+        on:change={setDate}
+      />
+    </FormGroup>
   </Nav>
 
   <Container>
