@@ -6,24 +6,22 @@ export default class proper {
   year: string;
   propername: string;
 
-  feasts: Map;
+  // type FeastMap = Record:<string, Date> // something for when I get bored
+
+  feasts: Map<string, Date>;
 
   // incoming format yyyy-mm-dd
   constructor(simple: string) {
-    console.debug("new proper()", simple);
     const s = simple.split("-");
-    const d = new Date(+s[0], +s[1], +s[2]);
+    const d = new Date(+s[0], +s[1] - 1, +s[2]); // month is base 0, not base 1
 
-    this.caldate = +s[1] + "-" + +s[2]; // stored in Firestore as m-d / mm-dd
+    this.caldate = +s[1] + "-" + +s[2]; // stored in Firestore as m-d / mm-dd, base 1
     this.weekday = d.getDay();
 
-    const years = ["A", "B", "C"];
-    this.year = years[(+s[0] + 2) % 3];
-
     this.setFeasts(+s[0]);
-    // this.season = "advent"; // tbd
-    // this.proper = 1; // tbd
     this.getSeason(d);
+
+    console.debug("proper", simple, this);
   }
 
   toString() {
@@ -112,28 +110,31 @@ export default class proper {
   }
 
   // https://stackoverflow.com/questions/8619879/javascript-calculate-the-day-of-the-year-1-366
-  getDayOfYear(d: date) {
-    const start = new Date(d.getFullYear(), 0, 0);
-    const diff =
-      d -
-      start +
+  getDayOfYear(d: Date) {
+    const start: Date = new Date(d.getFullYear(), 0, 0);
+    // const diff: number = d.getTime() - start.getTime();
+    const dif: number =
+      d.getTime() -
+      start.getTime() +
       (start.getTimezoneOffset() - d.getTimezoneOffset()) * 60 * 1000;
-    const oneDay = 1000 * 60 * 60 * 24;
-    return Math.floor(diff / oneDay);
+
+    // const oneDay = 1000 * 60 * 60 * 24;
+    // console.log("getDayOfYear", Math.floor(diff / 86400000), diff, dif);
+    return Math.floor(dif / 86400000);
   }
 
   getSeason(today: Date) {
-    let isnextlectyear = 0; // needed for lectionary year below
+    let isnextlectyear: boolean = false; // needed for lectionary year at bottom of method
     const nextday = 86400000;
     const f = (n) => {
+      // shortcut for getting a feast's getTime()
       return this.feasts.get(n).getTime();
     };
     const fdoy = (n) => {
+      // day of year for a feast
       return this.getDayOfYear(this.feasts.get(n));
     };
     const t = today.getTime();
-
-    console.log(t, f("epiphany"));
 
     // determine the season, proper
     if (t < f("epiphany")) {
@@ -217,7 +218,7 @@ export default class proper {
       this.proper = weeksaftereaster;
     } else if (t > f("pentecost") && t < f("trinity")) {
       this.season = "afterpentecost";
-      const daysafterp = getDayOfYeaer(today) - (fdoy("proper1") + 1);
+      const daysafterp = this.getDayOfYear(today) - (fdoy("proper1") + 1);
       const weeksafterp = Math.floor(daysafterp / 7) + 1;
       this.propername = "Proper " + weeksafterp + "; After Pentecost";
       this.proper = weeksafterp;
@@ -246,7 +247,7 @@ export default class proper {
       const daysafterp = this.getDayOfYear(today) - (fdoy("pentecost") + 1);
       const weeksafterp = Math.floor(daysafterp / 7) + 1;
       // this.propername       = cardToOrd($weeksafterp) . " " . this.['date_g']['weekday'] . " after Pentecost"; // XXX before advent
-      this.propername = "Proper ".$weeksafterp;
+      this.propername = "Proper " + weeksafterp;
       this.proper = weeksafterp;
     } else if (t >= f("advent") && t < f("christmaseve")) {
       this.season = "advent";
@@ -277,19 +278,15 @@ export default class proper {
       this.season = "unknown";
       // die("impossible day? <br/>today: {t}</br>" . print_r($feast, TRUE) );
     }
+
+    // set the lectionary year
+    const years = ["C", "A", "B"];
+    let y = today.getYear();
+    if (isnextlectyear) y = y + 1;
+    this.year = years[y % 3];
   }
 }
 
 /* 
-    $_ly                    = array(
-        0 => 'C',
-        1 => 'A',
-        2 => 'B'
-    );
-    this.['lectionaryyear'] = $_ly[(this.['date_g']['year'] + $isnextlectyear) % 3];
-    
     this.['title'] = this.season . "-" . this.proper . "-" . this.['date_g']['weekday'] . "-" . this.['lectionaryyear'] . "-" . this.['template'] . "-" . date("h:i", time());
-
-    }
-    }
-    */
+  */

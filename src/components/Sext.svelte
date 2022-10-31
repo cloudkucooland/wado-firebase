@@ -2,10 +2,8 @@
   import Location from "./Location.svelte";
 
   export let proper;
-  export let bold;
-  export let showall;
-
-  console.debug("Sext with Proper: ", proper);
+  // export let bold;
+  // export let showall;
 </script>
 
 <div class="rubric">

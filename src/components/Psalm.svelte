@@ -2,8 +2,8 @@
   import psalm from "../model/psalm";
 
   export let data;
-  export let bold;
-  export let showall;
+  // export let bold;
+  // export let showall;
 
   const p = new psalm(data);
 </script>

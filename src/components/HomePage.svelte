@@ -8,6 +8,7 @@
     CardBody,
     Nav,
     NavLink,
+    Form,
     FormGroup,
     Label,
     Input,
@@ -61,28 +62,29 @@
   function setDate(e) {
     forProper = new proper(e.srcElement.value);
     office = lut.get(officeName); // trigger a redraw
+    document.getElementById("datepicker").dispatchEvent(new Event("submit"));
   }
 </script>
 
 <Container class="cover-container mx-auto">
-  <ToastContainer let:data>
-    <FlatToast {data} />
-  </ToastContainer>
+  <!-- <ToastContainer let:data> <FlatToast {data} /> </ToastContainer> -->
 
   <Nav>
     {#each [...lut.keys()] as o}
       <NavLink href="#/office/{o}?{$querystring}">{o}</NavLink>
     {/each}
-    <FormGroup>
-      <!-- <Label for="t">Date</Label> -->
-      <Input
-        type="date"
-        name="t"
-        id="t"
-        placeholder={nowString}
-        on:change={setDate}
-      />
-    </FormGroup>
+    <Form id="datepicker" action="#/office/{officeName}">
+      <FormGroup>
+        <!-- <Label for="t">Date</Label> -->
+        <Input
+          type="date"
+          name="t"
+          id="t"
+          placeholder={nowString}
+          on:change={setDate}
+        />
+      </FormGroup>
+    </Form>
   </Nav>
 
   <Container>

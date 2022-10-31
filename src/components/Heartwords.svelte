@@ -8,9 +8,9 @@
   const hw = new heartword(data);
 </script>
 
-<div class="heartword">{@html p.body}</div>
-{#if typeof p.author !== "undefined"}
-  <div class="credit">{p.author}</div>
+<div class="heartword">{@html hw.body}</div>
+{#if typeof hw.author !== "undefined"}
+  <div class="credit">{hw.author}</div>
 {/if}
 
 <style>
