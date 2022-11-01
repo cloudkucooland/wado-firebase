@@ -281,7 +281,7 @@ export default class proper {
 
     // set the lectionary year
     const years = ["C", "A", "B"];
-    let y = today.getYear();
+    let y = today.getFullYear();
     if (isnextlectyear) y = y + 1;
     this.year = years[y % 3];
   }
