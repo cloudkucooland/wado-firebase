@@ -29,8 +29,8 @@
     max = +max;
   }
 
-  console.debug("Location: ", name, proper.toString());
-  recordEvent(name);
+  // console.debug("Location: ", name, proper.toString());
+  // recordEvent(name);
 
   export const lookup = new Map([
     ["heartwords", Heartwords],

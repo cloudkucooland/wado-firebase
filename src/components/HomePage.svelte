@@ -5,6 +5,7 @@
     Row,
     Card,
     CardHeader,
+    CardSubtitle,
     CardBody,
     Nav,
     NavLink,
@@ -14,9 +15,8 @@
     Input,
   } from "sveltestrap";
   import { FlatToast, ToastContainer } from "svelte-toasts";
-  import { querystring } from "svelte-spa-router";
   import { parse } from "qs";
-  import { recordEvent } from "../firebase";
+  // import { recordEvent } from "../firebase";
   import proper from "../model/proper";
   import { currentOffice } from "../util.ts";
 
@@ -27,9 +27,15 @@
   import Vespers from "./Vespers.svelte";
   import Compline from "./Compline.svelte";
 
-  export let params = { officeName: currentOffice() };
-  $: officeName = params.officeName ? params.officeName : currentOffice();
+  const now = new Date();
+  const nowString =
+    now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
 
+  export let params = { officeName: currentOffice(), officeDate: nowString };
+
+  $: officeDate = params.officeDate ? params.officeDate : nowString;
+
+  $: officeName = params.officeName ? params.officeName : currentOffice();
   // link office name with component for drawing menu and switching
   const lut = new Map([
     ["Lauds", Lauds],
@@ -45,53 +51,32 @@
   }
   $: office = lut.get(officeName);
 
-  recordEvent(officeName);
-
-  const now = new Date();
-  const nowString =
-    now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
-  $: forProper = new proper(nowString); // default to now, will be updated if a querystring is set before loading content
-
-  $: {
-    let parsed = parse($querystring); // when querystring updates, update parsed, which updates forProper
-    if (typeof parsed !== "object") parsed = { t: nowString }; // unparsable?
-    if (!parsed.hasOwnProperty("t")) parsed.t = nowString; // no t set
-    forProper = new proper(parsed.t); // update forProper with the results of the query
-  }
+  $: forProper = new proper(officeDate);
 
   function setDate(e) {
-    forProper = new proper(e.srcElement.value);
-    office = lut.get(officeName); // trigger a redraw
-    document.getElementById("datepicker").dispatchEvent(new Event("submit"));
+    officeDate = e.srcElement.value;
+    // office = lut.get(officeName);
   }
 </script>
 
 <Container class="cover-container mx-auto">
-  <!-- <ToastContainer let:data> <FlatToast {data} /> </ToastContainer> -->
-
   <Nav>
     {#each [...lut.keys()] as o}
-      <NavLink href="#/office/{o}?{$querystring}">{o}</NavLink>
+      <NavLink href="#/office/{o}/date/{officeDate}">{o}</NavLink>
     {/each}
-    <Form id="datepicker" action="#/office/{officeName}">
-      <FormGroup>
-        <!-- <Label for="t">Date</Label> -->
-        <Input
-          type="date"
-          name="t"
-          id="t"
-          placeholder={nowString}
-          on:change={setDate}
-        />
-      </FormGroup>
-    </Form>
+    <FormGroup>
+      <Input type="date" placeholder={nowString} on:change={setDate} />
+    </FormGroup>
   </Nav>
 
   <Container>
     <Row>
       <Col>
         <Card>
-          <CardHeader><h1>{officeName}: {forProper.toString()}</h1></CardHeader>
+          <CardHeader><h1>{officeName}</h1></CardHeader>
+          <CardSubtitle class="mb-2 text-muted"
+            >{forProper.toString()}</CardSubtitle
+          >
           <CardBody>
             <svelte:component this={office} proper={forProper} />
           </CardBody>

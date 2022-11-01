@@ -1,6 +1,5 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
-  // import Router, { location, replace } from "svelte-spa-router";
   import { fade } from "svelte/transition";
   import { ToastContainer, FlatToast } from "svelte-toasts";
 
@@ -13,10 +12,14 @@
     NavLink,
   } from "sveltestrap";
 
-  import { recordEvent } from "./firebase";
+  import { recordEvent, auth } from "./firebase";
+  import {
+    FacebookAuthProvider,
+    signInWithPopup,
+    signOut,
+  } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
   import Settings from "./components/Settings.svelte";
-  import Login from "./components/Login.svelte";
   import Admin from "./components/Admin.svelte";
   import Browse from "./components/Browse.svelte";
 
@@ -24,11 +27,32 @@
     // Exact path
     "/": HomePage,
     "/settings": Settings,
-    "/login": Login,
     "/admin": Admin,
     "/browse": Browse,
     "/office/:officeName": HomePage,
+    "/office/:officeName/date/:officeDate": HomePage,
   };
+
+  $: user = localStorage["user"]; // load from storage if available, this should be smarter
+
+  async function doLogin() {
+    // console.log(e);
+    const provider = new FacebookAuthProvider();
+    const result = await signInWithPopup(auth, provider);
+
+    user = result.user;
+    console.log(user);
+    localStorage["user"] = user; // save to storage so we don't need to relogin on every reload
+    // This gives you a Facebook Access Token.
+    // const credential = provider.credentialFromResult(auth, result);
+    // const token = credential.accessToken;
+  }
+
+  async function doLogout() {
+    localStorage.removeItem("user");
+    await signOut(auth);
+    user = false;
+  }
 
   recordEvent("startup");
 </script>
@@ -45,9 +69,16 @@
     <Collapse toggler="#main-toggler" navbar expand="lg">
       <Nav navbar>
         <NavItem><NavLink href="#/">WADO</NavLink></NavItem>
-        <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
-        <NavItem><NavLink href="#/login">Login</NavLink></NavItem>
-        <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
+        {#if user}
+          <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
+          <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
+          <NavItem
+            ><NavLink href="#" on:click={doLogout}>Log Out</NavLink></NavItem
+          >
+        {:else}
+          <NavItem><NavLink href="#" on:click={doLogin}>Login</NavLink></NavItem
+          >
+        {/if}
         <NavItem>
           <NavLink href="https://saint-luke.net">OSL</NavLink>
         </NavItem>

@@ -1,8 +1,6 @@
 <script>
   import Location from "./Location.svelte";
-
   export let proper;
-  console.debug("Terce with Proper: ", proper);
 </script>
 
 <center><h3>Opening</h3></center>
