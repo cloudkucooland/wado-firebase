@@ -5,12 +5,13 @@
   export let data;
   export let bold;
   export let showall;
+  export let id;
 
   const p = new psalm(data);
 </script>
 
 {#if $showEdit}<div class="edit">
-    <a href="#/edit/{p.name}">[Edit: {p.name}]</a>
+    <a href="#/edit/{id}">[Edit: {p.name}]</a>
   </div>{/if}
 <div class="psalm" {bold}>{@html p.body}</div>
 {#if showall && $debugOn}showall{/if}

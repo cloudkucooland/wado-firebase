@@ -31,7 +31,7 @@
     const associations = new Map();
 
     try {
-      const ref = new DocumentReference(id);
+      const ref = new DocumentReference("/prayers/" + id);
       console.log(ref);
       doc = await getDoc(ref);
       console.log(doc);
@@ -39,22 +39,6 @@
       console.log(e);
     }
 
-    if (typeof doc === "undefined") {
-      try {
-        const q = query(
-          collection(db, "prayers"),
-          where("Name", "==", id)
-        );
-
-        const res = await getDocs(q);
-        res.forEach((a) => {
-          console.log(a);
-          doc = a;
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    }
     console.log(doc);
   }
 

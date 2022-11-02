@@ -5,12 +5,13 @@
   export let data;
   export let bold;
   export let showall;
+  export let id;
 
   const l = new lection(data);
 </script>
 
 {#if $showEdit}<div class="edit">
-    <a href="#/edit/{l.name}">[Edit: {l.name}]</a>
+    <a href="#/edit/{id}">[Edit: {l.name}]</a>
   </div>{/if}
 {#if bold}&nbsp;{/if}
 {#if showall}&nbsp;{/if}

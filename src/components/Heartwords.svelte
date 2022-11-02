@@ -5,12 +5,13 @@
   export let data;
   export let bold;
   export let showall;
+  export let id;
 
   const hw = new heartword(data);
 </script>
 
 {#if $showEdit}<div class="edit">
-    <a href="#/edit/{hw.name}">[Edit: {hw.name}]</a>
+    <a href="#/edit/{id}">[Edit: {hw.name}]</a>
   </div>{/if}
 {#if bold}&nbsp{/if}
 {#if showall}&nbsp{/if}

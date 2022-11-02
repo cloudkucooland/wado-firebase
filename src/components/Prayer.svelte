@@ -5,12 +5,13 @@
   export let data;
   export let bold;
   export let showall;
+  export let id;
 
   const p = new prayer(data);
 </script>
 
 {#if $showEdit}<div class="edit">
-    <a href="#/edit/{p.name}">[Edit: {p.name}]</a>
+    <a href="#/edit/{id}">[Edit: {p.name}]</a>
   </div>{/if}
 {#if $debugOn && showall} &nbsp; {/if}
 <div class="prayer" {bold}>{@html p.body}</div>
