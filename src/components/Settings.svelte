@@ -18,13 +18,19 @@
     Input,
   } from "sveltestrap";
 
-  onMount((e) => {
-    // console.log("Setttings onMount", e);
-  });
+  try {
+    document.getElementById("debugOn").checked = $debugOn;
+    document.getElementById("showMedia").checked = $showMedia;
+    document.getElementById("showEdit").checked = $showEdit;
+  } catch (e) {
+    console.log(e);
+  }
 
-  $: debugChecked = $debugOn ? "checked" : "";
-  $: editChecked = $showEdit ? "checked" : "";
-  $: mediaChecked = $showMedia ? "checked" : "";
+  onMount(() => {
+    document.getElementById("debugOn").checked = $debugOn;
+    document.getElementById("showMedia").checked = $showMedia;
+    document.getElementById("showEdit").checked = $showEdit;
+  });
 </script>
 
 <Container>
@@ -40,7 +46,6 @@
                 name="debugOn"
                 id="debugOn"
                 type="checkbox"
-                {debugChecked}
                 on:change={(e) => {
                   debugOn.set(e.srcElement.checked);
                 }}
@@ -52,7 +57,6 @@
                 name="showMedia"
                 id="showMedia"
                 type="checkbox"
-                {mediaChecked}
                 on:change={(e) => {
                   showMedia.set(e.srcElement.checked);
                 }}
@@ -64,7 +68,6 @@
                 name="showEdit"
                 id="showEdit"
                 type="checkbox"
-                {editChecked}
                 on:change={(e) => {
                   showEdit.set(e.srcElement.checked);
                 }}
