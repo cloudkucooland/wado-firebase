@@ -26,17 +26,18 @@
   import Settings from "./components/Settings.svelte";
   import Admin from "./components/Admin.svelte";
   import Browse from "./components/Browse.svelte";
+  import Edit from "./components/Edit.svelte";
   import { notifyError, notifyInfo } from "./notify";
   import { debugOn } from "./model/preferences";
 
   const routes = {
-    // Exact path
     "/": HomePage,
     "/settings": Settings,
     "/admin": Admin,
     "/browse": Browse,
     "/office/:officeName": HomePage,
     "/office/:officeName/date/:officeDate": HomePage,
+    "/edit/:id": Edit,
   };
 
   $: loggedIn = false;
