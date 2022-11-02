@@ -98,7 +98,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size>= max) {
+    if (m.size >= max) {
       console.debug("season, proper, weekday", m.size);
       return m;
     }
@@ -165,8 +165,16 @@
   <div>Loading {name}</div>
 {:then data}
   {#each [...data] as [k, d]}
-    {#if $showEdit}<div class="edit"><a href="#/EditAssoc/xx">Edit {name}</a></div>{/if}
-    <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} {showall} />
+    {#if $showEdit}<div class="edit">
+        <a href="#/EditAssoc/xx">Edit {name}</a>
+      </div>{/if}
+    <svelte:component
+      this={lookup.get(d.Class)}
+      data={d}
+      id={k}
+      {bold}
+      {showall}
+    />
   {/each}
 {:catch error}
   <div>{name}: {error.message}</div>

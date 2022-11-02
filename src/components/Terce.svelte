@@ -11,24 +11,24 @@
 <div class="rubric">Be still, aware of God’s presence within and around.</div>
 
 <h3>Opening Sentences</h3>
-<Location name="DIURNAL-OPENING" {proper} max="1" />
+<Location name="DIURNAL-OPENING" {proper} />
 
 <h3>Prayer</h3>
-<Location name="GENERAL-WITHYOU" {proper} max="1" />
+<Location name="GENERAL-WITHYOU" {proper} />
 <Location name="TERCE-PRAYER" {proper} max="5" />
 
 <h3>Psalter</h3>
 <div class="rubric">(commonly sung to psalm tone three or said in unison)</div>
-<Location name="TERCE-PSALTER" {proper} max="1" />
-<Location name="GENERAL-GLORIA" {proper} max="1" />
+<Location name="TERCE-PSALTER" {proper} />
+<Location name="GENERAL-GLORIA" {proper} />
 
 <h3>The Little Chapter</h3>
-<Location name="TERCE-CHAPTER" {proper} max="1" />
+<Location name="TERCE-CHAPTER" {proper} />
 <div class="silence">a brief time of silent prayer</div>
 
 <h3>The Lord's Prayer</h3>
-<Location bold="true" name="GENERAL-LORDS" {proper} max="1" />
+<Location bold="true" name="GENERAL-LORDS" {proper} />
 
 <h3>Concluding Prayer</h3>
-<Location name="TERCE-CONCLUDING" {proper} max="1" />
-<Location name="GENERAL-DISMISSAL" {proper} max="1" />
+<Location name="TERCE-CONCLUDING" {proper} />
+<Location name="GENERAL-DISMISSAL" {proper} />
