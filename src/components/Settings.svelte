@@ -1,7 +1,5 @@
 <script>
   import { debugOn, showMedia, showEdit } from "../model/preferences";
-  import { auth } from "../firebase";
-  import { collection, query, where, getDocs } from "firebase/firestore";
   import { onMount } from "svelte";
 
   import {
@@ -18,18 +16,14 @@
     Input,
   } from "sveltestrap";
 
-  try {
-    document.getElementById("debugOn").checked = $debugOn;
-    document.getElementById("showMedia").checked = $showMedia;
-    document.getElementById("showEdit").checked = $showEdit;
-  } catch (e) {
-    console.log(e);
-  }
-
   onMount(() => {
-    document.getElementById("debugOn").checked = $debugOn;
-    document.getElementById("showMedia").checked = $showMedia;
-    document.getElementById("showEdit").checked = $showEdit;
+    try {
+      document.getElementById("debugOn").checked = $debugOn;
+      document.getElementById("showMedia").checked = $showMedia;
+      document.getElementById("showEdit").checked = $showEdit;
+    } catch (e) {
+      console.log(e);
+    }
   });
 </script>
 

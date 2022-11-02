@@ -17,17 +17,16 @@
   import Lection from "./Lection.svelte";
   import Prayer from "./Prayer.svelte";
   import Psalm from "./Psalm.svelte";
+  import { showEdit } from "../model/preferences";
 
   export let name;
   export let proper;
-  export let max = 5;
+  export let max = 1;
   export let order = "Weight";
   export let showall = false;
   export let bold = false;
 
-  if (typeof max !== "number") {
-    max = +max;
-  }
+  if (typeof max !== "number") max = +max;
 
   // console.debug("Location: ", name, proper.toString());
   // recordEvent(name);
@@ -42,7 +41,7 @@
   ]);
 
   async function loaddata() {
-    const prayers = [];
+    const m = new Map();
 
     // try with caldate
     let q = query(
@@ -56,11 +55,11 @@
     let res = await getDocs(q);
     for (const a of res.docs) {
       const doc = await getDoc(a.data().Reference);
-      prayers.push(doc.data());
+      m.set(doc.id, doc.data());
     }
-    if (prayers.length >= max) {
-      console.debug("calendar date", prayers.length);
-      return prayers;
+    if (m.size >= max) {
+      console.debug("calendar date", m.size);
+      return m;
     }
 
     // try with all the details
@@ -71,17 +70,17 @@
       where("Proper", "==", proper.proper),
       where("Weekday", "==", proper.weekday),
       orderBy(order),
-      limit(max - prayers.length)
+      limit(max - m.size)
     );
 
     res = await getDocs(q);
     for (const a of res.docs) {
       const doc = await getDoc(a.data().Reference);
-      prayers.push(doc.data());
+      m.set(doc.id, doc.data());
     }
-    if (prayers.length >= max) {
-      console.debug("season, proper, weekday", prayers.length);
-      return prayers;
+    if (m.size >= max) {
+      console.debug("season, proper, weekday", m.size);
+      return m;
     }
 
     // season & proper
@@ -91,17 +90,17 @@
       where("Season", "==", proper.season),
       where("Proper", "==", proper.proper),
       orderBy(order),
-      limit(max - prayers.length)
+      limit(max - m.size)
     );
 
     res = await getDocs(q);
     for (const a of res.docs) {
       const doc = await getDoc(a.data().Reference);
-      prayers.push(doc.data());
+      m.set(doc.id, doc.data());
     }
-    if (prayers.length >= max) {
-      console.debug("season, proper, weekday", prayers.length);
-      return prayers;
+    if (m.size>= max) {
+      console.debug("season, proper, weekday", m.size);
+      return m;
     }
 
     // season & weekday
@@ -111,17 +110,17 @@
       where("Season", "==", proper.season),
       where("Weekday", "==", proper.weekday),
       orderBy(order),
-      limit(max - prayers.length)
+      limit(max - m.size)
     );
 
     res = await getDocs(q);
     for (const a of res.docs) {
       const doc = await getDoc(a.data().Reference);
-      prayers.push(doc.data());
+      m.set(doc.id, doc.data());
     }
-    if (prayers.length >= max) {
-      console.debug("season, proper, weekday", prayers.length);
-      return prayers;
+    if (m.size >= max) {
+      console.debug("season, proper, weekday", m.size);
+      return m;
     }
 
     // just season
@@ -130,17 +129,17 @@
       where("Location", "==", name),
       where("Season", "==", proper.season),
       orderBy(order),
-      limit(max - prayers.length)
+      limit(max - m.size)
     );
 
     res = await getDocs(q);
     for (const a of res.docs) {
       const doc = await getDoc(a.data().Reference);
-      prayers.push(doc.data());
+      m.set(doc.id, doc.data());
     }
-    if (prayers.length >= max) {
-      console.debug("season only", prayers.length);
-      return prayers;
+    if (m.size >= max) {
+      console.debug("season only", m.size);
+      return m;
     }
 
     // just the location
@@ -148,25 +147,26 @@
       collection(db, "associations"),
       where("Location", "==", name),
       orderBy(order),
-      limit(max - prayers.length)
+      limit(max - m.size)
     );
 
     res = await getDocs(q);
     for (const a of res.docs) {
       const doc = await getDoc(a.data().Reference);
-      prayers.push(doc.data());
+      m.set(doc.id, doc.data());
     }
-    console.debug("location only", prayers.length);
+    console.debug("location only", m.size);
 
-    return prayers;
+    return m;
   }
 </script>
 
 {#await loaddata()}
   <div>Loading {name}</div>
 {:then data}
-  {#each data as d}
-    <svelte:component this={lookup.get(d.Class)} data={d} {bold} {showall} />
+  {#each [...data] as [k, d]}
+    {#if $showEdit}<div class="edit"><a href="#/EditAssoc/xx">Edit {name}</a></div>{/if}
+    <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} {showall} />
   {/each}
 {:catch error}
   <div>{name}: {error.message}</div>

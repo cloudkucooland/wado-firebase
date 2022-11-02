@@ -16,49 +16,71 @@
     where,
     getDocs,
     getDoc,
-    DocumentReference,
+    doc,
   } from "firebase/firestore";
   import { db } from "../firebase";
 
-  export let params = { id: string };
-  $: id = params.id ? params.id : "ex nihilo";
-  console.log(id);
+  import prayer from "../model/prayer";
+  import psalm from "../model/psalm";
+  import hymn from "../model/hymn";
+  import lection from "../model/lection";
+  import heartword from "../model/heartword";
 
-  let doc;
+  export let params = { id };
+  const id = params.id ? params.id : "exnihilo";
+
+  const classes = new Map([
+    ["prayer", prayer],
+    ["psalm", psalm],
+    ["hymn", hymn],
+    ["lection", lection],
+    ["heartword", heartword],
+  ]);
 
   async function loadPrayer() {
-    console.log("loadPrayer");
-    const associations = new Map();
+    const ref = doc(db, "prayers/" + id);
+    // console.log(ref, ref.path);
 
     try {
-      const ref = new DocumentReference("/prayers/" + id);
-      console.log(ref);
-      doc = await getDoc(ref);
-      console.log(doc);
+      let toEdit = await getDoc(ref);
+      const d = toEdit.data();
+
+      console.log(d.Class);
+      const c = classes.get(d.Class);
+      console.log(c);
+      const modelData = new c(d);
+      console.log(modelData);
+
+      return modelData;
+
+      // convert to right model/class
+
+      // load associations
+      // const associations = new Map();
+
     } catch (e) {
       console.log(e);
     }
-
-    console.log(doc);
+    console.log("fell through?");
+    return {};
   }
-
-  onMount(() => {
-    console.log("onMount");
-    loadPrayer();
-  });
 </script>
 
-{#await loadPrayer}
+{#await loadPrayer()}
+  <div>Loading</div>
+{:then data}
   <Container>
     <Row>
       <Col>
         <Card class="mb-2">
-          <CardHeader>Editing: {doc.data().name}</CardHeader>
+          <CardHeader>Editing: {data.name}</CardHeader>
           <CardBody class="card-body">
-            <textarea>{doc.data().body}</textarea>
+            <textarea>{data.body}</textarea>
           </CardBody>
         </Card>
       </Col>
     </Row>
   </Container>
+{:catch e}
+  <div>{e}</div>
 {/await}
