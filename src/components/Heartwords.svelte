@@ -1,4 +1,5 @@
 <script>
+  import { showMedia, showEdit } from "../model/preferences";
   import heartword from "../model/heartword";
 
   export let data;
@@ -8,7 +9,13 @@
   const hw = new heartword(data);
 </script>
 
+{#if $showEdit}<div class="edit">
+    <a href="#/edit/{hw.name}">[Edit: {hw.name}]</a>
+  </div>{/if}
+{#if bold}&nbsp{/if}
+{#if showall}&nbsp{/if}
 <div class="heartword">{@html hw.body}</div>
+{#if $showMedia && hw.media}<div class="media">{hw.media}</div>{/if}
 {#if typeof hw.author !== "undefined"}
   <div class="credit">{hw.author}</div>
 {/if}

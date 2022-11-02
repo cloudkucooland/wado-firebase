@@ -1,4 +1,5 @@
 <script>
+  import { showMedia, showEdit } from "../model/preferences";
   import hymn from "../model/hymn";
 
   export let data;
@@ -8,7 +9,11 @@
   const h = new hymn(data);
 </script>
 
-<div class="hymn">{@html h.body}</div>
+{#if $showEdit}<div class="edit">
+    <a href="#/edit/{h.name}">[Edit: {h.name}]</a>
+  </div>{/if}
+{#if showall}&nbsp;{/if}
+<div class="hymn" {bold}>{@html h.body}</div>
 <div>
   {#if typeof h.hymntune !== "undefined"}
     <span class="hymntune">{h.hymntune}</span>
@@ -17,6 +22,7 @@
     <span class="hymnmeter">{h.hymnmeter}</span>
   {/if}
 </div>
+{#if $showMedia && h.media}<div class="media">{h.media}</div>{/if}
 
 <style>
   div.hymn {

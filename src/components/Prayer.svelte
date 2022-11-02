@@ -1,4 +1,5 @@
 <script>
+  import { showMedia, debugOn, showEdit } from "../model/preferences";
   import prayer from "../model/prayer";
 
   export let data;
@@ -8,7 +9,12 @@
   const p = new prayer(data);
 </script>
 
-<div class="prayer">{@html p.body}</div>
+{#if $showEdit}<div class="edit">
+    <a href="#/edit/{p.name}">[Edit: {p.name}]</a>
+  </div>{/if}
+{#if $debugOn && showall} &nbsp; {/if}
+<div class="prayer" {bold}>{@html p.body}</div>
+{#if $showMedia && p.media}<div class="media">{p.media}</div>{/if}
 {#if typeof p.author !== "undefined"}
   <div class="credit">{p.author}</div>
 {/if}
