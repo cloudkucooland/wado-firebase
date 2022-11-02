@@ -1,7 +1,13 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
+import {
+  getAuth,
+  onAuthStateChanged,
+  setPersistence,
+  browserSessionPersistence,
+  FacebookAuthProvider,
+} from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { notifyInfo, notifyWarn } from "./notify";
 // import { Hymn, Lection, Prayer, Psalm } from "./model";
