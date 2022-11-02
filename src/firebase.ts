@@ -1,4 +1,3 @@
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import {
@@ -10,7 +9,6 @@ import {
 } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { notifyInfo, notifyWarn } from "./notify";
-// import { Hymn, Lection, Prayer, Psalm } from "./model";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtVBGVEjDM50VXljFFV-g_xltotL878b8",

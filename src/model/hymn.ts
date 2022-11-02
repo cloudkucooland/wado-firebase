@@ -7,6 +7,7 @@ export default class hymn {
   lastEdited: string;
   hymntune: string;
   hymnmeter: string;
+  media: string;
 
   constructor(obj: any) {
     this.name = obj.Name;
@@ -17,5 +18,6 @@ export default class hymn {
     this.hymnmeter = obj["Hymn Meter"] ? obj["Hymn Meter"] : false;
     this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
     this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
+    this.lastEdited = obj["Media"] ? obj["Media"] : "";
   }
 }

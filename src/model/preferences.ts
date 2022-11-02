@@ -1,21 +1,25 @@
 import { writable } from "svelte/store";
 
 // show extended debugging
-const storedDebug: boolean = localStorage["debugOn"];
+const storedDebug: string = localStorage["debugOn"];
 export const debugOn = writable(storedDebug);
 debugOn.subscribe((value) => {
-  let v: boolean = false;
-  if (value == "true") v = true;
-  console.log("setting debugOn", v);
-  localStorage["debugOn"] = v;
+  console.log("setting debugOn", value);
+  localStorage["debugOn"] = value;
 });
 
 // show media links
-const storedShowMedia: boolean = localStorage["showMedia"];
+const storedShowMedia: string = localStorage["showMedia"];
 export const showMedia = writable(storedShowMedia);
 showMedia.subscribe((value) => {
-  let v: boolean = false;
-  if (value == "true") v = true;
-  console.log("setting showMedia", v);
-  localStorage["showMedia"] = v;
+  console.log("setting showMedia", value);
+  localStorage["showMedia"] = value;
+});
+
+// show edit links
+const storedShowEdit: string = localStorage["showEdit"];
+export const showEdit = writable(storedShowEdit);
+showEdit.subscribe((value) => {
+  console.log("setting showEdit", value);
+  localStorage["showEdit"] = value;
 });
