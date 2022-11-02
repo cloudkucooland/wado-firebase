@@ -61,7 +61,7 @@
       console.log(result.user);
       loggedIn = true;
     } catch (e) {
-      notifyError(e);
+      notifyError(e.message);
       console.log(e);
     }
   }
