@@ -1,6 +1,7 @@
 <script>
   import { onMount } from "svelte";
   import {
+    Spinner,
     Container,
     Row,
     Col,
@@ -9,6 +10,10 @@
     CardHeader,
     CardBody,
     CardFooter,
+    Form,
+    FormGroup,
+    Input,
+    Label,
   } from "sveltestrap";
   import {
     collection,
@@ -39,7 +44,6 @@
 
   async function loadPrayer() {
     const ref = doc(db, "prayers/" + id);
-    // console.log(ref, ref.path);
 
     try {
       let toEdit = await getDoc(ref);
@@ -47,17 +51,13 @@
 
       console.log(d.Class);
       const c = classes.get(d.Class);
-      console.log(c);
       const modelData = new c(d);
-      console.log(modelData);
-
-      return modelData;
 
       // convert to right model/class
-
       // load associations
       // const associations = new Map();
 
+      return modelData;
     } catch (e) {
       console.log(e);
     }
@@ -67,7 +67,7 @@
 </script>
 
 {#await loadPrayer()}
-  <div>Loading</div>
+  <Spinner color="primary" />
 {:then data}
   <Container>
     <Row>
@@ -75,7 +75,35 @@
         <Card class="mb-2">
           <CardHeader>Editing: {data.name}</CardHeader>
           <CardBody class="card-body">
-            <textarea>{data.body}</textarea>
+            <Form>
+              <FormGroup>
+                <Label for="class">Class</Label>
+                <Input type="select" name="class" id="class">
+                  {#each [...classes] as [c, x]}
+                    {#if data.class == c}
+                      <option selected="selected">{c}</option>
+                    {:else}
+                      <option>{c}</option>
+                    {/if}
+                  {/each}
+                </Input>
+              </FormGroup>
+              <FormGroup>
+                <Label for="name">Name</Label>
+                <Input name="name" id="name" value={data.name} />
+              </FormGroup>
+              <textarea rows="30" cols="100" value={data.body} />
+              {#if data.class == "hymn"}
+                <FormGroup>
+                  <Label for="tune">Hymn Tune</Label>
+                  <Input name="tune" id="tune" value={data.hymntune} />
+                </FormGroup>
+                <FormGroup>
+                  <Label for="meter">Meter</Label>
+                  <Input name="meter" id="meter" value={data.hymnmeter} />
+                </FormGroup>
+              {/if}
+            </Form>
           </CardBody>
         </Card>
       </Col>

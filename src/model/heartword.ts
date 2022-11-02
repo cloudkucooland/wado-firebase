@@ -6,6 +6,7 @@ export default class heartword {
   lastEditor: string;
   lastEdited: string;
   author: string;
+  class: string;
 
   constructor(obj: any) {
     this.name = obj.Name;
@@ -15,5 +16,6 @@ export default class heartword {
     this.license = obj.License ? obj.License : false;
     this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
     this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
+    this.class = obj["Class"] ? obj["Class"] : "Heartword";
   }
 }

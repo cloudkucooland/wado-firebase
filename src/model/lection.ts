@@ -6,6 +6,7 @@ export default class lection {
   lastEditor: string;
   lastEdited: string;
   media: string;
+  class: string;
 
   constructor(obj: any) {
     this.name = obj.Name;
@@ -15,5 +16,6 @@ export default class lection {
     this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
     this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
     this.media = obj["Media"] ? obj["Media"] : "";
+    this.class = obj["Class"] ? obj["Class"] : "lection";
   }
 }
