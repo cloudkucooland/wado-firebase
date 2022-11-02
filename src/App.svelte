@@ -116,7 +116,12 @@
 </main>
 
 <footer class="mastfoot mx-5 mt-auto">
-  <p class="small">This site uses cookies for authentication purposes. <a href="/wado-privacy" target="new">Privacy Policy</a></p>
+  <p class="small">
+    This site uses cookies for authentication purposes. <a
+      href="/wado-privacy"
+      target="new">Privacy Policy</a
+    >
+  </p>
   <p class="text-muted text-right small">
     Copyright &copy; The Order of St. Luke 2022. All Rights Reserved. Build
     date: __buildDate__
