@@ -16,12 +16,18 @@
   import {
     FacebookAuthProvider,
     signInWithPopup,
+    signInWithRedirect,
     signOut,
+    setPersistence,
+    browserLocalPersistence,
+    onAuthStateChanged,
   } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
   import Settings from "./components/Settings.svelte";
   import Admin from "./components/Admin.svelte";
   import Browse from "./components/Browse.svelte";
+  import { notifyError, notifyInfo } from "./notify";
+  import { debugOn } from "./model/preferences";
 
   const routes = {
     // Exact path
@@ -33,25 +39,41 @@
     "/office/:officeName/date/:officeDate": HomePage,
   };
 
-  $: user = localStorage["user"]; // load from storage if available, this should be smarter
+  $: loggedIn = false;
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      console.log("user logged in", user);
+      loggedIn = true;
+      notifyInfo("logged in");
+    } else {
+      console.log("user signed out");
+      notifyInfo("logged out");
+    }
+  });
 
   async function doLogin() {
-    // console.log(e);
-    const provider = new FacebookAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-
-    user = result.user;
-    console.log(user);
-    localStorage["user"] = user; // save to storage so we don't need to relogin on every reload
-    // This gives you a Facebook Access Token.
-    // const credential = provider.credentialFromResult(auth, result);
-    // const token = credential.accessToken;
+    if ($debugOn) notifyInfo("doLogin");
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const result = await signInWithPopup(auth, new FacebookAuthProvider());
+      console.log(result.user);
+      loggedIn = true;
+    } catch (e) {
+      notifyError(e);
+      console.log(e);
+    }
   }
 
   async function doLogout() {
-    localStorage.removeItem("user");
-    await signOut(auth);
-    user = false;
+    if ($debugOn) notifyInfo("doLogout");
+    try {
+      await signOut(auth);
+      loggedIn = false;
+    } catch (e) {
+      notifyError(e);
+      console.log(e);
+    }
   }
 
   recordEvent("startup");
@@ -69,7 +91,7 @@
     <Collapse toggler="#main-toggler" navbar expand="lg">
       <Nav navbar>
         <NavItem><NavLink href="#/">WADO</NavLink></NavItem>
-        {#if user}
+        {#if loggedIn}
           <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
           <NavItem
@@ -94,10 +116,15 @@
 </main>
 
 <footer class="mastfoot mx-5 mt-auto">
-  <p class="small">This site uses cookies for authentication purposes.</p>
+  <p class="small">This site uses cookies for authentication purposes. <a href="/wado-privacy" target="new">Privacy Policy</a></p>
   <p class="text-muted text-right small">
     Copyright &copy; The Order of St. Luke 2022. All Rights Reserved. Build
     date: __buildDate__
+  </p>
+  <p class="small">
+    <a href="https://www.facebook.com/groups/3354160484857281"
+      >WADO user group</a
+    >
   </p>
 </footer>
 
