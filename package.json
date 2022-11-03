@@ -53,6 +53,8 @@
     "typescript": "^4.0.0"
   },
   "dependencies": {
+    "@ckeditor/ckeditor5-build-decoupled-document": "^35.2.1",
+    "ckeditor5-svelte": "^0.0.10",
     "firebase": "^9.6.1",
     "firebase-messaging": "^1.0.6"
   }
