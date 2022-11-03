@@ -25,6 +25,23 @@
   } from "firebase/firestore";
   import { db } from "../firebase";
 
+  import CKEditor from "ckeditor5-svelte";
+  import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
+  let editor = DecoupledEditor;
+  let editorInstance = null;
+  let editorData = "The Holy One be with you.";
+  let editorConfig = {
+    toolbar: {
+      items: [
+        "heading",
+        "|",
+        "bold",
+        "italic",
+        "underline"
+      ]
+    }
+  };
+
   import prayer from "../model/prayer";
   import psalm from "../model/psalm";
   import hymn from "../model/hymn";
@@ -41,6 +58,7 @@
     ["lection", lection],
     ["heartword", heartword],
   ]);
+  console.log("classes");
 
   async function loadPrayer() {
     const ref = doc(db, "prayers/" + id);
@@ -64,6 +82,12 @@
     console.log("fell through?");
     return {};
   }
+
+  function onReady({ detail: editor }) {
+    // Insert the toolbar before the editable area.
+    editorInstance = editor;
+    editor.ui.getEditableElement().parentElement.insertBefore( editor.ui.view.toolbar.element, editor.ui.getEditableElement());
+  }
 </script>
 
 {#await loadPrayer()}
@@ -74,17 +98,13 @@
       <Col>
         <Card class="mb-2">
           <CardHeader>Editing: {data.name}</CardHeader>
-          <CardBody class="card-body">
+          <CardBody>
             <Form>
               <FormGroup>
-                <Label for="class">Class</Label>
-                <Input type="select" name="class" id="class">
-                  {#each [...classes] as [c, x]}
-                    {#if data.class == c}
-                      <option selected="selected">{c}</option>
-                    {:else}
-                      <option>{c}</option>
-                    {/if}
+                <Label for="class">Class</Label> ({data.class})
+                <Input type="select" name="class" id="class" value={data.class}>
+                  {#each [...classes] as [key, value]}
+                    <option value={key}>{key}</option>
                   {/each}
                 </Input>
               </FormGroup>
@@ -92,7 +112,7 @@
                 <Label for="name">Name</Label>
                 <Input name="name" id="name" value={data.name} />
               </FormGroup>
-              <textarea rows="30" cols="100" value={data.body} />
+              <CKEditor editor={editor} on:ready={onReady} config={editorConfig} value={data.body} />
               {#if data.class == "hymn"}
                 <FormGroup>
                   <Label for="tune">Hymn Tune</Label>
@@ -103,6 +123,24 @@
                   <Input name="meter" id="meter" value={data.hymnmeter} />
                 </FormGroup>
               {/if}
+              {#if data.class == "prayer" || data.class == "heartword" }
+                <FormGroup>
+                  <Label for="author">Author</Label>
+                  <Input name="author" id="author" value={data.author} />
+                </FormGroup>
+              {/if}
+                <FormGroup>
+                  <Label for="editor">Last Editor</Label>
+                  <Input name="editor" id="editor" value={data.lastEditor} /> (will be auto-populated)
+                </FormGroup>
+                <FormGroup>
+                  <Label for="edited">Last Edited</Label>
+                  <Input name="edited" id="edited" value={data.lastEdited} /> (will be auto-populated)
+                </FormGroup>
+                <FormGroup>
+                  <Label for="license">License</Label>
+                  <Input name="license" id="license" value={data.license} /> (checkbox)
+                </FormGroup>
             </Form>
           </CardBody>
         </Card>
