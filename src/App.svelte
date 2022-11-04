@@ -42,10 +42,7 @@
   $: loggedIn = false;
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log(
-        "user logged in",
-        user,
-      );
+      console.log("user logged in", user);
       loggedIn = true;
       notifyInfo("logged in");
       if (isEditor() === true) {

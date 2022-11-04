@@ -101,9 +101,9 @@
       <Col>
         <Card class="mb-2">
           {#if editorPerm}
-          <CardHeader>Editing: {data.name}</CardHeader>
+            <CardHeader>Editing: {data.name}</CardHeader>
           {:else}
-          <CardHeader>Displaying: {data.name}</CardHeader>
+            <CardHeader>Displaying: {data.name}</CardHeader>
           {/if}
           <CardBody>
             <Form>
