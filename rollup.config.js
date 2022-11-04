@@ -108,26 +108,4 @@ export default [
       clearScreen: false,
     },
   },
-  {
-    input: "src/sw/firebase.ts",
-    output: {
-      sourcemap: sourcemap,
-      format: "iife",
-      name: "sw",
-      file: "public/build/sw.js",
-    },
-    plugins: [
-      commonjs(),
-      resolve({
-        browser: true,
-      }),
-      typescript({
-        sourceMap: sourcemap,
-        inlineSources: true,
-        include: ["src/sw/*"],
-        tsconfig: false,
-      }),
-      production && terser(),
-    ],
-  },
 ];

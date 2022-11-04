@@ -7,6 +7,5 @@
     "__sapper__/*",
     "public/*",
     "src/test",
-    "src/sw"
   ]
 }
