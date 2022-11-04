@@ -64,7 +64,7 @@
 <Location name="VESPER-SUPPLICATION" {proper} />
 <h4>Evening Collects</h4>
 <div class="rubric">One and usually more of the following collects.</div>
-<Location showall="true" name="VESPER-COLLECT2" {proper} max="10" />
+<Location name="VESPER-COLLECT2" {proper} max="10" />
 
 <h4>Prayers of Special Intention</h4>
 <h5>Collect of Commemoration</h5>

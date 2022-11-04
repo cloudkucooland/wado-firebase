@@ -14,7 +14,7 @@
 <Location name="LAUDS-HYMN1" {proper} />
 
 <h4><i>Morning Prayer</i></h4>
-<Location showall="on" name="LAUDS-COLLECT1" {proper} />
+<Location name="LAUDS-COLLECT1" {proper} max="5" />
 
 <center><h3>Psalter</h3></center><br />
 <Location name="LAUDS-PSALTER-ANTIPHON" {proper} />
@@ -51,8 +51,8 @@
 <h4><i>Prayers of Thanksgiving and Supplication</i></h4>
 <Location name="LAUDS-SUPPLICATION" {proper} /><br />
 <div class="rubric">Morning Collects (one or more of the following)</div>
-<Location showall="on" name="LAUDS-COLLECT2" {proper} max="3" />
-<Location showall="on" name="LAUDS-SEASONAL" {proper} max="3" />
+<Location name="LAUDS-COLLECT2" {proper} max="3" />
+<Location name="LAUDS-SEASONAL" {proper} max="3" />
 
 <h4><i>Collect for the Order of Saint Luke</i></h4>
 <Location name="OSL" {proper} />

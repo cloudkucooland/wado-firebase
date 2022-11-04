@@ -22,7 +22,6 @@
   export let proper;
   export let max = 1;
   export let order = "Weight";
-  export let showall = false;
   export let bold = false;
 
   if (typeof max !== "number") max = +max;
@@ -131,6 +130,27 @@
       where("Location", "==", name),
       where("Season", "==", proper.season),
       where("Proper", "==", -1),
+      where("Weekday", "==", proper.weekday),
+      where("Year", "==", "Any"),
+      orderBy(order),
+      limit(max - m.size)
+    );
+
+    res = await getDocs(q);
+    for (const a of res.docs) {
+      const doc = await getDoc(a.data().Reference);
+      m.set(doc.id, doc.data());
+    }
+    if (m.size >= max) {
+      // console.debug("season & weekday only", m.size);
+      return m;
+    }
+
+    q = query(
+      collection(db, "associations"),
+      where("Location", "==", name),
+      where("Season", "==", proper.season),
+      where("Proper", "==", -1),
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),
       orderBy(order),
@@ -182,7 +202,6 @@
       data={d}
       id={k}
       {bold}
-      {showall}
     />
   {/each}
 {:catch error}

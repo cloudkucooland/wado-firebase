@@ -4,7 +4,6 @@
 
   export let data;
   export let bold;
-  export let showall;
   export let id;
 
   const h = new hymn(data);
@@ -13,7 +12,6 @@
 {#if $showEdit}<div class="edit">
     <a href="#/edit/{id}">[Edit: {h.name}]</a>
   </div>{/if}
-{#if showall}&nbsp;{/if}
 <div class="hymn" {bold}>{@html h.body}</div>
 <div>
   {#if typeof h.hymntune !== "undefined"}

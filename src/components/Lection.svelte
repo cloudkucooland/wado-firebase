@@ -4,7 +4,6 @@
 
   export let data;
   export let bold;
-  export let showall;
   export let id;
 
   const l = new lection(data);
@@ -14,6 +13,5 @@
     <a href="#/edit/{id}">[Edit: {l.name}]</a>
   </div>{/if}
 {#if bold}&nbsp;{/if}
-{#if showall}&nbsp;{/if}
 <div class="lection">{@html l.body}</div>
 {#if $showMedia && l.media}<div class="media">{l.media}</div>{/if}

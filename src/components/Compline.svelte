@@ -19,7 +19,7 @@
 
 <h4>Gloria and Psalter</h4>
 <Location name="COMPLINE-PSALTER-PREFIX" {proper} />
-<Location showall="true" name="COMPLINE-PSALTER" {proper} max="5" />
+<Location name="COMPLINE-PSALTER" {proper} max="5" />
 <Location name="GENERAL-GLORIA" {proper} />
 <div class="silence">Silence</div>
 
@@ -37,7 +37,7 @@
 
 <h4>Night Prayers</h4>
 <div class="rubric">(selected from among the following)</div>
-<Location showall="on" name="COMPLINE-PRAYER" max="10" {proper} />
+<Location name="COMPLINE-PRAYER" max="10" {proper} />
 
 <h3>Concluding Prayer</h3>
 <Location name="COMPLINE-CONCLUDING" {proper} />

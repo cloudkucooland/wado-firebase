@@ -4,7 +4,6 @@
 
   export let data;
   export let bold;
-  export let showall;
   export let id;
 
   const hw = new heartword(data);
@@ -14,7 +13,6 @@
     <a href="#/edit/{id}">[Edit: {hw.name}]</a>
   </div>{/if}
 {#if bold}&nbsp{/if}
-{#if showall}&nbsp{/if}
 <div class="heartword">{@html hw.body}</div>
 {#if $showMedia && hw.media}<div class="media">{hw.media}</div>{/if}
 {#if typeof hw.author !== "undefined"}
