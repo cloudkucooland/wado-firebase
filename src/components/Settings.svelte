@@ -1,5 +1,5 @@
 <script>
-  import { debugOn, showMedia, showEdit } from "../model/preferences";
+  import { debugOn, showMedia, showEdit, offline } from "../model/preferences";
   import { onMount } from "svelte";
 
   import {
@@ -63,6 +63,17 @@
                 type="checkbox"
                 on:change={(e) => {
                   showEdit.set(e.target.checked);
+                }}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="Offline">Store Offline Data</Label>
+              <Input
+                name="Offline"
+                id="Offline"
+                type="checkbox"
+                on:change={(e) => {
+                  offline.set(e.target.checked);
                 }}
               />
             </FormGroup>

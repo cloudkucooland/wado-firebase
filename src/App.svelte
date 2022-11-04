@@ -12,14 +12,14 @@
     NavLink,
   } from "sveltestrap";
 
-  import { recordEvent, auth } from "./firebase";
+  import { recordEvent, auth, isEditor, db } from "./firebase";
   import {
     FacebookAuthProvider,
     signInWithPopup,
     signOut,
+    onAuthStateChanged,
     // setPersistence,
     // browserLocalPersistence,
-    onAuthStateChanged,
   } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
   import Settings from "./components/Settings.svelte";
@@ -40,15 +40,23 @@
   };
 
   $: loggedIn = false;
-
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // console.log("user logged in", user);
+      console.log(
+        "user logged in",
+        user,
+      );
       loggedIn = true;
       notifyInfo("logged in");
+      if (isEditor() === true) {
+        console.log("user has Editor claim");
+        notifyInfo("Editor permissions");
+      } else {
+        notifyInfo("User permissions");
+      }
     } else {
-      // console.log("user signed out");
       notifyInfo("logged out");
+      recordEvent("log out");
     }
   });
 
@@ -58,6 +66,7 @@
       // await setPersistence(auth, browserLocalPersistence);
       await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
+      recordEvent("login");
     } catch (e) {
       notifyError(e.message);
       console.log(e);
@@ -91,14 +100,14 @@
       <Nav navbar>
         <NavItem><NavLink href="#/">WADO</NavLink></NavItem>
         {#if loggedIn}
-          <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
-          <NavItem
-            ><NavLink href="#" on:click={doLogout}>Log Out</NavLink></NavItem
-          >
+          <NavItem>
+            <NavLink href="#" on:click={doLogout}>Log Out</NavLink>
+          </NavItem>
         {:else}
-          <NavItem><NavLink href="#" on:click={doLogin}>Login</NavLink></NavItem
-          >
+          <NavItem>
+            <NavLink href="#" on:click={doLogin}>Login</NavLink>
+          </NavItem>
         {/if}
         <NavItem>
           <NavLink href="https://saint-luke.net">OSL</NavLink>

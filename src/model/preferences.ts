@@ -28,3 +28,12 @@ showEdit.subscribe((value: boolean) => {
   // console.debug("storing showEdit", value);
   localStorage["showEdit"] = value ? "true" : "false";
 });
+
+// enable offline mode
+const storedOffline: boolean =
+  localStorage["Offline"] === "true" ? true : false;
+export const offline = writable(storedOffline);
+offline.subscribe((value: boolean) => {
+  if (value !== true) value = false;
+  localStorage["Offline"] = value ? "true" : "false";
+});
