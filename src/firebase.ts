@@ -3,6 +3,7 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { notifyInfo, notifyWarn } from "./notify";
+import { offline } from "./model/preferences";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtVBGVEjDM50VXljFFV-g_xltotL878b8",
@@ -19,29 +20,31 @@ const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-enableIndexedDbPersistence(db).catch((err) => {
-  if (err.code == "failed-precondition") {
-    notifyInfo("Unable to start persistence");
-    // Multiple tabs open, persistence can only be enabled
-    // in one tab at a a time.
-    // ...
-  } else if (err.code == "unimplemented") {
-    notifyWarn("Browser cannot start persistence");
-    // The current browser does not support all of the
-    // features required to enable persistence
-    // ...
-  }
-});
-
-const rootDir =
-  location.pathname +
-  (location.pathname.slice(-1) === "/" ? "" : "/") +
-  "build/";
-
-const sw = navigator.serviceWorker.register(rootDir + "sw.js", {
-  scope: rootDir,
-});
+if (offline) {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err.code == "failed-precondition") {
+      notifyInfo("Unable to start persistence");
+      // Multiple tabs open, persistence can only be enabled
+      // in one tab at a a time.
+      // ...
+    } else if (err.code == "unimplemented") {
+      notifyWarn("Browser cannot start persistence");
+      // The current browser does not support all of the
+      // features required to enable persistence
+      // ...
+    }
+  });
+}
 
 export function recordEvent(name: string) {
   logEvent(analytics, name);
+}
+
+export async function isEditor<Boolean>() {
+  const res = await auth.currentUser.getIdTokenResult();
+  if (res.claims.role == "Editor") {
+    return true;
+  } else {
+    return false;
+  }
 }
