@@ -41,6 +41,8 @@ export function recordEvent(name: string) {
 }
 
 export async function isEditor<Boolean>() {
+  if (!auth.currentUser) return false;
+
   const res = await auth.currentUser.getIdTokenResult();
   if (res.claims.role == "Editor") {
     return true;
