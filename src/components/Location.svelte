@@ -197,12 +197,7 @@
       <a href="#/editlocation/{name}">Edit {name}</a>
     </div>{/if}
   {#each [...data] as [k, d]}
-    <svelte:component
-      this={lookup.get(d.Class)}
-      data={d}
-      id={k}
-      {bold}
-    />
+    <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} />
   {/each}
 {:catch error}
   <div>{name}: {error.message}</div>

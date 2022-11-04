@@ -23,7 +23,6 @@
   } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
   import Settings from "./components/Settings.svelte";
-  import Admin from "./components/Admin.svelte";
   import Browse from "./components/Browse.svelte";
   import Edit from "./components/Edit.svelte";
   import EditLocation from "./components/EditLocation.svelte";
@@ -33,7 +32,6 @@
   const routes = {
     "/": HomePage,
     "/settings": Settings,
-    "/admin": Admin,
     "/browse": Browse,
     "/office/:officeName": HomePage,
     "/office/:officeName/date/:officeDate": HomePage,
