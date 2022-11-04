@@ -1,5 +1,5 @@
 <script>
-  import { debugOn, showMedia, showEdit, offline } from "../model/preferences";
+  import { showMedia, showEdit, offline } from "../model/preferences";
   import { onMount } from "svelte";
 
   import {
@@ -15,9 +15,10 @@
     Input,
   } from "sveltestrap";
 
+  // still needed?
   onMount(() => {
     try {
-      document.getElementById("debugOn").checked = $debugOn;
+      document.getElementById("offline").checked = $offline;
       document.getElementById("showMedia").checked = $showMedia;
       document.getElementById("showEdit").checked = $showEdit;
     } catch (e) {
@@ -33,17 +34,6 @@
         <CardHeader>Settings</CardHeader>
         <CardBody>
           <Form>
-            <FormGroup>
-              <Label for="debugOn">Debug</Label>
-              <Input
-                name="debugOn"
-                id="debugOn"
-                type="checkbox"
-                on:change={(e) => {
-                  debugOn.set(e.target.checked);
-                }}
-              />
-            </FormGroup>
             <FormGroup>
               <Label for="showMedia">Show Media Links</Label>
               <Input

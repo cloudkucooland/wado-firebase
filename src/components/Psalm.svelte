@@ -1,5 +1,5 @@
 <script>
-  import { showMedia, debugOn, showEdit } from "../model/preferences";
+  import { showMedia, showEdit } from "../model/preferences";
   import psalm from "../model/psalm";
 
   export let data;

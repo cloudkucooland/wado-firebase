@@ -1,14 +1,5 @@
 import { writable } from "svelte/store";
 
-// show extended debugging
-const storedDebug: boolean = localStorage["debugOn"] === "true" ? true : false;
-export const debugOn = writable(storedDebug);
-debugOn.subscribe((value: boolean) => {
-  if (value !== true) value = false;
-  // console.debug("storing debugOn", value);
-  localStorage["debugOn"] = value ? "true" : "false";
-});
-
 // show media links
 const storedShowMedia: boolean =
   localStorage["showMedia"] === "true" ? true : false;

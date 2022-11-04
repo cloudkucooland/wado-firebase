@@ -13,8 +13,6 @@
     FormGroup,
     Input,
   } from "sveltestrap";
-  // import { FlatToast, ToastContainer } from "svelte-toasts";
-  // import { recordEvent } from "../firebase";
   import proper from "../model/proper";
   import { currentOffice } from "../util.ts";
 
@@ -43,16 +41,17 @@
     ["Vespers", Vespers],
     ["Compline", Compline],
   ]);
-
   if (!lut.has(officeName)) {
     officeName = currentOffice();
   }
-  $: office = lut.get(officeName);
 
+  $: office = lut.get(officeName);
   $: forProper = new proper(officeDate);
 
   function setDate(e) {
     officeDate = e.srcElement.value;
+    params.officeDate = e.srcElement.value;
+    // trigger a drfresh somehow
     // office = lut.get(officeName);
   }
 </script>
@@ -74,9 +73,6 @@
       <Col>
         <Card>
           <CardHeader><h1>{officeName}</h1></CardHeader>
-          <CardSubtitle class="mb-2 text-muted"
-            >{forProper.toString()}</CardSubtitle
-          >
           <CardBody>
             <svelte:component this={office} proper={forProper} />
           </CardBody>

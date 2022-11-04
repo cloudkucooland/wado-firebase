@@ -27,7 +27,6 @@
   import Edit from "./components/Edit.svelte";
   import EditLocation from "./components/EditLocation.svelte";
   import { notifyError, notifyInfo } from "./notify";
-  import { debugOn } from "./model/preferences";
 
   const routes = {
     "/": HomePage,
@@ -58,7 +57,6 @@
   });
 
   async function doLogin() {
-    if ($debugOn) notifyInfo("doLogin");
     try {
       // await setPersistence(auth, browserLocalPersistence);
       await signInWithPopup(auth, new FacebookAuthProvider());
@@ -71,7 +69,6 @@
   }
 
   async function doLogout() {
-    if ($debugOn) notifyInfo("doLogout");
     try {
       await signOut(auth);
       loggedIn = false;

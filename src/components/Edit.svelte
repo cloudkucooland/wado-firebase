@@ -26,11 +26,9 @@
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
   let editor = DecoupledEditor;
-  // let editorInstance = null;
-  // let editorData = "The Holy One be with you.";
   let editorConfig = {
     toolbar: {
-      items: ["heading", "|", "bold", "italic", "underline"],
+      items: ["bold", "italic", "underline"],
     },
   };
 
@@ -44,6 +42,7 @@
   export let params = { id };
   const id = params.id ? params.id : "exnihilo";
   const editorPerm = isEditor();
+  console.debug("editor", editorPerm);
 
   const classes = new Map([
     ["prayer", prayer],
@@ -83,7 +82,6 @@
 
   function onReady({ detail: editor }) {
     // Insert the toolbar before the editable area.
-    // editorInstance = editor;
     editor.ui
       .getEditableElement()
       .parentElement.insertBefore(
@@ -100,7 +98,7 @@
     <Row>
       <Col>
         <Card class="mb-2">
-          {#if editorPerm}
+          {#if editorPerm == true}
             <CardHeader>Editing: {data.name}</CardHeader>
           {:else}
             <CardHeader>Displaying: {data.name}</CardHeader>
