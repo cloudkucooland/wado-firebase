@@ -1,12 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
-import {
-  getAuth,
-  onAuthStateChanged,
-  setPersistence,
-  browserSessionPersistence,
-  FacebookAuthProvider,
-} from "firebase/auth";
+import { getAuth } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
 import { notifyInfo, notifyWarn } from "./notify";
 
