@@ -3,6 +3,7 @@
 
   export let proper;
 </script>
+
 <center><h3>Opening</h3></center>
 <div class="rubric">Call to Praise and Prayer and Remembrance of Baptism</div>
 <Location name="LAUDS-OPENING" {proper} />

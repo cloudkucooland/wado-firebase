@@ -2,6 +2,7 @@
   import Location from "./Location.svelte";
   export let proper;
 </script>
+
 <center><h3>Opening</h3></center>
 <h4>Entrance of the Light</h4>
 <Location name="VESPERS-LIGHT" {proper} />
