@@ -9,7 +9,6 @@
     Card,
     CardHeader,
     CardBody,
-    CardFooter,
     Form,
     FormGroup,
     Label,
@@ -41,7 +40,7 @@
                 id="debugOn"
                 type="checkbox"
                 on:change={(e) => {
-                  debugOn.set(e.srcElement.checked);
+                  debugOn.set(e.target.checked);
                 }}
               />
             </FormGroup>
@@ -52,7 +51,7 @@
                 id="showMedia"
                 type="checkbox"
                 on:change={(e) => {
-                  showMedia.set(e.srcElement.checked);
+                  showMedia.set(e.target.checked);
                 }}
               />
             </FormGroup>
@@ -63,7 +62,7 @@
                 id="showEdit"
                 type="checkbox"
                 on:change={(e) => {
-                  showEdit.set(e.srcElement.checked);
+                  showEdit.set(e.target.checked);
                 }}
               />
             </FormGroup>

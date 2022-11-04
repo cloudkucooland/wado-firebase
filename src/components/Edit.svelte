@@ -1,19 +1,17 @@
 <script>
-  import { onMount } from "svelte";
   import {
     Spinner,
     Container,
     Row,
     Col,
     Card,
-    CardSubtitle,
     CardHeader,
     CardBody,
-    CardFooter,
     Form,
     FormGroup,
     Input,
     Label,
+    Table,
   } from "sveltestrap";
   import {
     collection,
@@ -32,14 +30,8 @@
   let editorData = "The Holy One be with you.";
   let editorConfig = {
     toolbar: {
-      items: [
-        "heading",
-        "|",
-        "bold",
-        "italic",
-        "underline"
-      ]
-    }
+      items: ["heading", "|", "bold", "italic", "underline"],
+    },
   };
 
   import prayer from "../model/prayer";
@@ -47,6 +39,7 @@
   import hymn from "../model/hymn";
   import lection from "../model/lection";
   import heartword from "../model/heartword";
+  import association from "../model/association";
 
   export let params = { id };
   const id = params.id ? params.id : "exnihilo";
@@ -58,35 +51,44 @@
     ["lection", lection],
     ["heartword", heartword],
   ]);
-  console.log("classes");
 
   async function loadPrayer() {
     const ref = doc(db, "prayers/" + id);
 
     try {
-      let toEdit = await getDoc(ref);
+      const toEdit = await getDoc(ref);
       const d = toEdit.data();
 
-      console.log(d.Class);
       const c = classes.get(d.Class);
       const modelData = new c(d);
+      modelData.associations = new Map();
 
-      // convert to right model/class
-      // load associations
-      // const associations = new Map();
+      const q = query(
+        collection(db, "associations"),
+        where("Reference", "==", ref)
+      );
+      const res = await getDocs(q);
+      for (const a of res.docs) {
+        const n = new association(a);
+        modelData.associations.set(a.id, n);
+      }
 
       return modelData;
     } catch (e) {
       console.log(e);
     }
-    console.log("fell through?");
     return {};
   }
 
   function onReady({ detail: editor }) {
     // Insert the toolbar before the editable area.
     editorInstance = editor;
-    editor.ui.getEditableElement().parentElement.insertBefore( editor.ui.view.toolbar.element, editor.ui.getEditableElement());
+    editor.ui
+      .getEditableElement()
+      .parentElement.insertBefore(
+        editor.ui.view.toolbar.element,
+        editor.ui.getEditableElement()
+      );
   }
 </script>
 
@@ -112,7 +114,12 @@
                 <Label for="name">Name</Label>
                 <Input name="name" id="name" value={data.name} />
               </FormGroup>
-              <CKEditor editor={editor} on:ready={onReady} config={editorConfig} value={data.body} />
+              <CKEditor
+                {editor}
+                on:ready={onReady}
+                config={editorConfig}
+                value={data.body}
+              />
               {#if data.class == "hymn"}
                 <FormGroup>
                   <Label for="tune">Hymn Tune</Label>
@@ -123,25 +130,85 @@
                   <Input name="meter" id="meter" value={data.hymnmeter} />
                 </FormGroup>
               {/if}
-              {#if data.class == "prayer" || data.class == "heartword" }
+              {#if data.class == "prayer" || data.class == "heartword"}
                 <FormGroup>
                   <Label for="author">Author</Label>
                   <Input name="author" id="author" value={data.author} />
                 </FormGroup>
               {/if}
-                <FormGroup>
-                  <Label for="editor">Last Editor</Label>
-                  <Input name="editor" id="editor" value={data.lastEditor} /> (will be auto-populated)
-                </FormGroup>
-                <FormGroup>
-                  <Label for="edited">Last Edited</Label>
-                  <Input name="edited" id="edited" value={data.lastEdited} /> (will be auto-populated)
-                </FormGroup>
-                <FormGroup>
-                  <Label for="license">License</Label>
-                  <Input name="license" id="license" value={data.license} /> (checkbox)
-                </FormGroup>
+              <FormGroup>
+                <Label for="editor">Last Editor</Label>
+                <Input
+                  name="editor"
+                  disabled="true"
+                  id="editor"
+                  value={data.lastEditor}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="edited" type="date">Last Edited</Label>
+                <Input
+                  name="edited"
+                  disabled="true"
+                  id="edited"
+                  value={data.lastEdited}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="license">License</Label>
+                <Input
+                  type="checkbox"
+                  name="license"
+                  id="license"
+                  checked={data.license}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="reviewed">Reviewed</Label>
+                <Input
+                  type="checkbox"
+                  name="reviewed"
+                  id="reviewed"
+                  checked={data.license}
+                />
+              </FormGroup>
             </Form>
+          </CardBody>
+        </Card>
+        <Card>
+          <CardHeader>Associations</CardHeader>
+          <CardBody>
+            <Table>
+              <thead>
+                <tr>
+                  <th>Location</th>
+                  <th>Calendar Date</th>
+                  <th>Season</th>
+                  <th>Proper</th>
+                  <th>Weekday</th>
+                  <th>Lectionary Year</th>
+                  <th>Weight</th>
+                  <th>&nbsp;</th>
+                </tr>
+              </thead>
+              <tbody>
+                {#each [...data.associations] as [k, v]}
+                  <tr id={k}>
+                    <td
+                      ><a href="#/editlocation/{v.Location}">{v.Location}</a
+                      ></td
+                    >
+                    <td>{v.CalendarDate}</td>
+                    <td>{v.Season}</td>
+                    <td>{v.Proper}</td>
+                    <td>{v.Weekday}</td>
+                    <td>{v.Year}</td>
+                    <td>{v.Weight}</td>
+                    <td>edit / delete</td>
+                  </tr>
+                {/each}
+              </tbody>
+            </Table>
           </CardBody>
         </Card>
       </Col>

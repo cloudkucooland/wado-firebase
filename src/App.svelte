@@ -16,10 +16,9 @@
   import {
     FacebookAuthProvider,
     signInWithPopup,
-    signInWithRedirect,
     signOut,
-    setPersistence,
-    browserLocalPersistence,
+    // setPersistence,
+    // browserLocalPersistence,
     onAuthStateChanged,
   } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
@@ -27,6 +26,7 @@
   import Admin from "./components/Admin.svelte";
   import Browse from "./components/Browse.svelte";
   import Edit from "./components/Edit.svelte";
+  import EditLocation from "./components/EditLocation.svelte";
   import { notifyError, notifyInfo } from "./notify";
   import { debugOn } from "./model/preferences";
 
@@ -38,17 +38,18 @@
     "/office/:officeName": HomePage,
     "/office/:officeName/date/:officeDate": HomePage,
     "/edit/:id": Edit,
+    "/editlocation/:id": EditLocation,
   };
 
   $: loggedIn = false;
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      console.log("user logged in", user);
+      // console.log("user logged in", user);
       loggedIn = true;
       notifyInfo("logged in");
     } else {
-      console.log("user signed out");
+      // console.log("user signed out");
       notifyInfo("logged out");
     }
   });
@@ -56,9 +57,8 @@
   async function doLogin() {
     if ($debugOn) notifyInfo("doLogin");
     try {
-      await setPersistence(auth, browserLocalPersistence);
-      const result = await signInWithPopup(auth, new FacebookAuthProvider());
-      console.log(result.user);
+      // await setPersistence(auth, browserLocalPersistence);
+      await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
     } catch (e) {
       notifyError(e.message);

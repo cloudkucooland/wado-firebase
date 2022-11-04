@@ -21,7 +21,7 @@ export default class proper {
     this.setFeasts(+s[0]);
     this.getSeason(d);
 
-    console.debug("proper", simple, this);
+    // console.debug("proper", simple, this);
   }
 
   toString() {
@@ -39,13 +39,13 @@ export default class proper {
     );
   }
 
-  addDays(d, days) {
+  addDays(d: Date, days: number) {
     const n = new Date(d);
     n.setDate(n.getDate() + days);
     return n;
   }
 
-  setFeasts(year) {
+  setFeasts(year: number) {
     const easter = this.getEaster(year);
 
     // fix Christ the King to Sunday
@@ -126,11 +126,11 @@ export default class proper {
   getSeason(today: Date) {
     let isnextlectyear: boolean = false; // needed for lectionary year at bottom of method
     const nextday = 86400000;
-    const f = (n) => {
+    const f = (n: string) => {
       // shortcut for getting a feast's getTime()
       return this.feasts.get(n).getTime();
     };
-    const fdoy = (n) => {
+    const fdoy = (n: string) => {
       // day of year for a feast
       return this.getDayOfYear(this.feasts.get(n));
     };

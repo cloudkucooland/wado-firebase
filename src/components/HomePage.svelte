@@ -11,11 +11,9 @@
     NavLink,
     Form,
     FormGroup,
-    Label,
     Input,
   } from "sveltestrap";
-  import { FlatToast, ToastContainer } from "svelte-toasts";
-  import { parse } from "qs";
+  // import { FlatToast, ToastContainer } from "svelte-toasts";
   // import { recordEvent } from "../firebase";
   import proper from "../model/proper";
   import { currentOffice } from "../util.ts";
@@ -64,9 +62,11 @@
     {#each [...lut.keys()] as o}
       <NavLink href="#/office/{o}/date/{officeDate}">{o}</NavLink>
     {/each}
-    <FormGroup>
-      <Input type="date" placeholder={nowString} on:change={setDate} />
-    </FormGroup>
+    <Form>
+      <FormGroup>
+        <Input type="date" placeholder={nowString} on:change={setDate} />
+      </FormGroup>
+    </Form>
   </Nav>
 
   <Container>
