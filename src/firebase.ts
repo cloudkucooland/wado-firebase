@@ -20,9 +20,8 @@ const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-if (offline) enableOfflineDataMode();
-
 export function enableOfflineDataMode() {
+  toasts.info("Starting offline data mode", null, { uid: 21, duration: 5 });
   enableIndexedDbPersistence(db).catch((err) => {
     if (err.code == "failed-precondition") {
       toasts.info("Offline data mode running in another tab/window", null, {
