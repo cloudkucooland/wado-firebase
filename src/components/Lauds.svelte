@@ -1,11 +1,13 @@
 <script>
   import Location from "./Location.svelte";
+  import Silence from "./Silence.svelte";
+  import Rubric from "./Rubric.svelte";
 
   export let proper;
 </script>
 
-<center><h3>Opening</h3></center>
-<div class="rubric">Call to Praise and Prayer and Remembrance of Baptism</div>
+<h3>Opening</h3>
+<Rubric>Call to Praise and Prayer and Remembrance of Baptism</Rubric>
 <Location name="LAUDS-OPENING" {proper} />
 <Location name="LAUDS-REMEMBRANCEBAPTISM" {proper} />
 
@@ -15,15 +17,14 @@
 <h4><i>Morning Prayer</i></h4>
 <Location name="LAUDS-COLLECT1" {proper} max="5" />
 
-<center><h3>Psalter</h3></center><br />
+<h3>Psalter</h3>
 <Location name="LAUDS-PSALTER-ANTIPHON" {proper} />
 <Location name="LAUDS-PSALM" {proper} />
 <Location name="LAUDS-GLORIA" {proper} />
 <Location name="LAUDS-PSALTER-ANTIPHON" {proper} /><br />
-<div class="silence">silence</div>
-<br />
+<Silence />
 
-<center><h3>Word</h3></center><br />
+<h3>Word</h3>
 <h4><i>Scripture</i></h4>
 <Location name="LAUDS-LECTIONARY" {proper} /><br />
 <Location name="LAUDS-LECTIONARY2" {proper} /><br />
@@ -31,33 +32,27 @@
 <Location name="LAUDS-LECTIONARY-HEARWHATSAYING" {proper} />
 
 <h4><i>Silence for Reflection</i></h4>
-<div class="silence">silence</div>
+<Silence />
 
 <h4><i>Canticle of Zechariah</i></h4>
 <Location name="GENERAL-ZECHARIAH" {proper} />
 <Location name="GENERAL-GLORIA" {proper} />
 
 <h4><i>Reading for Meditation and Reflection</i></h4>
-<br />
 
-<center><h3>Prayers</h3></center>
-<br />
-<div class="rubric">
+<h3>Prayers</h3>
+<Rubric>
   Give thanks and pray for the coming day and the needs of the world.
-</div>
-<br />
+</Rubric>
 
 <h4><i>Prayers of Thanksgiving and Supplication</i></h4>
 <Location name="LAUDS-SUPPLICATION" {proper} /><br />
-<div class="rubric">Morning Collects (one or more of the following)</div>
+<Rubric>Morning Collects (one or more of the following)</Rubric>
 <Location name="LAUDS-COLLECT2" {proper} max="3" />
 <Location name="LAUDS-SEASONAL" {proper} max="3" />
 
 <h4><i>Collect for the Order of Saint Luke</i></h4>
 <Location name="OSL" {proper} />
-
-<h4><i>Intercessions for the Order of Saint Luke</i></h4>
-<prayer>OSL Intercession</prayer>
 
 <h4><i>The Lord’s Prayer</i></h4>
 <Location name="GENERAL-LORDS" {proper} />
@@ -68,6 +63,6 @@
 <h4><i>Hymn</i></h4>
 <Location name="LAUDS-HYMN2" {proper} />
 
-<center><h3>Going Forth</h3></center>
+<h3>Going Forth</h3>
 <Location name="LAUDS-BENEDICTION" {proper} />
 <Location name="LAUDS-DISMISSAL" {proper} />

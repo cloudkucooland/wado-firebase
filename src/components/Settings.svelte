@@ -1,6 +1,7 @@
 <script>
   import { showMedia, showEdit, offline } from "../model/preferences";
   import { onMount } from "svelte";
+  import { isEditor } from "../firebase";
 
   import {
     Container,
@@ -15,7 +16,6 @@
     Input,
   } from "sveltestrap";
 
-  // still needed?
   onMount(() => {
     try {
       document.getElementById("offline").checked = $offline;
@@ -30,7 +30,7 @@
 <Container>
   <Row>
     <Col>
-      <Card class="mb-2">
+      <Card>
         <CardHeader>Settings</CardHeader>
         <CardBody>
           <Form>

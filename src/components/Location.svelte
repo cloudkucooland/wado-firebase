@@ -21,12 +21,11 @@
   export let name;
   export let proper;
   export let max = 1;
-  export let order = "Weight";
   export let bold = false;
 
   if (typeof max !== "number") max = +max;
 
-  // console.debug("Location: ", name, proper);
+  const order = "Weight";
 
   export const lookup = new Map([
     ["heartwords", Heartwords],
@@ -37,6 +36,7 @@
     ["psalm", Psalm],
   ]);
 
+  // this needs to be refactored
   async function loaddata() {
     const m = new Map();
 
@@ -55,11 +55,8 @@
       m.set(doc.id, doc.data());
     }
     if (m.size >= max) {
-      // console.debug("exact calendar date", m.size);
       return m;
     }
-
-    // console.debug(name, proper.season, proper.proper, proper.weekday, proper.year);
 
     // try with all the details
     q = query(
@@ -79,7 +76,6 @@
       m.set(doc.id, doc.data());
     }
     if (m.size >= max) {
-      // console.debug("season, proper, weekday, year", m.size);
       return m;
     }
 
@@ -100,7 +96,6 @@
       m.set(doc.id, doc.data());
     }
     if (m.size >= max) {
-      // console.debug("season, proper, weekday", m.size);
       return m;
     }
 
@@ -121,7 +116,6 @@
       m.set(doc.id, doc.data());
     }
     if (m.size >= max) {
-      // console.debug("season & proper only", m.size);
       return m;
     }
 
@@ -142,7 +136,6 @@
       m.set(doc.id, doc.data());
     }
     if (m.size >= max) {
-      // console.debug("season & weekday only", m.size);
       return m;
     }
 
@@ -163,7 +156,6 @@
       m.set(doc.id, doc.data());
     }
     if (m.size >= max) {
-      // console.debug("season only", m.size, name);
       return m;
     }
 

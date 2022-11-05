@@ -41,8 +41,7 @@
 
   export let params = { id };
   const id = params.id ? params.id : "exnihilo";
-  const editorPerm = isEditor();
-  console.debug("editor", editorPerm);
+  let editorPerm = false;
 
   const classes = new Map([
     ["prayer", prayer],
@@ -53,6 +52,8 @@
   ]);
 
   async function loadPrayer() {
+    editorPerm = await isEditor();
+
     const ref = doc(db, "prayers/" + id);
 
     try {

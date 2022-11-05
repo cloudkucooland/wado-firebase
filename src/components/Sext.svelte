@@ -1,15 +1,15 @@
 <script>
   import Location from "./Location.svelte";
+  import Silence from "./Silence.svelte";
+  import Rubric from "./Rubric.svelte";
 
   export let proper;
   // export let bold;
 </script>
 
-<div class="rubric">
-  At the hour when Jesus was placed on the cross, we pray.
-</div>
-<div class="silence">Silence</div>
-<div class="rubric">Be still, aware of God's presence within and around.</div>
+<Rubric>At the hour when Jesus was placed on the cross, we pray.</Rubric>
+<Silence />
+<Rubric>Be still, aware of God's presence within and around.</Rubric>
 
 <h3>Opening Sentences</h3>
 <Location name="DIURNAL-OPENING" {proper} />
@@ -19,13 +19,13 @@
 <Location name="SEXT-PRAYER" {proper} />
 
 <h3>Psalter</h3>
-<div class="rubric">(commonly sung to psalm tone three or said in unison)</div>
+<Rubric>(commonly sung to psalm tone three or said in unison)</Rubric>
 <Location name="SEXT-PSALTER" {proper} />
 <Location name="GENERAL-GLORIA" {proper} />
 
 <h3>The Little Chapter</h3>
 <Location name="SEXT-CHAPTER" {proper} />
-<div class="silence">a brief time of silent prayer</div>
+<Silence>a brief time of silent prayer</Silence>
 
 <h3>The Lord's Prayer</h3>
 <Location name="GENERAL-LORDS" {proper} />
