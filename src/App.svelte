@@ -2,6 +2,7 @@
   import Router from "svelte-spa-router";
   import { fade } from "svelte/transition";
   import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
+  import { offline } from "./model/preferences";
 
   import {
     Collapse,
@@ -12,7 +13,12 @@
     NavLink,
   } from "sveltestrap";
 
-  import { recordEvent, auth, isEditor } from "./firebase";
+  import {
+    recordEvent,
+    auth,
+    isEditor,
+    enableOfflineDataMode,
+  } from "./firebase";
   import {
     FacebookAuthProvider,
     GoogleAuthProvider,
@@ -87,6 +93,8 @@
     }
   }
 
+  if ($offline) enableOfflineDataMode();
+
   recordEvent("startup");
 </script>
 
@@ -129,7 +137,7 @@
   <Router {routes} />
 </main>
 
-<footer class="mastfoot mx-5 mt-auto">
+<footer>
   <p class="small">
     This site uses cookies for authentication purposes. <a
       href="/wado-privacy"
@@ -141,9 +149,10 @@
     date: __buildDate__
   </p>
   <p class="small">
-    <a href="https://www.facebook.com/groups/3354160484857281"
-      >WADO user group</a
-    >
+    <a href="https://www.facebook.com/groups/3354160484857281">
+      WADO user group
+    </a>&nbsp; | &nbsp;
+    <a href="https://github.com/cloudkucooland/wado-firebase"> GitHub </a>
   </p>
 </footer>
 
@@ -157,16 +166,12 @@
     display: flex;
     flex-direction: column;
   }
-
-  :global(h1) {
-    font-size: 200%;
-    font-weight: 800;
-  }
   :global(a:hover) {
     text-decoration: none;
   }
   :global(navbar) {
     padding-right: 60px;
+    padding-left: 30px;
   }
   :global(.navbar a) {
     font-weight: 700;
@@ -192,31 +197,7 @@
   :global(copyright) {
     font-weight: 700 !important;
   }
-  :global(.text-muted) {
+  .text-muted {
     font-weight: normal;
-  }
-
-  :global(div.collect) {
-    font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 1em;
-  }
-
-  :global(div.title) {
-    font-family: Georgia, serif;
-    font-weight: bold;
-  }
-
-  :global(div.rubric) {
-    font-family: Georgia, serif;
-    font-style: italic;
-    text-align: center;
-    margin-bottom: 1em;
-  }
-
-  :global(div.silence) {
-    font-family: Georgia, serif;
-    font-style: italic;
-    line-height: 2.5em;
   }
 </style>
