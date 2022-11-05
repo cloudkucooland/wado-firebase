@@ -137,18 +137,21 @@
   <Router {routes} />
 </main>
 
-<footer>
-  <p class="small">
+<footer class="footer mx-5">
+  <p class="small text-end">
     This site uses cookies for authentication purposes. <a
       href="/wado-privacy"
       target="new">Privacy Policy</a
     >
   </p>
-  <p class="text-muted text-right small">
-    Copyright &copy; The Order of St. Luke 2022. All Rights Reserved. Build
-    date: __buildDate__
+  <p class="text-muted text-end small">
+    Copyright &copy; 
+    <a href="https://saint-luke.net/">
+      The Order of St. Luke 2022.
+    </a>
+    All Rights Reserved. &nbsp;|&nbsp; Build date: __buildDate__
   </p>
-  <p class="small">
+  <p class="small text-end">
     <a href="https://www.facebook.com/groups/3354160484857281">
       WADO user group
     </a>&nbsp; | &nbsp;
