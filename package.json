@@ -29,6 +29,7 @@
     "@rollup/plugin-replace": "^4.0.0",
     "@rollup/plugin-typescript": "^8.0.0",
     "@tsconfig/svelte": "^2.0.0",
+    "@types/ckeditor__ckeditor5-build-decoupled-document": "^29.1.1",
     "@types/gapi": "^0.0.41",
     "@types/leaflet": "^1.7.5",
     "leaflet": "^1.7.1",
@@ -55,7 +56,6 @@
   "dependencies": {
     "@ckeditor/ckeditor5-build-decoupled-document": "^35.2.1",
     "ckeditor5-svelte": "^0.0.10",
-    "firebase": "^9.6.1",
-    "bible-gateway-api": "^1.0.8"
+    "firebase": "^9.6.1"
   }
 }
