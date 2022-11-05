@@ -2,7 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
-import { notifyInfo, notifyWarn } from "./notify";
+import { toasts } from "svelte-toasts";
 import { offline } from "./model/preferences";
 
 const firebaseConfig = {
@@ -20,27 +20,30 @@ const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-if (offline) {
+if (offline) enableOfflineDataMode();
+
+export function enableOfflineDataMode() {
   enableIndexedDbPersistence(db).catch((err) => {
     if (err.code == "failed-precondition") {
-      notifyInfo("Unable to start persistence");
-      // Multiple tabs open, persistence can only be enabled
-      // in one tab at a a time.
-      // ...
+      toasts.info("Offline data mode running in another tab/window", null, {
+        uid: 20,
+        duration: 5,
+      });
     } else if (err.code == "unimplemented") {
-      notifyWarn("Browser cannot start persistence");
-      // The current browser does not support all of the
-      // features required to enable persistence
-      // ...
+      toasts.error("Browser does not support offline data mode", null, {
+        uid: 20,
+        duration: 5,
+      });
     }
   });
 }
 
-export function recordEvent(name: string) {
-  logEvent(analytics, name);
+export function recordEvent(name: string, details?: object) {
+  if (!name) return;
+  logEvent(analytics, name, details);
 }
 
-export async function isEditor<Boolean>() {
+export async function isEditor() {
   if (!auth.currentUser) return false;
 
   const res = await auth.currentUser.getIdTokenResult();

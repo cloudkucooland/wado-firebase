@@ -35,7 +35,7 @@ export default class association {
     // console.log(d, this);
   }
 
-  WeekdayDisplay() {
+  public get WeekdayDisplay() {
     const days = new Map([
       [-1, "Any"],
       [0, "Sunday"],
@@ -49,12 +49,12 @@ export default class association {
     return days.get(this.Weekday);
   }
 
-  ProperDisplay() {
+  public get ProperDisplay() {
     if (this.Proper == -1) return "Any";
     return this.Proper;
   }
 
-  ReferenceDisplay() {
+  public get ReferenceDisplay() {
     return this.Reference.id;
   }
 }

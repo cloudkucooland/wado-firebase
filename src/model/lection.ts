@@ -1,12 +1,14 @@
+// import { BibleGatewayAPI } from "bible-gateway-api";
+
 export default class lection {
-  name: string;
-  body: string;
-  reviewed: boolean;
-  license: boolean;
-  lastEditor: string;
-  lastEdited: string;
-  media: string;
-  class: string;
+  public name: string;
+  public body: string;
+  public reviewed: boolean;
+  public license: boolean;
+  public lastEditor: string;
+  public lastEdited: string;
+  public media: string;
+  public class: string;
 
   constructor(obj: any) {
     this.name = obj.Name;
@@ -17,5 +19,18 @@ export default class lection {
     this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
     this.media = obj["Media"] ? obj["Media"] : "";
     this.class = obj["Class"] ? obj["Class"] : "lection";
+  }
+
+  public async fromBibleGateway() {
+    // const bgw = new BibleGatewayAPI();
+    let cc = "Not Found";
+
+    try {
+      // let { verse, content } = await bgw.search(this.body, "NRSV");
+      // cc = content;
+    } catch (e) {
+      console.log(e.message);
+    }
+    return cc;
   }
 }

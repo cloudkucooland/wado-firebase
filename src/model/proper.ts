@@ -140,7 +140,7 @@ export default class proper {
     if (t < f("epiphany")) {
       this.season = "christmas";
       let doc: number = this.getDayOfYear(today) - fdoy("christmas") + 1;
-      // this.propername = cardToOrd(doc) . ' day of Christmas';
+      // this.propername = this.cardToOrd(doc) . ' day of Christmas';
       this.proper = doc;
     } else if (t >= f("epiphany") && t < f("epiphany") + nextday) {
       this.season = "epiphany";
@@ -150,7 +150,7 @@ export default class proper {
       this.season = "afterepiphany";
       const daysintoordtime = this.getDayOfYear(today) - fdoy("epiphany") + 1;
       const weeksintoordtime = Math.floor(daysintoordtime / 7) + 1;
-      // this.propername = cardToOrd($weeksintoordtime) . " " . $brev['date_g']['weekday'] . " after Epiphany";
+      // this.propername = this.cardToOrd($weeksintoordtime) . " " . $brev['date_g']['weekday'] . " after Epiphany";
       this.proper = weeksintoordtime;
     } else if (t >= f("mardigras") && t < f("ashwednesday")) {
       this.season = "mardigras";
@@ -164,7 +164,7 @@ export default class proper {
       this.season = "lent";
       const daysintolent = this.getDayOfYear(today) - fdoy("ashwednesday") + 1;
       const weeksintolent = Math.floor(daysintolent / 7) + 1;
-      // this.propername       = cardToOrd($weeksintolent) . " " . this.['date_g']['weekday'] . " of Lent";
+      // this.propername       = this.cardToOrd($weeksintolent) . " " . this.['date_g']['weekday'] . " of Lent";
       this.proper = weeksintolent;
     } else if (t >= f("palmsunday") && t < f("palmsunday") + nextday) {
       this.season = "palmsunday";
@@ -194,7 +194,7 @@ export default class proper {
       this.season = "greatfifty";
       const daysaftereaster = this.getDayOfYear(today) - (fdoy("easter") + 1);
       const weeksaftereaster = Math.floor(daysaftereaster / 7) + 1;
-      // this.propername = cardToOrd($weeksaftereaster) . " " . this.['date_g']['weekday'] . " of Eastertide";
+      // this.propername = this.cardToOrd($weeksaftereaster) . " " . this.['date_g']['weekday'] . " of Eastertide";
       this.proper = weeksaftereaster;
     } else if (t >= f("ascensioneve") && t < f("ascension")) {
       this.season = "ascensioneve";
@@ -246,7 +246,7 @@ export default class proper {
       this.season = "beforeadvent";
       const daysafterp = this.getDayOfYear(today) - (fdoy("pentecost") + 1);
       const weeksafterp = Math.floor(daysafterp / 7) + 1;
-      // this.propername       = cardToOrd($weeksafterp) . " " . this.['date_g']['weekday'] . " after Pentecost"; // XXX before advent
+      // this.propername       = this.cardToOrd($weeksafterp) . " " . this.['date_g']['weekday'] . " after Pentecost"; // XXX before advent
       this.propername = "Proper " + weeksafterp;
       this.proper = weeksafterp;
     } else if (t >= f("advent") && t < f("christmaseve")) {
@@ -254,7 +254,7 @@ export default class proper {
       isnextlectyear = true;
       const daysaftera = this.getDayOfYear(today) - (fdoy("advent") + 1);
       const weeksaftera = Math.floor(daysaftera / 7) + 1;
-      // this.propername       = cardToOrd(weeksaftera) . " " . this.['date_g']['weekday'] . " of Advent";
+      // this.propername       = this.cardToOrd(weeksaftera) . " " . this.['date_g']['weekday'] . " of Advent";
       this.proper = weeksaftera;
     } else if (t >= f("christmaseve") && t < f("christmas")) {
       this.season = "christmaseve";
@@ -270,7 +270,7 @@ export default class proper {
       this.season = "christmas";
       isnextlectyear = true;
       // $doc                  = (t - f('christmas']) / nextday + 1;
-      // this.propername       = cardToOrd($doc) . ' day of Christmas';
+      // this.propername       = this.cardToOrd($doc) . ' day of Christmas';
       // this.proper = $doc;
       this.proper = 0;
     } else {
@@ -284,6 +284,32 @@ export default class proper {
     let y = today.getFullYear();
     if (isnextlectyear) y = y + 1;
     this.year = years[y % 3];
+  }
+
+  // Convert cardinal number to friendly ordinal numbers for display (English)
+  cardToOrd(card: number) {
+    const lut = new Map([
+      [0, ""],
+      [1, "First"],
+      [2, "Second"],
+      [3, "Third"],
+      [4, "Fourth"],
+      [5, "Fifth"],
+      [6, "Sixth"],
+      [7, "Seventh"],
+      [8, "Eighth"],
+      [9, "Ninth"],
+      [10, "Tenth"],
+      [11, "Eleventh"],
+      [12, "Twelfth"],
+      [21, "21st"],
+      [22, "22nd"],
+    ]);
+
+    if (!lut.has(card)) {
+      return card + "th";
+    }
+    return lut.get(card);
   }
 }
 
