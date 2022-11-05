@@ -1,16 +1,16 @@
 import { locations } from "../util";
 
 export default class association {
-  id: string;
-  CalendarDate: string;
-  Location: string;
-  PrayerName: string; // to be removed, redundant with reference.
-  Proper: number;
-  Season: string;
-  Weekday: number;
-  Weight: number;
-  Year: string;
-  Reference: any;
+  public id: string;
+  public CalendarDate: string;
+  public Location: string;
+  public PrayerName: string; // to be removed, redundant with reference.
+  public Proper: number;
+  public Season: string;
+  public Weekday: number;
+  public Weight: number;
+  public Year: string;
+  public Reference: any;
 
   constructor(obj: any) {
     this.id = obj.id;

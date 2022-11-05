@@ -1,5 +1,3 @@
-// import { BibleGatewayAPI } from "bible-gateway-api";
-
 export default class lection {
   public name: string;
   public body: string;
@@ -19,18 +17,5 @@ export default class lection {
     this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
     this.media = obj["Media"] ? obj["Media"] : "";
     this.class = obj["Class"] ? obj["Class"] : "lection";
-  }
-
-  public async fromBibleGateway() {
-    // const bgw = new BibleGatewayAPI();
-    let cc = "Not Found";
-
-    try {
-      // let { verse, content } = await bgw.search(this.body, "NRSV");
-      // cc = content;
-    } catch (e) {
-      console.log(e.message);
-    }
-    return cc;
   }
 }

@@ -28,3 +28,4 @@ offline.subscribe((value: boolean) => {
   if (value !== true) value = false;
   localStorage["Offline"] = value ? "true" : "false";
 });
+// offline.value = () => { return localStorage["Offline"] === "true" ? true : false; };

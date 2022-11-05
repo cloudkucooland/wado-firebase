@@ -1,14 +1,14 @@
 export default class proper {
-  caldate: string;
-  proper: number;
-  season: string;
-  weekday: number;
-  year: string;
-  propername: string;
+  public caldate: string;
+  public proper: number;
+  public season: string;
+  public weekday: number;
+  public year: string;
+  public propername: string;
 
   // type FeastMap = Record:<string, Date> // something for when I get bored
 
-  feasts: Map<string, Date>;
+  private _feasts: Map<string, Date>;
 
   // incoming format yyyy-mm-dd
   constructor(simple: string) {
@@ -24,7 +24,7 @@ export default class proper {
     // console.debug("proper", simple, this);
   }
 
-  toString() {
+  public toString() {
     return (
       "(" +
       this.caldate +
@@ -39,13 +39,13 @@ export default class proper {
     );
   }
 
-  addDays(d: Date, days: number) {
+  private addDays(d: Date, days: number) {
     const n = new Date(d);
     n.setDate(n.getDate() + days);
     return n;
   }
 
-  setFeasts(year: number) {
+  private setFeasts(year: number) {
     const easter = this.getEaster(year);
 
     // fix Christ the King to Sunday
@@ -54,7 +54,7 @@ export default class proper {
       christking = this.addDays(christking, 7 - christking.getDay());
     }
 
-    this.feasts = new Map([
+    this._feasts = new Map([
       ["epiphany", new Date(year, 0, 6, 0, 0, 0)],
       ["easter", easter],
 
@@ -90,7 +90,7 @@ export default class proper {
   }
 
   // https://gist.github.com/johndyer/0dffbdd98c2046f41180c051f378f343
-  getEaster(year: number) {
+  private getEaster(year: number) {
     const f = Math.floor;
     // Golden Number - 1
     const G: number = year % 19;
@@ -110,7 +110,7 @@ export default class proper {
   }
 
   // https://stackoverflow.com/questions/8619879/javascript-calculate-the-day-of-the-year-1-366
-  getDayOfYear(d: Date) {
+  private getDayOfYear(d: Date) {
     const start: Date = new Date(d.getFullYear(), 0, 0);
     // const diff: number = d.getTime() - start.getTime();
     const dif: number =
@@ -123,16 +123,16 @@ export default class proper {
     return Math.floor(dif / 86400000);
   }
 
-  getSeason(today: Date) {
+  private getSeason(today: Date) {
     let isnextlectyear: boolean = false; // needed for lectionary year at bottom of method
     const nextday = 86400000;
     const f = (n: string) => {
       // shortcut for getting a feast's getTime()
-      return this.feasts.get(n).getTime();
+      return this._feasts.get(n).getTime();
     };
     const fdoy = (n: string) => {
       // day of year for a feast
-      return this.getDayOfYear(this.feasts.get(n));
+      return this.getDayOfYear(this._feasts.get(n));
     };
     const t = today.getTime();
 
@@ -287,7 +287,7 @@ export default class proper {
   }
 
   // Convert cardinal number to friendly ordinal numbers for display (English)
-  cardToOrd(card: number) {
+  private cardToOrd(card: number) {
     const lut = new Map([
       [0, ""],
       [1, "First"],

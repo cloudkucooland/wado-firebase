@@ -1,13 +1,13 @@
 export default class prayer {
-  name: string;
-  body: string;
-  reviewed: boolean;
-  license: boolean;
-  lastEditor: string;
-  lastEdited: string;
-  author: string;
-  media: string;
-  class: string;
+  public name: string;
+  public body: string;
+  public reviewed: boolean;
+  public license: boolean;
+  public lastEditor: string;
+  public lastEdited: string;
+  public author: string;
+  public media: string;
+  public class: string;
 
   constructor(obj: any) {
     this.name = obj.Name;
