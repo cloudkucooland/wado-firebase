@@ -1,29 +1,4 @@
-// Convert cardinal number to friendly ordinal numbers for display (English)
-export function cardToOrd(card: number) {
-  const lut = new Map([
-    [0, ""],
-    [1, "First"],
-    [2, "Second"],
-    [3, "Third"],
-    [4, "Fourth"],
-    [5, "Fifth"],
-    [6, "Sixth"],
-    [7, "Seventh"],
-    [8, "Eighth"],
-    [9, "Ninth"],
-    [10, "Tenth"],
-    [11, "Eleventh"],
-    [12, "Twelfth"],
-    [21, "21st"],
-    [22, "22nd"],
-  ]);
-
-  if (!lut.has(card)) {
-    return card + "th";
-  }
-  return lut.get(card);
-}
-
+// Audit these to make sure they are all used
 export const locations = Array(
   "COMMENDATION",
   "COMPLINE-CHAPTER",
@@ -108,15 +83,3 @@ export const locations = Array(
   "VIGIL-LIGHT",
   "VIGIL-PARDON"
 );
-
-export function currentOffice() {
-  const d = new Date();
-  const hour = d.getHours();
-
-  if (hour >= 5 && hour < 9) return "Lauds";
-  if (hour >= 9 && hour < 12) return "Terce";
-  if (hour >= 12 && hour < 15) return "Sext";
-  if (hour >= 15 && hour < 17) return "None";
-  if (hour >= 17 && hour < 21) return "Vespers"; // if day is Saturday, do Vigil
-  return "Compline";
-}
