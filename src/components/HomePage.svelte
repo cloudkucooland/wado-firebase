@@ -5,7 +5,6 @@
     Row,
     Card,
     CardHeader,
-    CardSubtitle,
     CardBody,
     Nav,
     NavLink,
@@ -14,7 +13,7 @@
     Input,
   } from "sveltestrap";
   import proper from "../model/proper";
-  import { currentOffice } from "../util.ts";
+  import { recordEvent } from "../firebase";
 
   import Lauds from "./Lauds.svelte";
   import Terce from "./Terce.svelte";
@@ -47,6 +46,20 @@
 
   $: office = lut.get(officeName);
   $: forProper = new proper(officeDate);
+
+  recordEvent("screen_view", { firebase_screen: officeName });
+
+  export function currentOffice() {
+    const d = new Date();
+    const hour = d.getHours();
+
+    if (hour >= 5 && hour < 9) return "Lauds";
+    if (hour >= 9 && hour < 12) return "Terce";
+    if (hour >= 12 && hour < 15) return "Sext";
+    if (hour >= 15 && hour < 17) return "None";
+    if (hour >= 17 && hour < 21) return "Vespers"; // if day is Saturday, do Vigil
+    return "Compline";
+  }
 
   function setDate(e) {
     officeDate = e.srcElement.value;

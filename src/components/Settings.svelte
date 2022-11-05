@@ -57,10 +57,10 @@
               />
             </FormGroup>
             <FormGroup>
-              <Label for="Offline">Store Offline Data</Label>
+              <Label for="offline">Store Offline Data</Label>
               <Input
-                name="Offline"
-                id="Offline"
+                name="offline"
+                id="offline"
                 type="checkbox"
                 on:change={(e) => {
                   offline.set(e.target.checked);

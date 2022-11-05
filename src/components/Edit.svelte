@@ -197,14 +197,13 @@
               <tbody>
                 {#each [...data.associations] as [k, v]}
                   <tr id={k}>
-                    <td
-                      ><a href="#/editlocation/{v.Location}">{v.Location}</a
-                      ></td
-                    >
+                    <td>
+                      <a href="#/editlocation/{v.Location}">{v.Location}</a>
+                    </td>
                     <td>{v.CalendarDate}</td>
                     <td>{v.Season}</td>
-                    <td>{v.Proper}</td>
-                    <td>{v.Weekday}</td>
+                    <td>{v.ProperDisplay}</td>
+                    <td>{v.WeekdayDisplay}</td>
                     <td>{v.Year}</td>
                     <td>{v.Weight}</td>
                     <td>edit / delete</td>

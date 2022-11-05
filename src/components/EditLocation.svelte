@@ -11,13 +11,13 @@
   } from "sveltestrap";
   import { collection, query, where, getDocs } from "firebase/firestore";
   import { db } from "../firebase";
+  import association from "../model/association";
 
   import prayer from "../model/prayer";
   import psalm from "../model/psalm";
   import hymn from "../model/hymn";
   import lection from "../model/lection";
   import heartword from "../model/heartword";
-  import association from "../model/association";
 
   export let params = { id };
   const id = params.id ? params.id : "GENERAL-ANYTHING";
@@ -30,7 +30,7 @@
     ["heartword", heartword],
   ]);
 
-  const prayers = new Map();
+  // const prayers = new Map();
   const associations = new Map();
 
   async function loadLocation() {
@@ -93,8 +93,8 @@
                     </td>
                     <td>{v.CalendarDate}</td>
                     <td>{v.Season}</td>
-                    <td>{v.Proper}</td>
-                    <td>{v.Weekday}</td>
+                    <td>{v.ProperDisplay}</td>
+                    <td>{v.WeekdayDisplay}</td>
                     <td>{v.Year}</td>
                     <td>{v.Weight}</td>
                     <td>edit / delete</td>
