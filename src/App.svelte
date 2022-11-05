@@ -1,7 +1,7 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
   import { fade } from "svelte/transition";
-  import { ToastContainer, FlatToast } from "svelte-toasts";
+  import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
 
   import {
     Collapse,
@@ -12,21 +12,20 @@
     NavLink,
   } from "sveltestrap";
 
-  import { recordEvent, auth, isEditor, db } from "./firebase";
+  import { recordEvent, auth, isEditor } from "./firebase";
   import {
     FacebookAuthProvider,
+    GoogleAuthProvider,
     signInWithPopup,
     signOut,
     onAuthStateChanged,
-    // setPersistence,
-    // browserLocalPersistence,
+    // setPersistence, browserLocalPersistence,
   } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
   import Settings from "./components/Settings.svelte";
   import Browse from "./components/Browse.svelte";
   import Edit from "./components/Edit.svelte";
   import EditLocation from "./components/EditLocation.svelte";
-  import { notifyError, notifyInfo } from "./notify";
 
   const routes = {
     "/": HomePage,
@@ -39,31 +38,41 @@
   };
 
   $: loggedIn = false;
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (user) {
-      console.log("user logged in", user);
       loggedIn = true;
-      notifyInfo("logged in");
-      if (isEditor() === true) {
-        console.log("user has Editor claim");
-        notifyInfo("Editor permissions");
+      toasts.success("logged in", user.displayName, { uid: 10 });
+      if ((await isEditor()) === true) {
+        toasts.info("Editor permissions", user.displayName, { uid: 11 });
       } else {
-        notifyInfo("User permissions");
+        toasts.info("User permissions", user.displayName, { uid: 11 });
       }
     } else {
-      notifyInfo("logged out");
+      loggedIn = false;
+      toasts.success("logged out", null, { uid: 12 });
       recordEvent("log out");
     }
   });
 
-  async function doLogin() {
+  async function doFBLogin() {
     try {
       // await setPersistence(auth, browserLocalPersistence);
       await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
       recordEvent("login");
     } catch (e) {
-      notifyError(e.message);
+      toasts.error(e.message, null, { uid: 13 });
+      console.log(e);
+    }
+  }
+
+  async function doGLogin() {
+    try {
+      await signInWithPopup(auth, new GoogleAuthProvider());
+      loggedIn = true;
+      recordEvent("login");
+    } catch (e) {
+      toasts.error(e.message, null, { uid: 14 });
       console.log(e);
     }
   }
@@ -73,7 +82,7 @@
       await signOut(auth);
       loggedIn = false;
     } catch (e) {
-      notifyError(e);
+      toasts.error(e, null, { uid: 15 });
       console.log(e);
     }
   }
@@ -100,7 +109,10 @@
           </NavItem>
         {:else}
           <NavItem>
-            <NavLink href="#" on:click={doLogin}>Login</NavLink>
+            <NavLink href="#" on:click={doFBLogin}>Facebook Login</NavLink>
+          </NavItem>
+          <NavItem>
+            <NavLink href="#" on:click={doGLogin}>Google Login</NavLink>
           </NavItem>
         {/if}
         <NavItem>
