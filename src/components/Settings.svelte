@@ -1,7 +1,6 @@
 <script>
   import { showMedia, showEdit, offline } from "../model/preferences";
   import { onMount } from "svelte";
-  import { isEditor } from "../firebase";
 
   import {
     Container,

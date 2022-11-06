@@ -72,6 +72,7 @@
 
     res = await getDocs(q);
     for (const a of res.docs) {
+      if (a.data().CalendarDate != "Any") continue;
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
@@ -92,6 +93,7 @@
 
     res = await getDocs(q);
     for (const a of res.docs) {
+      if (a.data().CalendarDate != "Any") continue;
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
@@ -112,6 +114,7 @@
 
     res = await getDocs(q);
     for (const a of res.docs) {
+      if (a.data().CalendarDate != "Any") continue;
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
@@ -132,6 +135,7 @@
 
     res = await getDocs(q);
     for (const a of res.docs) {
+      if (a.data().CalendarDate != "Any") continue;
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
@@ -152,6 +156,7 @@
 
     res = await getDocs(q);
     for (const a of res.docs) {
+      if (a.data().CalendarDate != "Any") continue;
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
@@ -173,6 +178,7 @@
 
     res = await getDocs(q);
     for (const a of res.docs) {
+      if (a.data().CalendarDate != "Any") continue;
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }

@@ -145,10 +145,8 @@
     >
   </p>
   <p class="text-muted text-end small">
-    Copyright &copy; 
-    <a href="https://saint-luke.net/">
-      The Order of St. Luke 2022.
-    </a>
+    Copyright &copy;
+    <a href="https://saint-luke.net/"> The Order of St. Luke 2022. </a>
     All Rights Reserved. &nbsp;|&nbsp; Build date: __buildDate__
   </p>
   <p class="small text-end">

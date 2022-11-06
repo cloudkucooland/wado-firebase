@@ -83,3 +83,32 @@ export const locations = Array(
   "VIGIL-LIGHT",
   "VIGIL-PARDON"
 );
+
+export const seasons = new Array(
+  "epiphany",
+  "afterepiphany",
+  "mardigras",
+  "ashwednesday",
+  "lent",
+  "palmsunday",
+  "holyweek",
+  "maundythursday",
+  "goodfriday",
+  "holysaturday",
+  "easter",
+  "greatfifty",
+  "ascensioneve",
+  "ascension",
+  "greatfifty",
+  "pentecost",
+  "afterpentecost",
+  "trinity",
+  "afterpentecost",
+  "beforeadvent",
+  "christking",
+  "beforeadvent",
+  "advent",
+  "christmaseve",
+  "christmasday",
+  "christmas"
+);
