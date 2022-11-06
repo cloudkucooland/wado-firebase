@@ -26,9 +26,11 @@
     getDocs,
     getDoc,
     doc,
+    addDoc,
   } from "firebase/firestore";
   import { db, isEditor } from "../firebase";
   import { locations, seasons } from "../util";
+  import { toasts } from "svelte-toasts";
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
@@ -77,7 +79,7 @@
     editModalOpen = !editModalOpen;
     if (editModalOpen) {
       const ref = doc(db, "associations/" + e.target.value);
-      const d = await getDoc(ref);
+      const d = docGet(ref);
       const a = new association(d);
       console.log(a);
       const modal = document.getElementById("editModalBody");
@@ -93,7 +95,35 @@
   }
 
   async function addAssoc(e) {
-    console.log(e);
+    try {
+      // convert to association to clean it up
+      const building = new association({
+        id: "unset",
+        data: () => {
+          return {
+            Reference: doc(db, "prayers/" + id),
+            Location: document.getElementById("addLocation").value,
+            CalendarDate: document.getElementById("addCalendarDate").value,
+            Season: document.getElementById("addSeason").value,
+            Proper: +document.getElementById("addProper").value,
+            Weekday: +document.getElementById("addWeekday").value,
+            Year: document.getElementById("addYear").value,
+            Weight: +document.getElementById("addWeight").value,
+          };
+        },
+      });
+      console.log("built", building, building.toFirebase());
+      const added = await addDoc(
+        collection(db, "associations"),
+        building.toFirebase()
+      );
+      console.log("got ref on add", added);
+      const refetched = await getDoc(added);
+      modelData.associations.set(refetched.id, new association(refetched));
+    } catch (err) {
+      console.log(err, err.message);
+      toasts.error(err.message);
+    }
   }
 
   async function loadPrayer() {
