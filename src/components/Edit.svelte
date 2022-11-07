@@ -44,7 +44,17 @@
   const editorConfig = {
     // plugins: [ Essentials, RemoveFormat, ],
     toolbar: {
-      items: ["bold", "italic", "underline", "|", 'outdent', 'indent', '|', 'undo', 'redo' ], // removeFormat
+      items: [
+        "bold",
+        "italic",
+        "underline",
+        "|",
+        "outdent",
+        "indent",
+        "|",
+        "undo",
+        "redo",
+      ], // removeFormat
     },
   };
 
@@ -78,7 +88,7 @@
   }
 
   async function confirmDelete(e) {
-    recordEvent("delete_assoc", { id: id, assoc: e.target.value  });
+    recordEvent("delete_assoc", { id: id, assoc: e.target.value });
     console.debug("deleting association", e.target.value);
     deleteModalOpen = !deleteModalOpen;
 
@@ -151,7 +161,7 @@
       const refetched = await getDoc(added);
       // https://svelte.dev/tutorial/updating-arrays-and-objects
       associations = [...associations, new association(refetched)];
-      recordEvent("add_assoc", { id: id, new: added.id  });
+      recordEvent("add_assoc", { id: id, new: added.id });
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
