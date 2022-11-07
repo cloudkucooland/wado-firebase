@@ -25,8 +25,8 @@ export default class psalm {
       Body: this.body,
       Reviewed: this.reviewed,
       License: this.license,
-      LastEditor: this.lastEditor,
-      LastEdited: this.lastEdited,
+      "Last Editor": this.lastEditor,
+      "Last Edited": this.lastEdited,
       Media: this.media,
       Class: this.class,
     };

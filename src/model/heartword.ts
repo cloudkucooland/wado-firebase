@@ -28,8 +28,8 @@ export default class heartword {
       Author: this.author,
       Reviewed: this.reviewed,
       License: this.license,
-      LastEditor: this.lastEditor,
-      LastEdited: this.lastEdited,
+      "Last Editor": this.lastEditor,
+      "Last Edited": this.lastEdited,
       Media: this.media,
       Class: this.class,
     };
