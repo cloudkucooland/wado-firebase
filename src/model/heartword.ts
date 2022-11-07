@@ -7,6 +7,7 @@ export default class heartword {
   public lastEdited: string;
   public author: string;
   public class: string;
+  public media: string;
 
   constructor(obj: any) {
     this.name = obj.Name;
@@ -17,5 +18,20 @@ export default class heartword {
     this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
     this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
     this.class = obj["Class"] ? obj["Class"] : "Heartword";
+    this.media = obj["Media"] ? obj["Media"] : "";
+  }
+
+  public toFirebase() {
+    return {
+      Name: this.name,
+      Body: this.body,
+      Author: this.author,
+      Reviewed: this.reviewed,
+      License: this.license,
+      LastEditor: this.lastEditor,
+      LastEdited: this.lastEdited,
+      Media: this.media,
+      Class: this.class,
+    };
   }
 }

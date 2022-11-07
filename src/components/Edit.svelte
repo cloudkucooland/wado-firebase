@@ -27,10 +27,13 @@
     getDoc,
     doc,
     addDoc,
+    setDoc,
+    deleteDoc,
   } from "firebase/firestore";
-  import { db, isEditor } from "../firebase";
+  import { db, isEditor, auth } from "../firebase";
   import { locations, seasons } from "../util";
   import { toasts } from "svelte-toasts";
+  import { onMount } from "svelte";
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
@@ -51,7 +54,9 @@
   export let params = { id };
   const id = params.id ? params.id : "exnihilo";
   let editorPerm = false;
-  let modelData;
+  let modalId = "";
+  $: prayerData = new prayer({ name: "Loading", body: "Loading" });
+  $: associations = new Array();
 
   const classes = new Map([
     ["prayer", prayer],
@@ -63,27 +68,47 @@
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {
-    console.log(e);
     deleteModalOpen = !deleteModalOpen;
+    if (deleteModalOpen) modalId = e.target.value;
   }
 
-  function confirmDelete(e) {
-    console.log(e);
+  async function confirmDelete(e) {
+    console.debug("deleting association", e.target.value);
     deleteModalOpen = !deleteModalOpen;
-    // check to make sure not last assn
-    // remove it from firebase
+
+    if (associations.length <= 1) {
+      toasts.error("Cannot delete last association, edit to UNSET");
+      return;
+    }
+
+    try {
+      await deleteDoc(doc(db, "associations", e.target.value));
+    } catch (err) {
+      console.log(err);
+      toasts.error(err.message);
+    }
+    const newAssn = new Array();
+    for (const a of associations) {
+      if (a.id != e.target.value) {
+        newAssn.push(a);
+      }
+    }
+    associations = newAssn;
+    toasts.notify("Association deleted", e.target.value);
   }
 
   let editModalOpen = false;
   async function toggleEditOpen(e) {
     editModalOpen = !editModalOpen;
     if (editModalOpen) {
-      const ref = doc(db, "associations/" + e.target.value);
+      modalId = this.target.value;
+
+      /* const ref = doc(db, "associations/" + e.target.value);
       const d = docGet(ref);
       const a = new association(d);
-      console.log(a);
+      console.log(a); */
       const modal = document.getElementById("editModalBody");
-      modal.textContent = a;
+      modal.textContent = "draw menus here";
     }
   }
 
@@ -96,7 +121,6 @@
 
   async function addAssoc(e) {
     try {
-      // convert to association to clean it up
       const building = new association({
         id: "unset",
         data: () => {
@@ -112,16 +136,15 @@
           };
         },
       });
-      console.log("built", building, building.toFirebase());
       const added = await addDoc(
         collection(db, "associations"),
         building.toFirebase()
       );
-      console.log("got ref on add", added);
       const refetched = await getDoc(added);
-      modelData.associations.set(refetched.id, new association(refetched));
+      // https://svelte.dev/tutorial/updating-arrays-and-objects
+      associations = [...associations, new association(refetched)];
     } catch (err) {
-      console.log(err, err.message);
+      console.log(err);
       toasts.error(err.message);
     }
   }
@@ -136,8 +159,7 @@
       const d = toEdit.data();
 
       const c = classes.get(d.Class);
-      modelData = new c(d);
-      modelData.associations = new Map();
+      prayerData = new c(d);
 
       const q = query(
         collection(db, "associations"),
@@ -145,19 +167,46 @@
       );
       const res = await getDocs(q);
       for (const a of res.docs) {
-        const n = new association(a);
-        modelData.associations.set(a.id, n);
+        // https://svelte.dev/tutorial/updating-arrays-and-objects
+        associations = [...associations, new association(a)];
       }
-
-      return modelData;
     } catch (e) {
       console.log(e);
     }
-    return {};
   }
 
-  function saveChanges(e) {
-    console.log(e);
+  async function saveChanges(e) {
+    const editedData = {
+      Name: document.getElementById("name").value,
+      Class: document.getElementById("class").value,
+      Body: prayerData.body,
+      License: document.getElementById("license").checked,
+      Reviewed: document.getElementById("reviewed").checked,
+      "Last Editor": auth.currentUser.displayName,
+      "Last Edited": new Date().toUTCString(),
+    };
+
+    // currently displayed
+    if (prayerData.class == "hymn") {
+      editedData["Hymn Tune"] = document.getElementById("hymntune").value;
+      editedData["Hymn Meter"] = document.getElementById("hymnmeter").value;
+    }
+    if (prayerData.class == "prayer" || prayerData.class == "heartword") {
+      editedData.Author = document.getElementById("author").value;
+    }
+
+    // convert to class type, then back to store, for cleanup
+    const c = classes.get(editedData.Class);
+    const n = new c(editedData);
+    console.debug(editedData, n, n.toFirebase());
+
+    try {
+      await setDoc(doc(db, "prayers", id), n.toFirebase());
+      toasts.success("Saved Prayer", id);
+    } catch (err) {
+      console.error(err);
+      toasts.error(err.message);
+    }
   }
 
   function onReady({ detail: editor }) {
@@ -169,203 +218,208 @@
         editor.ui.getEditableElement()
       );
   }
+
+  onMount(async () => {
+    loadPrayer();
+  });
 </script>
 
-{#await loadPrayer()}
-  <Spinner color="primary" />
-{:then data}
-  <Container>
-    <Row>
-      <Col>
-        <Card class="mb-2">
-          {#if editorPerm == true}
-            <CardHeader>Editing: {data.name}</CardHeader>
-          {:else}
-            <CardHeader>Displaying: {data.name}</CardHeader>
-          {/if}
-          <CardBody>
-            <Form>
-              <FormGroup>
-                <Label for="class">Class</Label>
-                <Input type="select" name="class" id="class" value={data.class}>
-                  {#each [...classes] as [key, value]}
-                    <option value={key}>{key}</option>
-                  {/each}
-                </Input>
-              </FormGroup>
-              <FormGroup>
-                <Label for="name">Name</Label>
-                <Input name="name" id="name" value={data.name} />
-              </FormGroup>
-              <CKEditor
-                {editor}
-                on:ready={onReady}
-                config={editorConfig}
-                value={data.body}
-              />
-              {#if data.class == "hymn"}
-                <FormGroup>
-                  <Label for="tune">Hymn Tune</Label>
-                  <Input name="tune" id="tune" value={data.hymntune} />
-                </FormGroup>
-                <FormGroup>
-                  <Label for="meter">Meter</Label>
-                  <Input name="meter" id="meter" value={data.hymnmeter} />
-                </FormGroup>
-              {/if}
-              {#if data.class == "prayer" || data.class == "heartword"}
-                <FormGroup>
-                  <Label for="author">Author</Label>
-                  <Input name="author" id="author" value={data.author} />
-                </FormGroup>
-              {/if}
-              <FormGroup>
-                <Label for="editor">Last Editor</Label>
-                <Input
-                  name="editor"
-                  disabled="true"
-                  id="editor"
-                  value={data.lastEditor}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="edited" type="date">Last Edited</Label>
-                <Input
-                  name="edited"
-                  disabled="true"
-                  id="edited"
-                  value={data.lastEdited}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="license">License</Label>
-                <Input
-                  type="checkbox"
-                  name="license"
-                  id="license"
-                  checked={data.license}
-                />
-              </FormGroup>
-              <FormGroup>
-                <Label for="reviewed">Reviewed</Label>
-                <Input
-                  type="checkbox"
-                  name="reviewed"
-                  id="reviewed"
-                  checked={data.license}
-                />
-              </FormGroup>
-            </Form>
-            <Button size="sm" color="primary" on:click={saveChanges}>
-              Save
-            </Button>
-          </CardBody>
-        </Card>
-        <Card>
-          <CardHeader>Associations</CardHeader>
-          <CardBody>
-            <Table>
-              <thead>
-                <tr>
-                  <th>Location</th>
-                  <th>Calendar Date</th>
-                  <th>Season</th>
-                  <th>Proper</th>
-                  <th>Weekday</th>
-                  <th>Lectionary Year</th>
-                  <th>Weight</th>
-                  <th>&nbsp;</th>
-                </tr>
-              </thead>
-              <tbody>
-                {#each [...data.associations] as [k, v]}
-                  <tr id={k}>
-                    <td>
-                      <a href="#/editlocation/{v.Location}">{v.Location}</a>
-                    </td>
-                    <td>{v.CalendarDate}</td>
-                    <td>{v.Season}</td>
-                    <td>{v.ProperDisplay}</td>
-                    <td>{v.WeekdayDisplay}</td>
-                    <td>{v.Year}</td>
-                    <td>{v.Weight}</td>
-                    <td>
-                      <Button
-                        size="sm"
-                        color="warning"
-                        on:click={toggleEditOpen}
-                        value={k}>Edit</Button
-                      >
-                      <Button
-                        size="sm"
-                        color="danger"
-                        on:click={toggleDeleteOpen}
-                        value={k}>delete</Button
-                      >
-                    </td>
-                  </tr>
+<Container>
+  <Row>
+    <Col>
+      <Card class="mb-2">
+        {#if editorPerm == true}
+          <CardHeader>Editing: {prayerData.name}</CardHeader>
+        {:else}
+          <CardHeader>Displaying: {prayerData.name}</CardHeader>
+        {/if}
+        <CardBody>
+          <Form>
+            <FormGroup>
+              <Label for="class">Class</Label>
+              <Input
+                type="select"
+                name="class"
+                id="class"
+                value={prayerData.class}
+              >
+                {#each [...classes] as [key, value]}
+                  <option value={key}>{key}</option>
                 {/each}
-                <tr>
+              </Input>
+            </FormGroup>
+            <FormGroup>
+              <Label for="name">Name</Label>
+              <Input name="name" id="name" value={prayerData.name} />
+            </FormGroup>
+            <CKEditor
+              {editor}
+              on:ready={onReady}
+              config={editorConfig}
+              bind:value={prayerData.body}
+            />
+            {#if prayerData.class == "hymn"}
+              <FormGroup>
+                <Label for="hymntune">Hymn Tune</Label>
+                <Input
+                  name="hymntune"
+                  id="hymntune"
+                  value={prayerData.hymntune}
+                />
+              </FormGroup>
+              <FormGroup>
+                <Label for="hymnmeter">Meter</Label>
+                <Input
+                  name="hymnmeter"
+                  id="hymnmeter"
+                  value={prayerData.hymnmeter}
+                />
+              </FormGroup>
+            {/if}
+            {#if prayerData.class == "prayer" || prayerData.class == "heartword"}
+              <FormGroup>
+                <Label for="author">Author</Label>
+                <Input name="author" id="author" value={prayerData.author} />
+              </FormGroup>
+            {/if}
+            <FormGroup>
+              <Label for="lastEditor">Last Editor</Label>
+              <Input
+                name="lastEditor"
+                disabled="true"
+                id="lastEditor"
+                value={prayerData.lastEditor}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="lastEdited" type="date">Last Edited</Label>
+              <Input
+                name="lastEdited"
+                disabled="true"
+                id="lastEdited"
+                value={prayerData.lastEdited}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="license">License</Label>
+              <Input
+                type="checkbox"
+                name="license"
+                id="license"
+                checked={prayerData.license}
+              />
+            </FormGroup>
+            <FormGroup>
+              <Label for="reviewed">Reviewed</Label>
+              <Input
+                type="checkbox"
+                name="reviewed"
+                id="reviewed"
+                checked={prayerData.reviewed}
+              />
+            </FormGroup>
+          </Form>
+          <Button size="sm" color="primary" on:click={saveChanges}>Save</Button>
+        </CardBody>
+      </Card>
+      <Card>
+        <CardHeader>Associations</CardHeader>
+        <CardBody>
+          <Table>
+            <thead>
+              <tr>
+                <th>Location</th>
+                <th>Calendar Date</th>
+                <th>Season</th>
+                <th>Proper</th>
+                <th>Weekday</th>
+                <th>Lectionary Year</th>
+                <th>Weight</th>
+                <th>&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each associations as v}
+                <tr id={v.id}>
                   <td>
-                    <Input type="select" id="addLocation">
-                      {#each locations as l}
-                        <option value={l}>{l}</option>
-                      {/each}
-                    </Input>
+                    <a href="#/editlocation/{v.Location}">{v.Location}</a>
                   </td>
+                  <td>{v.CalendarDate}</td>
+                  <td>{v.Season}</td>
+                  <td>{v.ProperDisplay}</td>
+                  <td>{v.WeekdayDisplay}</td>
+                  <td>{v.Year}</td>
+                  <td>{v.Weight}</td>
                   <td>
-                    <Input
-                      id="addCalendarDate"
-                      value="Any"
-                      placeholder="mm-dd"
-                    />
-                  </td>
-                  <td>
-                    <Input type="select" id="addSeason" value="Any">
-                      <option value="Any">Any</option>
-                      {#each seasons as s}
-                        <option value={s}>{s}</option>
-                      {/each}
-                    </Input>
-                  </td>
-                  <td><Input id="addProper" value="Any" /></td>
-                  <td>
-                    <Input type="select" id="addWeekday" value="-1">
-                      <option value="-1">Any</option>
-                      <option value="0">Sunday</option>
-                      <option value="1">Monday</option>
-                      <option value="2">Tuesday</option>
-                      <option value="3">Wednesday</option>
-                      <option value="4">Thursday</option>
-                      <option value="5">Friday</option>
-                      <option value="6">Saturday</option>
-                    </Input>
-                  </td>
-                  <td>
-                    <Input id="addYear" type="select" value="Any">
-                      <option value="Any">Any</option>
-                      <option value="A">A</option>
-                      <option value="B">B</option>
-                      <option value="C">C</option>
-                    </Input>
-                  </td>
-                  <td><Input id="addWeight" value="1" /></td>
-                  <td>
-                    <Button size="sm" color="success" on:click={addAssoc}>
-                      Add
-                    </Button>
+                    <Button
+                      size="sm"
+                      color="warning"
+                      on:click={toggleEditOpen}
+                      value={v.id}>Edit</Button
+                    >
+                    <Button
+                      size="sm"
+                      color="danger"
+                      on:click={toggleDeleteOpen}
+                      value={v.id}>delete</Button
+                    >
                   </td>
                 </tr>
-              </tbody>
-            </Table>
-          </CardBody>
-        </Card>
-      </Col>
-    </Row>
-  </Container>
-{:catch e}
-  <div>{e}</div>
-{/await}
+              {/each}
+              <tr>
+                <td>
+                  <Input type="select" id="addLocation">
+                    {#each locations as l}
+                      <option value={l}>{l}</option>
+                    {/each}
+                  </Input>
+                </td>
+                <td>
+                  <Input id="addCalendarDate" value="Any" placeholder="mm-dd" />
+                </td>
+                <td>
+                  <Input type="select" id="addSeason" value="Any">
+                    <option value="Any">Any</option>
+                    {#each seasons as s}
+                      <option value={s}>{s}</option>
+                    {/each}
+                  </Input>
+                </td>
+                <td><Input id="addProper" value="Any" /></td>
+                <td>
+                  <Input type="select" id="addWeekday" value="-1">
+                    <option value="-1">Any</option>
+                    <option value="0">Sunday</option>
+                    <option value="1">Monday</option>
+                    <option value="2">Tuesday</option>
+                    <option value="3">Wednesday</option>
+                    <option value="4">Thursday</option>
+                    <option value="5">Friday</option>
+                    <option value="6">Saturday</option>
+                  </Input>
+                </td>
+                <td>
+                  <Input id="addYear" type="select" value="Any">
+                    <option value="Any">Any</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                  </Input>
+                </td>
+                <td><Input id="addWeight" value="1" /></td>
+                <td>
+                  <Button size="sm" color="success" on:click={addAssoc}>
+                    Add
+                  </Button>
+                </td>
+              </tr>
+            </tbody>
+          </Table>
+        </CardBody>
+      </Card>
+    </Col>
+  </Row>
+</Container>
 <Modal
   id="deleteModal"
   isOpen={deleteModalOpen}
@@ -375,9 +429,12 @@
   <ModalHeader {toggleDeleteOpen}>Delete Association</ModalHeader>
   <ModalBody>Confirm Delete</ModalBody>
   <ModalFooter>
-    <Button color="primary" size="sm" on:click={toggleDeleteOpen}>Cancel</Button
-    >
-    <Button color="warning" size="sm" on:click={confirmDelete}>Confirm</Button>
+    <Button color="primary" size="sm" on:click={toggleDeleteOpen}>
+      Cancel
+    </Button>
+    <Button color="warning" size="sm" on:click={confirmDelete} value={modalId}>
+      Confirm
+    </Button>
   </ModalFooter>
 </Modal>
 <Modal id="editModal" isOpen={editModalOpen} backdrop="static" {toggleEditOpen}>
@@ -386,6 +443,8 @@
   <ModalFooter>
     <Button color="secondary" size="sm" on:click={toggleEditOpen}>Cancel</Button
     >
-    <Button color="success" size="sm" on:click={confirmEdit}>Confirm</Button>
+    <Button color="success" size="sm" on:click={confirmEdit} value={modalId}
+      >Confirm</Button
+    >
   </ModalFooter>
 </Modal>

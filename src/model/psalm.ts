@@ -18,4 +18,17 @@ export default class psalm {
     this.media = obj["Media"] ? obj["Media"] : "";
     this.class = obj["Class"] ? obj["Class"] : "psalm";
   }
+
+  public toFirebase() {
+    return {
+      Name: this.name,
+      Body: this.body,
+      Reviewed: this.reviewed,
+      License: this.license,
+      LastEditor: this.lastEditor,
+      LastEdited: this.lastEdited,
+      Media: this.media,
+      Class: this.class,
+    };
+  }
 }

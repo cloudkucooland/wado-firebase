@@ -22,4 +22,19 @@ export default class hymn {
     this.media = obj["Media"] ? obj["Media"] : "";
     this.class = obj["Class"] ? obj["Class"] : "hymn";
   }
+
+  public toFirebase() {
+    return {
+      Name: this.name,
+      Body: this.body,
+      Reviewed: this.reviewed,
+      License: this.license,
+      LastEditor: this.lastEditor,
+      LastEdited: this.lastEdited,
+      "Hymn Meter": this.hymnmeter,
+      "Hymn Tune": this.hymntune,
+      Media: this.media,
+      Class: this.class,
+    };
+  }
 }

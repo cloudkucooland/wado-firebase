@@ -20,4 +20,18 @@ export default class prayer {
     this.media = obj["Media"] ? obj["Media"] : "";
     this.class = obj["Class"] ? obj["Class"] : "prayer";
   }
+
+  public toFirebase() {
+    return {
+      Name: this.name,
+      Body: this.body,
+      Author: this.author,
+      Reviewed: this.reviewed,
+      License: this.license,
+      LastEditor: this.lastEditor,
+      LastEdited: this.lastEdited,
+      Media: this.media,
+      Class: this.class,
+    };
+  }
 }
