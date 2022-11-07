@@ -26,17 +26,30 @@ export default class proper {
 
   public toString() {
     return (
-      "(" +
       this.caldate +
-      ") (" +
+      ": " +
       this.season +
       "-" +
       this.proper +
-      ") - " +
-      this.weekday +
-      " " +
+      ", " +
+      this.WeekdayDisplay() +
+      ", Year-" +
       this.year
     );
+  }
+
+  private WeekdayDisplay() {
+    const days = new Map([
+      [-1, "Any"],
+      [0, "Sunday"],
+      [1, "Monday"],
+      [2, "Tuesday"],
+      [3, "Wednesday"],
+      [4, "Thursday"],
+      [5, "Friday"],
+      [6, "Saturday"],
+    ]);
+    return days.get(this.weekday);
   }
 
   private addDays(d: Date, days: number) {
