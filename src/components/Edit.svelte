@@ -30,17 +30,21 @@
     setDoc,
     deleteDoc,
   } from "firebase/firestore";
-  import { db, isEditor, auth } from "../firebase";
+  import { db, isEditor, auth, recordEvent } from "../firebase";
   import { locations, seasons } from "../util";
   import { toasts } from "svelte-toasts";
   import { onMount } from "svelte";
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
-  let editor = DecoupledEditor;
-  let editorConfig = {
+  // import RemoveFormat from "@ckeditor/ckeditor5-remove-format/src/removeformat";
+  // import Essentials from "@ckeditor/ckeditor5-essentials"
+
+  const editor = DecoupledEditor;
+  const editorConfig = {
+    // plugins: [ Essentials, RemoveFormat, ],
     toolbar: {
-      items: ["bold", "italic", "underline"],
+      items: ["bold", "italic", "underline", "|", 'outdent', 'indent', '|', 'undo', 'redo' ], // removeFormat
     },
   };
 
@@ -68,11 +72,13 @@
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {
+    recordEvent("screen_view", { firebase_screen: "edit: toggleDeleteOpen" });
     deleteModalOpen = !deleteModalOpen;
     if (deleteModalOpen) modalId = e.target.value;
   }
 
   async function confirmDelete(e) {
+    recordEvent("delete_assoc", { id: id, assoc: e.target.value  });
     console.debug("deleting association", e.target.value);
     deleteModalOpen = !deleteModalOpen;
 
@@ -99,6 +105,7 @@
 
   let editModalOpen = false;
   async function toggleEditOpen(e) {
+    recordEvent("screen_view", { firebase_screen: "edit: toggleEditOpen" });
     editModalOpen = !editModalOpen;
     if (editModalOpen) {
       modalId = this.target.value;
@@ -113,6 +120,7 @@
   }
 
   function confirmEdit(e) {
+    recordEvent("edit_assoc", { id: id, assoc: e.target.value });
     console.log(e);
     editModalOpen = !editModalOpen;
     // write new data to firebase
@@ -143,6 +151,7 @@
       const refetched = await getDoc(added);
       // https://svelte.dev/tutorial/updating-arrays-and-objects
       associations = [...associations, new association(refetched)];
+      recordEvent("add_assoc", { id: id, new: added.id  });
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
@@ -176,6 +185,7 @@
   }
 
   async function saveChanges(e) {
+    recordEvent("save_prayer", { id: id });
     const editedData = {
       Name: document.getElementById("name").value,
       Class: document.getElementById("class").value,
@@ -217,12 +227,19 @@
         editor.ui.view.toolbar.element,
         editor.ui.getEditableElement()
       );
+    // editor.plugins.get( 'ShiftEnter' ).isEnabled = true;
+    // console.debug(Array.from( editor.ui.componentFactory.names() ));
   }
 
   onMount(async () => {
+    recordEvent("screen_view", { firebase_screen: "Edit", id: id });
     loadPrayer();
   });
 </script>
+
+<svelte:head>
+  <title>Editing: {prayerData.name}</title>
+</svelte:head>
 
 <Container>
   <Row>
