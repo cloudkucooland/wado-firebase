@@ -1,6 +1,5 @@
 <script>
   import {
-    Spinner,
     Container,
     Row,
     Col,
@@ -13,7 +12,6 @@
     Label,
     Table,
     Button,
-    Icon,
     Modal,
     ModalHeader,
     ModalBody,
@@ -31,7 +29,7 @@
     deleteDoc,
   } from "firebase/firestore";
   import { db, isEditor, auth, recordEvent } from "../firebase";
-  import { locations, seasons } from "../util";
+  import { locations, seasons, classes, getClass } from "../util";
   import { toasts } from "svelte-toasts";
   import { onMount } from "svelte";
 
@@ -58,12 +56,8 @@
     },
   };
 
-  import prayer from "../model/prayer";
-  import psalm from "../model/psalm";
-  import hymn from "../model/hymn";
-  import lection from "../model/lection";
-  import heartword from "../model/heartword";
   import association from "../model/association";
+  import prayer from "../model/prayer";
 
   export let params = { id };
   const id = params.id ? params.id : "exnihilo";
@@ -71,14 +65,6 @@
   let modalId = "";
   $: prayerData = new prayer({ name: "Loading", body: "Loading" });
   $: associations = new Array();
-
-  const classes = new Map([
-    ["prayer", prayer],
-    ["psalm", psalm],
-    ["hymn", hymn],
-    ["lection", lection],
-    ["heartword", heartword],
-  ]);
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {
@@ -177,7 +163,7 @@
       const toEdit = await getDoc(ref);
       const d = toEdit.data();
 
-      const c = classes.get(d.Class);
+      const c = getClass(d.Class);
       prayerData = new c(d);
 
       const q = query(
@@ -194,7 +180,7 @@
     }
   }
 
-  async function saveChanges(e) {
+  async function saveChanges() {
     recordEvent("save_prayer", { id: id });
     const editedData = {
       Name: document.getElementById("name").value,
@@ -216,7 +202,7 @@
     }
 
     // convert to class type, then back to store, for cleanup
-    const c = classes.get(editedData.Class);
+    const c = getClass(editedData.Class);
     const n = new c(editedData);
     console.debug(editedData, n, n.toFirebase());
 

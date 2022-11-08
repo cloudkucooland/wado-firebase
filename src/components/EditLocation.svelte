@@ -13,22 +13,10 @@
   import { db } from "../firebase";
   import association from "../model/association";
 
-  import prayer from "../model/prayer";
-  import psalm from "../model/psalm";
-  import hymn from "../model/hymn";
-  import lection from "../model/lection";
-  import heartword from "../model/heartword";
-
   export let params = { id };
   const id = params.id ? params.id : "GENERAL-ANYTHING";
 
-  const classes = new Map([
-    ["prayer", prayer],
-    ["psalm", psalm],
-    ["hymn", hymn],
-    ["lection", lection],
-    ["heartword", heartword],
-  ]);
+  // import { classes, getClass } from "../util";
 
   // const prayers = new Map();
   const associations = new Map();
@@ -47,7 +35,7 @@
 
         // const rawprayer = await getDoc(a.data().Reference);
         // const prayerdata = rawprayer.data();
-        // const c = classes.get(prayerdata.Class);
+        // const c = getClass(prayerdata.Class);
         // const prayer = new c(d);
         // docs.set(dd.id, prayer);
       }
