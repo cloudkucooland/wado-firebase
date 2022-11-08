@@ -9,7 +9,7 @@ export default class prayer {
   public media: string;
   public class: string;
 
-  constructor(obj: any) {
+  public constructor(obj: any) {
     this.name = obj.Name;
     this.body = obj.Body;
     this.author = obj.Author;
