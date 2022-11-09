@@ -32,6 +32,8 @@
   import Browse from "./components/Browse.svelte";
   import Edit from "./components/Edit.svelte";
   import EditLocation from "./components/EditLocation.svelte";
+  import PrayerList from "./components/PrayerList.svelte";
+  import LectionList from "./components/LectionList.svelte";
 
   const routes = {
     "/": HomePage,
@@ -41,6 +43,8 @@
     "/office/:officeName/date/:officeDate": HomePage,
     "/edit/:id": Edit,
     "/editlocation/:id": EditLocation,
+    "/prayers/:c": PrayerList,
+    "/lection/:location ": LectionList,
   };
 
   $: loggedIn = false;
