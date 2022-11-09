@@ -26,4 +26,10 @@
     line-height: 1.5em;
     margin-bottom: 2em;
   }
+  div.credit {
+    font-family: Georgia, serif;
+    font-style: italic;
+    text-align: right;
+    font-variant: small-caps;
+  }
 </style>
