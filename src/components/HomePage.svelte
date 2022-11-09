@@ -60,11 +60,9 @@
     {#each offices as o}
       <NavLink href="#/office/{o}/date/{officeDate}">{o}</NavLink>
     {/each}
-    <Form>
-      <FormGroup>
-        <Input type="date" on:change={setDate} />
-      </FormGroup>
-    </Form>
+    <FormGroup><!-- try bind again without Form> -->
+      <Input type="date" on:change={setDate} />
+    </FormGroup>
   </Nav>
 
   <Container>

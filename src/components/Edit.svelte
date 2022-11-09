@@ -35,12 +35,11 @@
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
-  // import RemoveFormat from "@ckeditor/ckeditor5-remove-format/src/removeformat";
-  // import Essentials from "@ckeditor/ckeditor5-essentials"
+  // import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
 
   const editor = DecoupledEditor;
   const editorConfig = {
-    // plugins: [ Essentials, RemoveFormat, ],
+    // plugins: [ SourceEditing ],
     toolbar: {
       items: [
         "bold",
@@ -52,9 +51,10 @@
         "|",
         "undo",
         "redo",
-      ], // removeFormat
+      ],
     },
   };
+        // "sourceEditing",
 
   import association from "../model/association";
   import prayer from "../model/prayer";
@@ -96,7 +96,7 @@
       }
     }
     associations = newAssn;
-    toasts.notify("Association deleted", e.target.value);
+    toasts.success("Association deleted", e.target.value);
   }
 
   let editModalOpen = false;
@@ -218,8 +218,10 @@
         editor.ui.view.toolbar.element,
         editor.ui.getEditableElement()
       );
-    // editor.plugins.get( 'ShiftEnter' ).isEnabled = true;
     // console.debug(Array.from( editor.ui.componentFactory.names() ));
+    // console.debug(editor.config._config, Array.from(editor.config.names()));
+    // console.debug(editor._availablePlugins.get("ShiftEnter"), editor._plugins.get("ShiftEnter"), editor._plugins.get("ShiftEnter").isEnabled);
+    // editor.plugins.get('ShiftEnter').isEnabled = true;
   }
 
   onMount(async () => {

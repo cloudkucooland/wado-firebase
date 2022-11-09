@@ -4,7 +4,6 @@ export default class association {
   public id: string;
   public CalendarDate: string;
   public Location: string;
-  public PrayerName: string; // to be removed, redundant with reference.
   public Proper: number;
   public Season: string;
   public Weekday: number;
@@ -25,8 +24,6 @@ export default class association {
       console.error("invalid location detected", d.Location);
       this.Location = "UNSET";
     }
-
-    this.PrayerName = d.PrayerName ? d.PrayerName : "UNSET";
 
     this.Proper = d.Proper ? d.Proper : -1; // Any;
     // make sure that proper is sane, e.g.
@@ -59,7 +56,6 @@ export default class association {
     return {
       CalendarDate: this.CalendarDate,
       Location: this.Location,
-      PrayerName: this.PrayerName,
       Proper: this.Proper,
       Season: this.Season,
       Weekday: this.Weekday,
