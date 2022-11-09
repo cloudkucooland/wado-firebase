@@ -113,6 +113,36 @@ export const seasons = new Array(
   "christmas"
 );
 
+export const seasonLUT = new Map([
+  ["epiphany", "00"],
+  ["afterepiphany", "01"],
+  ["mardigras", "02"],
+  ["ashwednesday", "03"],
+  ["lent", "04"],
+  ["palmsunday", "05"],
+  ["holyweek", "06"],
+  ["maundythursday", "07"],
+  ["goodfriday", "08"],
+  ["holysaturday", "09"],
+  ["easter", "10"],
+  ["greatfifty", "11"],
+  ["ascensioneve", "12"],
+  ["ascension", "13"],
+  ["greatfifty", "14"],
+  ["pentecost", "15"],
+  ["afterpentecost", "16"],
+  ["trinity", "17"],
+  ["afterpentecost", "18"],
+  ["beforeadvent", "19"],
+  ["christking", "20"],
+  ["beforeadvent", "21"],
+  ["advent", "22"],
+  ["christmaseve", "23"],
+  ["christmasday", "24"],
+  ["christmas", "25"],
+  ["Any", "99"],
+]);
+
 import Lauds from "./components/Lauds.svelte";
 import Terce from "./components/Terce.svelte";
 import Sext from "./components/Sext.svelte";
