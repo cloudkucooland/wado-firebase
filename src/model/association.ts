@@ -1,4 +1,4 @@
-import { locations, seasons } from "../util";
+import { locations, seasons, seasonLUT } from "../util";
 
 export default class association {
   public id: string;
@@ -90,5 +90,51 @@ export default class association {
 
   public get ReferenceDisplay() {
     return this.Reference.id;
+  }
+
+  // A negative number if a occurs before b; positive if the a occurs after b ; 0 if they are equivalent.
+  static sort(a, b) {
+    const A = a[1];
+    const B = b[1];
+
+    /* a calendar date always wins
+    if (A.CalendarDate !== "Any" && B.CalendarDate === "Any") return 1;
+    if (A.CalendarDate === "Any" && B.CalendarDate !== "Any") return -1;
+    if (A.CalendarDate !== "Any" && B.CalendarDate !== "Any")
+      return A.CalendarDate.localeCompare(B.CalendarDate);
+     */
+
+    // weekday is wrong
+    const astr =
+      seasonLUT.get(A.Season) +
+      " " +
+      association.anyLastNumber(A.Proper) +
+      " " +
+      association.anyLastNumber(A.Weekday) +
+      " " +
+      association.anyLastYear(A.Year) +
+      " " +
+      A.Weight;
+    const bstr =
+      seasonLUT.get(B.Season) +
+      " " +
+      association.anyLastNumber(B.Proper) +
+      " " +
+      association.anyLastNumber(B.Weekday) +
+      " " +
+      association.anyLastYear(B.Year) +
+      " " +
+      B.Weight;
+    return astr.localeCompare(bstr);
+  }
+
+  static anyLastYear(s: string) {
+    if (s === "Any") return "Z";
+    return s;
+  }
+
+  static anyLastNumber(n: number) {
+    if (n < 0) return 99;
+    return n;
   }
 }
