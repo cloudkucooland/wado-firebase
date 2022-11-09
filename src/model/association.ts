@@ -97,6 +97,16 @@ export default class association {
     const A = a[1];
     const B = b[1];
 
+    const anyLastYear = (s: string) => {
+      if (s === "Any") return "Z";
+      return s;
+    };
+
+    const anyLastNumber = (n: number) => {
+      if (n < 0) return 99;
+      return n;
+    };
+
     /* a calendar date always wins
     if (A.CalendarDate !== "Any" && B.CalendarDate === "Any") return 1;
     if (A.CalendarDate === "Any" && B.CalendarDate !== "Any") return -1;
@@ -104,37 +114,28 @@ export default class association {
       return A.CalendarDate.localeCompare(B.CalendarDate);
      */
 
-    // weekday is wrong
+    // instead of doing each value by hand, just turn it into an easily sortable string and do that
+    // like, follow and subscribe for more kludgey life-hacks
     const astr =
       seasonLUT.get(A.Season) +
       " " +
-      association.anyLastNumber(A.Proper) +
+      anyLastNumber(A.Proper) +
       " " +
-      association.anyLastNumber(A.Weekday) +
+      anyLastNumber(A.Weekday) +
       " " +
-      association.anyLastYear(A.Year) +
+      anyLastYear(A.Year) +
       " " +
       A.Weight;
     const bstr =
       seasonLUT.get(B.Season) +
       " " +
-      association.anyLastNumber(B.Proper) +
+      anyLastNumber(B.Proper) +
       " " +
-      association.anyLastNumber(B.Weekday) +
+      anyLastNumber(B.Weekday) +
       " " +
-      association.anyLastYear(B.Year) +
+      anyLastYear(B.Year) +
       " " +
       B.Weight;
     return astr.localeCompare(bstr);
-  }
-
-  static anyLastYear(s: string) {
-    if (s === "Any") return "Z";
-    return s;
-  }
-
-  static anyLastNumber(n: number) {
-    if (n < 0) return 99;
-    return n;
   }
 }
