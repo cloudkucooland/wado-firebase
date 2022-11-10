@@ -8,6 +8,7 @@ import json from "@rollup/plugin-json";
 import serve from "rollup-plugin-serve";
 import css from "rollup-plugin-css-only";
 import replace from "@rollup/plugin-replace";
+import svg from "rollup-plugin-svg";
 
 import { createFilter } from "@rollup/pluginutils";
 
@@ -90,6 +91,8 @@ export default [
         sourceMap: sourcemap,
         inlineSources: true,
       }),
+
+      svg(),
 
       replace({
         preventAssignment: true,

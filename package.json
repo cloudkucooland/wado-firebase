@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/cloudkucooland/wado-firebase#readme",
   "devDependencies": {
+    "@ckeditor/ckeditor5-source-editing": "^35.3.0",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
@@ -38,6 +39,7 @@
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-svelte": "^7.0.0",
+    "rollup-plugin-svg": "^2.0.0",
     "rollup-plugin-terser": "^7.0.0",
     "svelte": "^3.0.0",
     "svelte-check": "^2.0.0",
