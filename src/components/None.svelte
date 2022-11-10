@@ -4,7 +4,6 @@
   import Rubric from "./Rubric.svelte";
 
   export let proper;
-  console.debug("None with Proper: ", proper);
 </script>
 
 <Rubric>At the hour when Jesus died on the cross, we pray.</Rubric>
@@ -28,7 +27,7 @@
 <Silence>A brief time of silent prayer</Silence>
 
 <h3>The Lord's Prayer</h3>
-<Location name="GENERAL-LORDS" {proper} />
+<Location bold="true" name="GENERAL-LORDS" {proper} />
 
 <h3>Concluding Prayer</h3>
 <Location name="NONE-CONCLUDING" {proper} />

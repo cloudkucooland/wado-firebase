@@ -14,6 +14,7 @@
 {#if $showEdit}<div class="edit">
     <a href="#/edit/{id}">[Edit: {l.name}]</a>
   </div>{/if}
+<h5>{l.name}</h5>
 <div class={cssclass}>{@html l.body}</div>
 {#if $showMedia && l.media}<div class="media">{l.media}</div>{/if}
 

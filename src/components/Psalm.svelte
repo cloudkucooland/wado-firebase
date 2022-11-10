@@ -3,7 +3,6 @@
   import psalm from "../model/psalm";
 
   export let data;
-  export let bold;
   export let id;
 
   const p = new psalm(data);
@@ -12,8 +11,9 @@
 {#if $showEdit}<div class="edit">
     <a href="#/edit/{id}">[Edit: {p.name}]</a>
   </div>{/if}
-<div class="psalm" {bold}>{@html p.body}</div>
-{#if typeof p.author !== "undefined"}
+<h5>{p.name}</h5>
+<div class="psalm">{@html p.body}</div>
+{#if p.author}
   <div class="credit">{p.author}</div>
 {/if}
 {#if $showMedia && p.media}

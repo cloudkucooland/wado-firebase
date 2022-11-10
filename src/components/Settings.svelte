@@ -43,6 +43,9 @@
                   showMedia.set(e.target.checked);
                 }}
               />
+              <div>
+                This isn't used yet, but will be once we start supporting media
+              </div>
             </FormGroup>
             <FormGroup>
               <Label for="showEdit">Show Edit Links</Label>
@@ -54,6 +57,9 @@
                   showEdit.set(e.target.checked);
                 }}
               />
+              <div>
+                Turn on displaying links on the main pages for editing elements.
+              </div>
             </FormGroup>
             <FormGroup>
               <Label for="offline">Store Offline Data</Label>
@@ -65,6 +71,14 @@
                   offline.set(e.target.checked);
                 }}
               />
+              <div>
+                If you need to use WADO when you don't have data service, enable
+                this and reload the main page. This will use a lot of data on
+                the first load, and it will be slow until the entire load is
+                complete. Do not enable this on "always connected" devices
+                (desktop computers) since it won't do anything useful, but will
+                increases server load/costs.
+              </div>
             </FormGroup>
           </Form>
         </CardBody>

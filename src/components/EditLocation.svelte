@@ -132,7 +132,11 @@
                   <td>{v.Year}</td>
                   <td>{v.Weight}</td>
                   <td>
-                    <Button on:click={toggleDeleteOpen} value={k} color="warning">
+                    <Button
+                      on:click={toggleDeleteOpen}
+                      value={k}
+                      color="warning"
+                    >
                       Delete
                     </Button>
                   </td>
@@ -162,4 +166,3 @@
     </Button>
   </ModalFooter>
 </Modal>
-

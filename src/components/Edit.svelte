@@ -54,7 +54,7 @@
       ],
     },
   };
-        // "sourceEditing",
+  // "sourceEditing",
 
   import association from "../model/association";
   import prayer from "../model/prayer";
@@ -162,6 +162,7 @@
       const d = toEdit.data();
 
       const c = getClass(d.Class);
+      if (!c || typeof c == "undefined") console.log(d.Class);
       prayerData = new c(d);
 
       const q = query(

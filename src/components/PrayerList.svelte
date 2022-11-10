@@ -12,7 +12,8 @@
     ModalHeader,
     ModalBody,
     ModalFooter,
-    Nav, NavLink
+    Nav,
+    NavLink,
   } from "sveltestrap";
   import {
     collection,
@@ -25,14 +26,14 @@
     orderBy,
     getCountFromServer,
   } from "firebase/firestore";
-  import { db, recordEvent } from "../firebase";
+  import { db, recordEvent, isEditor } from "../firebase";
   import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
 
   export let params = { c };
-  const c = params.c? params.c: "prayer";
+  $: prayerClass = params.c ? params.c : "prayer";
   $: prayers = new Map();
   let editorPerm = false;
   let modalId = "exnihilo";
@@ -57,7 +58,7 @@
       console.log(err);
       toasts.error(err.message);
     }
-    const newPrayers= new Array();
+    const newPrayers = new Array();
     for (const p of prayers) {
       if (p.id != e.target.value) {
         newPrayers.push(p);
@@ -68,50 +69,61 @@
   }
 
   // https://github.com/firebase/snippets-web/blob/36740fb2c39383621c0c0a948236e9eab8a71516/snippets/firestore-next/test-firestore/paginate.js#L8-L23
-  async function loadClass() {
+  async function loadClass(pc) {
+    console.log("loadclass", pc);
+    const m = new Map();
     try {
       const q = query(
         collection(db, "prayers"),
-        where("Class", "==", c),
+        where("Class", "==", pc),
         orderBy("Name")
       );
       const res = await getDocs(q);
       for (const a of res.docs) {
         const p = new prayer(a.data());
 
-        const assq = query(collection(db, "associations"), where("Reference", "==", doc(db, "prayers", a.id)));
-        const snap = await getCountFromServer(assq);
-        p._assCount = snap.data().count;
+        // this is SLOW (getCountFromServer)
+        p._assCount = 0;
+        // const assq = query(collection(db, "associations"), where("Reference", "==", doc(db, "prayers", a.id)));
+        // const snap = await getCountFromServer(assq);
+        // p._assCount = snap.data().count;
 
         // cleanup the prayers & assn here
 
-        prayers.set(a.id, p);
+        m.set(a.id, p);
       }
-
-      prayers = prayers;
     } catch (e) {
       console.log(e);
     }
+    return m;
   }
 
   onMount(async () => {
-    recordEvent("screen_view", { firebase_screen: "PrayerList", id: c });
-    await loadClass();
-    // editorPerm = await isEditor();
+    prayers = await loadClass(prayerClass);
+    recordEvent("screen_view", {
+      firebase_screen: "PrayerList",
+      id: prayerClass,
+    });
+    editorPerm = await isEditor();
   });
 </script>
 
 <Container>
   <Nav>
     {#each cs as cx}
-      <NavLink href="#/prayers/{cx}/">{cx}</NavLink>
+      <NavLink
+        href="#/prayers/{cx}/"
+        on:click={async () => {
+          prayers = await loadClass(cx);
+        }}>{cx}</NavLink
+      >
     {/each}
   </Nav>
-<p>Loading might take a bit... be patient until I can make it better</p>
+  <p>Loading might take a bit... be patient until I can make it better</p>
   <Row>
     <Col>
       <Card>
-        <CardHeader>{c}</CardHeader>
+        <CardHeader>{prayerClass}</CardHeader>
         <CardBody>
           <Table>
             <thead>
@@ -135,9 +147,15 @@
                   <td>{v.reviewed}</td>
                   <td>{v._assCount}</td>
                   <td>
-                    <Button on:click={toggleDeleteOpen} value={k} color="warning">
-                      Delete
-                    </Button>
+                    {#if isEditor}
+                      <Button
+                        on:click={toggleDeleteOpen}
+                        value={k}
+                        color="warning"
+                      >
+                        Delete
+                      </Button>
+                    {/if}
                   </td>
                 </tr>
               {/each}
@@ -165,4 +183,3 @@
     </Button>
   </ModalFooter>
 </Modal>
-

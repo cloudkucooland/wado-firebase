@@ -3,7 +3,6 @@
   import heartword from "../model/heartword";
 
   export let data;
-  export let bold;
   export let id;
 
   const hw = new heartword(data);
@@ -12,7 +11,7 @@
 {#if $showEdit}<div class="edit">
     <a href="#/edit/{id}">[Edit: {hw.name}]</a>
   </div>{/if}
-{#if bold}&nbsp{/if}
+<div class="heartword">Hear what the spirit is saying:</div>
 <div class="heartword">{@html hw.body}</div>
 {#if $showMedia && hw.media}<div class="media">{hw.media}</div>{/if}
 {#if typeof hw.author !== "undefined"}

@@ -28,6 +28,7 @@
     // setPersistence, browserLocalPersistence,
   } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
+  import Admin from "./components/Admin.svelte";
   import Settings from "./components/Settings.svelte";
   import Browse from "./components/Browse.svelte";
   import Edit from "./components/Edit.svelte";
@@ -37,6 +38,7 @@
 
   const routes = {
     "/": HomePage,
+    "/admin": Admin,
     "/settings": Settings,
     "/browse": Browse,
     "/office/:officeName": HomePage,
@@ -44,7 +46,7 @@
     "/edit/:id": Edit,
     "/editlocation/:id": EditLocation,
     "/prayers/:c": PrayerList,
-    "/lection/:location ": LectionList,
+    "/lection/:l": LectionList,
   };
 
   $: loggedIn = false;
@@ -115,16 +117,17 @@
       <Nav navbar>
         <NavItem><NavLink href="#/">WADO</NavLink></NavItem>
         {#if loggedIn}
+          <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
           <NavItem>
             <NavLink href="#" on:click={doLogout}>Log Out</NavLink>
           </NavItem>
         {:else}
-          <NavItem>
+          <!-- <NavItem>
             <NavLink href="#" on:click={doFBLogin}>Facebook Login</NavLink>
-          </NavItem>
+          </NavItem> -->
           <NavItem>
-            <NavLink href="#" on:click={doGLogin}>Google Login</NavLink>
+            <NavLink href="#" on:click={doGLogin}>Login</NavLink>
           </NavItem>
         {/if}
         <NavItem>
