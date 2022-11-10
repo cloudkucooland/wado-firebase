@@ -129,17 +129,18 @@ export const seasonLUT = new Map([
   ["ascensioneve", "12"],
   ["ascension", "13"],
   ["greatfifty", "14"],
-  ["pentecost", "15"],
-  ["afterpentecost", "16"],
-  ["trinity", "17"],
-  ["afterpentecost", "18"],
-  ["beforeadvent", "19"],
-  ["christking", "20"],
-  ["beforeadvent", "21"],
-  ["advent", "22"],
-  ["christmaseve", "23"],
-  ["christmasday", "24"],
-  ["christmas", "25"],
+  ["pentecosteve", "15"],
+  ["pentecost", "16"],
+  ["afterpentecost", "17"],
+  ["trinity", "18"],
+  ["afterpentecost", "19"],
+  ["beforeadvent", "20"],
+  ["christking", "21"],
+  ["beforeadvent", "22"],
+  ["advent", "23"],
+  ["christmaseve", "24"],
+  ["christmasday", "25"],
+  ["christmas", "26"],
   ["Any", "99"],
 ]);
 
@@ -195,5 +196,9 @@ export const classes = new Map([
 ]);
 
 export function getClass(className: string) {
+  if (!classes.has(className)) {
+    console.log("invalid class", className);
+    className = "prayer";
+  }
   return classes.get(className);
 }
