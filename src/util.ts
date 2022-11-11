@@ -186,6 +186,7 @@ import psalm from "./model/psalm";
 import hymn from "./model/hymn";
 import lection from "./model/lection";
 import heartword from "./model/heartword";
+import antiphon from "./model/antiphon";
 
 export const classes = new Map([
   ["prayer", prayer],
@@ -193,6 +194,7 @@ export const classes = new Map([
   ["hymn", hymn],
   ["lection", lection],
   ["heartword", heartword],
+  ["antiphon", antiphon],
 ]);
 
 export function getClass(className: string) {
