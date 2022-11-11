@@ -10,33 +10,29 @@
     FormGroup,
     Label,
     Input,
+    Table,
   } from "sveltestrap";
+  import { tick } from "svelte";
   import { locations } from "../util";
   import { collection, query, where, getDocs } from "firebase/firestore";
   import { db } from "../firebase";
   import BrowseItem from "./BrowseItem.svelte";
   import association from "../model/association";
 
-  let isOpen = false;
   let location = "Any";
-  let associations = [];
 
-  async function requery() {
-    isOpen = false;
-    associations = [];
+  async function requery(l) {
+    const newAssoc = new Array();
 
-    const q = query(
-      collection(db, "associations"),
-      where("Location", "==", location)
-    );
+    const q = query(collection(db, "associations"), where("Location", "==", l));
 
     const res = await getDocs(q);
     res.forEach((a) => {
       const ax = new association(a);
-      associations.push(ax);
+      newAssoc.push(ax);
     });
 
-    isOpen = true;
+    return newAssoc;
   }
 </script>
 
@@ -51,13 +47,7 @@
           <Form>
             <FormGroup>
               <Label for="locations">Location</Label>
-              <Input
-                type="select"
-                name="locations"
-                id="locations"
-                bind:value={location}
-                on:change={requery}
-              >
+              <Input type="select" name="locations" bind:value={location}>
                 <option>Any</option>
                 {#each locations as L}
                   <option>{L}</option>
@@ -67,25 +57,28 @@
           </Form>
         </CardBody>
       </Card>
+      <Card>
+        <CardHeader>{location}</CardHeader>
+        <CardBody>
+          <Table>
+            <thead>
+              <tr>
+                <th>Prayer</th>
+                <th>Licensed</th>
+                <th>Reviewed</th>
+                <th>Class</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#await requery(location) then ax}
+                {#each ax as a}
+                  <BrowseItem association={a} />
+                {/each}
+              {/await}
+            </tbody>
+          </Table>
+        </CardBody>
+      </Card>
     </Col>
   </Row>
-  {#if isOpen}
-    <Row>
-      <Col>
-        <Card>
-          <CardHeader>
-            <h1>Results in {location}</h1>
-          </CardHeader>
-          <CardBody />
-        </Card>
-      </Col>
-    </Row>
-    {#each associations as a}
-      <Row>
-        <Col>
-          <BrowseItem association={a} />
-        </Col>
-      </Row>
-    {/each}
-  {/if}
 </Container>

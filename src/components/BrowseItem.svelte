@@ -10,46 +10,19 @@
   import { getDoc } from "firebase/firestore";
 
   export let association;
-  let name = "loading";
-  let body = "loading";
   let id = "unset";
-  let copyright;
+  let d = { Name: "Loading", License: false, Reviewed: false, Class: "prayer" };
 
   onMount(async () => {
-    const doc = await getDoc(association.reference);
+    const doc = await getDoc(association.Reference);
     id = doc.id;
-    const d = doc.data();
-    name = d.Name;
-    body = d.Body;
-    copyright = d.Copyright;
+    d = doc.data();
   });
 </script>
 
-<Card class="mb-2">
-  <CardHeader>
-    <h2><a href="#/edit/{id}">{name}</a></h2>
-  </CardHeader>
-  <CardSubtitle>
-    <div>Association: {association.id}</div>
-    {#if association.season}
-      <div>Season: {association.season}</div>
-    {/if}
-    {#if association.proper}
-      <div>Proper: {association.proper}</div>
-    {/if}
-    {#if association.week}
-      <div>Week: {association.week}</div>
-    {/if}
-    {#if association.weight}
-      <div>Weight: {association.weight}</div>
-    {/if}
-  </CardSubtitle>
-  <CardBody class="card-body">
-    {@html body}
-  </CardBody>
-  <CardFooter>
-    {#if copyright}
-      <div>{copyright}</div>
-    {/if}
-  </CardFooter>
-</Card>
+<tr>
+  <td><a href="#/edit/{id}">{d.Name}</a> </td>
+  <td>{d.License}</td>
+  <td>{d.Reviewed}</td>
+  <td>{d.Class}</td>
+</tr>
