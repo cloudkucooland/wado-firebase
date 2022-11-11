@@ -34,7 +34,7 @@
         <CardBody>
           <Form>
             <FormGroup>
-              <Label for="showMedia">Show Media Links</Label>
+              <Label for="showMedia">Show Media</Label>
               <Input
                 name="showMedia"
                 id="showMedia"
@@ -44,7 +44,7 @@
                 }}
               />
               <div>
-                This isn't used yet, but will be once we start supporting media
+                Show controls for items with attached media (recordings)
               </div>
             </FormGroup>
             <FormGroup>

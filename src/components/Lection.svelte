@@ -16,7 +16,7 @@
   </div>{/if}
 <h5>{l.name}</h5>
 <div class={cssclass}>{@html l.body}</div>
-{#if $showMedia && l.media}<div class="media">{l.media}</div>{/if}
+{#if $showMedia && l.media}<audio controls><source src={l.media} /></audio>{/if}
 
 <style>
   div.lection {

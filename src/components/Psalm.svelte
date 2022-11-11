@@ -19,9 +19,7 @@
 {#if p.author}
   <div class="credit">{p.author}</div>
 {/if}
-{#if $showMedia && p.media}
-  <div class="media">{p.media}</div>
-{/if}
+{#if $showMedia && p.media}<audio controls><source src={p.media} /></audio>{/if}
 
 <style>
   div.psalm {

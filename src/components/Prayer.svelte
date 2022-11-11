@@ -18,10 +18,10 @@
     <a href="#/edit/{id}">[Edit: {p.name}]</a>
   </div>{/if}
 <div class={cssClass}>{@html p.body}</div>
-{#if $showMedia && p.media}<div class="media">{p.media}</div>{/if}
 {#if typeof p.author !== "undefined"}
   <div class="credit">{p.author}</div>
 {/if}
+{#if $showMedia && p.media}<audio controls><source src={p.media} /></audio>{/if}
 
 <style>
   div.prayer {

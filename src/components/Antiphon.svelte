@@ -12,10 +12,11 @@
     <a href="#/edit/{id}">[Edit: {ant.name}]</a>
   </div>{/if}
 <div class="antiphon">{@html ant.body}</div>
-{#if $showMedia && ant.media}<div class="media">{ant.media}</div>{/if}
 {#if ant.author}
   <div class="credit">{ant.author}</div>
 {/if}
+{#if $showMedia && ant.media}<audio controls><source src={ant.media} /></audio
+  >{/if}
 
 <style>
   div.antiphon {

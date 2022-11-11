@@ -13,10 +13,11 @@
   </div>{/if}
 <div class="heartword">Hear what the spirit is saying:</div>
 <div class="heartword">{@html hw.body}</div>
-{#if $showMedia && hw.media}<div class="media">{hw.media}</div>{/if}
 {#if typeof hw.author !== "undefined"}
   <div class="credit">{hw.author}</div>
 {/if}
+{#if $showMedia && hw.media}<audio controls><source src={hw.media} /></audio
+  >{/if}
 
 <style>
   div.heartword {

@@ -21,7 +21,7 @@
     <span class="hymnmeter">{h.hymnmeter}</span>
   {/if}
 </div>
-{#if $showMedia && h.media}<div class="media">{h.media}</div>{/if}
+{#if $showMedia && h.media}<audio controls><source src={h.media} /></audio>{/if}
 
 <style>
   div.hymn {
