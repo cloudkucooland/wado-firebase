@@ -13,7 +13,7 @@
   </div>{/if}
 <h5>{p.name}</h5>
 {#if p.rubric}
-<div class="psalm-rubric">{p.rubric}</div>
+  <div class="psalm-rubric">{p.rubric}</div>
 {/if}
 <div class="psalm">{@html p.body}</div>
 {#if p.author}
