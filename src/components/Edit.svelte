@@ -32,6 +32,7 @@
   import { locations, seasons, classes, getClass } from "../util";
   import { toasts } from "svelte-toasts";
   import { onMount } from "svelte";
+  import EditMedia from "./EditMedia.svelte";
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
@@ -400,6 +401,7 @@
                 {/if}
               </Col>
             </Row>
+            <EditMedia {id} media={prayerData.media} />
           </Container>
         </CardBody>
       </Card>

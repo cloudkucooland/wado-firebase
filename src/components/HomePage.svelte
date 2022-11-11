@@ -12,6 +12,7 @@
     FormGroup,
     Input,
   } from "sveltestrap";
+  import { tick } from "svelte";
   import proper from "../model/proper";
   import { recordEvent } from "../firebase";
   import { getOffice, offices } from "../util";
@@ -48,6 +49,8 @@
   // this shouldn't be needed, but bind isn't working below
   function setDate(e) {
     officeDate = e.srcElement.value;
+    // forProper is reactive
+    office = getOffice(officeName);
   }
 </script>
 
@@ -60,8 +63,7 @@
     {#each offices as o}
       <NavLink href="#/office/{o}/date/{officeDate}">{o}</NavLink>
     {/each}
-    <FormGroup
-      ><!-- try bind again without Form> -->
+    <FormGroup>
       <Input type="date" on:change={setDate} />
     </FormGroup>
   </Nav>
