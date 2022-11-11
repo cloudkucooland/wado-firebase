@@ -198,6 +198,10 @@
       editedData["Hymn Meter"] = document.getElementById("hymnmeter").value;
     }
 
+    if (prayerData.class == "psalm") {
+      editedData.Antiphon = document.getElementById("psalmrubric").value;
+    }
+
     // convert to class type, then back to store, for cleanup
     const c = getClass(editedData.Class);
     const n = new c(editedData);
@@ -290,6 +294,21 @@
                       name="hymnmeter"
                       id="hymnmeter"
                       value={prayerData.hymnmeter}
+                      disabled={!editorPerm}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+            {/if}
+            {#if prayerData.class == "psalm"}
+              <Row>
+                <Col>
+                  <FormGroup>
+                    <Label for="psalmrubric">Hymn Tune</Label>
+                    <Input
+                      name="psalmrubric"
+                      id="psalmrubric"
+                      value={prayerData.rubric}
                       disabled={!editorPerm}
                     />
                   </FormGroup>
