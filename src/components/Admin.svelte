@@ -100,11 +100,6 @@
     <Col>
       <h2>Known Bugs/Quirks/Issues</h2>
       <div>
-        When editing a prayer, edit the body first. If the body is changed after
-        other things (such as the name, or author) the other changes will be
-        reverted when the body is edited.
-      </div>
-      <div>
         soft-breaks (shift-enter) doesn't work in the body on macOS (untested on
         windows). Edit the prayer in your word processor, copy-and-paste into
         the WADO editor
