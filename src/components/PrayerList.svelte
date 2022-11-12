@@ -53,7 +53,21 @@
     deleteModalOpen = !deleteModalOpen;
 
     try {
-      await deleteDoc(doc(db, "prayers", e.target.value));
+      const toDelete = doc(db, "prayers", e.target.value);
+
+      // remove associations for this prayer -- not tested yet
+      console.debug("removing associations on delete is not tested yet...");
+      const q = query(
+        collection(db, "associations"),
+        where("Reference", "==", toDelete)
+      );
+      const querySnapshot = await getDocs(q);
+      for (const asn of querySnapshot) {
+        console.log("deleting association", asn);
+        await deleteDoc(doc(db, "associations", asn.id));
+      }
+
+      await deleteDoc(toDelete);
     } catch (err) {
       console.log(err);
       toasts.error(err.message);

@@ -12,6 +12,7 @@
 {#if $showEdit}<div class="edit">
     <a href="#/edit/{id}">[Edit: {ant.name}]</a>
   </div>{/if}
+<h6>Antiphon</h6>
 <div class="antiphon">{@html ant.body}</div>
 {#if ant.author}
   <div class="credit">{ant.author}</div>
@@ -28,9 +29,8 @@
   }
   div.credit {
     font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 1em;
-    padding-left: 1em;
-    text-indent: -1em;
+    font-style: italic;
+    text-align: right;
+    font-variant: small-caps;
   }
 </style>

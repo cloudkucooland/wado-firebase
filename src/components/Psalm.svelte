@@ -26,13 +26,12 @@
   div.psalm {
     font-family: Georgia, serif;
     line-height: 1.5em;
-    margin-bottom: 2em;
+    margin-bottom: 1.5em;
   }
   div.psalm-rubric {
     font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 2em;
-    font-weight: italic;
+    font-style: italic;
+    text-align: center;
   }
   div.credit {
     font-family: Georgia, serif;

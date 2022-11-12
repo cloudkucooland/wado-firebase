@@ -177,33 +177,9 @@
 
   async function saveChanges() {
     recordEvent("save_prayer", { id: id });
-    const editedData = {
-      Name: document.getElementById("name").value,
-      Class: document.getElementById("class").value,
-      Body: prayerData.body,
-      License: document.getElementById("license").checked,
-      Reviewed: document.getElementById("reviewed").checked,
-      "Last Editor": auth.currentUser.displayName,
-      "Last Edited": new Date().toUTCString(),
-      Author: document.getElementById("author").value,
-    };
-
-    // currently displayed
-    if (prayerData.class == "hymn") {
-      editedData["Hymn Tune"] = document.getElementById("hymntune").value;
-      editedData["Hymn Meter"] = document.getElementById("hymnmeter").value;
-    }
-
-    if (prayerData.class == "psalm") {
-      editedData.Antiphon = document.getElementById("psalmrubric").value;
-    }
-
-    // convert to class type, then back to store, for cleanup
-    const c = getClass(editedData.Class);
-    const n = new c(editedData);
 
     try {
-      await setDoc(doc(db, "prayers", id), n.toFirebase());
+      await setDoc(doc(db, "prayers", id), prayerData.toFirebase());
       toasts.success("Saved Prayer", id);
     } catch (err) {
       console.error(err);
@@ -300,7 +276,7 @@
               <Row>
                 <Col>
                   <FormGroup>
-                    <Label for="psalmrubric">Hymn Tune</Label>
+                    <Label for="psalmrubric">Psalm Rubric</Label>
                     <Input
                       name="psalmrubric"
                       id="psalmrubric"

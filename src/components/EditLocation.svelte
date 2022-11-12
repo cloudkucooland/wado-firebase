@@ -63,6 +63,7 @@
   }
 
   async function loadLocation() {
+    const newAssn = new Map();
     try {
       const q = query(
         collection(db, "associations"),
@@ -72,29 +73,35 @@
       for (const a of res.docs) {
         const n = new association(a);
 
+        if (!n.Reference || n.Reference == "FIXME") {
+          console.error("bad reference, deleting association");
+          deleteDoc(doc(db, "associations", n.id)); // no need to await here
+          toasts.info("Deleting Invalid Association", n.id);
+          continue;
+        }
+
         const rawprayer = await getDoc(n.Reference);
         if (!rawprayer || !rawprayer.exists()) {
-          console.log("bad reference, deleting association");
+          console.error("bad reference, deleting association");
           deleteDoc(doc(db, "associations", n.id)); // no need to await here
           toasts.info("Deleting Invalid Association", n.id);
           continue;
         }
         const pp = new prayer(rawprayer.data());
         n._PrayerName = pp.name;
-        associations.set(a.id, n);
+        newAssn.set(a.id, n);
       }
 
       // now that the full list is built, sort it
-      associations = new Map([...associations].sort(association.sort));
-    } catch (e) {
-      console.log(e);
+      associations = new Map([...newAssn].sort(association.sort));
+    } catch (error) {
+      console.log(error);
     }
   }
 
   onMount(async () => {
     recordEvent("screen_view", { firebase_screen: "EditLocation", id: id });
     await loadLocation();
-    // editorPerm = await isEditor();
   });
 </script>
 

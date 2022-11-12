@@ -16,6 +16,11 @@
   onMount(async () => {
     const doc = await getDoc(association.Reference);
     id = doc.id;
+    if (!doc || !doc.exists()) {
+      console.log("reference does not exist");
+      d = { Name: "Failed", License: false, Reviewed: false, Class: "prayer" };
+      return;
+    }
     d = doc.data();
   });
 </script>

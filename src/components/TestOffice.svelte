@@ -21,3 +21,8 @@
 
 <h3>The Lord's Prayer max=5</h3>
 <Location name="GENERAL-LORDS" max="5" {proper} />
+
+<h3>Antiphon test</h3>
+<Location name="LAUDS-PSALTER-ANTIPHON" {proper} />
+<Location name="LAUDS-PSALM" {proper} />
+<Location name="LAUDS-PSALTER-ANTIPHON" {proper} />

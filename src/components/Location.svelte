@@ -16,6 +16,7 @@
   import Lection from "./Lection.svelte";
   import Prayer from "./Prayer.svelte";
   import Psalm from "./Psalm.svelte";
+  import Antiphon from "./Antiphon.svelte";
   import { showEdit } from "../model/preferences";
 
   export let name;
@@ -27,6 +28,7 @@
 
   const order = "Weight";
 
+  // XXX this belongs in util.ts
   export const lookup = new Map([
     ["heartwords", Heartwords],
     ["other", Prayer],
@@ -34,6 +36,7 @@
     ["lection", Lection],
     ["prayer", Prayer],
     ["psalm", Psalm],
+    ["antiphon", Antiphon],
   ]);
 
   // this needs to be refactored
@@ -182,7 +185,8 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size == 0) console.debug("location only", m.size, name);
+
+    if (m.size == 0) console.debug("no results found for", name);
 
     return m;
   }

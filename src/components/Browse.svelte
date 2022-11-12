@@ -44,6 +44,7 @@
           <h1>Browse</h1>
         </CardHeader>
         <CardBody>
+          <div><a href="#/editlocation/{location}">Edit {location}</a></div>
           <Form>
             <FormGroup>
               <Label for="locations">Location</Label>
