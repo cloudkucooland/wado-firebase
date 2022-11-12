@@ -1,5 +1,6 @@
 <script>
-  import { showMedia, showEdit } from "../model/preferences";
+  import { showEdit } from "../model/preferences";
+  import Media from "./Media.svelte";
   import lection from "../model/lection";
 
   export let data;
@@ -16,7 +17,7 @@
   </div>{/if}
 <h5>{l.name}</h5>
 <div class={cssclass}>{@html l.body}</div>
-{#if $showMedia && l.media}<audio controls><source src={l.media} /></audio>{/if}
+<Media mediaUrl={l.media} />
 
 <style>
   div.lection {

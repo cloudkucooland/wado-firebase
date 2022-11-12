@@ -1,5 +1,6 @@
 <script>
-  import { showMedia, showEdit } from "../model/preferences";
+  import { showEdit } from "../model/preferences";
+  import Media from "./Media.svelte";
   import prayer from "../model/prayer";
 
   export let data;
@@ -18,10 +19,8 @@
     <a href="#/edit/{id}">[Edit: {p.name}]</a>
   </div>{/if}
 <div class={cssClass}>{@html p.body}</div>
-{#if typeof p.author !== "undefined"}
-  <div class="credit">{p.author}</div>
-{/if}
-{#if $showMedia && p.media}<audio controls><source src={p.media} /></audio>{/if}
+{#if p.author}<div class="credit">{p.author}</div>{/if}
+<Media mediaUrl={p.media} />
 
 <style>
   div.prayer {

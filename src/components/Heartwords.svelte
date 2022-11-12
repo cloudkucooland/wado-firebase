@@ -1,5 +1,6 @@
 <script>
-  import { showMedia, showEdit } from "../model/preferences";
+  import { showEdit } from "../model/preferences";
+  import Media from "./Media.svelte";
   import heartword from "../model/heartword";
 
   export let data;
@@ -16,8 +17,7 @@
 {#if typeof hw.author !== "undefined"}
   <div class="credit">{hw.author}</div>
 {/if}
-{#if $showMedia && hw.media}<audio controls><source src={hw.media} /></audio
-  >{/if}
+<Media mediaUrl={hw.media} />
 
 <style>
   div.heartword {

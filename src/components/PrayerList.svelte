@@ -38,7 +38,7 @@
   let editorPerm = false;
   let modalId = "exnihilo";
 
-  const cs = new Array("prayer", "hymn", "psalm");
+  const cs = new Array("prayer", "hymn", "psalm", "antiphon");
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {

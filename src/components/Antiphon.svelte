@@ -1,5 +1,6 @@
 <script>
-  import { showMedia, showEdit } from "../model/preferences";
+  import { showEdit } from "../model/preferences";
+  import Media from "./Media.svelte";
   import antiphon from "../model/antiphon";
 
   export let data;
@@ -15,8 +16,7 @@
 {#if ant.author}
   <div class="credit">{ant.author}</div>
 {/if}
-{#if $showMedia && ant.media}<audio controls><source src={ant.media} /></audio
-  >{/if}
+<Media mediaUrl={ant.media} />
 
 <style>
   div.antiphon {

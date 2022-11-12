@@ -1,5 +1,6 @@
 <script>
-  import { showMedia, showEdit } from "../model/preferences";
+  import { showEdit } from "../model/preferences";
+  import Media from "./Media.svelte";
   import psalm from "../model/psalm";
 
   export let data;
@@ -19,7 +20,7 @@
 {#if p.author}
   <div class="credit">{p.author}</div>
 {/if}
-{#if $showMedia && p.media}<audio controls><source src={p.media} /></audio>{/if}
+<Media mediaUrl={p.media} />
 
 <style>
   div.psalm {

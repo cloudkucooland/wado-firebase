@@ -1,5 +1,6 @@
 <script>
-  import { showMedia, showEdit } from "../model/preferences";
+  import { showEdit } from "../model/preferences";
+  import Media from "./Media.svelte";
   import hymn from "../model/hymn";
 
   export let data;
@@ -21,7 +22,7 @@
     <span class="hymnmeter">{h.hymnmeter}</span>
   {/if}
 </div>
-{#if $showMedia && h.media}<audio controls><source src={h.media} /></audio>{/if}
+<Media mediaUrl={h.media} />
 
 <style>
   div.hymn {
