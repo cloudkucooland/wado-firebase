@@ -26,6 +26,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>User Settings</title>
+</svelte:head>
+
 <Container>
   <Row>
     <Col>

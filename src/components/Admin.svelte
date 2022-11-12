@@ -2,6 +2,10 @@
   import { Container, Col, Row } from "sveltestrap";
 </script>
 
+<svelte:head>
+  <title>WADO Admin</title>
+</svelte:head>
+
 <Container>
   <Row>
     <Col>

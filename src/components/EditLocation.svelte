@@ -105,6 +105,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>Edit Location: {id}</title>
+</svelte:head>
+
 <Container>
   <Row>
     <Col>

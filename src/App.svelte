@@ -108,7 +108,9 @@
   rel="stylesheet"
   href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
 />
-<svelte:head />
+<svelte:head>
+  <title>The Order of Saint Luke: Web Amplified Daily Office (WADO)</title>
+</svelte:head>
 
 <header>
   <Navbar container={false} color="dark" dark expand="lg">

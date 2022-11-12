@@ -36,6 +36,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>Browse: {location}</title>
+</svelte:head>
+
 <Container>
   <Row>
     <Col>

@@ -10,8 +10,8 @@ export default class prayer {
   public class: string;
 
   public constructor(obj: any) {
-    this.name = obj.Name;
-    this.body = obj.Body;
+    this.name = obj.Name.trim();
+    this.body = obj.Body.trim();
     this.author = obj.Author;
     this.reviewed = obj.Reviewed ? obj.Reviewed : false;
     this.license = obj.License ? obj.License : false;
@@ -23,12 +23,12 @@ export default class prayer {
 
   public toFirebase() {
     return {
-      Name: this.name,
-      Body: this.body,
-      Author: this.author,
+      Name: this.name.trim(),
+      Body: this.body.trim(),
+      Author: this.author.trim(),
       Reviewed: this.reviewed,
       License: this.license,
-      "Last Editor": this.lastEditor,
+      "Last Editor": this.lastEditor.trim(),
       "Last Edited": this.lastEdited,
       Media: this.media,
       Class: this.class,

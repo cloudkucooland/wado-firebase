@@ -11,9 +11,9 @@ export default class psalm extends prayer {
 
   public toFirebase() {
     return {
-      Name: this.name,
-      Body: this.body,
-      Author: this.author,
+      Name: this.name.trim(),
+      Body: this.body.trim(),
+      Author: this.author.trim(),
       Reviewed: this.reviewed,
       License: this.license,
       "Last Editor": this.lastEditor,

@@ -55,7 +55,7 @@
 </script>
 
 <svelte:head>
-  <title>{officeName}: {forProper}</title>
+  <title>WADO: {officeName}: {forProper}</title>
 </svelte:head>
 
 <Container class="cover-container mx-auto">

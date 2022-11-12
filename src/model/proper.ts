@@ -20,11 +20,14 @@ export default class proper {
 
     this.setFeasts(+s[0]);
     this.getSeason(d);
-
-    // console.debug("proper", simple, this);
+    console.log("proper", this.propername);
   }
 
   public toString() {
+    return this.propername;
+  }
+
+  public fullName() {
     return (
       this.caldate +
       ": " +
@@ -38,7 +41,9 @@ export default class proper {
     );
   }
 
-  private WeekdayDisplay() {
+  private WeekdayDisplay(day?) {
+    if (!day) day = this.weekday;
+
     const days = new Map([
       [-1, "Any"],
       [0, "Sunday"],
@@ -49,7 +54,7 @@ export default class proper {
       [5, "Friday"],
       [6, "Saturday"],
     ]);
-    return days.get(this.weekday);
+    return days.get(day);
   }
 
   private addDays(d: Date, days: number) {
@@ -125,14 +130,11 @@ export default class proper {
   // https://stackoverflow.com/questions/8619879/javascript-calculate-the-day-of-the-year-1-366
   private getDayOfYear(d: Date) {
     const start: Date = new Date(d.getFullYear(), 0, 0);
-    // const diff: number = d.getTime() - start.getTime();
     const dif: number =
       d.getTime() -
       start.getTime() +
       (start.getTimezoneOffset() - d.getTimezoneOffset()) * 60 * 1000;
 
-    // const oneDay = 1000 * 60 * 60 * 24;
-    // console.log("getDayOfYear", Math.floor(diff / 86400000), diff, dif);
     return Math.floor(dif / 86400000);
   }
 
@@ -152,9 +154,8 @@ export default class proper {
     // determine the season, proper
     if (t < f("epiphany")) {
       this.season = "christmas";
-      let doc: number = this.getDayOfYear(today) - fdoy("christmas") + 1;
-      // this.propername = this.cardToOrd(doc) . ' day of Christmas';
-      this.proper = doc;
+      this.proper = this.getDayOfYear(today) - fdoy("christmas") + 366;
+      this.propername = this.cardToOrd(this.proper) + " day of Christmas";
     } else if (t >= f("epiphany") && t < f("epiphany") + nextday) {
       this.season = "epiphany";
       this.propername = "Epiphany";
@@ -163,7 +164,11 @@ export default class proper {
       this.season = "afterepiphany";
       const daysintoordtime = this.getDayOfYear(today) - fdoy("epiphany") + 1;
       const weeksintoordtime = Math.floor(daysintoordtime / 7) + 1;
-      // this.propername = this.cardToOrd($weeksintoordtime) . " " . $brev['date_g']['weekday'] . " after Epiphany";
+      this.propername =
+        this.cardToOrd(weeksintoordtime) +
+        " " +
+        this.WeekdayDisplay() +
+        " after Epiphany";
       this.proper = weeksintoordtime;
     } else if (t >= f("mardigras") && t < f("ashwednesday")) {
       this.season = "mardigras";
@@ -177,7 +182,11 @@ export default class proper {
       this.season = "lent";
       const daysintolent = this.getDayOfYear(today) - fdoy("ashwednesday") + 1;
       const weeksintolent = Math.floor(daysintolent / 7) + 1;
-      // this.propername       = this.cardToOrd($weeksintolent) . " " . this.['date_g']['weekday'] . " of Lent";
+      this.propername =
+        this.cardToOrd(weeksintolent) +
+        " " +
+        this.WeekdayDisplay() +
+        " of Lent";
       this.proper = weeksintolent;
     } else if (t >= f("palmsunday") && t < f("palmsunday") + nextday) {
       this.season = "palmsunday";
@@ -185,7 +194,7 @@ export default class proper {
       this.proper = 0;
     } else if (t > f("palmsunday") && t < f("maundythursday")) {
       this.season = "holyweek";
-      // this.propername       = this.['date_g']['weekday'] . " of Holy Week";
+      this.propername = this.WeekdayDisplay() + " of Holy Week";
       this.proper = 0;
     } else if (t >= f("maundythursday") && t < f("goodfriday")) {
       this.season = "maundythursday";
@@ -207,7 +216,11 @@ export default class proper {
       this.season = "greatfifty";
       const daysaftereaster = this.getDayOfYear(today) - (fdoy("easter") + 1);
       const weeksaftereaster = Math.floor(daysaftereaster / 7) + 1;
-      // this.propername = this.cardToOrd($weeksaftereaster) . " " . this.['date_g']['weekday'] . " of Eastertide";
+      this.propername =
+        this.cardToOrd(weeksaftereaster) +
+        " " +
+        this.WeekdayDisplay() +
+        " of Eastertide";
       this.proper = weeksaftereaster;
     } else if (t >= f("ascensioneve") && t < f("ascension")) {
       this.season = "ascensioneve";
@@ -219,7 +232,7 @@ export default class proper {
       this.proper = 0;
     } else if (t > f("ascension") && t < f("pentecost")) {
       this.season = "greatfifty";
-      // this.propername       = this.['date_g']['weekday'] . " after Ascension"; // this isn't right since it is 10 days...
+      this.propername = this.WeekdayDisplay() + " after Ascension"; // this isn't right since it is 10 days...
       const daysaftereaster = this.getDayOfYear(today) - (fdoy("easter") + 1);
       const weeksaftereaster = Math.floor(daysaftereaster / 7) + 1;
       this.proper = weeksaftereaster;
@@ -249,7 +262,8 @@ export default class proper {
       this.season = "beforeadvent";
       const daysafterp = this.getDayOfYear(today) - (fdoy("proper1") + 1);
       const weeksafterp = Math.floor(daysafterp / 7) + 1;
-      this.propername = "Proper " + weeksafterp + "; Before Advent";
+      this.propername =
+        "Proper " + weeksafterp + "; Before Advent - " + this.WeekdayDisplay();
       this.proper = weeksafterp;
     } else if (t >= f("christking") && t < f("christking") + nextday) {
       this.season = "christking";
@@ -259,7 +273,11 @@ export default class proper {
       this.season = "beforeadvent";
       const daysafterp = this.getDayOfYear(today) - (fdoy("pentecost") + 1);
       const weeksafterp = Math.floor(daysafterp / 7) + 1;
-      // this.propername       = this.cardToOrd($weeksafterp) . " " . this.['date_g']['weekday'] . " after Pentecost"; // XXX before advent
+      this.propername =
+        this.cardToOrd(weeksafterp) +
+        " " +
+        this.WeekdayDisplay() +
+        " after Pentecost"; // XXX before advent
       this.propername = "Proper " + weeksafterp;
       this.proper = weeksafterp;
     } else if (t >= f("advent") && t < f("christmaseve")) {
@@ -267,7 +285,11 @@ export default class proper {
       isnextlectyear = true;
       const daysaftera = this.getDayOfYear(today) - (fdoy("advent") + 1);
       const weeksaftera = Math.floor(daysaftera / 7) + 1;
-      // this.propername       = this.cardToOrd(weeksaftera) . " " . this.['date_g']['weekday'] . " of Advent";
+      this.propername =
+        this.cardToOrd(weeksaftera) +
+        " " +
+        this.WeekdayDisplay() +
+        " of Advent";
       this.proper = weeksaftera;
     } else if (t >= f("christmaseve") && t < f("christmas")) {
       this.season = "christmaseve";
@@ -282,13 +304,13 @@ export default class proper {
     } else if (t > f("christmas")) {
       this.season = "christmas";
       isnextlectyear = true;
-      // $doc                  = (t - f('christmas']) / nextday + 1;
-      // this.propername       = this.cardToOrd($doc) . ' day of Christmas';
-      // this.proper = $doc;
-      this.proper = 0;
+      this.proper = (t - f("christmas")) / nextday + 1;
+      this.propername = this.cardToOrd(this.proper) + " day of Christmas";
+      // this.proper = 0;
     } else {
       this.proper = 0;
       this.season = "unknown";
+      this.propername = "unknown";
       // die("impossible day? <br/>today: {t}</br>" . print_r($feast, TRUE) );
     }
 
@@ -325,7 +347,3 @@ export default class proper {
     return lut.get(card);
   }
 }
-
-/* 
-    this.['title'] = this.season . "-" . this.proper . "-" . this.['date_g']['weekday'] . "-" . this.['lectionaryyear'] . "-" . this.['template'] . "-" . date("h:i", time());
-  */
