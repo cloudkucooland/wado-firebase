@@ -79,11 +79,6 @@
     console.debug("deleting association", e.target.value);
     deleteModalOpen = !deleteModalOpen;
 
-    if (associations.length <= 1) {
-      toasts.error("Cannot delete last association, edit to UNSET");
-      return;
-    }
-
     try {
       await deleteDoc(doc(db, "associations", e.target.value));
     } catch (err) {
@@ -259,7 +254,7 @@
                   <Input
                     name="name"
                     id="name"
-                    value={prayerData.name}
+                    bind:value={prayerData.name}
                     disabled={!editorPerm}
                   />
                 </FormGroup>
@@ -283,7 +278,7 @@
                     <Input
                       name="hymntune"
                       id="hymntune"
-                      value={prayerData.hymntune}
+                      bind:value={prayerData.hymntune}
                       disabled={!editorPerm}
                     />
                   </FormGroup>
@@ -294,7 +289,7 @@
                     <Input
                       name="hymnmeter"
                       id="hymnmeter"
-                      value={prayerData.hymnmeter}
+                      bind:value={prayerData.hymnmeter}
                       disabled={!editorPerm}
                     />
                   </FormGroup>
@@ -309,7 +304,7 @@
                     <Input
                       name="psalmrubric"
                       id="psalmrubric"
-                      value={prayerData.rubric}
+                      bind:value={prayerData.rubric}
                       disabled={!editorPerm}
                     />
                   </FormGroup>
@@ -324,7 +319,7 @@
                     type="select"
                     name="class"
                     id="class"
-                    value={prayerData.class}
+                    bind:value={prayerData.class}
                     disabled={!editorPerm}
                   >
                     {#each [...classes] as [key, value]}
@@ -339,7 +334,7 @@
                   <Input
                     name="author"
                     id="author"
-                    value={prayerData.author}
+                    bind:value={prayerData.author}
                     disabled={!editorPerm}
                   />
                 </FormGroup>
@@ -351,7 +346,7 @@
                     name="lastEditor"
                     disabled="true"
                     id="lastEditor"
-                    value={prayerData.lastEditor}
+                    bind:value={prayerData.lastEditor}
                   />
                 </FormGroup>
               </Col>
@@ -362,7 +357,7 @@
                     name="lastEdited"
                     disabled="true"
                     id="lastEdited"
-                    value={prayerData.lastEdited}
+                    bind:value={prayerData.lastEdited}
                   />
                 </FormGroup>
               </Col>
@@ -375,7 +370,7 @@
                     type="checkbox"
                     name="license"
                     id="license"
-                    checked={prayerData.license}
+                    bind:checked={prayerData.license}
                     disabled={!editorPerm}
                   />
                 </FormGroup>
@@ -387,7 +382,7 @@
                     type="checkbox"
                     name="reviewed"
                     id="reviewed"
-                    checked={prayerData.reviewed}
+                    bind:checked={prayerData.reviewed}
                     disabled={!editorPerm}
                   />
                 </FormGroup>
