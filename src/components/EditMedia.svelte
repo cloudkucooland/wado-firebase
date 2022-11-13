@@ -29,6 +29,13 @@
         return;
       }
 
+      // rules on cloud storage only allow audio, but catch here first if possible
+      if (!file.type.startsWith("audio/")) {
+        button.disabled = true;
+        toasts.error("media must be an audio file");
+        return;
+      }
+
       button.disabled = false;
       // toasts.success("ready to upload");
     };
@@ -49,9 +56,23 @@
 
     const mediaRef = ref(storage, "media/" + id);
     const metadata = { contentType: file.type };
+    let paused = false;
 
     try {
       const uploadTask = uploadBytesResumable(mediaRef, file, metadata);
+      progressBar.onClick = () =>  {
+        console.log("progressBar clicked");
+        if (paused) {
+          uploadTask.resume();
+        } else {
+          uploadTask.pause();
+        }
+      }
+
+      progressBar.onRemove= () => {
+        console.log("progressBar removed");
+        uploadTask.cancel();
+      }
 
       // onClick handler to pause/resume
 
@@ -63,6 +84,7 @@
               progressBar.update({ title: "Paused" });
               progressBar.type = "warning";
               console.debug("Upload is paused");
+              paused = true;
               break;
             case "running":
               if (snapshot.bytesTransferred > 0) {
@@ -75,6 +97,7 @@
                 description: progressBarString,
               });
               progressBar.type = "success";
+              paused = false;
               break;
           }
         },
