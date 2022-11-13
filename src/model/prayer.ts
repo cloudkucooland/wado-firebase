@@ -10,8 +10,8 @@ export default class prayer {
   public class: string;
 
   public constructor(obj: any) {
-    this.name = obj.Name.trim();
-    this.body = obj.Body.trim();
+    this.name = obj.Name;
+    this.body = obj.Body;
     this.author = obj.Author;
     this.reviewed = obj.Reviewed ? obj.Reviewed : false;
     this.license = obj.License ? obj.License : false;
