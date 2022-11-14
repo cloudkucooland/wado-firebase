@@ -18,6 +18,7 @@
 
   let calDateSet = false;
   let selectedSeason = seasonLUT.get("Any");
+  let properName = "Proper";
 
   onMount(async () => {
     const d = await getDoc(doc(db, "associations", id));
@@ -29,6 +30,9 @@
     } else {
       calDateSet = false;
     }
+    properName = selectedSeason.properName
+      ? selectedSeason.properName
+      : "Proper";
   });
 
   afterUpdate(() => {
@@ -39,6 +43,9 @@
     } else {
       calDateSet = false;
     }
+    properName = selectedSeason.properName
+      ? selectedSeason.properName
+      : "Proper";
   });
 </script>
 
@@ -55,7 +62,7 @@
   </Row>
   <Row>
     <Col sm="3">Season</Col>
-    <Col sm="2">Proper</Col>
+    <Col sm="2">{properName} <span class="small">(-1 for "Any")</span></Col>
     <Col sm="3">Weekday</Col>
     <Col sm="2">Year</Col>
     <Col sm="2">Weight</Col>
@@ -114,7 +121,9 @@
   </Row>
   <Row>
     <Col sm="2">&nbsp;</Col>
-    <Col sm="8">(fixed-dates are very rare; "Any" to use season-relative dates)</Col>
+    <Col sm="8"
+      >(fixed-dates are very rare; "Any" to use season-relative dates)</Col
+    >
     <Col sm="2">&nbsp;</Col>
   </Row>
   <Row>

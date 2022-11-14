@@ -2,6 +2,7 @@ export default class season {
   public name: string;
   public position: number;
   public maxProper: number;
+  public properName: string;
   public useWeekdays: boolean;
   public color: string;
 
@@ -9,6 +10,7 @@ export default class season {
     this.name = obj.name;
     this.position = obj.position;
     this.maxProper = obj.maxProper;
+    this.properName = obj.properName;
     this.useWeekdays = obj.useWeekdays;
     this.color = obj.color;
   }
