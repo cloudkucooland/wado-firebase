@@ -1,4 +1,5 @@
-import { locations, seasons, seasonLUT } from "../util";
+import { locations, seasonLUT } from "../util";
+import type season from "./season";
 
 export default class association {
   public id: string;
@@ -10,34 +11,75 @@ export default class association {
   public Weight: number;
   public Year: string;
   public Reference: any;
+  private _dirty: boolean;
+  private _season: season;
 
   constructor(obj: any) {
     this.id = obj.id;
     const d = obj.data();
     // console.debug(d);
 
-    this.CalendarDate = d.CalendarDate ? d.CalendarDate : "Any";
-    // check to make sure in the format mm-dd
-
     this.Location = d.Location ? d.Location : "UNSET";
     if (locations.indexOf(this.Location) == -1) {
       console.error("invalid location detected", d.Location);
+      this._dirty = true;
       this.Location = "UNSET";
     }
 
-    this.Proper = d.Proper ? d.Proper : -1; // Any;
-    // make sure that proper is sane, e.g.
-    if (this.Proper < -1) this.Proper = -1;
-    if (this.Season == "christmas" && this.Proper > 12) this.Proper = 12;
+    // triggers a delete in the location editor -- probably not the best thing here
+    this.Reference = d.Reference ? d.Reference : "FIXME";
+    if (this.Reference === "FIXME") {
+      console.error("missing reference");
+      this._dirty = true;
+    }
+
+    this.CalendarDate = d.CalendarDate ? d.CalendarDate : "Any";
+    if (
+      (this.CalendarDate != "Any" && this.CalendarDate.length < 3) ||
+      this.CalendarDate.length > 5
+    ) {
+      console.error("invalid calendar date detected", this.CalendarDate);
+      this._dirty = true;
+      this.CalendarDate = "Any";
+      // check to make sure in the format mm-dd
+      // split on -, convert to numbers, rebuild
+    }
 
     this.Season = d.Season ? d.Season : "Any";
-    if (this.Season != "Any" && seasons.indexOf(this.Season) == -1) {
+    if (!seasonLUT.has(this.Season)) {
       console.error("invalid season detected", d.Season);
+      this._dirty = true;
       this.Season = "Any";
+    }
+    this._season = seasonLUT.get(this.Season);
+
+    this.Proper = d.Proper ? d.Proper : -1; // Any;
+    if (this.Proper < -1) {
+      console.debug("invalid proper detected", this.Proper);
+      this._dirty = true;
+      this.Proper = -1;
+    }
+    if (this.Proper > this._season.maxProper) {
+      console.debug(
+        "invalid proper detected",
+        this.Proper,
+        this._season.maxProper
+      );
+      this._dirty = true;
+      this.Proper = this._season.maxProper;
     }
 
     this.Weekday = d.Weekday ? +d.Weekday : -1; // Any
-    this.Weight = d.Weight ? +d.Weight : 1;
+    if (this.Weekday < -1 || this.Weekday > 6) {
+      console.debug("invalid weekday");
+      this._dirty = true;
+      this.Weekday = -1;
+    }
+    if (!this._season.useWeekdays && this.Weekday != -1) {
+      console.debug("weekday set on season that doesn't use weekdays");
+      this._dirty = true;
+      this.Weekday = -1;
+    }
 
     this.Year = d.Year ? d.Year : "Any";
     if (
@@ -45,11 +87,35 @@ export default class association {
       this.Year != "A" &&
       this.Year != "B" &&
       this.Year != "C"
-    )
+    ) {
+      console.debug("invalid year");
+      this._dirty = true;
       this.Year = "Any";
+    }
 
-    this.Reference = d.Reference ? d.Reference : "FIXME";
-    // console.log(d, this);
+    this.Weight = d.Weight ? +d.Weight : 1;
+
+    // ignore everything else if calendar date is set
+    if (this.CalendarDate != "Any") {
+      if (this.Season != "Any") {
+        this._dirty = true;
+        this.Season = "Any";
+      }
+      if (this.Proper != -1) {
+        this._dirty = true;
+        this.Proper = -1;
+      }
+      if (this.Weekday != -1) {
+        this._dirty = true;
+        this.Weekday = -1;
+      }
+      if (this.Year != "Any") {
+        this._dirty = true;
+        this.Year = "Any";
+      }
+    }
+
+    // if (this._dirty) console.error(d, this);
   }
 
   public toFirebase() {
@@ -113,7 +179,7 @@ export default class association {
     // instead of doing each value by hand, just turn it into an easily sortable string and do that
     // like, follow and subscribe for more kludgey life-hacks
     const astr =
-      seasonLUT.get(A.Season) +
+      seasonLUT.get(A.Season).position +
       " " +
       anyLastNumber(A.Proper) +
       " " +
@@ -123,7 +189,7 @@ export default class association {
       " " +
       A.Weight;
     const bstr =
-      seasonLUT.get(B.Season) +
+      seasonLUT.get(B.Season).position +
       " " +
       anyLastNumber(B.Proper) +
       " " +
