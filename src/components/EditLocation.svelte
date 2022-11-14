@@ -130,7 +130,7 @@
             </thead>
             <tbody>
               {#each [...associations] as [k, v]}
-                <tr id={k}>
+                <tr id={k} class={v.dirtyStyle}>
                   <td>
                     <a href="#/edit/{v.Reference.id}">
                       {v._PrayerName}

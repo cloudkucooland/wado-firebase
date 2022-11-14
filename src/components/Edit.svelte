@@ -108,12 +108,24 @@
     }
   }
 
-  function confirmEdit(e) {
+  async function confirmEdit(e) {
     recordEvent("edit_assoc", { id: id, assoc: e.target.value });
     editModalOpen = !editModalOpen;
 
     console.log("edit result", assocEditResult);
-    // write new data to firebase
+    await setDoc(
+      doc(db, "associations", e.target.value),
+      assocEditResult.toFirebase()
+    );
+    const newAssn = new Array();
+    for (const a of associations) {
+      if (a.id != e.target.value) {
+        newAssn.push(a);
+      }
+    }
+    newAssn.push(assocEditResult);
+    associations = newAssn;
+    toasts.success("Saved Association", e.target.value);
   }
 
   async function addAssoc(e) {
@@ -391,7 +403,7 @@
             </thead>
             <tbody>
               {#each associations as v}
-                <tr id={v.id}>
+                <tr id={v.id} class={v.dirtyStyle}>
                   <td>
                     <a href="#/editlocation/{v.Location}">{v.Location}</a>
                   </td>
@@ -509,3 +521,11 @@
     </Button>
   </ModalFooter>
 </Modal>
+
+<style>
+  tr.dirty {
+    background-color: yellow !important;
+  }
+  tr.clean {
+  }
+</style>

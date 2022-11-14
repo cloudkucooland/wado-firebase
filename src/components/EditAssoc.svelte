@@ -54,17 +54,6 @@
     </Col>
   </Row>
   <Row>
-    <Col sm="2">Calendar Date</Col>
-    <Col sm="10">
-      <Input bind:value={a.CalendarDate} placeholder="mm-dd" />
-    </Col>
-  </Row>
-  <Row>
-    <Col sm="5">&nbsp;</Col>
-    <Col sm="2">- OR -</Col>
-    <Col sm="5">&nbsp;</Col>
-  </Row>
-  <Row>
     <Col sm="3">Season</Col>
     <Col sm="2">Proper</Col>
     <Col sm="3">Weekday</Col>
@@ -121,6 +110,17 @@
         max={99}
         disabled={calDateSet}
       />
+    </Col>
+  </Row>
+  <Row>
+    <Col sm="2">&nbsp;</Col>
+    <Col sm="8">(fixed-dates are very rare; "Any" to use season-relative dates)</Col>
+    <Col sm="2">&nbsp;</Col>
+  </Row>
+  <Row>
+    <Col sm="2">Fixed Date</Col>
+    <Col sm="10">
+      <Input bind:value={a.CalendarDate} placeholder="mm-dd" />
     </Col>
   </Row>
 </Container>
