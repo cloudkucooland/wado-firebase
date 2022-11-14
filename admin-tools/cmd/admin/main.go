@@ -79,6 +79,24 @@ func revokeReviewed() {
 }
 
 func assocCleanup() {
-	// if caldate is set... clear everything else -- but Lectionary year for some reason
-	// clean up easter, and other single-day seasons, which can't have a proper
+	batch := fsclient.Batch()
+
+	iter := fsclient.Collection("associations").Where("Season", "==", "easter").Where("Location", "==", "LAUDS-LECTIONARY").Limit(500).Documents(context.Background())
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(doc.Ref.ID)
+		batch.Set(doc.Ref, map[string]interface{}{"Season": "greatfifty"}, firestore.MergeAll)
+	}
+
+	_, err := batch.Commit(context.Background())
+	if err != nil {
+		panic(err)
+	}
 }
+
