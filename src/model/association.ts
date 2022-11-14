@@ -200,4 +200,13 @@ export default class association {
       B.Weight;
     return astr.localeCompare(bstr);
   }
+
+  public get dirty() {
+    return this._dirty;
+  }
+
+  public get dirtyStyle() {
+    if (this._dirty) return "dirty";
+    return "clean";
+  }
 }

@@ -12,7 +12,7 @@ export default class prayer {
   public constructor(obj: any) {
     this.name = obj.Name;
     this.body = obj.Body;
-    this.author = obj.Author;
+    this.author = obj.Author ? obj.Author : "";
     this.reviewed = obj.Reviewed ? obj.Reviewed : false;
     this.license = obj.License ? obj.License : false;
     this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
@@ -25,10 +25,10 @@ export default class prayer {
     return {
       Name: this.name.trim(),
       Body: this.body.trim(),
-      Author: this.author.trim(),
+      Author: this.author,
       Reviewed: this.reviewed,
       License: this.license,
-      "Last Editor": this.lastEditor.trim(),
+      "Last Editor": this.lastEditor,
       "Last Edited": this.lastEdited,
       Media: this.media,
       Class: this.class,
