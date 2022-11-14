@@ -14,7 +14,7 @@
   } from "sveltestrap";
   import { tick } from "svelte";
   import proper from "../model/proper";
-  import { recordEvent } from "../firebase";
+  import { recordEvent, screenView } from "../firebase";
   import { getOffice, offices } from "../util";
 
   const now = new Date();
@@ -32,7 +32,7 @@
   $: office = getOffice(officeName);
   $: forProper = new proper(officeDate);
 
-  recordEvent("screen_view", { firebase_screen: officeName });
+  screenView(officeName);
 
   export function currentOffice() {
     const d = new Date();
@@ -48,6 +48,7 @@
 
   // this shouldn't be needed, but bind isn't working below
   function setDate(e) {
+    screenView(officeName);
     officeDate = e.srcElement.value;
     // forProper is reactive
     office = getOffice(officeName);

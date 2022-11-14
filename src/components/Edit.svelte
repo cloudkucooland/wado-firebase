@@ -28,11 +28,12 @@
     setDoc,
     deleteDoc,
   } from "firebase/firestore";
-  import { db, isEditor, auth, recordEvent } from "../firebase";
+  import { db, isEditor, auth, recordEvent, screenView } from "../firebase";
   import { locations, seasons, classes, getClass } from "../util";
   import { toasts } from "svelte-toasts";
   import { onMount } from "svelte";
   import EditMedia from "./EditMedia.svelte";
+  import EditAssoc from "./EditAssoc.svelte";
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
@@ -63,13 +64,15 @@
   export let params = { id };
   const id = params.id ? params.id : "exnihilo";
   let modalId = "";
+  let assocEditResult;
+  const size = "xl";
   let editorPerm = false;
   $: prayerData = new prayer({ name: "Loading", body: "Loading" });
   $: associations = new Array();
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {
-    recordEvent("screen_view", { firebase_screen: "edit: toggleDeleteOpen" });
+    screenView("toggleDeleteOpen");
     deleteModalOpen = !deleteModalOpen;
     if (deleteModalOpen) modalId = e.target.value;
   }
@@ -97,26 +100,20 @@
 
   let editModalOpen = false;
   async function toggleEditOpen(e) {
-    recordEvent("screen_view", { firebase_screen: "edit: toggleEditOpen" });
+    screenView("toggleEditOpen");
     editModalOpen = !editModalOpen;
-    if (editModalOpen) {
-      modalId = this.target.value;
 
-      /* const ref = doc(db, "associations/" + e.target.value);
-      const d = docGet(ref);
-      const a = new association(d);
-      console.log(a); */
-      const modal = document.getElementById("editModalBody");
-      modal.textContent = "draw menus here";
+    if (editModalOpen) {
+      modalId = e.target.value;
     }
   }
 
   function confirmEdit(e) {
     recordEvent("edit_assoc", { id: id, assoc: e.target.value });
-    console.log(e);
     editModalOpen = !editModalOpen;
+
+    console.log("edit result", assocEditResult);
     // write new data to firebase
-    // update display?
   }
 
   async function addAssoc(e) {
@@ -202,7 +199,7 @@
   }
 
   onMount(async () => {
-    recordEvent("screen_view", { firebase_screen: "Edit", id: id });
+    screenView("Edit Prayer");
     await loadPrayer();
     editorPerm = await isEditor();
   });
@@ -499,14 +496,16 @@
     </Button>
   </ModalFooter>
 </Modal>
-<Modal id="editModal" isOpen={editModalOpen} backdrop="static" {toggleEditOpen}>
+<Modal id="editModal" isOpen={editModalOpen} {toggleEditOpen} {size}>
   <ModalHeader {toggleEditOpen}>Edit Association</ModalHeader>
-  <ModalBody id="editModalBody">Edit stuff goes here....</ModalBody>
+  <ModalBody><EditAssoc id={modalId} bind:result={assocEditResult} /></ModalBody
+  >
   <ModalFooter>
-    <Button color="secondary" size="sm" on:click={toggleEditOpen}>Cancel</Button
-    >
-    <Button color="success" size="sm" on:click={confirmEdit} value={modalId}
-      >Confirm</Button
-    >
+    <Button color="secondary" size="sm" on:click={toggleEditOpen}>
+      Cancel
+    </Button>
+    <Button color="success" size="sm" on:click={confirmEdit} value={modalId}>
+      Confirm
+    </Button>
   </ModalFooter>
 </Modal>

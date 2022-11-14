@@ -60,19 +60,19 @@
 
     try {
       const uploadTask = uploadBytesResumable(mediaRef, file, metadata);
-      progressBar.onClick = () =>  {
+      progressBar.onClick = () => {
         console.log("progressBar clicked");
         if (paused) {
           uploadTask.resume();
         } else {
           uploadTask.pause();
         }
-      }
+      };
 
-      progressBar.onRemove= () => {
+      progressBar.onRemove = () => {
         console.log("progressBar removed");
         uploadTask.cancel();
-      }
+      };
 
       // onClick handler to pause/resume
 

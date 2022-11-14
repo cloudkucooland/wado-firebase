@@ -22,7 +22,7 @@
     doc,
     deleteDoc,
   } from "firebase/firestore";
-  import { db, recordEvent } from "../firebase";
+  import { db, recordEvent, screenView } from "../firebase";
   import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
@@ -36,7 +36,7 @@
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {
-    recordEvent("screen_view", { firebase_screen: "edit: toggleDeleteOpen" });
+    screenView("toggleDeleteOpen");
     deleteModalOpen = !deleteModalOpen;
     if (deleteModalOpen) modalId = e.target.value;
   }
@@ -92,7 +92,7 @@
   }
 
   onMount(async () => {
-    recordEvent("screen_view", { firebase_screen: "EditLocation", id: id });
+    screenView("Edit Location");
     await loadLocation();
     // editorPerm = await isEditor();
   });

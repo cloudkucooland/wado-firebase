@@ -26,7 +26,7 @@
     orderBy,
     getCountFromServer,
   } from "firebase/firestore";
-  import { db, recordEvent, isEditor } from "../firebase";
+  import { db, recordEvent, isEditor, screenView } from "../firebase";
   import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
@@ -42,7 +42,7 @@
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {
-    recordEvent("screen_view", { firebase_screen: "edit: toggleDeleteOpen" });
+    screenView("toggleDeleteOpen");
     deleteModalOpen = !deleteModalOpen;
     if (deleteModalOpen) modalId = e.target.value;
   }
@@ -114,10 +114,7 @@
 
   onMount(async () => {
     prayers = await loadClass(prayerClass);
-    recordEvent("screen_view", {
-      firebase_screen: "PrayerList",
-      id: prayerClass,
-    });
+    screenView("Prayer List");
     editorPerm = await isEditor();
   });
 </script>
