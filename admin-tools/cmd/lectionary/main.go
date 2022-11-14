@@ -1,15 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"fmt"
+	"golang.org/x/net/html"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
-    "log"
-    "strings"
-    "bytes"
-    "golang.org/x/net/html"
+	"strings"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -17,7 +17,7 @@ import (
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 
-    "go.uber.org/ratelimit"
+	"go.uber.org/ratelimit"
 )
 
 // this is not clean code, I  just banged it out to do a job once. Do not use this as an example of what you ought to do.
@@ -47,7 +47,7 @@ func main() {
 func fetchLections(ctx context.Context) {
 	done := 0
 	batch := fsclient.BulkWriter(ctx)
-    rl := ratelimit.New(1)
+	rl := ratelimit.New(1)
 
 	iter := fsclient.Collection("prayers").Where("Class", "==", "lection").Documents(ctx)
 	for {
@@ -64,7 +64,7 @@ func fetchLections(ctx context.Context) {
 		if len(data["Body"].(string)) > 50 || data["Body"].(string) == "Lectionary Placeholder" {
 			continue
 		}
-        rl.Take() // one per second
+		rl.Take() // one per second
 
 		newBody, err := oremus(ctx, data["Name"].(string))
 		if err != nil {
@@ -77,21 +77,21 @@ func fetchLections(ctx context.Context) {
 			batch.Flush()
 		}
 
-        batch.Set(doc.Ref, map[string]interface{}{"Reviewed": false, "Body": newBody, "Author": "", "Last Editor": "Lection Autoupdate"}, firestore.MergeAll)
+		batch.Set(doc.Ref, map[string]interface{}{"Reviewed": false, "Body": newBody, "Author": "", "Last Editor": "Lection Autoupdate"}, firestore.MergeAll)
 	}
 	batch.End()
 }
 
 func oremus(ctx context.Context, ref string) (string, error) {
 	c := http.Client{}
-    data := url.Values{}
-    data.Set("passage", ref)
-    data.Set("vnum", "no")
-    data.Set("fnote","no")
-    data.Set("heading", "no")
-    data.Set("show_ref", "no")
-    data.Set("show_adj", "no")
-    data.Set("omithidden", "yes")
+	data := url.Values{}
+	data.Set("passage", ref)
+	data.Set("vnum", "no")
+	data.Set("fnote", "no")
+	data.Set("heading", "no")
+	data.Set("show_ref", "no")
+	data.Set("show_adj", "no")
+	data.Set("omithidden", "yes")
 
 	resp, err := c.PostForm("https://bible.oremus.org/", data)
 	if err != nil {
@@ -107,13 +107,13 @@ func oremus(ctx context.Context, ref string) (string, error) {
 		return "", err
 	}
 
-    parsed, err := parse(string(body[:]))
+	parsed, err := parse(string(body[:]))
 	// fmt.Println(parsed)
-    return string(parsed), nil
+	return string(parsed), nil
 }
 
 func parse(in string) (string, error) {
-    var out bytes.Buffer
+	var out bytes.Buffer
 
 	doc, err := html.Parse(strings.NewReader(in))
 	if err != nil {
@@ -124,20 +124,20 @@ func parse(in string) (string, error) {
 		if n.Type == html.ElementNode && n.Data == "div" {
 			for _, a := range n.Attr {
 				if a.Key == "class" && a.Val == "bibletext" {
-                    printing = true;
+					printing = true
 					break
 				}
 			}
 		}
-        if n.Type == html.TextNode && printing {
-            out.WriteString(strings.TrimSpace(n.Data))
-            out.WriteString(" ")
-        }
+		if n.Type == html.TextNode && printing {
+			out.WriteString(strings.TrimSpace(n.Data))
+			out.WriteString(" ")
+		}
 		for c := n.FirstChild; c != nil; c = c.NextSibling {
 			f(c, printing)
 		}
 	}
 	f(doc, false)
 
-    return out.String(), nil
+	return out.String(), nil
 }
