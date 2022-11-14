@@ -9,14 +9,13 @@ import (
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 
-	"google.golang.org/api/option"
 	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 )
-
 
 var client *auth.Client
 var fsclient *firestore.Client
-var app  *firebase.App
+var app *firebase.App
 
 func main() {
 	var err error
@@ -38,16 +37,16 @@ func main() {
 		panic(err)
 	}
 
-    // updateEditors()
-    // revokeReviewed()
-    assocCleanup()
+	// updateEditors()
+	// revokeReviewed()
+	assocCleanup()
 }
 
 func updateEditors() {
-    editors := []string{ "PsfIgw0szbhCX14JEwCnR4XNxxz1", "E8axm9DyN7eZ2gh7pGs6CrPOJLD3", "idlyS5Ansvhj23AsKmdrC3Ufbcb2", "hBk6r6Wq8STqGxOoPhPWHGtXo8Q2", "1a5UG6WjcSeLOXgcmZJKbjt7Dav1" }
+	editors := []string{"PsfIgw0szbhCX14JEwCnR4XNxxz1", "E8axm9DyN7eZ2gh7pGs6CrPOJLD3", "idlyS5Ansvhj23AsKmdrC3Ufbcb2", "hBk6r6Wq8STqGxOoPhPWHGtXo8Q2", "1a5UG6WjcSeLOXgcmZJKbjt7Dav1"}
 
-    for _, s := range editors {
-		claims := map[string]interface{}{ "role": "Editor"}
+	for _, s := range editors {
+		claims := map[string]interface{}{"role": "Editor"}
 		err := client.SetCustomUserClaims(context.Background(), s, claims)
 		if err != nil {
 			panic(err)
@@ -61,7 +60,7 @@ func revokeReviewed() {
 
 	iter := fsclient.Collection("prayers").Where("Reviewed", "==", true).Limit(500).Documents(context.Background())
 	for {
-        doc, err := iter.Next()
+		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
 		}
@@ -70,7 +69,7 @@ func revokeReviewed() {
 		}
 		// fmt.Println(doc.Data())
 		fmt.Println(doc.Ref.ID)
-		batch.Set(doc.Ref, map[string]interface{}{ "Reviewed": false, }, firestore.MergeAll)
+		batch.Set(doc.Ref, map[string]interface{}{"Reviewed": false}, firestore.MergeAll)
 	}
 
 	_, err := batch.Commit(context.Background())
@@ -80,6 +79,6 @@ func revokeReviewed() {
 }
 
 func assocCleanup() {
-    // if caldate is set... clear everything else -- but Lectionary year for some reason
-    // clean up easter, and other single-day seasons, which can't have a proper
+	// if caldate is set... clear everything else -- but Lectionary year for some reason
+	// clean up easter, and other single-day seasons, which can't have a proper
 }
