@@ -43,6 +43,11 @@ export function recordEvent(name: string, details?: object) {
   logEvent(analytics, name, details);
 }
 
+export function screenView(name: string) {
+  // logEvent(analytics, 'screen_view', { firebase_screen: name });
+  recordEvent("screen_view", { firebase_screen: name });
+}
+
 export async function isEditor() {
   if (!auth.currentUser) return false;
 
