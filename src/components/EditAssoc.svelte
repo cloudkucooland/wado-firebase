@@ -15,7 +15,7 @@
     Proper: -1,
     Weekday: "Any",
     Weight: "1",
-    Reference: doc(db, "ex", "nihilo")
+    Reference: doc(db, "ex", "nihilo"),
   };
   const dummy = {
     id: "",
