@@ -23,8 +23,8 @@ export default class prayer {
 
   public toFirebase() {
     return {
-      Name: this.name.trim(),
-      Body: this.body.trim(),
+      Name: this.name,
+      Body: this.body,
       Author: this.author,
       Reviewed: this.reviewed,
       License: this.license,

@@ -13,15 +13,15 @@ export default class hymn extends prayer {
 
   public toFirebase() {
     return {
-      Name: this.name.trim(),
-      Body: this.body.trim(),
+      Name: this.name,
+      Body: this.body,
       Reviewed: this.reviewed,
       License: this.license,
-      Author: this.author.trim(),
+      Author: this.author,
       "Last Editor": this.lastEditor,
       "Last Edited": this.lastEdited,
-      "Hymn Meter": this.hymnmeter.trim(),
-      "Hymn Tune": this.hymntune.trim(),
+      "Hymn Meter": this.hymnmeter,
+      "Hymn Tune": this.hymntune,
       Media: this.media,
       Class: this.class,
     };
