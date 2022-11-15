@@ -21,18 +21,22 @@
     getDoc,
     doc,
     deleteDoc,
+    setDoc,
   } from "firebase/firestore";
   import { db, recordEvent, screenView } from "../firebase";
   import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
+  import EditAssoc from "./EditAssoc.svelte";
 
   export let params = { id };
   const id = params.id ? params.id : "GENERAL-ANYTHING";
   $: associations = new Map();
   let editorPerm = false;
   let modalId = "exnihilo";
+  let assocEditResult;
+  const size = "xl";
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e) {
@@ -60,6 +64,47 @@
     }
     associations = newAssn;
     toasts.success("Association deleted", e.target.value);
+  }
+
+  let editModalOpen = false;
+  async function toggleEditOpen(e) {
+    screenView("toggleEditOpen");
+    editModalOpen = !editModalOpen;
+
+    if (editModalOpen) {
+      modalId = e.target.value;
+    }
+  }
+
+  async function confirmEdit(e) {
+    recordEvent("edit_assoc", { id: id, assoc: e.target.value });
+    editModalOpen = !editModalOpen;
+
+    console.log("edit result", assocEditResult);
+    try {
+      await setDoc(
+        doc(db, "associations", e.target.value),
+        assocEditResult.toFirebase()
+      );
+
+      const newAssn = new Map();
+      for (const [k, v] of associations) {
+        if (k != e.target.value) {
+          newAssn.set(k, v);
+        }
+      }
+
+      const rawprayer = await getDoc(assocEditResult.Reference);
+      const pp = new prayer(rawprayer.data());
+      assocEditResult._PrayerName = pp.name;
+      newAssn.set(e.target.value, assocEditResult);
+
+      associations = new Map([...newAssn].sort(association.sort));
+      toasts.success("Saved Association", e.target.value);
+    } catch (error) {
+      console.log(error);
+      toasts.error(error.Message);
+    }
   }
 
   async function loadLocation() {
@@ -126,6 +171,7 @@
                 <th>Lectionary Year</th>
                 <th>Weight</th>
                 <th>&nbsp;</th>
+                <th>&nbsp;</th>
               </tr>
             </thead>
             <tbody>
@@ -142,6 +188,11 @@
                   <td>{v.WeekdayDisplay}</td>
                   <td>{v.Year}</td>
                   <td>{v.Weight}</td>
+                  <td>
+                    <Button on:click={toggleEditOpen} value={k} color="warning">
+                      Edit
+                    </Button>
+                  </td>
                   <td>
                     <Button
                       on:click={toggleDeleteOpen}
@@ -173,6 +224,20 @@
       Cancel
     </Button>
     <Button color="warning" size="sm" on:click={confirmDelete} value={modalId}>
+      Confirm
+    </Button>
+  </ModalFooter>
+</Modal>
+<Modal id="editModal" isOpen={editModalOpen} {toggleEditOpen} {size}>
+  <ModalHeader {toggleEditOpen}>Edit Association</ModalHeader>
+  <ModalBody>
+    <EditAssoc id={modalId} bind:result={assocEditResult} />
+  </ModalBody>
+  <ModalFooter>
+    <Button color="secondary" size="sm" on:click={toggleEditOpen}>
+      Cancel
+    </Button>
+    <Button color="success" size="sm" on:click={confirmEdit} value={modalId}>
       Confirm
     </Button>
   </ModalFooter>
