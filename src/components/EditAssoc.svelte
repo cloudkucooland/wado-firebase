@@ -8,19 +8,37 @@
 
   export let id;
   export let result;
-  let a = {
+  export let addToID = "";
+  const dummyData = {
     Location: "UNSET",
     Season: "Any",
-    Proper: "Any",
+    Proper: -1,
     Weekday: "Any",
     Weight: "1",
-  }; // preload fake data until onMount completes
+    Reference: doc(db, "ex", "nihilo")
+  };
+  const dummy = {
+    id: "",
+    data: () => {
+      return dummyData;
+    },
+  };
+  let a = new association(dummy);
 
   let calDateSet = false;
-  let selectedSeason = seasonLUT.get("Any");
+  let selectedSeason = seasonLUT.get(a.Season);
   let properName = "Proper";
 
   onMount(async () => {
+    if (addToID != "") {
+      // use the dummy data if adding
+      dummyData.Reference = doc(db, "prayers", addToID);
+      a = new association(dummy);
+      result = a;
+      return;
+    }
+
+    // get the current one, from firestore
     const d = await getDoc(doc(db, "associations", id));
     a = new association(d);
     selectedSeason = seasonLUT.get(a.Season);
