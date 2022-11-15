@@ -65,6 +65,7 @@
   const id = params.id ? params.id : "exnihilo";
   let modalId = "";
   let assocEditResult;
+  let assocAddResult;
   const size = "xl";
   let editorPerm = false;
   $: prayerData = new prayer({ name: "Loading", body: "Loading" });
@@ -113,41 +114,46 @@
     editModalOpen = !editModalOpen;
 
     console.log("edit result", assocEditResult);
-    await setDoc(
-      doc(db, "associations", e.target.value),
-      assocEditResult.toFirebase()
-    );
-    const newAssn = new Array();
-    for (const a of associations) {
-      if (a.id != e.target.value) {
-        newAssn.push(a);
+    try {
+      await setDoc(
+        doc(db, "associations", e.target.value),
+        assocEditResult.toFirebase()
+      );
+      const newAssn = new Array();
+      for (const a of associations) {
+        if (a.id != e.target.value) {
+          newAssn.push(a);
+        }
       }
+      newAssn.push(assocEditResult);
+      associations = newAssn;
+      toasts.success("Saved Association", e.target.value);
+    } catch (error) {
+      console.log(error);
+      toasts.error(error.Message);
     }
-    newAssn.push(assocEditResult);
-    associations = newAssn;
-    toasts.success("Saved Association", e.target.value);
   }
 
-  async function addAssoc(e) {
+  let addAssocModalOpen = false;
+  async function toggleAddAssocOpen(e) {
+    screenView("toggleAddAssocOpen");
+    addAssocModalOpen = !addAssocModalOpen;
+
+    if (addAssocModalOpen) {
+      modalId = e.target.value;
+    }
+  }
+
+  async function confirmAddAssoc(e) {
+    recordEvent("edit_assoc", { id: id, assoc: e.target.value });
+    addAssocModalOpen = !addAssocModalOpen;
+
+    console.log("add result", assocAddResult.toFirebase());
+
     try {
-      const building = new association({
-        id: "unset",
-        data: () => {
-          return {
-            Reference: doc(db, "prayers/" + id),
-            Location: document.getElementById("addLocation").value,
-            CalendarDate: document.getElementById("addCalendarDate").value,
-            Season: document.getElementById("addSeason").value,
-            Proper: +document.getElementById("addProper").value,
-            Weekday: +document.getElementById("addWeekday").value,
-            Year: document.getElementById("addYear").value,
-            Weight: +document.getElementById("addWeight").value,
-          };
-        },
-      });
       const added = await addDoc(
         collection(db, "associations"),
-        building.toFirebase()
+        assocAddResult.toFirebase()
       );
       const refetched = await getDoc(added);
       // https://svelte.dev/tutorial/updating-arrays-and-objects
@@ -431,61 +437,13 @@
                   </td>
                 </tr>
               {/each}
-              {#if editorPerm}
-                <tr>
-                  <td>
-                    <Input type="select" id="addLocation">
-                      {#each locations as l}
-                        <option value={l}>{l}</option>
-                      {/each}
-                    </Input>
-                  </td>
-                  <td>
-                    <Input
-                      id="addCalendarDate"
-                      value="Any"
-                      placeholder="mm-dd"
-                    />
-                  </td>
-                  <td>
-                    <Input type="select" id="addSeason" value="Any">
-                      <option value="Any">Any</option>
-                      {#each seasons as s}
-                        <option value={s}>{s}</option>
-                      {/each}
-                    </Input>
-                  </td>
-                  <td><Input id="addProper" value="Any" /></td>
-                  <td>
-                    <Input type="select" id="addWeekday" value="-1">
-                      <option value="-1">Any</option>
-                      <option value="0">Sunday</option>
-                      <option value="1">Monday</option>
-                      <option value="2">Tuesday</option>
-                      <option value="3">Wednesday</option>
-                      <option value="4">Thursday</option>
-                      <option value="5">Friday</option>
-                      <option value="6">Saturday</option>
-                    </Input>
-                  </td>
-                  <td>
-                    <Input id="addYear" type="select" value="Any">
-                      <option value="Any">Any</option>
-                      <option value="A">A</option>
-                      <option value="B">B</option>
-                      <option value="C">C</option>
-                    </Input>
-                  </td>
-                  <td><Input id="addWeight" value="1" /></td>
-                  <td>
-                    <Button size="sm" color="success" on:click={addAssoc}>
-                      Add
-                    </Button>
-                  </td>
-                </tr>
-              {/if}
             </tbody>
           </Table>
+          {#if editorPerm}
+            <Button size="sm" color="success" on:click={toggleAddAssocOpen}
+              >Add</Button
+            >
+          {/if}
         </CardBody>
       </Card>
     </Col>
@@ -510,13 +468,38 @@
 </Modal>
 <Modal id="editModal" isOpen={editModalOpen} {toggleEditOpen} {size}>
   <ModalHeader {toggleEditOpen}>Edit Association</ModalHeader>
-  <ModalBody><EditAssoc id={modalId} bind:result={assocEditResult} /></ModalBody
-  >
+  <ModalBody>
+    <EditAssoc id={modalId} bind:result={assocEditResult} />
+  </ModalBody>
   <ModalFooter>
     <Button color="secondary" size="sm" on:click={toggleEditOpen}>
       Cancel
     </Button>
     <Button color="success" size="sm" on:click={confirmEdit} value={modalId}>
+      Confirm
+    </Button>
+  </ModalFooter>
+</Modal>
+<Modal
+  id="addAssocModal"
+  isOpen={addAssocModalOpen}
+  {toggleAddAssocOpen}
+  {size}
+>
+  <ModalHeader {toggleAddAssocOpen}>Add Association</ModalHeader>
+  <ModalBody>
+    <EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />
+  </ModalBody>
+  <ModalFooter>
+    <Button color="secondary" size="sm" on:click={toggleAddAssocOpen}>
+      Cancel
+    </Button>
+    <Button
+      color="success"
+      size="sm"
+      on:click={confirmAddAssoc}
+      value={modalId}
+    >
       Confirm
     </Button>
   </ModalFooter>
