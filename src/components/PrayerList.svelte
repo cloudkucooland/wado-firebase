@@ -59,10 +59,10 @@
       console.debug("removing associations on delete is not tested yet...");
       const q = query(
         collection(db, "associations"),
-        where("Reference", "==", toDelete)
+        where("Reference", "==", doc(db, "prayers", e.target.value))
       );
-      const querySnapshot = await getDocs(q);
-      for (const asn of querySnapshot) {
+      const res = await getDocs(q);
+      for (const asn of res.docs) {
         console.log("deleting association", asn);
         await deleteDoc(doc(db, "associations", asn.id));
       }
