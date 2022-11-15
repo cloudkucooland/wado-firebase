@@ -194,6 +194,8 @@
     recordEvent("save_prayer", { id: id });
 
     try {
+      prayerData.lastEditor = auth.currentUser.displayName;
+      prayerData.lastEdited = new Date().toISOString();
       await setDoc(doc(db, "prayers", id), prayerData.toFirebase());
       toasts.success("Saved Prayer", id);
     } catch (err) {
