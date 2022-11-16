@@ -4,7 +4,7 @@
   import { onMount, afterUpdate } from "svelte";
   import association from "../model/association";
   import { Container, Row, Col, Input } from "sveltestrap";
-  import { locations, seasons, seasonLUT } from "../util";
+  import { locations, seasonLUT } from "../util";
 
   export let id;
   export let result;
@@ -89,7 +89,7 @@
     <Col sm="3">
       <Input type="select" bind:value={a.Season} disabled={calDateSet}>
         <option value="Any">Any</option>
-        {#each seasons as s}
+        {#each Array.from(seasonLUT.keys()) as s}
           <option value={s}>{s}</option>
         {/each}
       </Input>

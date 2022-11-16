@@ -28,7 +28,7 @@
     deleteDoc,
   } from "firebase/firestore";
   import { db, isEditor, auth, recordEvent, screenView } from "../firebase";
-  import { classes, getClass } from "../util";
+  import { classes, getClass } from "../model/prayerClasses";
   import { toasts } from "svelte-toasts";
   import { onMount } from "svelte";
   import EditMedia from "./EditMedia.svelte";
