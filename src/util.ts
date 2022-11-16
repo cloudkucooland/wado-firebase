@@ -1,5 +1,3 @@
-import season from "./model/season";
-
 // Audit these to make sure they are all used
 export const locations = Array(
   "COMMENDATION",
@@ -77,35 +75,7 @@ export const locations = Array(
   "VESPER-SUPPLICATION"
 );
 
-export const seasons = new Array(
-  "epiphany",
-  "afterepiphany",
-  "mardigras",
-  "ashwednesday",
-  "lent",
-  "palmsunday",
-  "holyweek",
-  "maundythursday",
-  "goodfriday",
-  "holysaturday",
-  "easter",
-  "greatfifty",
-  "ascensioneve",
-  "ascension",
-  "greatfifty",
-  "pentecost",
-  "afterpentecost",
-  "trinity",
-  "afterpentecost",
-  "beforeadvent",
-  "christking",
-  "beforeadvent",
-  "advent",
-  "christmaseve",
-  "christmasday",
-  "christmas"
-);
-
+import season from "./model/season";
 export const seasonLUT = new Map([
   [
     "epiphany",
@@ -401,28 +371,4 @@ export const offices = new Array(
 
 export function getOffice(officeName: string) {
   return officeLUT.get(officeName);
-}
-
-import prayer from "./model/prayer";
-import psalm from "./model/psalm";
-import hymn from "./model/hymn";
-import lection from "./model/lection";
-import heartword from "./model/heartword";
-import antiphon from "./model/antiphon";
-
-export const classes = new Map([
-  ["prayer", prayer],
-  ["psalm", psalm],
-  ["hymn", hymn],
-  ["lection", lection],
-  ["heartword", heartword],
-  ["antiphon", antiphon],
-]);
-
-export function getClass(className: string) {
-  if (!classes.has(className)) {
-    console.log("invalid class", className);
-    className = "prayer";
-  }
-  return classes.get(className);
 }
