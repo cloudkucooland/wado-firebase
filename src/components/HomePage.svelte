@@ -8,13 +8,11 @@
     CardBody,
     Nav,
     NavLink,
-    Form,
     FormGroup,
     Input,
   } from "sveltestrap";
-  import { tick } from "svelte";
   import proper from "../model/proper";
-  import { recordEvent, screenView } from "../firebase";
+  import { screenView } from "../firebase";
   import { getOffice, offices } from "../util";
 
   const now = new Date();

@@ -6,7 +6,6 @@
     Card,
     CardHeader,
     CardBody,
-    Form,
     FormGroup,
     Input,
     Label,
@@ -29,7 +28,7 @@
     deleteDoc,
   } from "firebase/firestore";
   import { db, isEditor, auth, recordEvent, screenView } from "../firebase";
-  import { locations, seasons, classes, getClass } from "../util";
+  import { classes, getClass } from "../util";
   import { toasts } from "svelte-toasts";
   import { onMount } from "svelte";
   import EditMedia from "./EditMedia.svelte";
@@ -315,7 +314,7 @@
                     bind:value={prayerData.class}
                     disabled={!editorPerm}
                   >
-                    {#each [...classes] as [key, value]}
+                    {#each Array.from(classes.keys()) as key}
                       <option value={key}>{key}</option>
                     {/each}
                   </Input>
@@ -510,7 +509,5 @@
 <style>
   tr.dirty {
     background-color: yellow !important;
-  }
-  tr.clean {
   }
 </style>

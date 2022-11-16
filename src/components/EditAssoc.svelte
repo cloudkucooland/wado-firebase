@@ -1,7 +1,7 @@
 <script>
   import { getDoc, doc } from "firebase/firestore";
   import { db } from "../firebase";
-  import { onMount, beforeUpdate, afterUpdate, onDestroy } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import association from "../model/association";
   import { Container, Row, Col, Input } from "sveltestrap";
   import { locations, seasons, seasonLUT } from "../util";

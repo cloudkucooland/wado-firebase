@@ -1,12 +1,5 @@
 <script>
   import { onMount } from "svelte";
-  import {
-    Card,
-    CardSubtitle,
-    CardHeader,
-    CardBody,
-    CardFooter,
-  } from "sveltestrap";
   import { getDoc } from "firebase/firestore";
 
   export let association;

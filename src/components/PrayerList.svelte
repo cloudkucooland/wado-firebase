@@ -20,14 +20,13 @@
     query,
     where,
     getDocs,
-    getDoc,
     doc,
     deleteDoc,
     orderBy,
-    getCountFromServer,
+    // getCountFromServer,
   } from "firebase/firestore";
   import { db, recordEvent, isEditor, screenView } from "../firebase";
-  import association from "../model/association";
+  // import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";

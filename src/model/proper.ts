@@ -41,7 +41,7 @@ export default class proper {
     );
   }
 
-  private WeekdayDisplay(day?) {
+  private WeekdayDisplay(day?: number) {
     if (!day) day = this.weekday;
 
     const days = new Map([

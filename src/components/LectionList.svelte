@@ -7,11 +7,6 @@
     CardHeader,
     CardBody,
     Table,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
     Nav,
     NavLink,
   } from "sveltestrap";
@@ -24,7 +19,6 @@
     doc,
     deleteDoc,
     orderBy,
-    getCountFromServer,
   } from "firebase/firestore";
   import { db, recordEvent, isEditor, screenView } from "../firebase";
   import association from "../model/association";
@@ -32,7 +26,7 @@
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
 
-  export let params = { l, y };
+  export let params; //  = { l, y };
   $: location = params.l ? params.l : "LAUDS-LECTIONARY";
   $: year = params.y ? params.y : "A";
   $: lections = new Map();

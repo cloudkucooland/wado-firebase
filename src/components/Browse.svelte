@@ -12,7 +12,6 @@
     Input,
     Table,
   } from "sveltestrap";
-  import { tick } from "svelte";
   import { locations } from "../util";
   import { collection, query, where, getDocs } from "firebase/firestore";
   import { db } from "../firebase";
