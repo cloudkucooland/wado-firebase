@@ -1,5 +1,5 @@
 <script>
-  import { showMedia, showEdit, offline } from "../model/preferences";
+  import { showMedia, showEdit, showAlt, offline } from "../model/preferences";
   import { onMount } from "svelte";
 
   import {
@@ -50,6 +50,18 @@
               <div>
                 Show controls for items with attached media (recordings)
               </div>
+            </FormGroup>
+            <FormGroup>
+              <Label for="showAlt">Show Alternatives</Label>
+              <Input
+                name="showAlt"
+                id="showAlt"
+                type="checkbox"
+                on:change={(e) => {
+                  showAlt.set(e.target.checked);
+                }}
+              />
+              <div>Show alternatives for the various prayers/hymns/etc.</div>
             </FormGroup>
             <FormGroup>
               <Label for="showEdit">Show Edit Links</Label>
