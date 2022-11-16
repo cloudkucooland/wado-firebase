@@ -16,8 +16,16 @@ const storedShowEdit: boolean =
 export const showEdit = writable(storedShowEdit);
 showEdit.subscribe((value: boolean) => {
   if (value !== true) value = false;
-  // console.debug("storing showEdit", value);
   localStorage["showEdit"] = value ? "true" : "false";
+});
+
+// show alternatives
+const storedShowAlt: boolean =
+  localStorage["showAlt"] === "true" ? true : false;
+export const showAlt = writable(storedShowAlt);
+showAlt.subscribe((value: boolean) => {
+  if (value !== true) value = false;
+  localStorage["showAlt"] = value ? "true" : "false";
 });
 
 // enable offline mode
@@ -28,4 +36,3 @@ offline.subscribe((value: boolean) => {
   if (value !== true) value = false;
   localStorage["Offline"] = value ? "true" : "false";
 });
-// offline.value = () => { return localStorage["Offline"] === "true" ? true : false; };
