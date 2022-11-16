@@ -22,13 +22,9 @@
   export let name;
   export let proper;
   export let max = 1;
+  export let maxAlt = 0;
   export let bold = false;
 
-  if (typeof max !== "number") max = +max;
-
-  const order = "Weight";
-
-  // XXX this belongs in util.ts
   export const lookup = new Map([
     ["heartwords", Heartwords],
     ["other", Prayer],
@@ -38,6 +34,12 @@
     ["psalm", Psalm],
     ["antiphon", Antiphon],
   ]);
+
+  if (typeof max !== "number") max = +max;
+  if (typeof maxAlt !== "number") maxAlt = +maxAlt;
+  const realMax = (maxAlt > max) ? maxAlt : max;
+
+  const order = "Weight";
 
   // this needs to be refactored
   async function loaddata() {
@@ -49,7 +51,7 @@
       where("Location", "==", name),
       where("Calendar Date", "==", proper.caldate),
       orderBy(order),
-      limit(max)
+      limit(realMax)
     );
 
     let res = await getDocs(q);
@@ -57,7 +59,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size >= max) {
+    if (m.size >=realMax) {
       return m;
     }
 
@@ -70,7 +72,7 @@
       where("Weekday", "==", proper.weekday),
       where("Year", "==", proper.year),
       orderBy(order),
-      limit(max - m.size)
+      limit(realMax - m.size)
     );
 
     res = await getDocs(q);
@@ -79,7 +81,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size >= max) {
+    if (m.size >= realMax) {
       return m;
     }
 
@@ -91,7 +93,7 @@
       where("Weekday", "==", proper.weekday),
       where("Year", "==", "Any"),
       orderBy(order),
-      limit(max - m.size)
+      limit(realMax - m.size)
     );
 
     res = await getDocs(q);
@@ -100,7 +102,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size >= max) {
+    if (m.size >= realMax) {
       return m;
     }
 
@@ -112,7 +114,7 @@
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),
       orderBy(order),
-      limit(max - m.size)
+      limit(realMax - m.size)
     );
 
     res = await getDocs(q);
@@ -121,7 +123,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size >= max) {
+    if (m.size >= realMax) {
       return m;
     }
 
@@ -133,7 +135,7 @@
       where("Weekday", "==", proper.weekday),
       where("Year", "==", "Any"),
       orderBy(order),
-      limit(max - m.size)
+      limit(realMax - m.size)
     );
 
     res = await getDocs(q);
@@ -142,7 +144,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size >= max) {
+    if (m.size >= realMax) {
       return m;
     }
 
@@ -154,7 +156,7 @@
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),
       orderBy(order),
-      limit(max - m.size)
+      limit(realMax - m.size)
     );
 
     res = await getDocs(q);
@@ -163,7 +165,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size >= max) {
+    if (m.size >= realMax) {
       return m;
     }
 
@@ -176,7 +178,7 @@
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),
       orderBy(order),
-      limit(max - m.size)
+      limit(realMax - m.size)
     );
 
     res = await getDocs(q);
@@ -199,7 +201,7 @@
       <a href="#/editlocation/{name}">Edit {name}</a>
     </div>{/if}
   {#each [...data] as [k, d]}
-    <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} />
+    <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} maxAlt={maxAlt} max={max} />
   {/each}
 {:catch error}
   <div>{name}: {error.message}</div>
