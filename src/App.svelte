@@ -46,7 +46,7 @@
     "/edit/:id": Edit,
     "/editlocation/:id": EditLocation,
     "/prayers/:c": PrayerList,
-    "/lection/:l": LectionList,
+    "/lectionary/:l/:y": LectionList,
   };
 
   $: loggedIn = false;

@@ -12,6 +12,8 @@
     ModalHeader,
     ModalBody,
     ModalFooter,
+    Nav,
+    NavLink,
   } from "sveltestrap";
   import {
     collection,
@@ -21,125 +23,95 @@
     getDoc,
     doc,
     deleteDoc,
+    orderBy,
+    getCountFromServer,
   } from "firebase/firestore";
-  import { db, recordEvent, screenView } from "../firebase";
+  import { db, recordEvent, isEditor, screenView } from "../firebase";
   import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
 
-  export let params = { id };
-  const id = params.id ? params.id : "GENERAL-ANYTHING";
-  $: associations = new Map();
+  export let params = { l, y };
+  $: location = params.l ? params.l : "LAUDS-LECTIONARY";
+  $: year = params.y ? params.y : "A";
+  $: lections = new Map();
   let editorPerm = false;
   let modalId = "exnihilo";
 
-  let deleteModalOpen = false;
-  function toggleDeleteOpen(e) {
-    screenView("toggleDeleteOpen");
-    deleteModalOpen = !deleteModalOpen;
-    if (deleteModalOpen) modalId = e.target.value;
-  }
+  const ls = new Array(
+    "LAUDS-LECTIONARY",
+    "LAUDS-LECTIONARY2",
+    "LAUDS-LECTIONARY-HEARWHATSAYING",
+    "VESPER-LECTIONARY"
+  );
 
-  async function confirmDelete(e) {
-    recordEvent("delete_assoc", { id: id, assoc: e.target.value });
-    console.debug("deleting association", e.target.value);
-    deleteModalOpen = !deleteModalOpen;
-
-    try {
-      await deleteDoc(doc(db, "associations", e.target.value));
-    } catch (err) {
-      console.log(err);
-      toasts.error(err.message);
-    }
-    const newAssn = new Array();
-    for (const a of associations) {
-      if (a.id != e.target.value) {
-        newAssn.push(a);
-      }
-    }
-    associations = newAssn;
-    toasts.success("Association deleted", e.target.value);
-  }
-
-  async function loadLocation() {
+  async function loadLocations(loc, y) {
+    console.log("loadLocations", loc, y);
+    const m = new Map();
     try {
       const q = query(
         collection(db, "associations"),
-        where("Location", "==", id)
+        where("Location", "==", loc),
+        where("Year", "==", y)
       );
       const res = await getDocs(q);
       for (const a of res.docs) {
-        const n = new association(a);
+        const p = new association(a);
 
-        const rawprayer = await getDoc(n.Reference);
-        if (!rawprayer || !rawprayer.exists()) {
-          console.log("bad reference, deleting association");
-          deleteDoc(doc(db, "associations", n.id)); // no need to await here
-          toasts.info("Deleting Invalid Association", n.id);
-          continue;
-        }
-        const pp = new prayer(rawprayer.data());
-        n._PrayerName = pp.name;
-        associations.set(a.id, n);
+        m.set(a.id, p);
       }
-
-      // now that the full list is built, sort it
-      associations = new Map([...associations].sort(association.sort));
     } catch (e) {
       console.log(e);
     }
+    return m;
   }
 
   onMount(async () => {
-    screenView("Edit Location");
-    await loadLocation();
-    // editorPerm = await isEditor();
+    lections = await loadLocations(location, year);
+    screenView("Lection List");
+    editorPerm = await isEditor();
   });
 </script>
 
 <Container>
+  <Nav>
+    {#each ls as lx}
+      {#each ["A", "B", "C"] as y}
+        <NavLink
+          href="#/lectionary/{lx}/{y}/"
+          on:click={async () => {
+            lections = await loadLocations(lx, y);
+          }}>{lx} {y}</NavLink
+        >
+      {/each}
+    {/each}
+  </Nav>
   <Row>
     <Col>
       <Card>
-        <CardHeader>Associations for {id}</CardHeader>
+        <CardHeader>{location}: Year {year}</CardHeader>
         <CardBody>
           <Table>
             <thead>
               <tr>
-                <th>Prayer</th>
-                <th>Calendar Date</th>
+                <th>Passage</th>
                 <th>Season</th>
                 <th>Proper</th>
                 <th>Weekday</th>
-                <th>Lectionary Year</th>
-                <th>Weight</th>
-                <th>&nbsp;</th>
               </tr>
             </thead>
             <tbody>
-              {#each [...associations] as [k, v]}
+              {#each [...lections] as [k, v]}
                 <tr id={k}>
                   <td>
                     <a href="#/edit/{v.Reference.id}">
-                      {v._PrayerName}
+                      {v.Reference.id}
                     </a>
                   </td>
-                  <td>{v.CalendarDate}</td>
                   <td>{v.Season}</td>
-                  <td>{v.ProperDisplay}</td>
-                  <td>{v.WeekdayDisplay}</td>
-                  <td>{v.Year}</td>
-                  <td>{v.Weight}</td>
-                  <td>
-                    <Button
-                      on:click={toggleDeleteOpen}
-                      value={k}
-                      color="warning"
-                    >
-                      Delete
-                    </Button>
-                  </td>
+                  <td>{v.Proper}</td>
+                  <td>{v.Weekday}</td>
                 </tr>
               {/each}
             </tbody>
@@ -149,20 +121,3 @@
     </Col>
   </Row>
 </Container>
-<Modal
-  id="deleteModal"
-  isOpen={deleteModalOpen}
-  backdrop="static"
-  {toggleDeleteOpen}
->
-  <ModalHeader {toggleDeleteOpen}>Delete Association</ModalHeader>
-  <ModalBody>Confirm Delete</ModalBody>
-  <ModalFooter>
-    <Button color="primary" size="sm" on:click={toggleDeleteOpen}>
-      Cancel
-    </Button>
-    <Button color="warning" size="sm" on:click={confirmDelete} value={modalId}>
-      Confirm
-    </Button>
-  </ModalFooter>
-</Modal>
