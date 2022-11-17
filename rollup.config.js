@@ -5,10 +5,10 @@ import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import json from "@rollup/plugin-json";
-import serve from "rollup-plugin-serve";
 import css from "rollup-plugin-css-only";
 import replace from "@rollup/plugin-replace";
-import svg from "rollup-plugin-svg";
+// import svg from "rollup-plugin-svg";
+import collectSass from "rollup-plugin-collect-sass";
 
 import { createFilter } from "@rollup/pluginutils";
 
@@ -92,20 +92,21 @@ export default [
         inlineSources: true,
       }),
 
-      svg(),
+      // svg(),
 
       replace({
         preventAssignment: true,
         __buildDate__: () => new Date().toUTCString(),
       }),
 
+      // deal with sass files (unused presently)
+      collectSass(),
+
       // If we're building for production (npm run build
       // instead of npm run dev), minify
       production && terser(),
 
       userscript && userscriptAsset(),
-
-      watch && serve("public"),
     ],
     watch: {
       clearScreen: false,
