@@ -1,5 +1,4 @@
-import { locations, seasonLUT } from "../util";
-import type season from "./season";
+import season from "./season";
 
 export default class association {
   public id: string;
@@ -20,7 +19,7 @@ export default class association {
     // console.debug(d);
 
     this.Location = d.Location ? d.Location : "UNSET";
-    if (locations.indexOf(this.Location) == -1) {
+    if (this.locations.indexOf(this.Location) == -1) {
       console.error("invalid location detected", d.Location);
       this._dirty = true;
       this.Location = "UNSET";
@@ -46,12 +45,12 @@ export default class association {
     }
 
     this.Season = d.Season ? d.Season : "Any";
-    if (!seasonLUT.has(this.Season)) {
+    if (!season.LUT.has(this.Season)) {
       console.error("invalid season detected", d.Season);
       this._dirty = true;
       this.Season = "Any";
     }
-    this._season = seasonLUT.get(this.Season);
+    this._season = season.LUT.get(this.Season);
 
     this.Proper = d.Proper ? d.Proper : -1; // Any;
     if (this.Proper < -1) {
@@ -179,7 +178,7 @@ export default class association {
     // instead of doing each value by hand, just turn it into an easily sortable string and do that
     // like, follow and subscribe for more kludgey life-hacks
     const astr =
-      seasonLUT.get(A.Season).position +
+      season.LUT.get(A.Season).position +
       " " +
       anyLastNumber(A.Proper) +
       " " +
@@ -189,7 +188,7 @@ export default class association {
       " " +
       A.Weight;
     const bstr =
-      seasonLUT.get(B.Season).position +
+      season.LUT.get(B.Season).position +
       " " +
       anyLastNumber(B.Proper) +
       " " +
@@ -209,4 +208,80 @@ export default class association {
     if (this._dirty) return "dirty";
     return "clean";
   }
+
+  public locations = Array(
+    "COMMENDATION",
+    "COMPILNE-CONFESSION",
+    "COMPLINE-CHAPTER",
+    "COMPLINE-CONCLUDING",
+    "COMPLINE-HYMN",
+    "COMPLINE-OPENING",
+    "COMPLINE-OPENING-HYMN",
+    "COMPLINE-PRAYER",
+    "COMPLINE-PSALTER",
+    "COMPLINE-PSALTER-PREFIX",
+    "DIURNAL-OPENING",
+    "FORGIVEN",
+    "GENERAL-DISMISSAL",
+    "GENERAL-GLORIA",
+    "GENERAL-LORDS",
+    "GENERAL-RESPONSE-SCRIPTURE",
+    "GENERAL-WITHYOU",
+    "GENERAL-ZECHARIAH",
+    "KYRIE",
+    "LAUDS-BENEDICTION",
+    "LAUDS-COLLECT1",
+    "LAUDS-COLLECT2",
+    "LAUDS-COLLECT-FINAL",
+    "LAUDS-DISMISSAL",
+    "LAUDS-GLORIA",
+    "LAUDS-HYMN1",
+    "LAUDS-HYMN2",
+    "LAUDS-LECTIONARY",
+    "LAUDS-LECTIONARY2",
+    "LAUDS-LECTIONARY-HEARWHATSAYING",
+    "LAUDS-OPENING",
+    "LAUDS-PSALM",
+    "LAUDS-PSALTER-ANTIPHON",
+    "LAUDS-REMEMBRANCEBAPTISM",
+    "LAUDS-SEASONAL",
+    "LAUDS-SUPPLICATION",
+    "MAGNIFICAT",
+    "MATINS-PRAYER",
+    "MATINS-PSALTER",
+    "NONE-CHAPTER",
+    "NONE-CONCLUDING",
+    "NONE-DISMISSAL",
+    "NONE-PRAYER",
+    "NONE-PSALTER",
+    "OSL",
+    "PHOS-HILARON",
+    "SEXT-CHAPTER",
+    "SEXT-CONCLUDING",
+    "SEXT-DISMISSAL",
+    "SEXT-PRAYER",
+    "SEXT-PSALTER",
+    "SIMEON",
+    "TERCE-CHAPTER",
+    "TERCE-CONCLUDING",
+    "TERCE-PRAYER",
+    "TERCE-PSALTER",
+    "UNSET",
+    "VESPER-ANTIPHON",
+    "VESPER-BENEDICTION",
+    "VESPER-COLLECT1",
+    "VESPER-COLLECT2",
+    "VESPER-COLLECT3",
+    "VESPER-COMMEMORATION",
+    "VESPER-CONFESSION",
+    "VESPER-DISMISSAL",
+    "VESPER-GLORIA",
+    "VESPER-HEARWORD",
+    "VESPER-HYMN",
+    "VESPER-LECTIONARY",
+    "VESPER-PARDON",
+    "VESPER-PSALM",
+    "VESPERS-LIGHT",
+    "VESPER-SUPPLICATION"
+  );
 }

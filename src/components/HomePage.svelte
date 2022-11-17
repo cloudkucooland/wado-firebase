@@ -13,7 +13,7 @@
   } from "sveltestrap";
   import proper from "../model/proper";
   import { screenView } from "../firebase";
-  import { getOffice, offices } from "../util";
+  import { getOffice, offices } from "../model/offices";
 
   const now = new Date();
   const nowString =
@@ -32,7 +32,7 @@
 
   screenView(officeName);
 
-  export function currentOffice() {
+  function currentOffice() {
     const d = new Date();
     const hour = d.getHours();
 

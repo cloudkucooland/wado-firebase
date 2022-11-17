@@ -15,11 +15,13 @@
     Input,
   } from "sveltestrap";
 
+  // does bind not work?
   onMount(() => {
     try {
       document.getElementById("offline").checked = $offline;
       document.getElementById("showMedia").checked = $showMedia;
       document.getElementById("showEdit").checked = $showEdit;
+      document.getElementById("showAlt").checked = $showAlt;
     } catch (e) {
       console.log(e);
     }

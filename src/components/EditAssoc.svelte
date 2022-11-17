@@ -3,8 +3,8 @@
   import { db } from "../firebase";
   import { onMount, afterUpdate } from "svelte";
   import association from "../model/association";
+  import season from "../model/season";
   import { Container, Row, Col, Input } from "sveltestrap";
-  import { locations, seasonLUT } from "../util";
 
   export let id;
   export let result;
@@ -26,7 +26,7 @@
   let a = new association(dummy);
 
   let calDateSet = false;
-  let selectedSeason = seasonLUT.get(a.Season);
+  let selectedSeason = season.LUT.get(a.Season);
   let properName = "Proper";
 
   onMount(async () => {
@@ -41,7 +41,7 @@
     // get the current one, from firestore
     const d = await getDoc(doc(db, "associations", id));
     a = new association(d);
-    selectedSeason = seasonLUT.get(a.Season);
+    selectedSeason = season.LUT.get(a.Season);
     result = a;
     if (result.CalendarDate !== "Any") {
       calDateSet = true;
@@ -55,7 +55,7 @@
 
   afterUpdate(() => {
     result = a;
-    selectedSeason = seasonLUT.get(a.Season);
+    selectedSeason = season.LUT.get(a.Season);
     if (result.CalendarDate !== "Any") {
       calDateSet = true;
     } else {
@@ -72,7 +72,7 @@
     <Col sm="2">Location</Col>
     <Col sm="10">
       <Input type="select" bind:value={a.Location}>
-        {#each locations as l}
+        {#each association.locations as l}
           <option value={l}>{l}</option>
         {/each}
       </Input>
@@ -89,7 +89,7 @@
     <Col sm="3">
       <Input type="select" bind:value={a.Season} disabled={calDateSet}>
         <option value="Any">Any</option>
-        {#each Array.from(seasonLUT.keys()) as s}
+        {#each Array.from(season.LUT.keys()) as s}
           <option value={s}>{s}</option>
         {/each}
       </Input>

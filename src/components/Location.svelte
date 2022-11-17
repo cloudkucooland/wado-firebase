@@ -10,6 +10,8 @@
     orderBy,
   } from "firebase/firestore";
   import { db } from "../firebase";
+  import { showEdit, showAlt } from "../model/preferences";
+  import Alternatives from "./Alternatives.svelte";
 
   import Heartwords from "./Heartwords.svelte";
   import Hymn from "./Hymn.svelte";
@@ -17,7 +19,6 @@
   import Prayer from "./Prayer.svelte";
   import Psalm from "./Psalm.svelte";
   import Antiphon from "./Antiphon.svelte";
-  import { showEdit } from "../model/preferences";
 
   export let name;
   export let proper;
@@ -200,16 +201,13 @@
   {#if $showEdit}<div class="edit">
       <a href="#/editlocation/{name}">Edit {name}</a>
     </div>{/if}
-  {#each [...data] as [k, d]}
-    <svelte:component
-      this={lookup.get(d.Class)}
-      data={d}
-      id={k}
-      {bold}
-      {maxAlt}
-      {max}
-    />
-  {/each}
+  {#if maxAlt > 0 && $showAlt}
+    <Alternatives {data} />
+  {:else}
+    {#each [...data] as [k, d]}
+      <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} />
+    {/each}
+  {/if}
 {:catch error}
   <div>{name}: {error.message}</div>
 {/await}

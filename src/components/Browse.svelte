@@ -12,7 +12,6 @@
     Input,
     Table,
   } from "sveltestrap";
-  import { locations } from "../util";
   import { collection, query, where, getDocs } from "firebase/firestore";
   import { db } from "../firebase";
   import BrowseItem from "./BrowseItem.svelte";
@@ -53,7 +52,7 @@
               <Label for="locations">Location</Label>
               <Input type="select" name="locations" bind:value={location}>
                 <option>Any</option>
-                {#each locations as L}
+                {#each association.locations as L}
                   <option>{L}</option>
                 {/each}
               </Input>
