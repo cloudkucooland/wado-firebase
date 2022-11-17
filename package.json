@@ -4,13 +4,10 @@
   "description": "Order of St. Luke Web-Amplified Daily Office",
   "private": true,
   "scripts": {
-    "build": "rollup -c --bundleConfigAsCjs",
-    "dev": "DEVELOPMENT=1 rollup -c --bundleConfigAsCjs",
-    "serve": "rollup -c -w",
+    "build": "vite build",
+    "dev": "vite",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
-    "install": "cp public/build/* /www/osl/wado/build/ ; cp public/*.* /www/osl/wado/ "
+    "format": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -24,25 +21,18 @@
   "homepage": "https://github.com/cloudkucooland/wado-firebase#readme",
   "devDependencies": {
     "@ckeditor/ckeditor5-source-editing": "^35.3.1",
-    "@rollup/plugin-commonjs": "^23.0.2",
-    "@rollup/plugin-json": "^5.0.1",
-    "@rollup/plugin-node-resolve": "^15.0.1",
-    "@rollup/plugin-replace": "^5.0.1",
-    "@rollup/plugin-typescript": "^9.0.2",
+    "@sveltejs/vite-plugin-svelte": "^1.2.0",
     "@tsconfig/svelte": "^3.0.0",
     "@types/ckeditor__ckeditor5-build-decoupled-document": "^29.1.1",
     "prettier-plugin-svelte": "^2.8.0",
-    "rollup": "^3.3.0",
-    "rollup-plugin-collect-sass": "^1.0.9",
-    "rollup-plugin-css-only": "^4.3.0",
-    "rollup-plugin-svelte": "^7.1.0",
     "svelte": "^3.53.1",
     "svelte-check": "^2.9.2",
     "svelte-preprocess": "^4.10.7",
     "svelte-spa-router": "^3.3.0",
     "svelte-toasts": "^1.1.2",
     "sveltestrap": "^5.10.0",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.3",
+    "vite": "^3.2.4"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-build-decoupled-document": "^35.3.1",

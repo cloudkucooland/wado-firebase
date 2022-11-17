@@ -1,3 +1,2 @@
-public/build
-wrapper_*
-*.user.js
+dist/assets/
+dist/index.html
