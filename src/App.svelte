@@ -1,8 +1,8 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
-  import { fade } from "svelte/transition";
   import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
   import { offline } from "./model/preferences";
+  // import { appInstaller } from "./appinstaller";
 
   import {
     Collapse,
@@ -106,6 +106,8 @@
 
   if ($offline) enableOfflineDataMode();
 
+  // appInstaller();
+
   recordEvent("startup");
 </script>
 
@@ -119,7 +121,14 @@
 
 <header>
   <Navbar container={false} color="dark" dark expand="lg">
-    <NavbarBrand href="/wado/">WADO</NavbarBrand>
+    <NavbarBrand href="/wado/"
+      ><img
+        src="ox.svg"
+        height="64"
+        width="64"
+        alt="current office"
+      /></NavbarBrand
+    >
     <NavbarToggler id="main-toggler" />
     <Collapse toggler="#main-toggler" navbar expand="lg">
       <Nav class="ms-auto" navbar>
@@ -186,15 +195,18 @@
     text-decoration: none;
   }
   :global(navbar) {
-    padding-right: 60px;
-    padding-left: 30px;
+    background-color: #a30e15ff !important;
+    padding-right: 60px !important;
+    padding-left: 30px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
   }
   :global(.navbar a) {
     font-weight: 700;
     border-bottom: 1px solid transparent;
   }
   :global(.navbar a:hover) {
-    border-bottom: 1px solid #33cc99;
+    border-bottom: 1px solid #decdf5ff;
   }
   :global(.content-area) {
     padding: 0 16px 16px 16px;
