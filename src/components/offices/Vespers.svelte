@@ -7,15 +7,15 @@
 
 <h3>Opening</h3>
 <h4>Entrance of the Light</h4>
-<Location name="VESPERS-LIGHT" {proper} />
+<Location name="VESPERS-LIGHT" {proper} altMax=3 />
 
 <h4>Hymn of Light (The Phos Hilaron)</h4>
-<Location name="PHOS-HILARON" {proper} />
+<Location name="PHOS-HILARON" {proper} altMax=3 />
 
 <h4>+ Thanksgiving for Light</h4>
 <Rubric>(Always included in Festive Vespers or Evensong)</Rubric>
 <Location name="GENERAL-WITHYOU" {proper} />
-<Location name="VESPER-COLLECT1" {proper} />
+<Location name="VESPER-COLLECT1" {proper} altMax=3 />
 <Rubric>The community is seated.</Rubric>
 
 <h4>Evening Prayer Canticle</h4>
@@ -25,7 +25,7 @@
 </Rubric>
 
 <h4>Prayer of awareness</h4>
-<Location name="VESPER-CONFESSION" {proper} />
+<Location name="VESPER-CONFESSION" {proper} altMax=3 />
 <Silence>silent recollection and examination of conscience</Silence>
 
 <h4>Words of Assurance:</h4>
@@ -40,7 +40,7 @@
 
 <h3>Word</h3>
 <h4>Scripture</h4>
-<Location name="VESPER-LECTIONARY" {proper} />
+<Location name="VESPER-LECTIONARY" {proper} altMax=3 />
 <Location name="GENERAL-RESPONSE-SCRIPTURE" {proper} />
 <Location name="VESPER-HEARWORD" {proper} /><br />
 
@@ -62,7 +62,7 @@
 >
 
 <h4>Prayer of Thanksgiving</h4>
-<Location name="VESPER-SUPPLICATION" {proper} />
+<Location name="VESPER-SUPPLICATION" {proper} altMax=3 />
 <h4>Evening Collects</h4>
 <Rubric>One and usually more of the following collects.</Rubric>
 <Location name="VESPER-COLLECT2" {proper} max="10" />
@@ -70,7 +70,7 @@
 <h4>Prayers of Special Intention</h4>
 <h5>Collect of Commemoration</h5>
 <Rubric>Proper collects for holy days and major feasts</Rubric>
-<Location name="VESPER-COMMEMORATION" {proper} />
+<Location name="VESPER-COMMEMORATION" {proper} altMax=3 />
 
 <h5>Intercession for the Order of Saint Luke</h5>
 <Location name="OSL" {proper} />
@@ -78,13 +78,13 @@
 <h4>The Lord’s Prayer</h4>
 <Location name="GENERAL-LORDS" {proper} /><br />
 <h4>Concluding Collect</h4>
-<Location name="VESPER-COLLECT3" {proper} />
+<Location name="VESPER-COLLECT3" {proper} altMax=3 />
 
 <h4>Hymn</h4>
-<Location name="VESPER-HYMN" {proper} />
+<Location name="VESPER-HYMN" {proper} altMax=3 />
 
 <h4>Commendation and Canticle of Simeon</h4>
-<Location name="SIMEON" {proper} /><br />
+<Location name="SIMEON" {proper} altMax=3 /><br />
 
 <h3>Going Forth</h3>
 <Location name="VESPER-BENEDICTION" {proper} />
