@@ -1,12 +1,12 @@
-import Lauds from "../components/Lauds.svelte";
-import Terce from "../components/Terce.svelte";
-import Sext from "../components/Sext.svelte";
-import None from "../components/None.svelte";
-import Vespers from "../components/Vespers.svelte";
-import Compline from "../components/Compline.svelte";
-import Vigil from "../components/Vigil.svelte";
-import Matins from "../components/Matins.svelte";
-import TestOffice from "../components/TestOffice.svelte";
+import Lauds from "../components/offices/Lauds.svelte";
+import Terce from "../components/offices/Terce.svelte";
+import Sext from "../components/offices/Sext.svelte";
+import None from "../components/offices/None.svelte";
+import Vespers from "../components/offices/Vespers.svelte";
+import Compline from "../components/offices/Compline.svelte";
+import Vigil from "../components/offices/Vigil.svelte";
+import Matins from "../components/offices/Matins.svelte";
+import TestOffice from "../components/offices/TestOffice.svelte";
 
 // Lookup table of office-name to component...
 const officeLUT = new Map([
