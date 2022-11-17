@@ -1,7 +1,7 @@
 <script>
-  import Location from "./Location.svelte";
-  import Silence from "./Silence.svelte";
-  import Rubric from "./Rubric.svelte";
+  import Location from "../Location.svelte";
+  import Silence from "../Silence.svelte";
+  import Rubric from "../Rubric.svelte";
 
   export let proper;
 </script>

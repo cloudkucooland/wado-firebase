@@ -1,7 +1,7 @@
 <script>
-  import { showEdit } from "../model/preferences";
-  import Media from "./Media.svelte";
-  import prayer from "../model/prayer";
+  import { showEdit } from "../../model/preferences";
+  import Media from "../Media.svelte";
+  import prayer from "../../model/prayer";
 
   export let data;
   export let bold;

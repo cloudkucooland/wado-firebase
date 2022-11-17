@@ -1,12 +1,12 @@
 <script>
   import { TabContent, TabPane } from "sveltestrap";
 
-  import Heartwords from "./Heartwords.svelte";
-  import Hymn from "./Hymn.svelte";
-  import Lection from "./Lection.svelte";
-  import Prayer from "./Prayer.svelte";
-  import Psalm from "./Psalm.svelte";
-  import Antiphon from "./Antiphon.svelte";
+  import Heartwords from "./prayerClasses/Heartwords.svelte";
+  import Hymn from "./prayerClasses/Hymn.svelte";
+  import Lection from "./prayerClasses/Lection.svelte";
+  import Prayer from "./prayerClasses/Prayer.svelte";
+  import Psalm from "./prayerClasses/Psalm.svelte";
+  import Antiphon from "./prayerClasses/Antiphon.svelte";
 
   export const lookup = new Map([
     ["heartwords", Heartwords],

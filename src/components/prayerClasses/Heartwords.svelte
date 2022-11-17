@@ -1,7 +1,7 @@
 <script>
-  import { showEdit } from "../model/preferences";
-  import Media from "./Media.svelte";
-  import heartword from "../model/heartword";
+  import { showEdit } from "../../model/preferences";
+  import Media from "../Media.svelte";
+  import heartword from "../../model/heartword";
 
   export let data;
   export let id;

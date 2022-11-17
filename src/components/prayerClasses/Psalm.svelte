@@ -1,7 +1,7 @@
 <script>
-  import { showEdit } from "../model/preferences";
-  import Media from "./Media.svelte";
-  import psalm from "../model/psalm";
+  import { showEdit } from "../../model/preferences";
+  import Media from "../Media.svelte";
+  import psalm from "../../model/psalm";
 
   export let data;
   export let id;

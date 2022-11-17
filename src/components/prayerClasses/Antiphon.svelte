@@ -1,7 +1,7 @@
 <script>
-  import { showEdit } from "../model/preferences";
-  import Media from "./Media.svelte";
-  import antiphon from "../model/antiphon";
+  import { showEdit } from "../../model/preferences";
+  import Media from "../Media.svelte";
+  import antiphon from "../../model/antiphon";
 
   export let data;
   export let id;
