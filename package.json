@@ -10,7 +10,7 @@
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "install": "cp public/build/* /www/osl/wado/build/"
+    "install": "cp public/build/* /www/osl/wado/build/ ; cp public/*.* /www/osl/wado/ "
   },
   "repository": {
     "type": "git",
@@ -36,6 +36,7 @@
     "leaflet": "^1.7.1",
     "prettier-plugin-svelte": "^2.4.0",
     "rollup": "^2.3.4",
+    "rollup-plugin-collect-sass": "^1.0.9",
     "rollup-plugin-css-only": "^3.1.0",
     "rollup-plugin-serve": "^1.1.0",
     "rollup-plugin-svelte": "^7.0.0",
