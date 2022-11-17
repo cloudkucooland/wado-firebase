@@ -8,14 +8,14 @@
 
 <h3>Opening</h3>
 <Rubric>Call to Praise and Prayer and Remembrance of Baptism</Rubric>
-<Location name="LAUDS-OPENING" {proper} />
+<Location name="LAUDS-OPENING" {proper} maxAlt={5} />
 <Location name="LAUDS-REMEMBRANCEBAPTISM" {proper} />
 
 <h4><i>Morning Hymn</i></h4>
-<Location name="LAUDS-HYMN1" {proper} />
+<Location name="LAUDS-HYMN1" {proper} maxAlt={5} />
 
 <h4><i>Morning Prayer</i></h4>
-<Location name="LAUDS-COLLECT1" {proper} max="5" />
+<Location name="LAUDS-COLLECT1" {proper} max="5" maxAlt={5} />
 
 <h3>Psalter</h3>
 <Location name="LAUDS-PSALTER-ANTIPHON" {proper} />
@@ -35,7 +35,7 @@
 <Silence />
 
 <h4><i>Canticle of Zechariah</i></h4>
-<Location name="GENERAL-ZECHARIAH" {proper} />
+<Location name="GENERAL-ZECHARIAH" {proper} maxAlt={5} />
 <Location name="GENERAL-GLORIA" {proper} />
 
 <h4><i>Reading for Meditation and Reflection</i></h4>
@@ -46,10 +46,10 @@
 </Rubric>
 
 <h4><i>Prayers of Thanksgiving and Supplication</i></h4>
-<Location name="LAUDS-SUPPLICATION" {proper} /><br />
+<Location name="LAUDS-SUPPLICATION" {proper} maxAlt={5} /><br />
 <Rubric>Morning Collects (one or more of the following)</Rubric>
-<Location name="LAUDS-COLLECT2" {proper} max="3" />
-<Location name="LAUDS-SEASONAL" {proper} max="3" />
+<Location name="LAUDS-COLLECT2" {proper} max="3" maxAlt={5} />
+<Location name="LAUDS-SEASONAL" {proper} max="3" maxAlt={5} />
 
 <h4><i>Collect for the Order of Saint Luke</i></h4>
 <Location name="OSL" {proper} />
@@ -58,10 +58,10 @@
 <Location name="GENERAL-LORDS" {proper} />
 
 <h4><i>Concluding Collect</i></h4>
-<Location name="LAUDS-COLLECT-FINAL" {proper} />
+<Location name="LAUDS-COLLECT-FINAL" {proper} maxAlt={5} />
 
 <h4><i>Hymn</i></h4>
-<Location name="LAUDS-HYMN2" {proper} />
+<Location name="LAUDS-HYMN2" {proper} maxAlt={5} />
 
 <h3>Going Forth</h3>
 <Location name="LAUDS-BENEDICTION" {proper} />

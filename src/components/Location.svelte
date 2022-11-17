@@ -9,8 +9,10 @@
     limit,
     orderBy,
   } from "firebase/firestore";
+  import { Spinner } from "sveltestrap";
   import { db } from "../firebase";
   import { showEdit, showAlt } from "../model/preferences";
+  import { toasts } from "svelte-toasts";
   import Alternatives from "./Alternatives.svelte";
 
   import Heartwords from "./Heartwords.svelte";
@@ -196,12 +198,12 @@
 </script>
 
 {#await loaddata()}
-  <div>Loading {name}</div>
+  <Spinner color="primary" />
 {:then data}
   {#if $showEdit}<div class="edit">
       <a href="#/editlocation/{name}">Edit {name}</a>
     </div>{/if}
-  {#if maxAlt > 0 && $showAlt}
+  {#if maxAlt > 0 && $showAlt && data.size > 1}
     <Alternatives {data} />
   {:else}
     {#each [...data] as [k, d]}
@@ -209,5 +211,6 @@
     {/each}
   {/if}
 {:catch error}
+  toasts.error(error.messages);
   <div>{name}: {error.message}</div>
 {/await}

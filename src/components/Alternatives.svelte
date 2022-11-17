@@ -26,8 +26,6 @@
     if (isA == 1) return "active";
     return "";
   }
-
-  console.log(data);
 </script>
 
 <TabContent>

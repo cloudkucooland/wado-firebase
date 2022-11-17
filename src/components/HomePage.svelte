@@ -32,6 +32,7 @@
 
   screenView(officeName);
 
+  // move this to model/offices.ts
   function currentOffice() {
     const d = new Date();
     const hour = d.getHours();

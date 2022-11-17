@@ -11,6 +11,11 @@
     Nav,
     NavItem,
     NavLink,
+    NavbarBrand,
+    Dropdown,
+    DropdownToggle,
+    DropdownMenu,
+    DropdownItem,
   } from "sveltestrap";
 
   import {
@@ -114,10 +119,10 @@
 
 <header>
   <Navbar container={false} color="dark" dark expand="lg">
+    <NavbarBrand href="/wado/">WADO</NavbarBrand>
     <NavbarToggler id="main-toggler" />
     <Collapse toggler="#main-toggler" navbar expand="lg">
-      <Nav navbar>
-        <NavItem><NavLink href="#/">WADO</NavLink></NavItem>
+      <Nav class="ms-auto" navbar>
         {#if loggedIn}
           <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
@@ -125,21 +130,22 @@
             <NavLink href="#" on:click={doLogout}>Log Out</NavLink>
           </NavItem>
         {:else}
-          <!-- <NavItem>
-            <NavLink href="#" on:click={doFBLogin}>Facebook Login</NavLink>
-          </NavItem> -->
-          <NavItem>
-            <NavLink href="#" on:click={doGLogin}>Login</NavLink>
-          </NavItem>
+          <Dropdown nav inNavbar>
+            <DropdownToggle nav caret>Login</DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem on:click={doGLogin}>Google Login</DropdownItem>
+              <DropdownItem on:click={doFBLogin}>Facebook Login</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
         {/if}
         <NavItem>
-          <NavLink href="https://saint-luke.net">OSL</NavLink>
+          <NavLink href="https://saint-luke.net/">OSL</NavLink>
         </NavItem>
       </Nav>
     </Collapse>
   </Navbar>
 </header>
-<main in:fade={{ duration: 500 }}>
+<main>
   <ToastContainer let:data>
     <FlatToast {data} />
   </ToastContainer>
