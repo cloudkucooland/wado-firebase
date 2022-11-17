@@ -37,7 +37,7 @@
 
   if (typeof max !== "number") max = +max;
   if (typeof maxAlt !== "number") maxAlt = +maxAlt;
-  const realMax = (maxAlt > max) ? maxAlt : max;
+  const realMax = maxAlt > max ? maxAlt : max;
 
   const order = "Weight";
 
@@ -59,7 +59,7 @@
       const doc = await getDoc(a.data().Reference);
       m.set(doc.id, doc.data());
     }
-    if (m.size >=realMax) {
+    if (m.size >= realMax) {
       return m;
     }
 
@@ -201,7 +201,14 @@
       <a href="#/editlocation/{name}">Edit {name}</a>
     </div>{/if}
   {#each [...data] as [k, d]}
-    <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} maxAlt={maxAlt} max={max} />
+    <svelte:component
+      this={lookup.get(d.Class)}
+      data={d}
+      id={k}
+      {bold}
+      {maxAlt}
+      {max}
+    />
   {/each}
 {:catch error}
   <div>{name}: {error.message}</div>

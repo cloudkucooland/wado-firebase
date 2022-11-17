@@ -26,7 +26,6 @@
     // getCountFromServer,
   } from "firebase/firestore";
   import { db, recordEvent, isEditor, screenView } from "../firebase";
-  // import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
@@ -157,7 +156,7 @@
                   <td>{v.reviewed}</td>
                   <td>{v._assCount}</td>
                   <td>
-                    {#if isEditor}
+                    {#if editorPerm}
                       <Button
                         on:click={toggleDeleteOpen}
                         value={k}
