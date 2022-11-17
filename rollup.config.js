@@ -1,13 +1,12 @@
 import svelte from "rollup-plugin-svelte";
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
-import { terser } from "rollup-plugin-terser";
+// import { terser } from "rollup-plugin-terser";
 import sveltePreprocess from "svelte-preprocess";
 import typescript from "@rollup/plugin-typescript";
 import json from "@rollup/plugin-json";
 import css from "rollup-plugin-css-only";
 import replace from "@rollup/plugin-replace";
-// import svg from "rollup-plugin-svg";
 import collectSass from "rollup-plugin-collect-sass";
 
 import { createFilter } from "@rollup/pluginutils";
@@ -92,8 +91,6 @@ export default [
         inlineSources: true,
       }),
 
-      // svg(),
-
       replace({
         preventAssignment: true,
         __buildDate__: () => new Date().toUTCString(),
@@ -104,7 +101,7 @@ export default [
 
       // If we're building for production (npm run build
       // instead of npm run dev), minify
-      production && terser(),
+      // production && terser(),
 
       userscript && userscriptAsset(),
     ],
