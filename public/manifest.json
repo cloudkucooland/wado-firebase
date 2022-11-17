@@ -1,0 +1,9 @@
+{
+  "name": "The Daily Office",
+  "short_name": "WADO",
+  "theme_color": "#ad1212",
+  "background_color": "#ffffff",
+  "display": "browser",
+  "scope": "/wado/",
+  "start_url": "/wado/#"
+}
