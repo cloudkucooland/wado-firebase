@@ -28,9 +28,10 @@
   }
 </script>
 
+<!-- instead of substring, split at the first space after 20? -->
 <TabContent>
   {#each [...data] as [k, d]}
-    <TabPane tabId={k} tab={d.Name} active={isActive(k)}>
+    <TabPane tabId={k} tab={d.Name.substring(0, 30)} active={isActive(k)}>
       <svelte:component this={lookup.get(d.Class)} data={d} id={k} />
     </TabPane>
   {/each}
