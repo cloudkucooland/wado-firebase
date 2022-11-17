@@ -1,9 +1,35 @@
 {
   "name": "The Daily Office",
   "short_name": "WADO",
-  "theme_color": "#ad1212",
+  "description": "The Order of Saint Luke's Amplified Daily Office",
+  "theme_color": "#a30e15",
   "background_color": "#ffffff",
   "display": "browser",
   "scope": "/wado/",
-  "start_url": "/wado/#"
+  "start_url": "https://saint-luke.net/wado/",
+  "icons": [
+    { "src": "/wado/ox.svg", "type": "image/svg+xml", "sizes": "512x512" }
+  ],
+  "shortcuts": [
+    {
+      "name": "The Current Office",
+      "short_name": "Current",
+      "url": "/wado/#",
+      "icons": [
+        { "src": "/wado/ox.svg", "type": "image/svg+xml", "sizes": "192x192" }
+      ]
+    },
+    {
+      "name": "WADO Admin",
+      "short_name": "Admin",
+      "url": "/wado/#/admin",
+      "icons": [
+        {
+          "src": "/wado/ox-scroll.svg",
+          "type": "image/svg+xml",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }
