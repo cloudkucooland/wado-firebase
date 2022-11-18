@@ -47,21 +47,17 @@
 
   async function confirmDelete(e) {
     recordEvent("delete_prayer", { id: e.target.value });
-    console.debug("deleting prayer", e.target.value);
     deleteModalOpen = !deleteModalOpen;
 
     try {
       const toDelete = doc(db, "prayers", e.target.value);
 
-      // remove associations for this prayer -- not tested yet
-      console.debug("removing associations on delete is not tested yet...");
       const q = query(
         collection(db, "associations"),
         where("Reference", "==", doc(db, "prayers", e.target.value))
       );
       const res = await getDocs(q);
       for (const asn of res.docs) {
-        console.log("deleting association", asn);
         await deleteDoc(doc(db, "associations", asn.id));
       }
 
@@ -93,15 +89,6 @@
       const res = await getDocs(q);
       for (const a of res.docs) {
         const p = new prayer(a.data());
-
-        // this is SLOW (getCountFromServer)
-        p._assCount = 0;
-        // const assq = query(collection(db, "associations"), where("Reference", "==", doc(db, "prayers", a.id)));
-        // const snap = await getCountFromServer(assq);
-        // p._assCount = snap.data().count;
-
-        // cleanup the prayers & assn here
-
         m.set(a.id, p);
       }
     } catch (e) {
@@ -128,7 +115,6 @@
       >
     {/each}
   </Nav>
-  <p>Loading might take a bit... be patient until I can make it better</p>
   <Row>
     <Col>
       <Card>
@@ -140,7 +126,6 @@
                 <th>Prayer</th>
                 <th>Licensed</th>
                 <th>Reviewed</th>
-                <th>Associations</th>
                 <th>&nbsp;</th>
               </tr>
             </thead>
@@ -154,7 +139,6 @@
                   </td>
                   <td>{v.license}</td>
                   <td>{v.reviewed}</td>
-                  <td>{v._assCount}</td>
                   <td>
                     {#if editorPerm}
                       <Button
