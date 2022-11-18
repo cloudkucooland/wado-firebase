@@ -19,7 +19,7 @@ export default class association {
     // console.debug(d);
 
     this.Location = d.Location ? d.Location : "UNSET";
-    if (this.locations.indexOf(this.Location) == -1) {
+    if (association.locations.indexOf(this.Location) == -1) {
       console.error("invalid location detected", d.Location);
       this._dirty = true;
       this.Location = "UNSET";
@@ -209,7 +209,7 @@ export default class association {
     return "clean";
   }
 
-  public locations = Array(
+  public static locations = Array(
     "COMMENDATION",
     "COMPILNE-CONFESSION",
     "COMPLINE-CHAPTER",
