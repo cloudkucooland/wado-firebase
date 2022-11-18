@@ -109,10 +109,6 @@
         the WADO editor
       </div>
       <div>There is no way to add a new prayer yet</div>
-      <div>
-        There is no way to edit an association yet, add a new one, delete the
-        old one
-      </div>
     </Col>
   </Row>
 </Container>
