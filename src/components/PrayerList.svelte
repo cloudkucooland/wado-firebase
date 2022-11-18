@@ -114,6 +114,14 @@
         }}>{cx}</NavLink
       >
     {/each}
+    <NavLink>
+      <Button
+        on:click={() => {
+          window.location.assign("#/addPrayer");
+        }}
+        color="success"
+      >Add Prayer</Button>
+    </NavLink>
   </Nav>
   <Row>
     <Col>
