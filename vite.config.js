@@ -1,6 +1,5 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { dependencies } from "./package.json";
 import replace from "@rollup/plugin-replace";
 
 export default defineConfig({
