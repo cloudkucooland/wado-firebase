@@ -10,7 +10,7 @@ export default defineConfig({
       /* plugin options */
     }),
     replace({
-      __buildDate__: () => JSON.stringify(new Date())
+      __buildDate__: () => JSON.stringify(new Date()),
     }),
   ],
   build: {
