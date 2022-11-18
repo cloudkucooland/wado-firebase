@@ -1,7 +1,7 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import { dependencies } from "./package.json";
-import { chunkSplitPlugin } from "vite-plugin-chunk-split";
+import replace from "@rollup/plugin-replace";
 
 export default defineConfig({
   base: "/wado/",
@@ -9,11 +9,8 @@ export default defineConfig({
     svelte({
       /* plugin options */
     }),
-    chunkSplitPlugin({
-      strategy: "single-vendor",
-      customSplitting: {
-        ckeditor: ["ckeditor5-svelte"],
-      },
+    replace({
+      __buildDate__: () => JSON.stringify(new Date())
     }),
   ],
   build: {
@@ -21,9 +18,7 @@ export default defineConfig({
     reportCompressedSize: false,
     chunkSizeWarningLimit: 2048,
     rollupOptions: {
-      output: {
-        manualChunks: {},
-      },
+      output: {},
     },
   },
 });
