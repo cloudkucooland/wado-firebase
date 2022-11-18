@@ -40,18 +40,21 @@
   import EditLocation from "./components/EditLocation.svelte";
   import PrayerList from "./components/PrayerList.svelte";
   import LectionList from "./components/LectionList.svelte";
+  import AddPrayer from "./components/AddPrayer.svelte";
 
   const routes = {
     "/": HomePage,
     "/admin": Admin,
     "/settings": Settings,
     "/browse": Browse,
-    "/office/:officeName": HomePage,
+    "/office/:officeName/:officeDate?": HomePage,
     "/office/:officeName/date/:officeDate": HomePage,
     "/edit/:id": Edit,
     "/editlocation/:id": EditLocation,
     "/prayers/:c": PrayerList,
+    "/addPrayer": AddPrayer,
     "/lectionary/:l/:y": LectionList,
+    "*": HomePage,
   };
 
   $: loggedIn = false;
