@@ -36,11 +36,8 @@
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
-  // import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
-
   const editor = DecoupledEditor;
   const editorConfig = {
-    // plugins: [ SourceEditing ],
     toolbar: {
       items: [
         "bold",
@@ -55,7 +52,6 @@
       ],
     },
   };
-  // "sourceEditing",
 
   import association from "../model/association";
   import prayer from "../model/prayer";
@@ -65,7 +61,6 @@
   let modalId = "";
   let assocEditResult;
   let assocAddResult;
-  const size = "xl";
   let editorPerm = false;
   $: prayerData = new prayer({ name: "Loading", body: "Loading" });
   $: associations = new Array();
@@ -79,7 +74,6 @@
 
   async function confirmDelete(e) {
     recordEvent("delete_assoc", { id: id, assoc: e.target.value });
-    console.debug("deleting association", e.target.value);
     deleteModalOpen = !deleteModalOpen;
 
     try {
@@ -147,8 +141,6 @@
     recordEvent("edit_assoc", { id: id, assoc: e.target.value });
     addAssocModalOpen = !addAssocModalOpen;
 
-    console.log("add result", assocAddResult.toFirebase());
-
     try {
       const added = await addDoc(
         collection(db, "associations"),
@@ -172,7 +164,6 @@
       const d = toEdit.data();
 
       const c = getClass(d.Class);
-      if (!c || typeof c == "undefined") console.log(d.Class);
       prayerData = new c(d);
 
       const q = query(
@@ -184,8 +175,9 @@
         // https://svelte.dev/tutorial/updating-arrays-and-objects
         associations = [...associations, new association(a)];
       }
-    } catch (e) {
-      console.log(e);
+    } catch (err) {
+      console.log(err);
+      toasts.error(err.message);
     }
   }
 
@@ -211,10 +203,6 @@
         editor.ui.view.toolbar.element,
         editor.ui.getEditableElement()
       );
-    // console.debug(Array.from( editor.ui.componentFactory.names() ));
-    // console.debug(editor.config._config, Array.from(editor.config.names()));
-    // console.debug(editor._availablePlugins.get("ShiftEnter"), editor._plugins.get("ShiftEnter"), editor._plugins.get("ShiftEnter").isEnabled);
-    // editor.plugins.get('ShiftEnter').isEnabled = true;
   }
 
   onMount(async () => {
@@ -467,7 +455,7 @@
     </Button>
   </ModalFooter>
 </Modal>
-<Modal id="editModal" isOpen={editModalOpen} {toggleEditOpen} {size}>
+<Modal id="editModal" isOpen={editModalOpen} {toggleEditOpen} size="xl">
   <ModalHeader {toggleEditOpen}>Edit Association</ModalHeader>
   <ModalBody>
     <EditAssoc id={modalId} bind:result={assocEditResult} />
@@ -485,7 +473,7 @@
   id="addAssocModal"
   isOpen={addAssocModalOpen}
   {toggleAddAssocOpen}
-  {size}
+  size="xl"
 >
   <ModalHeader {toggleAddAssocOpen}>Add Association</ModalHeader>
   <ModalBody>
