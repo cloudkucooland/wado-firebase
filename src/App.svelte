@@ -136,7 +136,15 @@
     <Collapse toggler="#main-toggler" navbar expand="lg">
       <Nav class="ms-auto" navbar>
         {#if loggedIn}
-          <NavItem><NavLink href="#/admin">Admin</NavLink></NavItem>
+          <Dropdown nav inNavbar>
+            <DropdownToggle nav caret>Admin</DropdownToggle>
+            <DropdownMenu>
+              <DropdownItem href="#/admin">Admin Screen</DropdownItem>
+              <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
+              <DropdownItem href="#/lectionary">Lectionary Editor</DropdownItem>
+              <DropdownItem href="#/browse">Location Browser</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
           <NavItem>
             <NavLink href="#" on:click={doLogout}>Log Out</NavLink>
@@ -197,10 +205,10 @@
   :global(a:hover) {
     text-decoration: none;
   }
-  :global(navbar) {
+  :global(.navbar) {
     background-color: #a30e15ff !important;
-    padding-right: 60px !important;
-    padding-left: 30px !important;
+    padding-right: 10px !important;
+    padding-left: 10px !important;
     padding-top: 0px !important;
     padding-bottom: 0px !important;
   }
@@ -209,7 +217,7 @@
     border-bottom: 1px solid transparent;
   }
   :global(.navbar a:hover) {
-    border-bottom: 1px solid #decdf5ff;
+    border-bottom: 1px solid #a30e15ff;
   }
   :global(.content-area) {
     padding: 0 16px 16px 16px;
