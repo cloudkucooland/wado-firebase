@@ -21,10 +21,10 @@
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
 
-  let officeDate = params.officeDate
+  let officeDate = params.officeDate;
 
   // needs to be reactive
-  $: officeName = params.officeName
+  $: officeName = params.officeName;
   $: forProper = new proper(officeDate);
   $: office = getOffice(officeName);
 
