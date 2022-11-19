@@ -6,13 +6,9 @@
     Container,
     Col,
     Row,
-    Card,
-    CardHeader,
-    CardBody,
-    Form,
-    FormGroup,
-    Label,
     Input,
+    ListGroup,
+    ListGroupItem,
   } from "sveltestrap";
 
   // does bind not work?
@@ -33,74 +29,112 @@
 </svelte:head>
 
 <Container>
-  <Row>
-    <Col>
-      <Card>
-        <CardHeader>Settings</CardHeader>
-        <CardBody>
-          <Form>
-            <FormGroup>
-              <Label for="showMedia">Show Media</Label>
-              <Input
-                name="showMedia"
-                id="showMedia"
-                type="checkbox"
-                on:change={(e) => {
-                  showMedia.set(e.target.checked);
-                }}
-              />
-              <div>
-                Show controls for items with attached media (recordings)
-              </div>
-            </FormGroup>
-            <FormGroup>
-              <Label for="showAlt">Show Alternatives</Label>
-              <Input
-                name="showAlt"
-                id="showAlt"
-                type="checkbox"
-                on:change={(e) => {
-                  showAlt.set(e.target.checked);
-                }}
-              />
-              <div>Show alternatives for the various prayers/hymns/etc.</div>
-            </FormGroup>
-            <FormGroup>
-              <Label for="showEdit">Show Edit Links</Label>
-              <Input
-                name="showEdit"
-                id="showEdit"
-                type="checkbox"
-                on:change={(e) => {
-                  showEdit.set(e.target.checked);
-                }}
-              />
-              <div>
-                Turn on displaying links on the main pages for editing elements.
-              </div>
-            </FormGroup>
-            <FormGroup>
-              <Label for="offline">Store Offline Data</Label>
-              <Input
-                name="offline"
-                id="offline"
-                type="checkbox"
-                on:change={(e) => {
-                  offline.set(e.target.checked);
-                }}
-              />
-              <div>
-                If you need to use WADO when you don't have data service, enable
-                this and reload the main page. This will use a lot of data on
-                the first load, and it will be slow until the entire load is
-                complete. Do not enable this on "always connected" devices
-                (desktop computers) since it won't do anything useful, but will
-                increases server load/costs.
-              </div>
-            </FormGroup>
-          </Form>
-        </CardBody>
-      </Card>
-    </Col>
+  <Row class="justify-content-center">
+    <Col xs="12" lg="10" xl="8" mx="auto">
+      <h2 class="h3 mb-4 page-title">Settings</h2>
+      <div class="my-4">
+        <strong class="mb-0">Display</strong>
+        <ListGroup class="mb-5 shadow">
+          <ListGroupItem>
+            <Row class="align-items-center">
+              <Col>
+                <strong class="mb-0">Show Media</strong>
+                <p class="text-muted mb-0">
+                  Show controls for playing media files (when available).
+                </p>
+              </Col>
+              <Col sm="auto">
+                <div class="custom-control custom-switch">
+                  <Input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="showMedia"
+                    on:change={(e) => {
+                      showMedia.set(e.target.checked);
+                    }}
+                  />
+                  <span class="custom-control-label" />
+                </div>
+              </Col>
+            </Row>
+          </ListGroupItem>
+          <ListGroupItem>
+            <Row class="align-items-center">
+              <Col>
+                <strong class="mb-0">Show Alternatives</strong>
+                <p class="text-muted mb-0">
+                  Show additional prayer options (when available).
+                </p>
+              </Col>
+              <Col sm="auto">
+                <div class="custom-control custom-switch">
+                  <Input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="showAlt"
+                    on:change={(e) => {
+                      showAlt.set(e.target.checked);
+                    }}
+                  />
+                  <span class="custom-control-label" />
+                </div>
+              </Col>
+            </Row>
+          </ListGroupItem>
+          <ListGroupItem>
+            <Row class="align-items-center">
+              <Col>
+                <strong class="mb-0">Show Edit Links</strong>
+                <p class="text-muted mb-0">
+                  Show links to edit prayers & locations.
+                </p>
+              </Col>
+              <Col sm="auto">
+                <div class="custom-control custom-switch">
+                  <Input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="showEdit"
+                    on:change={(e) => {
+                      showEdit.set(e.target.checked);
+                    }}
+                  />
+                  <span class="custom-control-label" />
+                </div>
+              </Col>
+            </Row>
+          </ListGroupItem>
+        </ListGroup>
+        <strong class="mb-0">Data Cache</strong>
+        <ListGroup class="mb-5 shadow">
+          <ListGroupItem>
+            <Row class="align-items-center">
+              <Col>
+                <strong class="mb-0">Offline Data Cache</strong>
+                <p class="text-muted mb-0">Pre-cache the prayer data.</p>
+              </Col>
+              <Col sm="auto">
+                <div class="custom-control custom-switch">
+                  <Input
+                    type="checkbox"
+                    class="custom-control-input"
+                    id="offline"
+                    on:change={(e) => {
+                      offline.set(e.target.checked);
+                    }}
+                  />
+                  <span class="custom-control-label">
+                    If you need to use WADO when you don't have data service,
+                    enable this and reload the main page. This will use a lot of
+                    data on the first load, and it will be slow until the entire
+                    load is complete.</span
+                  >
+                </div>
+              </Col>
+            </Row>
+          </ListGroupItem>
+        </ListGroup>
+      </div></Col
+    >
   </Row>
 </Container>
