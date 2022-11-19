@@ -10,9 +10,9 @@
     orderBy,
   } from "firebase/firestore";
   import { Spinner } from "sveltestrap";
-  import { db } from "../firebase";
+  import { db, getDocCacheFirst } from "../firebase";
   import { showEdit, showAlt } from "../model/preferences";
-  import { toasts } from "svelte-toasts";
+  // import { toasts } from "svelte-toasts";
   import Alternatives from "./Alternatives.svelte";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
@@ -59,7 +59,7 @@
 
     let res = await getDocs(q);
     for (const a of res.docs) {
-      const doc = await getDoc(a.data().Reference);
+      const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
     }
     if (m.size >= realMax) {
@@ -81,7 +81,7 @@
     res = await getDocs(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
-      const doc = await getDoc(a.data().Reference);
+      const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
     }
     if (m.size >= realMax) {
@@ -102,7 +102,7 @@
     res = await getDocs(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
-      const doc = await getDoc(a.data().Reference);
+      const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
     }
     if (m.size >= realMax) {
@@ -123,7 +123,7 @@
     res = await getDocs(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
-      const doc = await getDoc(a.data().Reference);
+      const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
     }
     if (m.size >= realMax) {
@@ -144,7 +144,7 @@
     res = await getDocs(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
-      const doc = await getDoc(a.data().Reference);
+      const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
     }
     if (m.size >= realMax) {
@@ -165,7 +165,7 @@
     res = await getDocs(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
-      const doc = await getDoc(a.data().Reference);
+      const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
     }
     if (m.size >= realMax) {
@@ -187,7 +187,7 @@
     res = await getDocs(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
-      const doc = await getDoc(a.data().Reference);
+      const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
     }
 
