@@ -21,14 +21,12 @@
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
 
-  // probably doesn't need to be reactive
-  $: officeDate = params.officeDate ? params.officeDate : nowString;
-  // probably doesn't need to be reactive
-  $: officeName = params.officeName ? params.officeName : currentOffice();
+  let officeDate = params.officeDate
 
-  // these two almost certainly need to be reactive
-  $: office = getOffice(officeName);
+  // needs to be reactive
+  $: officeName = params.officeName
   $: forProper = new proper(officeDate);
+  $: office = getOffice(officeName);
 
   screenView(officeName);
 
@@ -48,9 +46,10 @@
   // this shouldn't be needed, but bind isn't working below
   function setDate(e) {
     screenView(officeName);
+    window.location.assign("#/office/" + officeName + "/" + e.srcElement.value);
     officeDate = e.srcElement.value;
-    // forProper is reactive
-    office = getOffice(officeName);
+    forProper = new proper(officeDate);
+    office = getOffice(officeName); // does nothing?
   }
 </script>
 
@@ -61,7 +60,7 @@
 <Container class="cover-container mx-auto">
   <Nav>
     {#each offices as o}
-      <NavLink href="#/office/{o}/date/{officeDate}">{o}</NavLink>
+      <NavLink href="#/office/{o}/{officeDate}">{o}</NavLink>
     {/each}
     <FormGroup>
       <Input type="date" on:change={setDate} />
