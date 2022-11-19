@@ -2,8 +2,18 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
+import {
+  getFirestore,
+  enableIndexedDbPersistence,
+  getDocsFromCache,
+  getDocsFromServer,
+  getDocFromCache,
+  getDocFromServer,
+  Query,
+  DocumentReference,
+} from "firebase/firestore";
 import { toasts } from "svelte-toasts";
+import { offline } from "./model/preferences";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtVBGVEjDM50VXljFFV-g_xltotL878b8",
@@ -56,5 +66,32 @@ export async function isEditor() {
     return true;
   } else {
     return false;
+  }
+}
+
+export async function getDocsCacheFirst(q: Query) {
+  //if (!$offline) return getDocsFromServer(q);
+
+  try {
+    const res = await getDocsFromCache(q);
+    console.debug("got a query from cache!");
+    return res;
+  } catch (err) {
+    // console.debug(err);
+    return getDocsFromServer(q);
+  }
+}
+
+export async function getDocCacheFirst(r: DocumentReference) {
+  // if (!$offline) return getDocFromServer(r);
+
+  try {
+    const res = await getDocFromCache(r);
+    console.debug("doc cache hit");
+    return res;
+  } catch (err) {
+    console.debug("doc cache miss");
+    const res = await getDocFromServer(r);
+    return res;
   }
 }
