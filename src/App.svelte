@@ -124,7 +124,7 @@
 
 <header>
   <Navbar container={false} color="dark" dark expand="lg">
-    <NavbarBrand href="/wado/"
+    <NavbarBrand href="/wado/#/"
       ><img
         src="ox.svg"
         height="64"
