@@ -25,7 +25,13 @@
     orderBy,
     // getCountFromServer,
   } from "firebase/firestore";
-  import { db, recordEvent, isEditor, screenView } from "../firebase";
+  import {
+    db,
+    recordEvent,
+    isEditor,
+    screenView,
+    getDocsCacheFirst,
+  } from "../firebase";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
@@ -56,7 +62,7 @@
         collection(db, "associations"),
         where("Reference", "==", doc(db, "prayers", e.target.value))
       );
-      const res = await getDocs(q);
+      const res = await getDocsCacheFirst(q);
       for (const asn of res.docs) {
         await deleteDoc(doc(db, "associations", asn.id));
       }
@@ -119,8 +125,8 @@
         on:click={() => {
           window.location.assign("#/addPrayer");
         }}
-        color="success"
-      >Add Prayer</Button>
+        color="success">Add Prayer</Button
+      >
     </NavLink>
   </Nav>
   <Row>
