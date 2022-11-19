@@ -1,19 +1,19 @@
 <script>
   import { onMount } from "svelte";
-  import { getDoc } from "firebase/firestore";
+  import { getDocCacheFirst } from "../firebase";
 
   export let association;
   let id = "unset";
   let d = { Name: "Loading", License: false, Reviewed: false, Class: "prayer" };
 
   onMount(async () => {
-    const doc = await getDoc(association.Reference);
-    id = doc.id;
+    const doc = await getDocCacheFirst(association.Reference);
     if (!doc || !doc.exists()) {
       console.log("reference does not exist");
       d = { Name: "Failed", License: false, Reviewed: false, Class: "prayer" };
       return;
     }
+    id = doc.id;
     d = doc.data();
   });
 </script>
