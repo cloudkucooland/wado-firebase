@@ -34,4 +34,18 @@ export default class prayer {
       Class: this.class,
     };
   }
+
+  public get shortname() {
+    if (this.name.length < 30) return this.name;
+
+    const words: Array<string> = this.name.split(" ");
+    let shortName: string = "";
+    let i: number = 0;
+    while (shortName.length < 25) {
+      if (i > 0) shortName += " ";
+      shortName += words[i];
+      i = i + 1;
+    }
+    return shortName;
+  }
 }
