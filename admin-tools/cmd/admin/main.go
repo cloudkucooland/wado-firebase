@@ -88,12 +88,18 @@ func revokeReviewed() {
 func updateMeiliSearch() {
 	key := os.Getenv("MEILIADMINKEY")
 	c := meilisearch.NewClient(meilisearch.ClientConfig{
-                Host: "http://osl.indievisible.org:7700",
+                Host: "https://osl.indievisible.org:7700",
                 APIKey: key,
         })
 	// c.DeleteIndex("prayers")
 
 	index := c.Index("prayers")
+	resp, err := index.UpdateFilterableAttributes(&[]string{ "Class", "License", "Reviewed" })
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", resp)
+
 	var documents []map[string]interface{}
 
 	iter := fsclient.Collection("prayers").Where("License", "==", true).Documents(context.Background())
