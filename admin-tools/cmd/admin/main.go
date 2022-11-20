@@ -1,8 +1,12 @@
 package main
 
 import (
+	// "bytes"
 	"context"
 	"fmt"
+	// "net/http"
+	// "encoding/json"
+	"os"
 
 	"cloud.google.com/go/firestore"
 	// "google.golang.org/api/iterator"
@@ -11,6 +15,8 @@ import (
 
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
+
+	"github.com/meilisearch/meilisearch-go"
 )
 
 var client *auth.Client
@@ -39,7 +45,8 @@ func main() {
 
 	// updateEditors()
 	// revokeReviewed()
-	assocCleanup()
+	// assocCleanup()
+	updateMeiliSearch()
 }
 
 func updateEditors() {
@@ -76,6 +83,39 @@ func revokeReviewed() {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func updateMeiliSearch() {
+	key := os.Getenv("MEILIADMINKEY")
+	c := meilisearch.NewClient(meilisearch.ClientConfig{
+                Host: "http://osl.indievisible.org:7700",
+                APIKey: key,
+        })
+	// c.DeleteIndex("prayers")
+
+	index := c.Index("prayers")
+	var documents []map[string]interface{}
+
+	iter := fsclient.Collection("prayers").Where("License", "==", true).Documents(context.Background())
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+
+		mm := doc.Data()
+		mm["fsid"] = doc.Ref.ID
+		documents = append(documents, mm)
+	}
+
+	task, err := index.AddDocumentsInBatches(documents, 50, "fsid")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%+v\n", task)
 }
 
 func assocCleanup() {
