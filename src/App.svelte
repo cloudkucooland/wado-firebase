@@ -141,11 +141,12 @@
           <Dropdown nav inNavbar>
             <DropdownToggle nav caret>Admin</DropdownToggle>
             <DropdownMenu>
-              <DropdownItem href="#/admin">Admin Screen</DropdownItem>
+              <DropdownItem href="#/search">Search</DropdownItem>
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
               <DropdownItem href="#/lectionary">Lectionary Editor</DropdownItem>
               <DropdownItem href="#/browse">Location Browser</DropdownItem>
-              <DropdownItem href="#/search">Search</DropdownItem>
+              <DropdownItem href="#/admin">Admin Screen</DropdownItem>
+              <DropdownItem href="#/addPrayer">Add Prayer</DropdownItem>
             </DropdownMenu>
           </Dropdown>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
