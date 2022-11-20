@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { TabContent, TabPane } from "sveltestrap";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
@@ -21,17 +21,31 @@
   export let data;
 
   let isA = 0;
-  function isActive() {
+  function isActive(key) {
     isA = isA + 1;
-    if (isA == 1) return "active";
-    return "";
+    if (isA == 1) return true; // "active";
+    return false; // "";
+  }
+
+  function shortname(name) {
+    if (name.length < 30) return name;
+
+    const words = name.split(" ");
+    let shortName = "";
+    let i = 0;
+    while (shortName.length < 25) {
+      if (i > 0) shortName += " ";
+      shortName += words[i];
+      i = i + 1;
+    }
+    return shortName;
   }
 </script>
 
 <!-- instead of substring, split at the first space after 20? -->
 <TabContent>
   {#each [...data] as [k, d]}
-    <TabPane tabId={k} tab={d.Name.substring(0, 30)} active={isActive(k)}>
+    <TabPane tabId={k} tab={shortname(d.Name)} active={isActive(k)}>
       <svelte:component this={lookup.get(d.Class)} data={d} id={k} />
     </TabPane>
   {/each}
