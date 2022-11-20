@@ -41,6 +41,7 @@
   import PrayerList from "./components/PrayerList.svelte";
   import LectionList from "./components/LectionList.svelte";
   import AddPrayer from "./components/AddPrayer.svelte";
+  import Search from "./components/Search.svelte";
 
   const routes = {
     "/": HomePage,
@@ -54,6 +55,7 @@
     "/prayers/:c": PrayerList,
     "/addPrayer": AddPrayer,
     "/lectionary/:l/:y": LectionList,
+    "/search": Search,
     "*": HomePage,
   };
 
@@ -143,6 +145,7 @@
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
               <DropdownItem href="#/lectionary">Lectionary Editor</DropdownItem>
               <DropdownItem href="#/browse">Location Browser</DropdownItem>
+              <DropdownItem href="#/search">Search</DropdownItem>
             </DropdownMenu>
           </Dropdown>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>

@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "ckeditor5-svelte": "^0.0.10",
-    "firebase": "^9.14.0"
+    "firebase": "^9.14.0",
+    "meilisearch": "^0.29.1"
   }
 }
