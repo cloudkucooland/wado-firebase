@@ -108,7 +108,7 @@
         windows). Edit the prayer in your word processor, copy-and-paste into
         the WADO editor
       </div>
-      <div>There is no way to add a new prayer yet</div>
+      <div>The Workflow for adding data is sub-optimal</div>
     </Col>
   </Row>
 </Container>
