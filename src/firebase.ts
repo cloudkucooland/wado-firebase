@@ -72,11 +72,12 @@ export async function isEditor() {
 export async function getDocsCacheFirst(q: Query) {
   try {
     const res = await getDocsFromCache(q);
-    console.debug("got a query from cache!");
+    console.debug("query cache hit");
     return res;
   } catch (err) {
-    // console.debug(err);
-    return getDocsFromServer(q);
+    console.debug("query cache miss");
+    const res = await getDocsFromServer(q);
+    return res;
   }
 }
 
