@@ -25,7 +25,7 @@
 
   // needs to be reactive
   $: officeName = params.officeName;
-  $: forProper = new proper(officeDate);
+  $: forProper = proper.fromDate(officeDate);
   $: office = getOffice(officeName);
 
   screenView(officeName);
