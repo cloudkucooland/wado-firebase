@@ -54,7 +54,7 @@
     "/editlocation/:id": EditLocation,
     "/prayers/:c": PrayerList,
     "/addPrayer": AddPrayer,
-    "/lectionary/:l/:y": LectionList,
+    "/lectionary/:y": LectionList,
     "/search": Search,
     "*": HomePage,
   };
@@ -143,7 +143,9 @@
             <DropdownMenu>
               <DropdownItem href="#/search">Search</DropdownItem>
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
-              <DropdownItem href="#/lectionary">Lectionary Editor</DropdownItem>
+              <DropdownItem href="#/lectionary/A"
+                >Lectionary Editor</DropdownItem
+              >
               <DropdownItem href="#/browse">Location Browser</DropdownItem>
               <DropdownItem href="#/admin">Admin Screen</DropdownItem>
               <DropdownItem href="#/addPrayer">Add Prayer</DropdownItem>
