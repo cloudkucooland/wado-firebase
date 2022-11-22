@@ -7,7 +7,7 @@
     ListGroup,
     ListGroupItem,
   } from "sveltestrap";
-  import { client, index } from "../meili";
+  import { index } from "../meili";
   import { toasts } from "svelte-toasts";
   import { recordEvent } from "../firebase";
 
