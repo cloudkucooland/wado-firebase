@@ -3,12 +3,10 @@
     Container,
     Row,
     Col,
-    Card,
-    CardHeader,
-    CardBody,
-    Table,
     Nav,
     NavLink,
+    ListGroup,
+    ListGroupItem,
   } from "sveltestrap";
   import {
     collection,
@@ -47,8 +45,7 @@
       console.log(e);
     } */
     }
-    lections = ay;
-    console.log(lections);
+    return ay;
   }
 
   onMount(async () => {
@@ -59,43 +56,52 @@
 </script>
 
 <Container>
-  <Nav>
-    {#each ["A", "B", "C"] as y}
-      <NavLink
-        href="#/lectionary/{y}/"
-        on:click={async () => {
-          lections = await loadLections(y);
-        }}>{y}</NavLink
-      >
-    {/each}
-  </Nav>
+  <Row class="justify-content-center">
+    <Col xs="12" lg="10" xl="8" mx="auto">
+      <h2>Lectionary Editor</h2>
+    </Col>
+  </Row>
+
+  <Row class="justify-content-center">
+    <Col xs="12" lg="10" xl="8" mx="auto">
+      <Nav>
+        {#each ["A", "B", "C"] as y}
+          <NavLink
+            href="#/lectionary/{y}/"
+            on:click={async () => {
+              lections = await loadLections(y);
+            }}>{y}</NavLink
+          >
+        {/each}
+      </Nav>
+    </Col>
+  </Row>
+
   <Row>
     <Col>
-      <Card>
-        <CardHeader>Year {year}</CardHeader>
-        <CardBody>
-          <Table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Season</th>
-                <th>Proper</th>
-                <th>Weekday</th>
-              </tr>
-            </thead>
-            <tbody>
-              {#each [...lections] as [k, v]}
-                <tr id={k}>
-                  <td>{k}</td>
-                  <td>{v.season}</td>
-                  <td>{v.proper}</td>
-                  <td>{v.weekday}</td>
-                </tr>
-              {/each}
-            </tbody>
-          </Table>
-        </CardBody>
-      </Card>
+      <div class="my-4">
+        <ListGroup class="mb-5 shadow">
+          {#each [...lections] as [k, v]}
+            <ListGroupItem>
+              <Row class="align-items-center">
+                <Col xs="12" lg="10" xl="8" mx="auto">
+                  <strong class="mb-0">{k}</strong>
+                </Col>
+              </Row>
+              <Row class="align-items-center">
+                <Col xs="1"><strong>M</strong></Col>
+                <Col xs="2">Morning</Col>
+                <Col xs="1"><strong>E</strong></Col>
+                <Col xs="2">Evening</Col>
+                <Col xs="1"><strong>P</strong></Col>
+                <Col xs="2">Psalm</Col>
+                <Col xs="1"><strong>A</strong></Col>
+                <Col xs="1">Antiphon</Col>
+              </Row>
+            </ListGroupItem>
+          {/each}
+        </ListGroup>
+      </div>
     </Col>
   </Row>
 </Container>
