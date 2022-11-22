@@ -1,18 +1,9 @@
 <script>
   // type="ts"
-  import {
-    collection,
-    query,
-    where,
-    getDoc,
-    getDocs,
-    limit,
-    orderBy,
-  } from "firebase/firestore";
+  import { collection, query, where, limit, orderBy } from "firebase/firestore";
   import { Spinner } from "sveltestrap";
-  import { db, getDocCacheFirst } from "../firebase";
+  import { db, getDocCacheFirst, getDocsCacheFirst } from "../firebase";
   import { showEdit, showAlt } from "../model/preferences";
-  // import { toasts } from "svelte-toasts";
   import Alternatives from "./Alternatives.svelte";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
@@ -57,7 +48,7 @@
       limit(realMax)
     );
 
-    let res = await getDocs(q);
+    let res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       const doc = await getDocCacheFirst(a.data().Reference);
       m.set(doc.id, doc.data());
@@ -78,7 +69,7 @@
       limit(realMax - m.size)
     );
 
-    res = await getDocs(q);
+    res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
@@ -99,7 +90,7 @@
       limit(realMax - m.size)
     );
 
-    res = await getDocs(q);
+    res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
@@ -120,7 +111,7 @@
       limit(realMax - m.size)
     );
 
-    res = await getDocs(q);
+    res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
@@ -141,7 +132,7 @@
       limit(realMax - m.size)
     );
 
-    res = await getDocs(q);
+    res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
@@ -162,7 +153,7 @@
       limit(realMax - m.size)
     );
 
-    res = await getDocs(q);
+    res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
@@ -184,7 +175,7 @@
       limit(realMax - m.size)
     );
 
-    res = await getDocs(q);
+    res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
