@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
   import { TabContent, TabPane } from "sveltestrap";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
@@ -23,8 +23,8 @@
   let isA = 0;
   function isActive(key) {
     isA = isA + 1;
-    if (isA == 1) return true; // "active";
-    return false; // "";
+    if (isA == 1) return true;
+    return false;
   }
 
   function shortname(name) {
@@ -42,7 +42,6 @@
   }
 </script>
 
-<!-- instead of substring, split at the first space after 20? -->
 <TabContent>
   {#each [...data] as [k, d]}
     <TabPane tabId={k} tab={shortname(d.Name)} active={isActive(k)}>
