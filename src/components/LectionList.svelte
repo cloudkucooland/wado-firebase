@@ -21,48 +21,38 @@
     orderBy,
   } from "firebase/firestore";
   import { db, recordEvent, isEditor, screenView } from "../firebase";
-  import association from "../model/association";
-  import prayer from "../model/prayer";
+  // import association from "../model/association";
+  // import prayer from "../model/prayer";
+  import season from "../model/season";
+  import proper from "../model/proper";
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
 
-  export let params; //  = { l, y };
-  $: location = params.l ? params.l : "LAUDS-LECTIONARY";
+  export let params; //  = { y };
   $: year = params.y ? params.y : "A";
   $: lections = new Map();
   let editorPerm = false;
   let modalId = "exnihilo";
 
-  const ls = new Array(
-    "LAUDS-LECTIONARY",
-    "LAUDS-LECTIONARY2",
-    "LAUDS-LECTIONARY-HEARWHATSAYING",
-    "VESPER-LECTIONARY"
-  );
-
-  async function loadLocations(loc, y) {
-    console.log("loadLocations", loc, y);
-    const m = new Map();
-    try {
-      const q = query(
-        collection(db, "associations"),
-        where("Location", "==", loc),
-        where("Year", "==", y)
-      );
+  async function loadLections(y) {
+    const ay = proper.AllYear(y);
+    for (const [k, v] of ay) {
+      /* try {
+      const q = query(collection(db, "lections", y, "l"));
       const res = await getDocs(q);
       for (const a of res.docs) {
-        const p = new association(a);
-
-        m.set(a.id, p);
+        fromFS.set(a.id, a.data()); // convert to some class
       }
     } catch (e) {
       console.log(e);
+    } */
     }
-    return m;
+    lections = ay;
+    console.log(lections);
   }
 
   onMount(async () => {
-    lections = await loadLocations(location, year);
+    lections = await loadLections(year);
     screenView("Lection List");
     editorPerm = await isEditor();
   });
@@ -70,26 +60,24 @@
 
 <Container>
   <Nav>
-    {#each ls as lx}
-      {#each ["A", "B", "C"] as y}
-        <NavLink
-          href="#/lectionary/{lx}/{y}/"
-          on:click={async () => {
-            lections = await loadLocations(lx, y);
-          }}>{lx} {y}</NavLink
-        >
-      {/each}
+    {#each ["A", "B", "C"] as y}
+      <NavLink
+        href="#/lectionary/{y}/"
+        on:click={async () => {
+          lections = await loadLections(y);
+        }}>{y}</NavLink
+      >
     {/each}
   </Nav>
   <Row>
     <Col>
       <Card>
-        <CardHeader>{location}: Year {year}</CardHeader>
+        <CardHeader>Year {year}</CardHeader>
         <CardBody>
           <Table>
             <thead>
               <tr>
-                <th>Passage</th>
+                <th>Name</th>
                 <th>Season</th>
                 <th>Proper</th>
                 <th>Weekday</th>
@@ -98,14 +86,10 @@
             <tbody>
               {#each [...lections] as [k, v]}
                 <tr id={k}>
-                  <td>
-                    <a href="#/edit/{v.Reference.id}">
-                      {v.Reference.id}
-                    </a>
-                  </td>
-                  <td>{v.Season}</td>
-                  <td>{v.Proper}</td>
-                  <td>{v.Weekday}</td>
+                  <td>{k}</td>
+                  <td>{v.season}</td>
+                  <td>{v.proper}</td>
+                  <td>{v.weekday}</td>
                 </tr>
               {/each}
             </tbody>
