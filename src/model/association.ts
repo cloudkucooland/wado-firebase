@@ -178,7 +178,7 @@ export default class association {
     // instead of doing each value by hand, just turn it into an easily sortable string and do that
     // like, follow and subscribe for more kludgey life-hacks
     const astr =
-      season.LUT.get(A.Season).position +
+      season.LUT.get(A.Season).churchPos +
       " " +
       anyLastNumber(A.Proper) +
       " " +
@@ -188,7 +188,7 @@ export default class association {
       " " +
       A.Weight;
     const bstr =
-      season.LUT.get(B.Season).position +
+      season.LUT.get(B.Season).churchPos +
       " " +
       anyLastNumber(B.Proper) +
       " " +
