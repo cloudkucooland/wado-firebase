@@ -12,8 +12,8 @@
     Input,
     Table,
   } from "sveltestrap";
-  import { collection, query, where, getDocs } from "firebase/firestore";
-  import { db } from "../firebase";
+  import { collection, query, where } from "firebase/firestore";
+  import { db, getDocsCacheFirst } from "../firebase";
   import BrowseItem from "./BrowseItem.svelte";
   import association from "../model/association";
 
@@ -24,7 +24,7 @@
 
     const q = query(collection(db, "associations"), where("Location", "==", l));
 
-    const res = await getDocs(q);
+    const res = await getDocsCacheFirst(q);
     res.forEach((a) => {
       const ax = new association(a);
       newAssoc.push(ax);
