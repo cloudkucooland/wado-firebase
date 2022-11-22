@@ -45,8 +45,6 @@ export default class proper {
       console.error("invalid year");
       this.year = "Any";
     }
-
-    // console.debug(this);
   }
 
   // incoming format yyyy-mm-dd
@@ -64,12 +62,6 @@ export default class proper {
 
   public toString(): string {
     return this.propername;
-  }
-
-  public get fullName(): string {
-    return (
-      this.season + "-(" + this.proper + ")-(" + this.weekday + ")-" + this.year
-    );
   }
 
   private _weekdayDisplay(day?: number): string {
@@ -97,7 +89,7 @@ export default class proper {
   private _setFeasts(year: number): void {
     const easter = this.getEaster(year);
 
-    // fix Christ the King to Sunday
+    // Christ the King is always on Sunday
     let christking = new Date(year, 10, 20, 0, 0, 0);
     if (christking.getDay() != 0) {
       christking = this._addDays(christking, 7 - christking.getDay());
@@ -181,26 +173,26 @@ export default class proper {
     return this.getDayOfYear(this._feasts.get(n));
   }
 
-  private _getSeason(today: Date): void {
+  private _getSeason(forday: Date): void {
     let isnextlectyear: boolean = false; // needed for lectionary year at bottom of method
     const nextday = 86400000;
     const f = (n: string): number => {
       // shortcut for getting a feast's getTime()
       return this._feasts.get(n).getTime();
     };
-    const t = today.getTime();
+    const t = forday.getTime();
 
     // determine the season, proper
     if (t < f("epiphany")) {
       this.season = "christmas";
-      this.proper = this.getDayOfYear(today) - this._fdoy("christmas") + 366;
+      this.proper = this.getDayOfYear(forday) - this._fdoy("christmas") + 366;
     } else if (t >= f("epiphany") && t < f("epiphany") + nextday) {
       this.season = "epiphany";
       this.proper = 0;
     } else if (t > f("epiphany") && t < f("mardigras")) {
       this.season = "afterepiphany";
       const daysintoordtime =
-        this.getDayOfYear(today) - this._fdoy("epiphany") + 1;
+        this.getDayOfYear(forday) - this._fdoy("epiphany") + 1;
       this.proper = Math.floor(daysintoordtime / 7) + 1;
     } else if (t >= f("mardigras") && t < f("ashwednesday")) {
       this.season = "mardigras";
@@ -211,7 +203,7 @@ export default class proper {
     } else if (t > f("ashwednesday") && t < f("palmsunday")) {
       this.season = "lent";
       const daysintolent =
-        this.getDayOfYear(today) - this._fdoy("ashwednesday") + 1;
+        this.getDayOfYear(forday) - this._fdoy("ashwednesday") + 1;
       this.proper = Math.floor(daysintolent / 7) + 1;
     } else if (t >= f("palmsunday") && t < f("palmsunday") + nextday) {
       this.season = "palmsunday";
@@ -234,7 +226,7 @@ export default class proper {
     } else if (t > f("easter") && t < f("ascension")) {
       this.season = "greatfifty";
       const daysaftereaster =
-        this.getDayOfYear(today) - (this._fdoy("easter") + 1);
+        this.getDayOfYear(forday) - (this._fdoy("easter") + 1);
       this.proper = Math.floor(daysaftereaster / 7) + 1;
     } else if (t >= f("ascensioneve") && t < f("ascension")) {
       this.season = "ascensioneve";
@@ -245,25 +237,28 @@ export default class proper {
     } else if (t > f("ascension") && t < f("pentecost")) {
       this.season = "greatfifty";
       const daysaftereaster =
-        this.getDayOfYear(today) - (this._fdoy("easter") + 1);
+        this.getDayOfYear(forday) - (this._fdoy("easter") + 1);
       this.proper = Math.floor(daysaftereaster / 7) + 1;
     } else if (t >= f("pentecost") && t < f("pentecost") + nextday) {
       this.season = "pentecost";
       this.proper = 0;
     } else if (t > f("pentecost") && t < f("trinity")) {
       this.season = "afterpentecost";
-      const daysafterp = this.getDayOfYear(today) - (this._fdoy("proper1") + 1);
+      const daysafterp =
+        this.getDayOfYear(forday) - (this._fdoy("proper1") + 1);
       this.proper = Math.floor(daysafterp / 7) + 1;
     } else if (t >= f("trinity") && t < f("trinity") + nextday) {
       this.season = "trinity";
       this.proper = 0;
     } else if (t > f("trinity") && t < f("sept1")) {
       this.season = "afterpentecost";
-      const daysafterp = this.getDayOfYear(today) - (this._fdoy("proper1") + 1);
+      const daysafterp =
+        this.getDayOfYear(forday) - (this._fdoy("proper1") + 1);
       this.proper = Math.floor(daysafterp / 7) + 1;
     } else if (t >= f("sept1") && t < f("christking")) {
       this.season = "beforeadvent";
-      const daysafterp = this.getDayOfYear(today) - (this._fdoy("proper1") + 1);
+      const daysafterp =
+        this.getDayOfYear(forday) - (this._fdoy("proper1") + 1);
       this.proper = Math.floor(daysafterp / 7) + 1;
     } else if (t >= f("christking") && t < f("christking") + nextday) {
       this.season = "christking";
@@ -271,12 +266,12 @@ export default class proper {
     } else if (t > f("christking") && t < f("advent")) {
       this.season = "beforeadvent";
       const daysafterp =
-        this.getDayOfYear(today) - (this._fdoy("pentecost") + 1);
+        this.getDayOfYear(forday) - (this._fdoy("pentecost") + 1);
       this.proper = Math.floor(daysafterp / 7) + 1;
     } else if (t >= f("advent") && t < f("christmaseve")) {
       this.season = "advent";
       isnextlectyear = true;
-      const daysaftera = this.getDayOfYear(today) - this._fdoy("advent");
+      const daysaftera = this.getDayOfYear(forday) - this._fdoy("advent");
       this.proper = Math.floor(daysaftera / 7) + 1;
     } else if (t >= f("christmaseve") && t < f("christmas")) {
       this.season = "christmaseve";
@@ -298,7 +293,7 @@ export default class proper {
 
     // set the lectionary year
     const years = ["C", "A", "B"];
-    let y = today.getFullYear();
+    let y = forday.getFullYear();
     if (isnextlectyear) y = y + 1;
     this.year = years[y % 3];
   }
@@ -423,7 +418,6 @@ export default class proper {
 
     for (const [k, v] of season.LUT) {
       if (v.name == "beforeadvent" || v.name == "Any") continue;
-      console.debug(k);
       const obj: any = { year: lectionaryYear, season: v.name };
 
       // one-day "season"
