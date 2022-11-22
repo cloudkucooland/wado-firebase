@@ -17,13 +17,17 @@
     collection,
     query,
     where,
-    getDocs,
-    getDoc,
     doc,
     deleteDoc,
     setDoc,
   } from "firebase/firestore";
-  import { db, recordEvent, screenView } from "../firebase";
+  import {
+    db,
+    recordEvent,
+    screenView,
+    getDocsCacheFirst,
+    getDocCacheFirst,
+  } from "../firebase";
   import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
@@ -33,7 +37,7 @@
   export let params = { id };
   const id = params.id ? params.id : "GENERAL-ANYTHING";
   $: associations = new Map();
-  let editorPerm = false;
+  // let editorPerm = false;
   let modalId = "exnihilo";
   let assocEditResult;
   const size = "xl";
@@ -94,7 +98,7 @@
         }
       }
 
-      const rawprayer = await getDoc(assocEditResult.Reference);
+      const rawprayer = await getDocCacheFirst(assocEditResult.Reference);
       const pp = new prayer(rawprayer.data());
       assocEditResult._PrayerName = pp.name;
       newAssn.set(e.target.value, assocEditResult);
@@ -114,7 +118,7 @@
         collection(db, "associations"),
         where("Location", "==", id)
       );
-      const res = await getDocs(q);
+      const res = await getDocsCacheFirst(q);
       for (const a of res.docs) {
         const n = new association(a);
 
@@ -125,7 +129,7 @@
           continue;
         }
 
-        const rawprayer = await getDoc(n.Reference);
+        const rawprayer = await getDocCacheFirst(n.Reference);
         if (!rawprayer || !rawprayer.exists()) {
           console.error("bad reference, deleting association");
           deleteDoc(doc(db, "associations", n.id)); // no need to await here
