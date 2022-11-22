@@ -19,7 +19,6 @@
     collection,
     query,
     where,
-    getDocs,
     doc,
     deleteDoc,
     orderBy,
@@ -92,7 +91,7 @@
         where("Class", "==", pc),
         orderBy("Name")
       );
-      const res = await getDocs(q);
+      const res = await getDocsCacheFirst(q);
       for (const a of res.docs) {
         const p = new prayer(a.data());
         m.set(a.id, p);
