@@ -202,6 +202,5 @@
     {/each}
   {/if}
 {:catch error}
-  toasts.error(error.messages);
   <div>{name}: {error.message}</div>
 {/await}
