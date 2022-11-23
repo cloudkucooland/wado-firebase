@@ -322,10 +322,10 @@ export default class proper {
         return "Epiphany";
       case "afterepiphany":
         return (
+          "Epiphany (ordinary) " +
           this.cardToOrd(this.proper) +
-          " " +
-          this._weekdayDisplay() +
-          " after Epiphany"
+          ": " +
+          this._weekdayDisplay()
         );
       case "mardigras":
         return "Shrove Tuesday";
@@ -417,7 +417,9 @@ export default class proper {
     const ll = new Map();
 
     for (const [k, v] of season.LUT) {
+      // broad exceptions go here
       if (v.name == "beforeadvent" || v.name == "Any") continue;
+
       const obj: any = { year: lectionaryYear, season: v.name };
 
       // one-day "season"
@@ -429,6 +431,9 @@ export default class proper {
 
       let i = 1;
       while (i <= v.maxProper) {
+        // specific exceptions go here
+        if (v.name == "christmas" && i == 1) continue; // christmasday == christmas.1
+
         obj.proper = i;
 
         if (v.useWeekdays) {
