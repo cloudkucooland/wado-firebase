@@ -54,7 +54,6 @@ export function recordEvent(name: string, details?: object) {
 }
 
 export function screenView(name: string) {
-  // logEvent(analytics, 'screen_view', { firebase_screen: name });
   recordEvent("screen_view", { firebase_screen: name });
 }
 
