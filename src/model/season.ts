@@ -22,7 +22,7 @@ export default class season {
         name: "advent",
         julianPos: 23,
         churchPos: 0,
-        maxProper: 5,
+        maxProper: 4,
         useWeekdays: true,
         color: "purple",
       }),
