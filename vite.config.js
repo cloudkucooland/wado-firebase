@@ -10,6 +10,8 @@ export default defineConfig({
     }),
     replace({
       __buildDate__: () => JSON.stringify(new Date()),
+      preventAssignment: true,
+      "process.browser": true,
     }),
   ],
   build: {
