@@ -13,7 +13,7 @@ import {
   DocumentReference,
 } from "firebase/firestore";
 import { toasts } from "svelte-toasts";
-// import { offline } from "./model/preferences";
+import { offline } from "./model/preferences";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAtVBGVEjDM50VXljFFV-g_xltotL878b8",
@@ -72,6 +72,10 @@ export async function isEditor() {
 export async function getDocsCacheFirst(q: Query) {
   try {
     const res = await getDocsFromCache(q);
+    if (res.empty) {
+      // console.debug("result empty");
+      throw new Error("query cache miss");
+    }
     console.debug("query cache hit");
     return res;
   } catch (err) {
