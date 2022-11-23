@@ -1,7 +1,7 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
   import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
-  import { offline } from "./model/preferences";
+  // import { offline } from "./model/preferences";
   // import { appInstaller } from "./appinstaller";
 
   import {
@@ -17,7 +17,6 @@
     DropdownMenu,
     DropdownItem,
   } from "sveltestrap";
-
   import {
     recordEvent,
     auth,
@@ -30,7 +29,6 @@
     signInWithPopup,
     signOut,
     onAuthStateChanged,
-    // setPersistence, browserLocalPersistence,
   } from "firebase/auth";
   import HomePage from "./components/HomePage.svelte";
   import Admin from "./components/Admin.svelte";
@@ -109,7 +107,8 @@
     }
   }
 
-  if ($offline) enableOfflineDataMode();
+  // if ($offline)
+  enableOfflineDataMode();
 
   // appInstaller();
 

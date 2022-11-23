@@ -1,5 +1,5 @@
 <script>
-  import { showMedia, showEdit, showAlt, offline } from "../model/preferences";
+  import { showMedia, showEdit, showAlt } from "../model/preferences";
   import { onMount } from "svelte";
 
   import {
@@ -14,7 +14,7 @@
   // does bind not work?
   onMount(() => {
     try {
-      document.getElementById("offline").checked = $offline;
+      // document.getElementById("offline").checked = $offline;
       document.getElementById("showMedia").checked = $showMedia;
       document.getElementById("showEdit").checked = $showEdit;
       document.getElementById("showAlt").checked = $showAlt;
@@ -105,6 +105,7 @@
             </Row>
           </ListGroupItem>
         </ListGroup>
+        <!--
         <strong class="mb-0">Data Cache</strong>
         <ListGroup class="mb-5 shadow">
           <ListGroupItem>
@@ -134,6 +135,7 @@
             </Row>
           </ListGroupItem>
         </ListGroup>
+  -->
       </div></Col
     >
   </Row>
