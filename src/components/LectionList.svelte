@@ -24,13 +24,14 @@
     doc,
     addDoc,
     setDoc,
+    getDocs,
   } from "firebase/firestore";
   import {
     db,
     recordEvent,
     isEditor,
     screenView,
-    getDocsCacheFirst,
+    // getDocsCacheFirst,
   } from "../firebase";
   import proper from "../model/proper";
   import { onMount } from "svelte";
@@ -63,6 +64,8 @@
       v.evening = "";
       v.morningpsalm = "";
       v.eveningpsalm = "";
+      v.morningtitle = "";
+      v.eveningtitle = "";
 
       try {
         const q = query(
@@ -72,7 +75,8 @@
           where("proper", "==", v.proper),
           limit(1)
         );
-        const res = await getDocsCacheFirst(q);
+        // const res = await getDocsCacheFirst(q);
+        const res = await getDocs(q);
         for (const a of res.docs) {
           const n = a.data();
           v.path = a.ref.path;
@@ -80,6 +84,10 @@
           v.evening = n.evening;
           v.morningpsalm = n.morningpsalm;
           v.eveningpsalm = n.eveningpsalm;
+          if (n._morning) v._morning = n._morning;
+          if (n._evening) v._evening = n._evening;
+          if (n._morningpsalm) v._morningpsalm = n._morningpsalm;
+          if (n._eveningpsalm) v._eveningpsalm = n._eveningpsalm;
           ay.set(k, v); // update with data from firestore // needed?
         }
       } catch (e) {
@@ -122,6 +130,7 @@
     recordEvent("edit_lection", { key: modalData.key });
     lectionModalOpen = !lectionModalOpen;
 
+    // do not write the cached data back, refetch it
     const data = {
       morning: modalData.morning,
       morningpsalm: modalData.morningpsalm,
@@ -215,14 +224,40 @@
                 </Col>
               </Row>
               <Row class="align-items-center">
-                <Col xs="1"><strong>Morning Psalm:</strong></Col>
-                <Col xs="2">{v.morningpsalm}</Col>
-                <Col xs="1"><strong>Morning:</strong></Col>
-                <Col xs="2">{v.morning}</Col>
-                <Col xs="1"><strong>Evening Psalm:</strong></Col>
-                <Col xs="1">{v.eveningpsalm}</Col>
-                <Col xs="1"><strong>Evening:</strong></Col>
-                <Col xs="2">{v.evening}</Col>
+                <Col xs="2"><strong>Morning Psalm:</strong></Col>
+                {#if v._morningpsalm}
+                  <Col xs="2"
+                    ><em class="text-success">{v.morningpsalm}</em></Col
+                  >
+                {:else}
+                  <Col xs="2">{v.morningpsalm}</Col>
+                {/if}
+                <Col xs="2"><strong>Morning:</strong></Col>
+                {#if v._morning}
+                  <Col xs="2"><em class="text-success">{v.morning}</em></Col>
+                {:else}
+                  <Col xs="2">{v.morning}</Col>
+                {/if}
+                <Col xs="2"><strong>Morning Title:</strong></Col>
+                <Col xs="2">{v.morningtitle}</Col>
+              </Row>
+              <Row class="align-items-center">
+                <Col xs="2"><strong>Evening Psalm:</strong></Col>
+                {#if v._eveningpsalm}
+                  <Col xs="2"
+                    ><em class="text-success">{v.eveningpsalm}</em></Col
+                  >
+                {:else}
+                  <Col xs="2">{v.eveningpsalm}</Col>
+                {/if}
+                <Col xs="2"><strong>Evening:</strong></Col>
+                {#if v._evening}
+                  <Col xs="2"><em class="text-success">{v.evening}</em></Col>
+                {:else}
+                  <Col xs="2">{v.evening}</Col>
+                {/if}
+                <Col xs="2"><strong>Evening Title:</strong></Col>
+                <Col xs="2">{v.eveningtitle}</Col>
               </Row>
             </ListGroupItem>
           {/each}
@@ -240,10 +275,12 @@
 >
   <ModalHeader {toggleLectionModalOpen}>Edit Lection</ModalHeader>
   <ModalBody>
-    Morning Psalm: <Input bind:value={modalData.morningpsalm} />
-    Morning: <Input bind:value={modalData.morning} />
-    Evening Psalm: <Input bind:value={modalData.eveningpsalm} />
-    Evening: <Input bind:value={modalData.evening} />
+    M Psalm: <Input bind:value={modalData.morningpsalm} />
+    M: <Input bind:value={modalData.morning} />
+    M Title: <Input bind:value={modalData.morningtitle} />
+    E Psalm: <Input bind:value={modalData.eveningpsalm} />
+    E: <Input bind:value={modalData.evening} />
+    E Title: <Input bind:value={modalData.eveningtitle} />
   </ModalBody>
   <ModalFooter>
     <Button color="secondary" size="sm" on:click={toggleLectionModalOpen}>
