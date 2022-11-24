@@ -20,8 +20,17 @@
     let q = query(collection(db, "lections", proper.year, "l"), ...wheres);
 
     let res = await getDocsCacheFirst(q);
-    if (res.empty) return "No Psalm set for today, consult the lectionary";
-    if (res.size != 1) console.log("multiple matches, this should not happen");
+    if (res.empty)
+      return {
+        _morningpsalm:
+          "<h2>No Psalm set for today, consult the lectionary</h2><br />",
+        _eveningpsalm:
+          "<h2>No Psalm set for today, consult the lectionary</h2><br />",
+      };
+    if (res.size != 1) {
+      // toasts?
+      console.log("multiple matches, this should not happen");
+    }
     return res.docs[0].data();
   }
 </script>
