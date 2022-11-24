@@ -2,6 +2,7 @@
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
+  import PsalmLection from "../PsalmLection.svelte";
 
   export let proper;
 </script>
@@ -20,7 +21,7 @@
 
 <h4>Gloria and Psalter</h4>
 <Location name="COMPLINE-PSALTER-PREFIX" {proper} />
-<Location name="COMPLINE-PSALTER" {proper} max="5" />
+<PsalmLection office="COMPLINE" {proper} />
 <Location name="GENERAL-GLORIA" {proper} />
 <Silence />
 

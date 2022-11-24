@@ -2,6 +2,9 @@
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
+  import Lection from "../Lection.svelte";
+  import PsalmLection from "../PsalmLection.svelte";
+
   export let proper;
 </script>
 
@@ -32,17 +35,14 @@
 <Location name="VESPER-PARDON" {proper} />
 
 <h3>Psalter</h3>
-<Location name="VESPER-ANTIPHON" {proper} />
-<Location name="VESPER-PSALM" {proper} />
+<PsalmLection {proper} office="VESPERS" />
 <Location name="VESPER-GLORIA" {proper} />
-<Location name="VESPER-ANTIPHON" {proper} />
 <Silence />
 
 <h3>Word</h3>
 <h4>Scripture</h4>
-<Location name="VESPER-LECTIONARY" {proper} altMax="3" />
+<Lection office="VESPERS" {proper} />
 <Location name="GENERAL-RESPONSE-SCRIPTURE" {proper} />
-<Location name="VESPER-HEARWORD" {proper} /><br />
 
 <h4>Silence for Reflection</h4>
 
