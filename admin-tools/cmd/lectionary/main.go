@@ -49,8 +49,11 @@ func fetchLections(ctx context.Context) {
 	batch := fsclient.BulkWriter(ctx)
 	rl := ratelimit.New(1)
 
-	iter := fsclient.Collection("prayers").Where("Class", "==", "lection").Documents(ctx)
+	// TODO, more than year A
+	// TODO, not limit to ALL, some kind of filter for those already done
+	iter := fsclient.Collection("lections/A/l").Documents(ctx)
 	for {
+		done = done + 1
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
@@ -61,23 +64,47 @@ func fetchLections(ctx context.Context) {
 		data := doc.Data()
 
 		// if it already has data, skip it.
-		if len(data["Body"].(string)) > 50 || data["Body"].(string) == "Lectionary Placeholder" {
+		existing, ok := data["_evening"]
+		if ok && len(existing.(string)) > 2 {
 			continue
 		}
-		rl.Take() // one per second
+		fmt.Printf("fetching for: %+v\n", data);
 
-		newBody, err := oremus(ctx, data["Name"].(string))
+		rl.Take() // one per second
+		e, err := oremus(ctx, data["evening"].(string))
 		if err != nil {
 			panic(err)
 		}
-		fmt.Printf("%s: %s\n", data["Name"].(string), newBody)
+		// fmt.Printf("%s: %s\n", data["evening"].(string), e)
+
+		rl.Take() // one per second
+		ep, err := oremus(ctx, data["eveningpsalm"].(string))
+		if err != nil {
+			panic(err)
+		}
+		// fmt.Printf("%s: %s\n", data["eveningpsalm"].(string), e)
+
+		rl.Take() // one per second
+		m, err := oremus(ctx, data["morning"].(string))
+		if err != nil {
+			panic(err)
+		}
+		// fmt.Printf("%s: %s\n", data["morning"].(string), m)
+
+		rl.Take() // one per second
+		mp, err := oremus(ctx, data["morningpsalm"].(string))
+		if err != nil {
+			panic(err)
+		}
+		// fmt.Printf("%s: %s\n", data["morningpsalm"].(string), m)
 
 		// BulkWriter must flush every 20 writes, do I need to do this or does BW take care of it for me?
 		if done%20 == 0 {
+			fmt.Println("sending batch of 20");
 			batch.Flush()
 		}
 
-		batch.Set(doc.Ref, map[string]interface{}{"Reviewed": false, "Body": newBody, "Author": "", "Last Editor": "Lection Autoupdate"}, firestore.MergeAll)
+		batch.Set(doc.Ref, map[string]interface{}{"_evening": e, "_morning": m, "_eveningpsalm": ep, "_morningpsalm": mp}, firestore.MergeAll)
 	}
 	batch.End()
 }
@@ -85,7 +112,8 @@ func fetchLections(ctx context.Context) {
 func oremus(ctx context.Context, ref string) (string, error) {
 	c := http.Client{}
 	data := url.Values{}
-	data.Set("passage", ref)
+	cleanref := strings.Trim(ref, "	")
+	data.Set("passage", cleanref)
 	data.Set("vnum", "no")
 	data.Set("fnote", "no")
 	data.Set("heading", "no")
