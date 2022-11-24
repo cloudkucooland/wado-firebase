@@ -24,7 +24,7 @@ export default class proper {
     this.weekday = typeof inObj.weekday != "undefined" ? inObj.weekday : -1;
     this.year = inObj.year ? inObj.year : "Any";
 
-    // if (this.season == "beforeadvent") this.season == "afterpentecost";
+    if (this.season == "beforeadvent") this.season = "afterpentecost";
 
     if (!season.LUT.has(this.season)) {
       console.error("invalid season");
@@ -89,6 +89,15 @@ export default class proper {
   private _setFeasts(year: number): void {
     const easter = this.getEaster(year);
 
+    // BOL is Sunday
+    let sundayafterepi = new Date(year, 1, 6, 0, 0, 0);
+    if (sundayafterepi.getDay() != 0) {
+      sundayafterepi = this._addDays(
+        sundayafterepi,
+        7 - sundayafterepi.getDay()
+      );
+    }
+
     // Christ the King is always on Sunday
     let christking = new Date(year, 10, 20, 0, 0, 0);
     if (christking.getDay() != 0) {
@@ -122,8 +131,8 @@ export default class proper {
       // when "proper 1" starts: first Sunday after May 1
       ["proper1", proper1],
 
-      /* fake feast for switching seasons */
-      ["sept1", new Date(year, 8, 1, 0, 0, 0)],
+      // First Sunday after Jan 6 */
+      ["sundayafterepi", sundayafterepi],
 
       /* Christ the King is Sunday on or after Nov 20 */
       ["christking", christking],
@@ -189,6 +198,9 @@ export default class proper {
     } else if (t >= f("epiphany") && t < f("epiphany") + nextday) {
       this.season = "epiphany";
       this.proper = 0;
+    } else if (t >= f("epiphany") + nextday && t < f("sundayafterepi")) {
+      this.season = "baptismoflord";
+      this.proper = (t - f("sundayafterepi")) / nextday + 1;
     } else if (t > f("epiphany") && t < f("mardigras")) {
       this.season = "afterepiphany";
       const daysintoordtime =
@@ -250,13 +262,8 @@ export default class proper {
     } else if (t >= f("trinity") && t < f("trinity") + nextday) {
       this.season = "trinity";
       this.proper = 0;
-    } else if (t > f("trinity") && t < f("sept1")) {
+    } else if (t > f("trinity") && t < f("christking")) {
       this.season = "afterpentecost";
-      const daysafterp =
-        this.getDayOfYear(forday) - (this._fdoy("proper1") + 1);
-      this.proper = Math.floor(daysafterp / 7) + 1;
-    } else if (t >= f("sept1") && t < f("christking")) {
-      this.season = "beforeadvent";
       const daysafterp =
         this.getDayOfYear(forday) - (this._fdoy("proper1") + 1);
       this.proper = Math.floor(daysafterp / 7) + 1;
@@ -264,7 +271,7 @@ export default class proper {
       this.season = "christking";
       this.proper = 0;
     } else if (t > f("christking") && t < f("advent")) {
-      this.season = "beforeadvent";
+      this.season = "afterpentecost";
       const daysafterp =
         this.getDayOfYear(forday) - (this._fdoy("pentecost") + 1);
       this.proper = Math.floor(daysafterp / 7) + 1;
@@ -299,6 +306,8 @@ export default class proper {
   }
 
   get propername(): string {
+    if (this.season == "beforeadvent") this.season = "afterpentecost";
+
     if (!this.season || !season.LUT.has(this.season)) {
       console.error("invalid season", this);
       return "unknown";
@@ -320,12 +329,12 @@ export default class proper {
         return this.cardToOrd(this.proper) + " day of Christmas";
       case "epiphany":
         return "Epiphany";
+      case "baptismoflord":
+        const day = 6 + this.proper;
+        return "January " + day + " (after Epiphany)";
       case "afterepiphany":
         return (
-          "Epiphany (ordinary) " +
-          this.cardToOrd(this.proper) +
-          ": " +
-          this._weekdayDisplay()
+          "Epiphany (ordinary) " + this.proper + ", " + this._weekdayDisplay()
         );
       case "mardigras":
         return "Shrove Tuesday";
@@ -376,11 +385,6 @@ export default class proper {
         return "Trinity Sunday";
       case "christking":
         return "Christ the King Sunday";
-      case "beforeadvent":
-        // use afterpentecost
-        return (
-          "Proper " + this.proper + "; before Advent, " + this._weekdayDisplay()
-        );
     }
 
     console.error("invalid season", this);
@@ -432,7 +436,7 @@ export default class proper {
       let i = 1;
       while (i <= v.maxProper) {
         // specific exceptions go here
-        if (v.name == "christmas" && i == 1) continue; // christmasday == christmas.1
+        // if (v.name == "christmas" && i == 1) continue; // christmasday == christmas.1
 
         obj.proper = i;
 
