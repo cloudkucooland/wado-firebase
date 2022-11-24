@@ -13,6 +13,8 @@
     ModalFooter,
     Input,
     Button,
+    TabContent,
+    TabPane,
   } from "sveltestrap";
   import {
     collection,
@@ -41,9 +43,27 @@
   $: modalData = {};
 
   async function loadLections(y) {
+    let progressBarString = "starting";
+    const progressBar = toasts.success("Loading Data", progressBarString, {
+      duration: 0,
+    });
+
     const ay = proper.AllYear(y);
 
+    let i = 0;
     for (const [k, v] of ay) {
+      progressBarString = i;
+      progressBar.update({
+        title: "Loading data",
+        description: progressBarString,
+      });
+      i = i + 1;
+
+      v.morning = "";
+      v.evening = "";
+      v.morningpsalm = "";
+      v.eveningpsalm = "";
+
       try {
         const q = query(
           collection(db, "lections", y, "l"),
@@ -60,13 +80,14 @@
           v.evening = n.evening;
           v.morningpsalm = n.morningpsalm;
           v.eveningpsalm = n.eveningpsalm;
-          ay.set(k, v); // update with data from firestore
+          ay.set(k, v); // update with data from firestore // needed?
         }
       } catch (e) {
         toasts.error(e.message);
         console.log(e);
       }
     }
+    progressBar.remove();
     return ay;
   }
 
@@ -98,7 +119,6 @@
   }
 
   async function confirmLectionModal() {
-    // console.debug("from modal", modalData);
     recordEvent("edit_lection", { key: modalData.key });
     lectionModalOpen = !lectionModalOpen;
 
@@ -111,12 +131,12 @@
       proper: modalData.proper,
       weekday: modalData.weekday,
     };
-    // console.debug("to firestore", data);
 
     try {
       if (modalData.path == "" || typeof modalData.path == "undefined") {
         const added = await addDoc(collection(db, "lections", year, "l"), data);
-        modelData.path = added.ref.path;
+        console.log(added);
+        modalData.path = added.ref.path;
       } else {
         await setDoc(doc(db, modalData.path), data);
       }
@@ -128,33 +148,54 @@
     toasts.success("lection set");
     lections = lections;
   }
+
+  function isActive(y) {
+    console.log("isActive", y);
+    return year == y;
+  }
+
+  function setActive(y) {
+    console.log("setActive", y);
+    year = y;
+    // lections = loadLections(y);
+    // document.location.assign("#/lections/" + y);
+  }
 </script>
 
 <Container>
-  <Row class="justify-content-center">
-    <Col xs="12" lg="10" xl="8" mx="auto">
+  <Row>
+    <Col mx="auto">
       <h2>Lectionary Editor</h2>
     </Col>
   </Row>
 
-  <Row class="justify-content-center">
-    <Col xs="12" lg="10" xl="8" mx="auto">
-      <strong class="mb-0">Year:</strong>
-      <Nav>
+  <Row>
+    <Col mx="auto">
+      <TabContent
+        on:click={console.log}
+        on:_click={() => {
+          console.log("TabContent");
+          setActive("A");
+        }}
+      >
         {#each ["A", "B", "C"] as y}
-          <NavLink
-            href="#/lectionary/{y}/"
-            on:click={async () => {
-              lections = await loadLections(y);
-            }}>{y}</NavLink
-          >
+          <TabPane
+            tabId={y}
+            tab="Year {y}"
+            active={isActive(y)}
+            on:click={console.log}
+            on:_click={() => {
+              console.log("TabPane");
+              setActive(y);
+            }}
+          />
         {/each}
-      </Nav>
+      </TabContent>
     </Col>
   </Row>
 
   <Row>
-    <Col>
+    <Col mx="auto">
       <div class="my-4">
         <ListGroup class="mb-5 shadow">
           {#each [...lections] as [k, v]}
@@ -163,6 +204,7 @@
                 <Col xs="12" lg="10" xl="8" mx="auto">
                   {#if editorPerm}
                     <Button
+                      color="success"
                       on:click={toggleLectionModalOpen}
                       value={k}
                       size="sm">{k}</Button
@@ -173,14 +215,14 @@
                 </Col>
               </Row>
               <Row class="align-items-center">
-                <Col xs="1"><strong>M:</strong></Col>
-                <Col xs="2">{v.morning}</Col>
-                <Col xs="1"><strong>E:</strong></Col>
-                <Col xs="2">{v.evening}</Col>
-                <Col xs="1"><strong>MP:</strong></Col>
+                <Col xs="1"><strong>Morning Psalm:</strong></Col>
                 <Col xs="2">{v.morningpsalm}</Col>
-                <Col xs="1"><strong>EP:</strong></Col>
+                <Col xs="1"><strong>Morning:</strong></Col>
+                <Col xs="2">{v.morning}</Col>
+                <Col xs="1"><strong>Evening Psalm:</strong></Col>
                 <Col xs="1">{v.eveningpsalm}</Col>
+                <Col xs="1"><strong>Evening:</strong></Col>
+                <Col xs="2">{v.evening}</Col>
               </Row>
             </ListGroupItem>
           {/each}
