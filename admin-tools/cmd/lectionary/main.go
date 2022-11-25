@@ -68,39 +68,43 @@ func fetchLections(ctx context.Context) {
 		if ok && len(existing.(string)) > 2 {
 			continue
 		}
-		fmt.Printf("fetching for: %+v\n", data);
+		fmt.Printf("fetching for: %+v\n", data)
 
 		rl.Take() // one per second
 		e, err := oremus(ctx, data["evening"].(string))
 		if err != nil {
 			panic(err)
 		}
-		// fmt.Printf("%s: %s\n", data["evening"].(string), e)
 
-		rl.Take() // one per second
-		ep, err := oremus(ctx, data["eveningpsalm"].(string))
-		if err != nil {
-			panic(err)
+		var ep string
+		_, ok = data["_eveningpsalmref"]
+		if !ok {
+			rl.Take() // one per second
+			ep, err = oremus(ctx, data["eveningpsalm"].(string))
+			if err != nil {
+				panic(err)
+			}
 		}
-		// fmt.Printf("%s: %s\n", data["eveningpsalm"].(string), e)
 
 		rl.Take() // one per second
 		m, err := oremus(ctx, data["morning"].(string))
 		if err != nil {
 			panic(err)
 		}
-		// fmt.Printf("%s: %s\n", data["morning"].(string), m)
 
-		rl.Take() // one per second
-		mp, err := oremus(ctx, data["morningpsalm"].(string))
-		if err != nil {
-			panic(err)
+		var mp string
+		_, ok = data["_morningpsalmref"]
+		if !ok {
+			rl.Take() // one per second
+			mp, err = oremus(ctx, data["morningpsalm"].(string))
+			if err != nil {
+				panic(err)
+			}
 		}
-		// fmt.Printf("%s: %s\n", data["morningpsalm"].(string), m)
 
 		// BulkWriter must flush every 20 writes, do I need to do this or does BW take care of it for me?
 		if done%20 == 0 {
-			fmt.Println("sending batch of 20");
+			fmt.Println("sending batch of 20")
 			batch.Flush()
 		}
 
