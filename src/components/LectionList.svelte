@@ -116,7 +116,7 @@
     screenView("lectionModalOpen");
     lectionModalOpen = !lectionModalOpen;
 
-    // we discard the caches, do not copy them here
+    // discard the caches, do not copy them here
     if (lectionModalOpen) {
       const v = lections.get(e.target.value);
       modalData = {
@@ -152,6 +152,7 @@
       weekday: modalData.weekday,
     };
 
+    // try to link to the formatted psalms
     try {
       let q = query(
         collection(db, "prayers"),
@@ -160,7 +161,6 @@
       );
       let res = await getDocsCacheFirst(q);
       for (const a of res.docs) {
-        // console.log("morning psalm", modalData.morningpsalm, a);
         data._morningpsalmref = a.id;
       }
 
@@ -171,7 +171,6 @@
       );
       res = await getDocsCacheFirst(q);
       for (const a of res.docs) {
-        // console.log("evening psalm", modalData.eveningpsalm, a);
         data._eveningpsalmref = a.id;
       }
     } catch (err) {
@@ -179,6 +178,7 @@
       toasts.error(err.message);
     }
 
+    // send to firestore
     try {
       if (modalData.path == "" || typeof modalData.path == "undefined") {
         const added = await addDoc(collection(db, "lections", year, "l"), data);
@@ -191,20 +191,19 @@
       toasts.error(err.message);
     }
     lections.set(modalData.key, modalData);
-    toasts.success("lection set");
+    toasts.success("lection saved");
     lections = lections;
   }
 
   function isActive(y) {
-    // console.log("isActive", y);
     return year == y;
   }
 
-  function setActive(y) {
+  async function setActive(y) {
     console.log("setActive", y);
     year = y;
-    // lections = loadLections(y);
-    // document.location.assign("#/lections/" + y);
+    // lections = await loadLections(y);
+    document.location.replace("#/lectionary/" + y);
   }
 </script>
 
@@ -218,9 +217,7 @@
   <Row>
     <Col mx="auto">
       <TabContent
-        on:click={console.log}
-        on:_click={() => {
-          console.log("TabContent");
+        on:click={() => {
           setActive("A");
         }}
       >
@@ -228,12 +225,10 @@
           <TabPane
             tabId={y}
             tab="Year {y}"
-            active={isActive(y)}
-            on:click={console.log}
-            on:_click={() => {
-              console.log("TabPane");
+            on:click={() => {
               setActive(y);
             }}
+            active={isActive(y)}
           />
         {/each}
       </TabContent>
