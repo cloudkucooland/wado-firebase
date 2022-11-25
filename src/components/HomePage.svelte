@@ -49,7 +49,8 @@
     window.location.assign("#/office/" + officeName + "/" + e.srcElement.value);
     officeDate = e.srcElement.value;
     forProper = new proper(officeDate);
-    office = getOffice(officeName); // does nothing?
+    // office = getOffice(officeName); // does nothing?
+    office = office;
   }
 </script>
 

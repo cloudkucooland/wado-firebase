@@ -3,8 +3,9 @@ import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import {
-  getFirestore,
+  clearIndexedDbPersistence,
   enableIndexedDbPersistence,
+  getFirestore,
   getDocsFromCache,
   getDocsFromServer,
   getDocFromCache,
@@ -29,6 +30,9 @@ const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage();
+
+// enable this if indexdb gets messed up...
+if (false) clearIndexedDbPersistence(db);
 
 export function enableOfflineDataMode() {
   toasts.info("Starting offline data mode", null, { uid: 21, duration: 5 });
