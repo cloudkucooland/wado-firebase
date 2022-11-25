@@ -48,7 +48,7 @@
     if (office != "LAUDS" && d._eveningpsalmref) {
       try {
         const ps = doc(db, "prayers", d._eveningpsalmref);
-        const res = await getDocCacheFirst(res);
+        const res = await getDocCacheFirst(ps);
         d._eveningpsalmresolved = res.data();
       } catch (err) {
         console.log(err);
@@ -66,7 +66,7 @@
     {#if data._morningpsalmresolved}
       <Psalm data={data._morningpsalmresolved} />
     {:else if data._morningpsalm}
-      <h3>{data.morningpsalm}</h3>
+      <h5>{data.morningpsalm}</h5>
       <p>{@html data._morningpsalm}</p>
     {:else}
       <a
@@ -78,7 +78,7 @@
   {:else if data._eveningpsalmresolved}
     <Psalm data={data._eveningpsalmresolved} />
   {:else if data._eveningpsalm}
-    <h3>{data.eveningpsalm}</h3>
+    <h5>{data.eveningpsalm}</h5>
     <p>{@html data._eveningpsalm}</p>
   {:else}
     <a
@@ -88,5 +88,5 @@
     </a>
   {/if}
 {:catch error}
-  <div>{name}: {error.message}</div>
+  <div>{error.message}</div>
 {/await}
