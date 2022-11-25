@@ -30,24 +30,32 @@
   <Spinner color="secondary" />
 {:then data}
   {#if office == "LAUDS"}
+    {#if data.morningtitle}<h4>{data.morningtitle}</h4>{/if}
     {#if data._morning}
-      {@html data._morning}
+      <p>{@html data._morning}</p>
     {:else}
-      <a
-        href="https://www.biblegateway.com/passage/?search={data.morning}&version=NRSVUE"
-      >
-        {data.morning}
-      </a>
+      <p>
+        <a
+          href="https://www.biblegateway.com/passage/?search={data.morning}&version=NRSVUE"
+        >
+          {data.morning}
+        </a>
+      </p>
     {/if}
-  {:else if data._evening}
-    {@html data._evening}
   {:else}
-    <a
-      href="https://www.biblegateway.com/passage/?search={data.evening}&version=NRSVUE"
-    >
-      {data.evening}
-    </a>
+    {#if data.eveningtitle}<h4>{data.eveningtitle}</h4>{/if}
+    {#if data._evening}
+      <p>{@html data._evening}</p>
+    {:else}
+      <p>
+        <a
+          href="https://www.biblegateway.com/passage/?search={data.evening}&version=NRSVUE"
+        >
+          {data.evening}
+        </a>
+      </p>
+    {/if}
   {/if}
 {:catch error}
-  <div>{name}: {error.message}</div>
+  <div>{error.message}</div>
 {/await}

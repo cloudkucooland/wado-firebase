@@ -31,7 +31,7 @@
     recordEvent,
     isEditor,
     screenView,
-    // getDocsCacheFirst,
+    getDocsCacheFirst,
   } from "../firebase";
   import proper from "../model/proper";
   import { onMount } from "svelte";
@@ -84,11 +84,17 @@
           v.evening = n.evening;
           v.morningpsalm = n.morningpsalm;
           v.eveningpsalm = n.eveningpsalm;
+          if (n.morningtitle) v.morningtitle = n.morningtitle;
+          if (n.eveningtitle) v.eveningtitle = n.eveningtitle;
+
+          // get caches if set
           if (n._morning) v._morning = n._morning;
           if (n._evening) v._evening = n._evening;
           if (n._morningpsalm) v._morningpsalm = n._morningpsalm;
           if (n._eveningpsalm) v._eveningpsalm = n._eveningpsalm;
-          ay.set(k, v); // update with data from firestore // needed?
+          if (n._morningpsalmref) v._morningpsalmref = n._morningpsalmref;
+          if (n._eveningpsalmref) v._eveningpsalmref = n._eveningpsalmref;
+          // ay.set(k, v); // update with data from firestore // needed?
         }
       } catch (e) {
         toasts.error(e.message);
@@ -110,6 +116,7 @@
     screenView("lectionModalOpen");
     lectionModalOpen = !lectionModalOpen;
 
+    // we discard the caches, do not copy them here
     if (lectionModalOpen) {
       const v = lections.get(e.target.value);
       modalData = {
@@ -117,6 +124,8 @@
         evening: v.evening,
         morningpsalm: v.morningpsalm,
         eveningpsalm: v.eveningpsalm,
+        morningtitle: v.morningtitle,
+        eveningtitle: v.eveningtitle,
         season: v.season,
         proper: v.proper,
         weekday: v.weekday,
@@ -134,18 +143,46 @@
     const data = {
       morning: modalData.morning,
       morningpsalm: modalData.morningpsalm,
+      morningtitle: modalData.morningtitle,
       evening: modalData.evening,
       eveningpsalm: modalData.eveningpsalm,
+      eveningtitle: modalData.eveningtitle,
       season: modalData.season,
       proper: modalData.proper,
       weekday: modalData.weekday,
     };
 
     try {
+      let q = query(
+        collection(db, "prayers"),
+        where("Class", "==", "psalm"),
+        where("Name", "==", modalData.morningpsalm)
+      );
+      let res = await getDocsCacheFirst(q);
+      for (const a of res.docs) {
+        // console.log("morning psalm", modalData.morningpsalm, a);
+        data._morningpsalmref = a.id;
+      }
+
+      q = query(
+        collection(db, "prayers"),
+        where("Class", "==", "psalm"),
+        where("Name", "==", modalData.eveningpsalm)
+      );
+      res = await getDocsCacheFirst(q);
+      for (const a of res.docs) {
+        // console.log("evening psalm", modalData.eveningpsalm, a);
+        data._eveningpsalmref = a.id;
+      }
+    } catch (err) {
+      console.log(err);
+      toasts.error(err.message);
+    }
+
+    try {
       if (modalData.path == "" || typeof modalData.path == "undefined") {
         const added = await addDoc(collection(db, "lections", year, "l"), data);
-        console.log(added);
-        modalData.path = added.ref.path;
+        modalData.path = added.path;
       } else {
         await setDoc(doc(db, modalData.path), data);
       }
@@ -159,7 +196,7 @@
   }
 
   function isActive(y) {
-    console.log("isActive", y);
+    // console.log("isActive", y);
     return year == y;
   }
 
@@ -225,9 +262,13 @@
               </Row>
               <Row class="align-items-center">
                 <Col xs="2"><strong>Morning Psalm:</strong></Col>
-                {#if v._morningpsalm}
+                {#if v._morningpsalmref}
                   <Col xs="2"
                     ><em class="text-success">{v.morningpsalm}</em></Col
+                  >
+                {:else if v._morningpsalm}
+                  <Col xs="2"
+                    ><em class="text-warning">{v.morningpsalm}</em></Col
                   >
                 {:else}
                   <Col xs="2">{v.morningpsalm}</Col>
@@ -243,9 +284,13 @@
               </Row>
               <Row class="align-items-center">
                 <Col xs="2"><strong>Evening Psalm:</strong></Col>
-                {#if v._eveningpsalm}
+                {#if v._eveningpsalmref}
                   <Col xs="2"
                     ><em class="text-success">{v.eveningpsalm}</em></Col
+                  >
+                {:else if v._eveningpsalm}
+                  <Col xs="2"
+                    ><em class="text-warning">{v.eveningpsalm}</em></Col
                   >
                 {:else}
                   <Col xs="2">{v.eveningpsalm}</Col>

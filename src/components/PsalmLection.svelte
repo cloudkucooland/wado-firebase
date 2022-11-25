@@ -1,8 +1,10 @@
 <script>
-  import { collection, query, where } from "firebase/firestore";
+  import { collection, query, where, doc } from "firebase/firestore";
   import { Spinner } from "sveltestrap";
   import { db, getDocCacheFirst, getDocsCacheFirst } from "../firebase";
   import season from "../model/season";
+  import Psalm from "./prayerClasses/Psalm.svelte";
+  import { toasts } from "svelte-toasts";
 
   export let office;
   export let proper;
@@ -23,15 +25,37 @@
     if (res.empty)
       return {
         _morningpsalm:
-          "<h2>No Psalm set for today, consult the lectionary</h2><br />",
+          "<h4>No Psalm set for today, consult the lectionary</h4><br />",
         _eveningpsalm:
-          "<h2>No Psalm set for today, consult the lectionary</h2><br />",
+          "<h4>No Psalm set for today, consult the lectionary</h4><br />",
       };
     if (res.size != 1) {
-      // toasts?
+      toasts.error("Multiple lection matches?!");
       console.log("multiple matches, this should not happen");
     }
-    return res.docs[0].data();
+    const d = res.docs[0].data();
+
+    if (office == "LAUDS" && d._morningpsalmref) {
+      try {
+        const ps = doc(db, "prayers", d._morningpsalmref);
+        const res = await getDocCacheFirst(ps);
+        d._morningpsalmresolved = res.data();
+      } catch (err) {
+        console.log(err);
+        toasts.error(err.message);
+      }
+    }
+    if (office != "LAUDS" && d._eveningpsalmref) {
+      try {
+        const ps = doc(db, "prayers", d._eveningpsalmref);
+        const res = await getDocCacheFirst(res);
+        d._eveningpsalmresolved = res.data();
+      } catch (err) {
+        console.log(err);
+        toasts.error(err.message);
+      }
+    }
+    return d;
   }
 </script>
 
@@ -39,8 +63,11 @@
   <Spinner color="secondary" />
 {:then data}
   {#if office == "LAUDS"}
-    {#if data._morningpsalm}
-      {@html data._morningpsalm}
+    {#if data._morningpsalmresolved}
+      <Psalm data={data._morningpsalmresolved} />
+    {:else if data._morningpsalm}
+      <h3>{data.morningpsalm}</h3>
+      <p>{@html data._morningpsalm}</p>
     {:else}
       <a
         href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
@@ -48,8 +75,11 @@
         {data.morningpsalm}
       </a>
     {/if}
+  {:else if data._eveningpsalmresolved}
+    <Psalm data={data._eveningpsalmresolved} />
   {:else if data._eveningpsalm}
-    {@html data._eveningpsalm}
+    <h3>{data.eveningpsalm}</h3>
+    <p>{@html data._eveningpsalm}</p>
   {:else}
     <a
       href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
