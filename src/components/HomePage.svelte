@@ -6,14 +6,15 @@
     Card,
     CardHeader,
     CardBody,
-    Nav,
-    NavLink,
+    TabContent,
+    TabPane,
     FormGroup,
     Input,
   } from "sveltestrap";
   import proper from "../model/proper";
   import { screenView } from "../firebase";
   import { getOffice, offices } from "../model/offices";
+  import { tick } from "svelte";
 
   const now = new Date();
   const nowString =
@@ -21,9 +22,7 @@
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
 
-  let officeDate = params.officeDate;
-
-  // needs to be reactive
+  $: officeDate = params.officeDate;
   $: officeName = params.officeName;
   $: forProper = proper.fromDate(officeDate);
   $: office = getOffice(officeName);
@@ -42,16 +41,6 @@
     if (hour >= 17 && hour < 21) return "Vespers"; // if day is Saturday, do Vigil
     return "Compline";
   }
-
-  // this shouldn't be needed, but bind isn't working below
-  function setDate(e) {
-    screenView(officeName);
-    window.location.assign("#/office/" + officeName + "/" + e.srcElement.value);
-    officeDate = e.srcElement.value;
-    forProper = new proper(officeDate);
-    // office = getOffice(officeName); // does nothing?
-    office = office;
-  }
 </script>
 
 <svelte:head>
@@ -59,15 +48,36 @@
 </svelte:head>
 
 <Container class="cover-container mx-auto">
-  <Nav>
-    {#each offices as o}
-      <NavLink href="#/office/{o}/{officeDate}">{o}</NavLink>
-    {/each}
-    <FormGroup>
-      <Input type="date" on:change={setDate} />
-    </FormGroup>
-  </Nav>
-
+  <Row>
+    <Col xs="10">
+      <TabContent
+        on:tab={(e) => {
+          if (officeName == e.detail) return;
+          screenView(officeName);
+          officeName = e.detail;
+          window.location.replace("#/office/" + officeName + "/" + officeDate);
+        }}
+      >
+        {#each offices as o}
+          <TabPane tabId={o} tab={o} active={officeName == o} />
+        {/each}
+      </TabContent>
+    </Col>
+    <Col xs="2">
+      <Input
+        type="date"
+        on:change={(e) => {
+          if (officeDate == e.srcElement.value) return;
+          screenView(officeName);
+          officeDate = e.srcElement.value;
+          window.location.assign("#/office/" + officeName + "/" + officeDate);
+          forProper = proper.fromDate(officeDate); // updates w/o this, but one late...
+          officeName = officeName;
+          console.log(officeName, e.srcElement.value, forProper);
+        }}
+      />
+    </Col>
+  </Row>
   <Container>
     <Row>
       <Col>
