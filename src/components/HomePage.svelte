@@ -14,7 +14,6 @@
   import proper from "../model/proper";
   import { screenView } from "../firebase";
   import { getOffice, offices } from "../model/offices";
-  import { tick } from "svelte";
 
   const now = new Date();
   const nowString =
