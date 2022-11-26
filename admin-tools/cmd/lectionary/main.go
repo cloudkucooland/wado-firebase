@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"unicode"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -42,6 +43,16 @@ func main() {
 
 	ctx := context.Background()
 	fetchLections(ctx)
+
+	/* d, err := ioutil.ReadFile("test.html")
+	if err != nil {
+		panic(err)
+	}
+	p, err := parse(string(d[:]))
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(p) */
 }
 
 func fetchLections(ctx context.Context) {
@@ -133,14 +144,12 @@ func oremus(ctx context.Context, ref string) (string, error) {
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
-
-	if nil != err {
+	if err != nil {
 		fmt.Printf("%s\n", err.Error())
 		return "", err
 	}
 
 	parsed, err := parse(string(body[:]))
-	// fmt.Println(parsed)
 	return string(parsed), nil
 }
 
@@ -162,8 +171,26 @@ func parse(in string) (string, error) {
 			}
 		}
 		if n.Type == html.TextNode && printing {
-			out.WriteString(strings.TrimSpace(n.Data))
-			out.WriteString(" ")
+			b := bytes.Buffer{}
+			prevIsSpace := false
+
+			for _, i := range n.Data {
+				if unicode.IsSpace(i) {
+					if !prevIsSpace {
+						b.WriteRune(' ')
+					}
+					prevIsSpace = true
+				} else {
+					b.WriteRune(i)
+					prevIsSpace = false
+				}
+			}
+			trimmed := strings.TrimSpace(b.String())
+			if trimmed != "" {
+				out.WriteString("<p>")
+				out.WriteString(trimmed)
+				out.WriteString("</p>\n")
+			}
 		}
 		for c := n.FirstChild; c != nil; c = c.NextSibling {
 			f(c, printing)
