@@ -3,8 +3,6 @@
     Container,
     Row,
     Col,
-    Nav,
-    NavLink,
     ListGroup,
     ListGroupItem,
     Modal,
@@ -194,20 +192,6 @@
     toasts.success("lection saved");
     lections = lections;
   }
-
-  function isActive(y) {
-    return year == y;
-  }
-
-  async function setActive(e) {
-    if (e.detail == year) {
-      console.log("skipping setActive");
-      return;
-    }
-    year = e.detail;
-    document.location.assign("#/lectionary/" + year);
-    lections = await loadLections(year);
-  }
 </script>
 
 <Container>
@@ -221,11 +205,15 @@
     <Col mx="auto">
       <TabContent
         on:tab={async (e) => {
-          await setActive(e);
+          if (e.detail == year) return;
+          lections = new Map();
+          year = e.detail;
+          document.location.assign("#/lectionary/" + year);
+          lections = await loadLections(year);
         }}
       >
         {#each ["A", "B", "C"] as y}
-          <TabPane tabId={y} tab="Year {y}" active={isActive(y)} />
+          <TabPane tabId={y} tab="Year {y}" active={year == y} />
         {/each}
       </TabContent>
     </Col>
