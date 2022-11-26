@@ -199,37 +199,33 @@
     return year == y;
   }
 
-  async function setActive(y) {
-    console.log("setActive", y);
-    year = y;
-    // lections = await loadLections(y);
-    document.location.replace("#/lectionary/" + y);
+  async function setActive(e) {
+    if (e.detail == year) {
+      console.log("skipping setActive");
+      return;
+    }
+    year = e.detail;
+    document.location.assign("#/lectionary/" + year);
+    lections = await loadLections(year);
   }
 </script>
 
 <Container>
   <Row>
     <Col mx="auto">
-      <h2>Lectionary Editor</h2>
+      <h2>Lectionary Editor: Year {year}</h2>
     </Col>
   </Row>
 
   <Row>
     <Col mx="auto">
       <TabContent
-        on:click={() => {
-          setActive("A");
+        on:tab={async (e) => {
+          await setActive(e);
         }}
       >
         {#each ["A", "B", "C"] as y}
-          <TabPane
-            tabId={y}
-            tab="Year {y}"
-            on:click={() => {
-              setActive(y);
-            }}
-            active={isActive(y)}
-          />
+          <TabPane tabId={y} tab="Year {y}" active={isActive(y)} />
         {/each}
       </TabContent>
     </Col>
@@ -242,7 +238,7 @@
           {#each [...lections] as [k, v]}
             <ListGroupItem>
               <Row class="align-items-center">
-                <Col xs="12" lg="10" xl="8" mx="auto">
+                <Col xs="12" mx="auto">
                   {#if editorPerm}
                     <Button
                       color="success"
@@ -268,14 +264,14 @@
                 {:else}
                   <Col xs="2">{v.morningpsalm}</Col>
                 {/if}
-                <Col xs="2"><strong>Morning:</strong></Col>
+                <Col xs="1"><strong>Morning:</strong></Col>
                 {#if v._morning}
                   <Col xs="2"><em class="text-success">{v.morning}</em></Col>
                 {:else}
                   <Col xs="2">{v.morning}</Col>
                 {/if}
                 <Col xs="2"><strong>Morning Title:</strong></Col>
-                <Col xs="2">{v.morningtitle}</Col>
+                <Col xs="3">{v.morningtitle}</Col>
               </Row>
               <Row class="align-items-center">
                 <Col xs="2"><strong>Evening Psalm:</strong></Col>
@@ -290,14 +286,14 @@
                 {:else}
                   <Col xs="2">{v.eveningpsalm}</Col>
                 {/if}
-                <Col xs="2"><strong>Evening:</strong></Col>
+                <Col xs="1"><strong>Evening:</strong></Col>
                 {#if v._evening}
                   <Col xs="2"><em class="text-success">{v.evening}</em></Col>
                 {:else}
                   <Col xs="2">{v.evening}</Col>
                 {/if}
                 <Col xs="2"><strong>Evening Title:</strong></Col>
-                <Col xs="2">{v.eveningtitle}</Col>
+                <Col xs="3">{v.eveningtitle}</Col>
               </Row>
             </ListGroupItem>
           {/each}
