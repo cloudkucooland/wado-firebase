@@ -24,10 +24,12 @@
     let res = await getDocsCacheFirst(q);
     if (res.empty)
       return {
+        morningpsalm: "Lectionary incomplete",
         _morningpsalm:
-          "<h4>No Psalm set for today, consult the lectionary</h4><br />",
+          "<h5>No Psalm set for today, consult the lectionary</h5><br />",
+        eveningpsalm: "Lectionary incomplete",
         _eveningpsalm:
-          "<h4>No Psalm set for today, consult the lectionary</h4><br />",
+          "<h5>No Psalm set for today, consult the lectionary</h5><br />",
       };
     if (res.size != 1) {
       toasts.error("Multiple lection matches?!");

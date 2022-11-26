@@ -23,8 +23,8 @@
     let res = await getDocsCacheFirst(q);
     if (res.empty)
       return {
-        morning: "No Psalm set for today, consult the lectionary",
-        evening: "No Psalm set for today, consult the lectionary",
+        _morning: "No passage set for today, consult the lectionary",
+        _evening: "No passage set for today, consult the lectionary",
       };
     return res.docs[0].data();
   }
