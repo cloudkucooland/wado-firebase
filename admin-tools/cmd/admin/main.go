@@ -47,6 +47,7 @@ func main() {
 	// revokeReviewed()
 	// assocCleanup()
 	updateMeiliSearch()
+	// purgeOldLectionary()
 }
 
 func updateEditors() {
@@ -141,6 +142,29 @@ func assocCleanup() {
 	}
 
 	_, err := batch.Commit(context.Background())
+	if err != nil {
+		panic(err)
+	}
+}
+
+func purgeOldLectionary() {
+	batch := fsclient.Batch()
+
+	ctx := context.Background();
+	iter := fsclient.Collection("prayers").Where("Class", "==", "lection").Limit(500).Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println(doc.Ref.ID)
+		batch.Delete(doc.Ref)
+	}
+
+	_, err := batch.Commit(ctx)
 	if err != nil {
 		panic(err)
 	}
