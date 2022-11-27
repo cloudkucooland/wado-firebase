@@ -34,7 +34,7 @@
   <Spinner color="secondary" />
 {:then data}
   {#if office == "LAUDS"}
-    {#if data.morningtitle}<h5>{data.morningtitle}</h5>{/if}
+    {#if data.morningtitle}<h5>{data.morning}: {data.morningtitle}</h5>{/if}
     {#if data._morning}
       <p>{@html data._morning}</p>
     {:else}
@@ -47,7 +47,7 @@
       </p>
     {/if}
   {:else}
-    {#if data.eveningtitle}<h5>{data.eveningtitle}</h5>{/if}
+    {#if data.eveningtitle}<h5>{data.evening}: {data.eveningtitle}</h5>{/if}
     {#if data._evening}
       <p>{@html data._evening}</p>
     {:else}

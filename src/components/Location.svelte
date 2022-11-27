@@ -8,7 +8,6 @@
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
   import Hymn from "./prayerClasses/Hymn.svelte";
-  import Lection from "./prayerClasses/Lection.svelte";
   import Prayer from "./prayerClasses/Prayer.svelte";
   import Psalm from "./prayerClasses/Psalm.svelte";
   import Antiphon from "./prayerClasses/Antiphon.svelte";
@@ -23,7 +22,6 @@
     ["heartwords", Heartwords],
     ["other", Prayer],
     ["hymn", Hymn],
-    ["lection", Lection],
     ["prayer", Prayer],
     ["psalm", Psalm],
     ["antiphon", Antiphon],
