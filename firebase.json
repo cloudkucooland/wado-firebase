@@ -1,14 +1,22 @@
 {
   "hosting": {
-    "public": "public",
+    "public": "dist",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "rewrites": [
+    "redirects": [
       {
-        "source": "**",
-        "destination": "/index.html"
+        "source": "/wado/assets/:f*",
+        "destination": "/assets/:f",
+        "type": 301
       },
       {
-        "source": "/wado/**",
+        "source": "/wado/:f*",
+        "destination": "/:f",
+        "type": 301
+      }
+    ],
+    "rewrites": [
+      {
+        "source": "*",
         "destination": "/index.html"
       }
     ]
