@@ -8,7 +8,6 @@
     CardBody,
     TabContent,
     TabPane,
-    FormGroup,
     Input,
   } from "sveltestrap";
   import proper from "../model/proper";
