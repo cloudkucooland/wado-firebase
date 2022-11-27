@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"unicode"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -41,24 +42,17 @@ func main() {
 
 	ctx := context.Background()
 	fetchLections(ctx)
-
-	/* p, err := oremus(ctx, "Luke 18")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(p) */
 }
 
 func fetchLections(ctx context.Context) {
-	done := 0
+	// done := 0
 	batch := fsclient.BulkWriter(ctx)
 	rl := ratelimit.New(1)
 
 	// TODO, more than year A
-	// TODO, not limit to ALL, some kind of filter for those already done
 	iter := fsclient.Collection("lections/A/l").Documents(ctx)
 	for {
-		done++
+		// done++
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
@@ -68,14 +62,13 @@ func fetchLections(ctx context.Context) {
 		}
 		data := doc.Data()
 
-		// if it already has data, skip it.
-		existing, ok := data["_evening"]
-		if ok && len(existing.(string)) > 2 {
+		// if it already has morning data cached, skip whole block.
+		_, ok := data["_morning"]
+		if ok {
 			continue
 		}
-		// fmt.Printf("fetching for: %+v\n", data)
 
-		rl.Take() // one per second
+		rl.Take()
 		e, err := oremus(ctx, data["evening"].(string))
 		if err != nil {
 			panic(err)
@@ -84,14 +77,14 @@ func fetchLections(ctx context.Context) {
 		var ep string
 		_, ok = data["_eveningpsalmref"]
 		if !ok {
-			rl.Take() // one per second
+			rl.Take()
 			ep, err = oremus(ctx, data["eveningpsalm"].(string))
 			if err != nil {
 				panic(err)
 			}
 		}
 
-		rl.Take() // one per second
+		rl.Take()
 		m, err := oremus(ctx, data["morning"].(string))
 		if err != nil {
 			panic(err)
@@ -100,7 +93,7 @@ func fetchLections(ctx context.Context) {
 		var mp string
 		_, ok = data["_morningpsalmref"]
 		if !ok {
-			rl.Take() // one per second
+			rl.Take()
 			mp, err = oremus(ctx, data["morningpsalm"].(string))
 			if err != nil {
 				panic(err)
@@ -108,10 +101,10 @@ func fetchLections(ctx context.Context) {
 		}
 
 		// BulkWriter must flush every 20 writes, do I need to do this or does BW take care of it for me?
-		if done%20 == 0 {
+		/* if done%20 == 0 {
 			fmt.Println("sending batch of 20")
 			batch.Flush()
-		}
+		} */
 
 		batch.Set(doc.Ref, map[string]interface{}{"_evening": e, "_morning": m, "_eveningpsalm": ep, "_morningpsalm": mp}, firestore.MergeAll)
 	}
@@ -144,7 +137,7 @@ func oremus(ctx context.Context, ref string) (string, error) {
 	}
 
 	parsed := parse(string(body[:]))
-	return string(parsed), nil
+	return parsed, nil
 }
 
 func parse(in string) string {
@@ -157,7 +150,26 @@ func parse(in string) string {
 		tt := z.Next()
 		switch tt {
 		case html.ErrorToken:
-			return out.String() // hit EOF
+			// hit EOF -- cleanup double-spaces on the way out
+			b := bytes.Buffer{}
+			prevIsSpace := false
+
+			for {
+				i, _, err := out.ReadRune()
+				if err != nil {
+					return b.String()
+				}
+				if unicode.IsSpace(i) {
+					if !prevIsSpace {
+						b.WriteRune(' ')
+					}
+					prevIsSpace = true
+				} else {
+					b.WriteRune(i)
+					prevIsSpace = false
+				}
+			}
+			return b.String()
 		case html.TextToken:
 			if inLection {
 				out.Write(z.Text())
