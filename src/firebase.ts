@@ -35,7 +35,7 @@ export const storage = getStorage();
 if (false) clearIndexedDbPersistence(db);
 
 export function enableOfflineDataMode() {
-  toasts.info("Starting offline data mode", null, { uid: 21, duration: 5 });
+  // toasts.info("Starting offline data mode", null, { uid: 21, duration: 5 });
   enableIndexedDbPersistence(db).catch((err) => {
     if (err.code == "failed-precondition") {
       toasts.info("Offline data mode running in another tab/window", null, {
