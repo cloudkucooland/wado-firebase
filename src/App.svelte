@@ -1,8 +1,6 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
   import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
-  // import { offline } from "./model/preferences";
-  // import { appInstaller } from "./appinstaller";
 
   import {
     Collapse,
@@ -40,6 +38,7 @@
   import LectionList from "./components/LectionList.svelte";
   import AddPrayer from "./components/AddPrayer.svelte";
   import Search from "./components/Search.svelte";
+  import Users from "./components/Users.svelte";
 
   const routes = {
     "/": HomePage,
@@ -54,6 +53,7 @@
     "/addPrayer": AddPrayer,
     "/lectionary/:y": LectionList,
     "/search": Search,
+    "/users": Users,
     "*": HomePage,
   };
 
@@ -61,16 +61,11 @@
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       loggedIn = true;
-      toasts.success("logged in", user.displayName, { uid: 10 });
       if ((await isEditor()) === true) {
         toasts.info("Editor permissions", user.displayName, { uid: 11 });
-      } else {
-        toasts.info("User permissions", user.displayName, { uid: 11 });
       }
     } else {
       loggedIn = false;
-      toasts.success("logged out", null, { uid: 12 });
-      recordEvent("log out");
     }
   });
 
@@ -79,7 +74,7 @@
       // await setPersistence(auth, browserLocalPersistence);
       await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
-      recordEvent("login");
+      recordEvent("Facebook login");
     } catch (e) {
       toasts.error(e.message, null, { uid: 13 });
       console.log(e);
@@ -90,7 +85,7 @@
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
       loggedIn = true;
-      recordEvent("login");
+      recordEvent("Google login");
     } catch (e) {
       toasts.error(e.message, null, { uid: 14 });
       console.log(e);
@@ -101,6 +96,8 @@
     try {
       await signOut(auth);
       loggedIn = false;
+      recordEvent("log out");
+      toasts.success("logged out", null, { uid: 12 });
     } catch (e) {
       toasts.error(e, null, { uid: 15 });
       console.log(e);
