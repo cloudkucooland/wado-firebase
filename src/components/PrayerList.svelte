@@ -20,6 +20,7 @@
     query,
     where,
     doc,
+    getDocs,
     deleteDoc,
     orderBy,
     // getCountFromServer,
@@ -29,7 +30,7 @@
     recordEvent,
     isEditor,
     screenView,
-    getDocsCacheFirst,
+    // getDocsCacheFirst,
   } from "../firebase";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
@@ -61,7 +62,7 @@
         collection(db, "associations"),
         where("Reference", "==", doc(db, "prayers", e.target.value))
       );
-      const res = await getDocsCacheFirst(q);
+      const res = await getDocs(q);
       for (const asn of res.docs) {
         await deleteDoc(doc(db, "associations", asn.id));
       }
@@ -91,7 +92,7 @@
         where("Class", "==", pc),
         orderBy("Name")
       );
-      const res = await getDocsCacheFirst(q);
+      const res = await getDocs(q);
       for (const a of res.docs) {
         const p = new prayer(a.data());
         m.set(a.id, p);
