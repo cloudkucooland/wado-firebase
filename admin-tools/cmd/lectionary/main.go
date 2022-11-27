@@ -6,11 +6,9 @@ import (
 	"fmt"
 	"golang.org/x/net/html"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
-	"unicode"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -44,11 +42,7 @@ func main() {
 	ctx := context.Background()
 	fetchLections(ctx)
 
-	/* d, err := ioutil.ReadFile("test.html")
-	if err != nil {
-		panic(err)
-	}
-	p, err := parse(string(d[:]))
+	/* p, err := oremus(ctx, "Luke 18")
 	if err != nil {
 		panic(err)
 	}
@@ -64,7 +58,7 @@ func fetchLections(ctx context.Context) {
 	// TODO, not limit to ALL, some kind of filter for those already done
 	iter := fsclient.Collection("lections/A/l").Documents(ctx)
 	for {
-		done = done + 1
+		done++
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
@@ -79,7 +73,7 @@ func fetchLections(ctx context.Context) {
 		if ok && len(existing.(string)) > 2 {
 			continue
 		}
-		fmt.Printf("fetching for: %+v\n", data)
+		// fmt.Printf("fetching for: %+v\n", data)
 
 		rl.Take() // one per second
 		e, err := oremus(ctx, data["evening"].(string))
@@ -149,54 +143,74 @@ func oremus(ctx context.Context, ref string) (string, error) {
 		return "", err
 	}
 
-	parsed, err := parse(string(body[:]))
+	parsed := parse(string(body[:]))
 	return string(parsed), nil
 }
 
-func parse(in string) (string, error) {
-	var out bytes.Buffer
+func parse(in string) string {
+	z := html.NewTokenizer(strings.NewReader(in))
+	var out = bytes.Buffer{}
+	var inLection = false
+	var passageDepth = 0
 
-	doc, err := html.Parse(strings.NewReader(in))
-	if err != nil {
-		log.Fatal(err)
-	}
-	var f func(*html.Node, bool)
-	f = func(n *html.Node, printing bool) {
-		if n.Type == html.ElementNode && n.Data == "div" {
-			for _, a := range n.Attr {
-				if a.Key == "class" && a.Val == "bibletext" {
-					printing = true
-					break
-				}
+	for {
+		tt := z.Next()
+		switch tt {
+		case html.ErrorToken:
+			return out.String() // hit EOF
+		case html.TextToken:
+			if inLection {
+				out.Write(z.Text())
 			}
-		}
-		if n.Type == html.TextNode && printing {
-			b := bytes.Buffer{}
-			prevIsSpace := false
-
-			for _, i := range n.Data {
-				if unicode.IsSpace(i) {
-					if !prevIsSpace {
-						b.WriteRune(' ')
+		case html.StartTagToken:
+			tn, hasAttr := z.TagName()
+			if inLection {
+				switch string(tn) {
+				case "p":
+					out.WriteString("<p>")
+				case "nn":
+					out.WriteString("<i>")
+				case "span":
+					out.WriteString(" <span class='adonai'>")
+				default:
+					// fmt.Printf("%+v\n", string(tn))
+				}
+				passageDepth++
+			}
+			if hasAttr {
+				for hasAttr {
+					ta, val, attr := z.TagAttr()
+					hasAttr = attr
+					if string(ta) == "class" && string(val) == "bibletext" {
+						inLection = true
 					}
-					prevIsSpace = true
-				} else {
-					b.WriteRune(i)
-					prevIsSpace = false
 				}
 			}
-			trimmed := strings.TrimSpace(b.String())
-			if trimmed != "" {
-				out.WriteString("<p>")
-				out.WriteString(trimmed)
-				out.WriteString("</p>\n")
+		case html.EndTagToken:
+			if inLection {
+				tn, _ := z.TagName()
+				switch string(tn) {
+				case "p":
+					out.WriteString("</p>\n")
+				case "nn":
+					out.WriteString("</i>")
+				case "span":
+					out.WriteString("</span> ")
+				default:
+					// fmt.Printf("%+v\n", string(tn))
+				}
+				if passageDepth == 0 {
+					inLection = false
+				}
+				passageDepth--
+			}
+		case html.SelfClosingTagToken:
+			if inLection {
+				out.WriteString(" ")
 			}
 		}
-		for c := n.FirstChild; c != nil; c = c.NextSibling {
-			f(c, printing)
-		}
 	}
-	f(doc, false)
 
-	return out.String(), nil
+	// not reached
+	return out.String()
 }
