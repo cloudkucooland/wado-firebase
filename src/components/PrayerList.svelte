@@ -110,6 +110,10 @@
   });
 </script>
 
+<svelte:head>
+  <title>WADO Prayer List: {prayerClass}</title>
+</svelte:head>
+
 <Container>
   <Nav>
     {#each cs as cx}

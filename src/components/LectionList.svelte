@@ -194,6 +194,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>WADO Lectionary Editor: Year {year}</title>
+</svelte:head>
+
 <Container>
   <Row>
     <Col mx="auto">

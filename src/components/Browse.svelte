@@ -35,7 +35,7 @@
 </script>
 
 <svelte:head>
-  <title>Browse: {location}</title>
+  <title>WADO Location Browser: {location}</title>
 </svelte:head>
 
 <Container>

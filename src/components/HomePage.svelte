@@ -54,8 +54,8 @@
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
       if (!auth.currentUser) return;
       scrolled = true;
-      const days = await user.UpdateStreak(auth.currentUser.uid);
-      toasts.success("Daily Streak", days + " days");
+      const res = await user.UpdateStreak(auth.currentUser.uid);
+      toasts.success("Daily Streak", res);
     }
   }
 </script>
@@ -86,13 +86,13 @@
       <Input
         type="date"
         on:change={(e) => {
-          if (officeDate == e.srcElement.value) return;
+          if (officeDate == e.target.value) return;
           screenView(officeName);
-          officeDate = e.srcElement.value;
+          officeDate = e.target.value;
           window.location.assign("#/office/" + officeName + "/" + officeDate);
           forProper = proper.fromDate(officeDate); // updates w/o this, but one late...
           officeName = officeName;
-          console.log(officeName, e.srcElement.value, forProper);
+          console.log(officeName, e.target.value, forProper);
         }}
       />
     </Col>

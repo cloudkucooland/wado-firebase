@@ -56,6 +56,10 @@
   }
 </script>
 
+<svelte:head>
+  <title>WADO Prayer Search</title>
+</svelte:head>
+
 <Container>
   <Row class="justify-content-center">
     <Col xs="12" lg="10" xl="8" mx="auto">

@@ -25,7 +25,7 @@
 </script>
 
 <svelte:head>
-  <title>User Settings</title>
+  <title>WADO User Settings</title>
 </svelte:head>
 
 <Container>
