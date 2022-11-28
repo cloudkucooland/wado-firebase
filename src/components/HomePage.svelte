@@ -11,21 +11,30 @@
     Input,
   } from "sveltestrap";
   import proper from "../model/proper";
-  import { screenView } from "../firebase";
+  import { auth, screenView } from "../firebase";
   import { getOffice, offices } from "../model/offices";
+  import { toasts } from "svelte-toasts";
+  import { onMount } from "svelte";
+  import user from "../model/user";
 
   const now = new Date();
   const nowString =
     now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
-
   $: officeDate = params.officeDate;
-  $: officeName = params.officeName;
   $: forProper = proper.fromDate(officeDate);
+  $: officeName = params.officeName;
   $: office = getOffice(officeName);
 
-  screenView(officeName);
+  // for streak tracking
+  let scrolled = false; // not yet scrolled to end
+  let natural = true; // no date specified, allow streak tracking
+  // if (params.officeDate != nowString) natural = false; // date specified, no streak tracking
+
+  onMount(() => {
+    screenView(officeName);
+  });
 
   // move this to model/offices.ts
   function currentOffice() {
@@ -39,11 +48,23 @@
     if (hour >= 17 && hour < 21) return "Vespers"; // if day is Saturday, do Vigil
     return "Compline";
   }
+
+  async function scrolling() {
+    if (scrolled || !natural) return; // remove the handler?
+    if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
+      if (!auth.currentUser) return;
+      scrolled = true;
+      const days = await user.UpdateStreak(auth.currentUser.uid);
+      toasts.success("Daily Streak", days + " days");
+    }
+  }
 </script>
 
 <svelte:head>
   <title>WADO: {officeName}: {forProper}</title>
 </svelte:head>
+
+<svelte:window on:scroll|passive|stopPropagation={scrolling} />
 
 <Container class="cover-container mx-auto">
   <Row>
