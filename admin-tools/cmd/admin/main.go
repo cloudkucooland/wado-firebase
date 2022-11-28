@@ -95,11 +95,10 @@ func updateMeiliSearch() {
 	// c.DeleteIndex("prayers")
 
 	index := c.Index("prayers")
-	resp, err := index.UpdateFilterableAttributes(&[]string{ "Class", "License", "Reviewed" })
+	_, err := index.UpdateFilterableAttributes(&[]string{ "Class", "License", "Reviewed" })
 	if err != nil {
 		panic(err)
 	}
-	fmt.Printf("%+v\n", resp)
 
 	var documents []map[string]interface{}
 
@@ -118,30 +117,7 @@ func updateMeiliSearch() {
 		documents = append(documents, mm)
 	}
 
-	task, err := index.AddDocumentsInBatches(documents, 50, "fsid")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%+v\n", task)
-}
-
-func assocCleanup() {
-	batch := fsclient.Batch()
-
-	iter := fsclient.Collection("associations").Where("Season", "==", "easter").Where("Location", "==", "LAUDS-LECTIONARY").Limit(500).Documents(context.Background())
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(doc.Ref.ID)
-		batch.Set(doc.Ref, map[string]interface{}{"Season": "greatfifty"}, firestore.MergeAll)
-	}
-
-	_, err := batch.Commit(context.Background())
+	_, err = index.AddDocumentsInBatches(documents, 50, "fsid")
 	if err != nil {
 		panic(err)
 	}
@@ -151,7 +127,7 @@ func purgeOldLectionary() {
 	batch := fsclient.Batch()
 
 	ctx := context.Background();
-	iter := fsclient.Collection("prayers").Where("Class", "==", "lection").Limit(500).Documents(ctx)
+	iter := fsclient.Collection("associations").Where("Location", "==", "LAUDS-PSALTER-ANTIPHON").Limit(500).Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
