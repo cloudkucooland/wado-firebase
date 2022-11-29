@@ -2,14 +2,14 @@ import { auth, db } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export default class user {
-  public name: string;
+  public userName: string;
 
   constructor(obj: any) {
-    this.name = obj.name;
+    this.userName = obj.userName;
   }
 
   public toString() {
-    return this.name;
+    return this.userName;
   }
 
   public static async me() {
@@ -17,7 +17,7 @@ export default class user {
 
     const res = await auth.currentUser.getIdTokenResult();
     console.log(res);
-    this.name = res.Name;
+    this.userName = res.Name;
     // load data from firestore...
   }
 
