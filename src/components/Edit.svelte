@@ -36,11 +36,9 @@
 
   import CKEditor from "ckeditor5-svelte";
   import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
-  import SourceEditing from '@ckeditor/ckeditor5-source-editing/src/sourceediting';
 
   const editor = DecoupledEditor;
   const editorConfig = {
-    plugins: [ SourceEditing ],
     toolbar: {
       items: [
         "bold",
@@ -52,8 +50,6 @@
         "|",
         "undo",
         "redo",
-        "|",
-        "sourceEditing",
       ],
     },
   };
@@ -208,7 +204,6 @@
         editor.ui.view.toolbar.element,
         editor.ui.getEditableElement()
       );
-    console.log(editor.builtinPlugins.map( plugin => plugin.pluginName ));
   }
 
   onMount(async () => {
