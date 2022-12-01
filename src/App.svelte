@@ -208,7 +208,6 @@
     text-decoration: none;
   }
   :global(.navbar) {
-    background-color: #a30e15ff !important;
     padding-right: 10px !important;
     padding-left: 10px !important;
     padding-top: 0px !important;
@@ -234,9 +233,6 @@
   :global(footer) {
     font-size: 80%;
     font-weight: 500;
-  }
-  :global(copyright) {
-    font-weight: 700 !important;
   }
   .text-muted {
     font-weight: normal;
