@@ -67,9 +67,6 @@
   {#if office == "LAUDS"}
     {#if data._morningpsalmresolved}
       <Psalm data={data._morningpsalmresolved} />
-    {:else if data._morningpsalm}
-      <h5>{data.morningpsalm}</h5>
-      <p>{@html data._morningpsalm}</p>
     {:else}
       <a
         href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
@@ -79,9 +76,6 @@
     {/if}
   {:else if data._eveningpsalmresolved}
     <Psalm data={data._eveningpsalmresolved} />
-  {:else if data._eveningpsalm}
-    <h5>{data.eveningpsalm}</h5>
-    <p>{@html data._eveningpsalm}</p>
   {:else}
     <a
       href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
