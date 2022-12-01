@@ -14,7 +14,7 @@
   import { auth, screenView } from "../firebase";
   import { getOffice, offices } from "../model/offices";
   import { toasts } from "svelte-toasts";
-  import { onMount } from "svelte";
+  import { onMount, afterUpdate } from "svelte";
   import user from "../model/user";
 
   const now = new Date();
@@ -29,11 +29,15 @@
 
   // for streak tracking
   let scrolled = false; // not yet scrolled to end
-  let natural = true; // no date specified, allow streak tracking
-  // if (params.officeDate != nowString) natural = false; // date specified, no streak tracking
 
   onMount(() => {
-    screenView(officeName);
+    // set the URL so that "poking the ox" always takes you to "now"
+    window.location.assign("#/office/" + officeName + "/" + officeDate);
+    screenView(officeName, { proper: forProper.propername });
+  });
+
+  afterUpdate(() => {
+    screenView(officeName, { proper: forProper.propername });
   });
 
   // move this to model/offices.ts
@@ -50,7 +54,7 @@
   }
 
   async function scrolling() {
-    if (scrolled || !natural) return; // remove the handler?
+    if (scrolled) return; // remove the handler?
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
       if (!auth.currentUser) return;
       scrolled = true;
@@ -61,7 +65,7 @@
 </script>
 
 <svelte:head>
-  <title>WADO: {officeName}: {forProper}</title>
+  <title>WADO: {officeName}: {forProper.propername}</title>
 </svelte:head>
 
 <svelte:window on:scroll|passive|stopPropagation={scrolling} />
@@ -91,8 +95,8 @@
           officeDate = e.target.value;
           window.location.assign("#/office/" + officeName + "/" + officeDate);
           forProper = proper.fromDate(officeDate); // updates w/o this, but one late...
-          officeName = officeName;
-          console.log(officeName, e.target.value, forProper);
+          // officeName = officeName;
+          // console.log(officeName, e.target.value, forProper.propername);
         }}
       />
     </Col>
@@ -101,7 +105,7 @@
     <Row>
       <Col>
         <Card>
-          <CardHeader>{officeName}: {forProper}</CardHeader>
+          <CardHeader>{officeName}: {forProper.propername}</CardHeader>
           <CardBody>
             <svelte:component this={office} proper={forProper} />
           </CardBody>
