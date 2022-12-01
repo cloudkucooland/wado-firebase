@@ -49,20 +49,22 @@ export default class proper {
 
   // incoming format yyyy-mm-dd
   public static fromDate(simple: string): proper {
-    const s = simple.split("-");
-    const d = new Date(+s[0], +s[1] - 1, +s[2]); // month is base 0, not base 1
+    try {
+      const s = simple.split("-");
+      const d = new Date(+s[0], +s[1] - 1, +s[2]); // month is base 0, not base 1
+      const newProper = new proper({ caldate: +s[1] + "-" + +s[2] }); // stored in Firestore as m-d / mm-dd, base 1
+      newProper.weekday = d.getDay();
 
-    const newProper = new proper({ caldate: +s[1] + "-" + +s[2] }); // stored in Firestore as m-d / mm-dd, base 1
-    newProper.weekday = d.getDay();
-
-    newProper._setFeasts(+s[0]);
-    newProper._getSeason(d);
-    return newProper;
+      newProper._setFeasts(+s[0]);
+      newProper._getSeason(d);
+      return newProper;
+    } catch (err) {
+      console.log(err);
+    }
+    return new proper({});
   }
 
-  public toString(): string {
-    return this.propername;
-  }
+  // public toString(): string { return this.propername; }
 
   private _weekdayDisplay(day?: number): string {
     if (!day) day = this.weekday;
