@@ -151,7 +151,11 @@
               {#each [...prayers] as [k, v]}
                 <tr id={k}>
                   <td>
-                    <a href="#/edit/{k}">
+                    <a
+                      href="#/edit/{k}"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       {v.name}
                     </a>
                   </td>
