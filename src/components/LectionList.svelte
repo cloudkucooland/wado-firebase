@@ -247,7 +247,13 @@
                 <Col xs="2"><strong>Morning Psalm:</strong></Col>
                 {#if v._morningpsalmref}
                   <Col xs="2"
-                    ><em class="text-success">{v.morningpsalm}</em></Col
+                    ><em class="text-success"
+                      ><a
+                        href="#/edit/{v._morningpsalmref}"
+                        target="_blank"
+                        rel="noopener noreferrer">{v.morningpsalm}</a
+                      ></em
+                    ></Col
                   >
                 {:else if v._morningpsalm}
                   <Col xs="2"
@@ -269,7 +275,13 @@
                 <Col xs="2"><strong>Evening Psalm:</strong></Col>
                 {#if v._eveningpsalmref}
                   <Col xs="2"
-                    ><em class="text-success">{v.eveningpsalm}</em></Col
+                    ><em class="text-success"
+                      ><a
+                        href="#/edit/{v._eveningpsalmref}"
+                        target="_blank"
+                        rel="noopener noreferrer">{v.eveningpsalm}</a
+                      ></em
+                    ></Col
                   >
                 {:else if v._eveningpsalm}
                   <Col xs="2"
@@ -301,7 +313,9 @@
   {toggleLectionModalOpen}
   size="xl"
 >
-  <ModalHeader {toggleLectionModalOpen}>Edit Lection</ModalHeader>
+  <ModalHeader {toggleLectionModalOpen}
+    >Edit Lection: {modalData.key}</ModalHeader
+  >
   <ModalBody>
     M Psalm: <Input bind:value={modalData.morningpsalm} />
     M: <Input bind:value={modalData.morning} />
