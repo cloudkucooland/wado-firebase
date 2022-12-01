@@ -3,9 +3,11 @@ package main
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"golang.org/x/net/html"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
@@ -20,13 +22,11 @@ import (
 	"go.uber.org/ratelimit"
 )
 
-// this is not clean code, I  just banged it out to do a job once. Do not use this as an example of what you ought to do.
-
 var fsclient *firestore.Client
-var app *firebase.App
 
 func main() {
 	var err error
+	var app *firebase.App
 
 	config := &firebase.Config{ProjectID: "osl-dailyoffice"}
 
@@ -41,18 +41,17 @@ func main() {
 	}
 
 	ctx := context.Background()
-	fetchLections(ctx)
+	fetchLections(ctx, "A", true)
+	fetchLections(ctx, "B", false)
+	fetchLections(ctx, "C", false)
 }
 
-func fetchLections(ctx context.Context) {
-	// done := 0
+func fetchLections(ctx context.Context, year string, force bool) {
 	batch := fsclient.BulkWriter(ctx)
 	rl := ratelimit.New(1)
 
-	// TODO, more than year A
-	iter := fsclient.Collection("lections/A/l").Documents(ctx)
+	iter := fsclient.Collection("lections/" + year + "/l").Documents(ctx)
 	for {
-		// done++
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
@@ -64,51 +63,106 @@ func fetchLections(ctx context.Context) {
 
 		// if it already has morning data cached, skip whole block.
 		_, ok := data["_morning"]
-		if ok {
+		if ok && !force {
 			continue
 		}
 
 		rl.Take()
 		e, err := oremus(ctx, data["evening"].(string))
 		if err != nil {
-			panic(err)
+			log.Println(err.Error())
+			continue
 		}
 
 		var ep string
-		_, ok = data["_eveningpsalmref"]
-		if !ok {
+		ep, ok = data["_eveningpsalmref"].(string)
+		// check to make sure the ref is valid
+		if !ok || force {
 			rl.Take()
-			ep, err = oremus(ctx, data["eveningpsalm"].(string))
+			ep, err = psalmRef(ctx, data["eveningpsalm"].(string))
 			if err != nil {
-				panic(err)
+				log.Println(err.Error())
+				continue
 			}
 		}
 
 		rl.Take()
 		m, err := oremus(ctx, data["morning"].(string))
 		if err != nil {
-			panic(err)
+			log.Println(err.Error())
+			continue
 		}
 
 		var mp string
-		_, ok = data["_morningpsalmref"]
-		if !ok {
+		mp, ok = data["_morningpsalmref"].(string)
+		// check to make sure the ref is valid
+		if !ok || force {
 			rl.Take()
-			mp, err = oremus(ctx, data["morningpsalm"].(string))
+			mp, err = psalmRef(ctx, data["morningpsalm"].(string))
 			if err != nil {
-				panic(err)
+				log.Println(err.Error())
+				continue
 			}
 		}
 
-		// BulkWriter must flush every 20 writes, do I need to do this or does BW take care of it for me?
-		/* if done%20 == 0 {
-			fmt.Println("sending batch of 20")
-			batch.Flush()
-		} */
-
-		batch.Set(doc.Ref, map[string]interface{}{"_evening": e, "_morning": m, "_eveningpsalm": ep, "_morningpsalm": mp}, firestore.MergeAll)
+		batch.Set(doc.Ref, map[string]interface{}{"_evening": e, "_morning": m, "_morningpsalmref": mp, "_eveningpsalmref": ep}, firestore.MergeAll)
 	}
 	batch.End()
+}
+
+func psalmRef(ctx context.Context, ref string) (string, error) {
+	cleanref := strings.Trim(ref, " ")
+	if cleanref == "" {
+		return "", errors.New("bad ref")
+	}
+
+	prayers := fsclient.Collection("prayers")
+
+	// check for existing
+	// log.Printf("looking for %s\n", cleanref)
+	q := prayers.Where("Name", "==", cleanref).Limit(1)
+	iter := q.Documents(ctx)
+	defer iter.Stop()
+	doc, err := iter.Next()
+	if err != nil && err != iterator.Done {
+		return "", err
+	}
+	if doc != nil && doc.Ref != nil && doc.Ref.ID != "" {
+		// log.Printf("found psalm ref for %s: %s\n", cleanref, doc.Ref.ID)
+		return doc.Ref.ID, nil
+	}
+
+	// log.Printf("creating %s\n", cleanref)
+	// fetch content
+	body, err := oremus(ctx, cleanref)
+	if err != nil {
+		return "", err
+	}
+
+	// create and save
+	type Psalm struct {
+		Body       string
+		Class      string
+		License    bool
+		LastEdited string `firestore:"Last Edited"`
+		LastEditor string `firestore:"Last Editor"`
+		Name       string
+		Reviewed   bool
+	}
+	newDoc, _, err := prayers.Add(ctx, Psalm{
+		Body:       body,
+		Class:      "psalm",
+		License:    true,
+		LastEdited: "auto",
+		LastEditor: "lection auto-update",
+		Name:       cleanref,
+		Reviewed:   false,
+	})
+	if err != nil {
+		return "", err
+	}
+	log.Printf("created %s: %s\n", cleanref, newDoc.ID)
+	return newDoc.ID, err
 }
 
 func oremus(ctx context.Context, ref string) (string, error) {
