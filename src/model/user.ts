@@ -17,7 +17,7 @@ export default class user {
 
     const res = await auth.currentUser.getIdTokenResult();
     console.log(res);
-    this.userName = res.Name;
+    // this.userName = res.name;
     // load data from firestore...
   }
 
@@ -25,6 +25,7 @@ export default class user {
     const now = new Date();
     const d =
       now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const ref = doc(db, "user", uid);
 
@@ -45,9 +46,10 @@ export default class user {
         return "Current streak: " + dd.consecutiveDays + " days";
       }
 
-      const s = d.split("-");
       const sd = dd.lastDay.split("-");
-      if (s[0] == sd[0] && s[1] == sd[1] && +s[2] == +sd[2] + 1) {
+      const lastDate = new Date(sd[0], sd[1] - 1, sd[2]);
+
+      if (today - lastDate <= 86400001) { // 1 day + 1 msec
         const newStreak = dd.consecutiveDays + 1;
         await setDoc(
           ref,
