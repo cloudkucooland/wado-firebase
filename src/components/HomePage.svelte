@@ -37,6 +37,7 @@
   });
 
   afterUpdate(() => {
+    // console.log("afterUpdate", forProper.propername, forProper);
     screenView(officeName, { proper: forProper.propername });
   });
 
@@ -76,7 +77,6 @@
       <TabContent
         on:tab={(e) => {
           if (officeName == e.detail) return;
-          screenView(officeName);
           officeName = e.detail;
           window.location.replace("#/office/" + officeName + "/" + officeDate);
         }}
@@ -90,8 +90,7 @@
       <Input
         type="date"
         on:change={(e) => {
-          if (officeDate == e.target.value) return;
-          screenView(officeName);
+          // if (officeDate == e.target.value) return;
           officeDate = e.target.value;
           window.location.assign("#/office/" + officeName + "/" + officeDate);
           forProper = proper.fromDate(officeDate); // updates w/o this, but one late...
