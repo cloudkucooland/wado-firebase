@@ -48,8 +48,9 @@ export default class user {
 
       const sd = dd.lastDay.split("-");
       const lastDate = new Date(sd[0], sd[1] - 1, sd[2]);
-
-      if (today - lastDate <= 86400001) { // 1 day + 1 msec
+      const diff = today - lastDate;
+      if (diff <= 86400001) {
+        // 1 day + 1 msec
         const newStreak = dd.consecutiveDays + 1;
         await setDoc(
           ref,

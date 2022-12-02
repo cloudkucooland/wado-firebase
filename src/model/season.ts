@@ -4,6 +4,8 @@ export default class season {
   public churchPos: number;
   public maxProper: number;
   public useWeekdays: boolean;
+  public startWeekday: number;
+  public maxWeekday: number;
   public color: string;
 
   public constructor(obj: any) {
@@ -12,6 +14,8 @@ export default class season {
     this.churchPos = obj.churchPos;
     this.maxProper = obj.maxProper;
     this.useWeekdays = obj.useWeekdays;
+    this.startWeekday = obj.startWeekday ? obj.startWeekday : 0;
+    this.maxWeekday = obj.maxWeekday ? obj.maxWeekday : 0;
     this.color = obj.color;
   }
 
@@ -90,19 +94,9 @@ export default class season {
         julianPos: 2,
         churchPos: 7,
         maxProper: 10,
+        maxWeekday: 2,
         useWeekdays: true,
         color: "green",
-      }),
-    ],
-    [
-      "mardigras",
-      new season({
-        name: "mardigras",
-        julianPos: 3,
-        churchPos: 8,
-        maxProper: 0,
-        useWeekdays: false,
-        color: "yellow",
       }),
     ],
     [
@@ -124,6 +118,8 @@ export default class season {
         churchPos: 10,
         maxProper: 6,
         useWeekdays: true,
+        startWeekday: 4,
+        maxWeekday: 6,
         color: "purple",
       }),
     ],
@@ -144,8 +140,10 @@ export default class season {
         name: "holyweek",
         julianPos: 7,
         churchPos: 12,
-        maxProper: 0,
+        maxProper: 1,
         useWeekdays: true,
+        startWeekday: 1,
+        maxWeekday: 3,
         color: "white",
       }),
     ],

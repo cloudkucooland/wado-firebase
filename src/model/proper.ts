@@ -118,7 +118,6 @@ export default class proper {
       ["epiphany", new Date(year, 0, 6, 0, 0, 0)],
 
       /* almost everthing is relative to easter */
-      ["mardigras", this._addDays(easter, -47)],
       ["ashwednesday", this._addDays(easter, -46)],
       ["palmsunday", this._addDays(easter, -7)],
       ["maundythursday", this._addDays(easter, -3)],
@@ -203,14 +202,11 @@ export default class proper {
     } else if (t >= f("epiphany") + nextday && t < f("sundayafterepi")) {
       this.season = "baptismoflord";
       this.proper = (t - f("sundayafterepi")) / nextday + 1;
-    } else if (t > f("epiphany") && t < f("mardigras")) {
+    } else if (t > f("epiphany") && t < f("ashwednesday")) {
       this.season = "afterepiphany";
       const daysintoordtime =
         this.getDayOfYear(forday) - this._fdoy("epiphany") + 1;
       this.proper = Math.floor(daysintoordtime / 7) + 1;
-    } else if (t >= f("mardigras") && t < f("ashwednesday")) {
-      this.season = "mardigras";
-      this.proper = 0;
     } else if (t >= f("ashwednesday") && t < f("ashwednesday") + nextday) {
       this.season = "ashwednesday";
       this.proper = 0;
@@ -224,7 +220,7 @@ export default class proper {
       this.proper = 0;
     } else if (t > f("palmsunday") && t < f("maundythursday")) {
       this.season = "holyweek";
-      this.proper = 0;
+      this.proper = 1;
     } else if (t >= f("maundythursday") && t < f("goodfriday")) {
       this.season = "maundythursday";
       this.proper = 0;
@@ -338,16 +334,19 @@ export default class proper {
         return (
           "Epiphany (ordinary) " + this.proper + ", " + this._weekdayDisplay()
         );
-      case "mardigras":
-        return "Shrove Tuesday";
       case "ashwednesday":
         return "Ash Wednesday";
       case "lent":
+        let p = this.proper;
+        let prep = "of";
+        if (this.weekday == 0) prep = "in";
         return (
-          this.cardToOrd(this.proper) +
+          this.cardToOrd(p) +
           " " +
           this._weekdayDisplay() +
-          " of Lent"
+          " " +
+          prep +
+          " Lent"
         );
       case "palmsunday":
         return "Palm Sunday";
@@ -366,7 +365,7 @@ export default class proper {
           this.cardToOrd(this.proper) +
           " " +
           this._weekdayDisplay() +
-          " of Eastertide"
+          " of Easter"
         );
       case "ascensioneve":
         return "Eve of the Ascension";
@@ -437,15 +436,25 @@ export default class proper {
 
       let i = 1;
       while (i <= v.maxProper) {
-        // specific exceptions go here
-        // if (v.name == "christmas" && i == 1) continue; // christmasday == christmas.1
+        // exceptions go here
+        if (v.name == "christmas" && i == 1) {
+          i = i + 1;
+          continue;
+        }
 
         obj.proper = i;
 
         if (v.useWeekdays) {
-          let d = 0;
-          while (d <= 6) {
-            obj.weekday = d;
+          // Most seasons start on Monday, except for lent, which counts from Wednesdays
+          let d = v.startWeekday;
+          if (v.name == "greatfifty" && i == 1) d = 1; // do not display Easter twice, otherwise greatfifty is normal
+          if (v.name == "afterpentecost" && i == 1) d = 1; // do not display Pentecost twice, otherwise afterpentecost is normal
+
+          while (d <= 6 + v.startWeekday) {
+            // for seasons that END on a day other than Sunday (Ordinary after Epiphany)
+            if (v.maxWeekday != 0 && i >= v.maxProper && d > v.maxWeekday)
+              break;
+            obj.weekday = d % 7;
             const p = new proper(obj);
             ll.set(p.propername, p);
             d = d + 1;
