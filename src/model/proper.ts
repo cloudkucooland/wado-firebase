@@ -92,7 +92,7 @@ export default class proper {
     const easter = this.getEaster(year);
 
     // BOL is Sunday
-    let sundayafterepi = new Date(year, 1, 6, 0, 0, 0);
+    let sundayafterepi = new Date(year, 0, 6, 0, 0, 0);
     if (sundayafterepi.getDay() != 0) {
       sundayafterepi = this._addDays(
         sundayafterepi,
@@ -201,7 +201,8 @@ export default class proper {
       this.proper = 0;
     } else if (t >= f("epiphany") + nextday && t < f("sundayafterepi")) {
       this.season = "baptismoflord";
-      this.proper = (t - f("sundayafterepi")) / nextday + 1;
+      // proper is number of days after epiphany
+      this.proper = this.getDayOfYear(forday) - this._fdoy("epiphany");
     } else if (t > f("epiphany") && t < f("ashwednesday")) {
       this.season = "afterepiphany";
       const daysintoordtime =
@@ -213,7 +214,7 @@ export default class proper {
     } else if (t > f("ashwednesday") && t < f("palmsunday")) {
       this.season = "lent";
       const daysintolent =
-        this.getDayOfYear(forday) - this._fdoy("ashwednesday") + 1;
+        this.getDayOfYear(forday) - this._fdoy("ashwednesday") - 1;
       this.proper = Math.floor(daysintolent / 7) + 1;
     } else if (t >= f("palmsunday") && t < f("palmsunday") + nextday) {
       this.season = "palmsunday";
