@@ -69,21 +69,23 @@ func GetOremus(ctx context.Context, e FirestoreEvent) error {
 	pathParts := strings.Split(fullPath, "/")
 	collection := pathParts[0]
 	doc := strings.Join(pathParts[1:], "/")
+	cdoc := client.Collection(collection).Doc(doc)
 
+	// this costs 3 writes per, but should be infrequent enough
 	// update the psalm references if they are empty
 	if e.Value.Fields.MorningPsalmRef.StringValue == "" {
 		mpref, err := psalmRef(ctx, e.Value.Fields.MorningPsalm.StringValue)
-		_, err = client.Collection(collection).Doc(doc).Set(ctx, map[string]interface{}{"_morningpsalmref": mpref}, firestore.MergeAll)
+		_, err = cdoc.Set(ctx, map[string]interface{}{"_morningpsalmref": mpref}, firestore.MergeAll)
 		if err != nil {
-			log.Fatalf("Set MPRef: %v, %s, %s/%s", err, mpref, collection, doc)
+			log.Fatalf("Set MPRef: %v", err)
 		}
 	}
 
 	if e.Value.Fields.EveningPsalmRef.StringValue == "" {
 		epref, err := psalmRef(ctx, e.Value.Fields.EveningPsalm.StringValue)
-		_, err = client.Collection(collection).Doc(doc).Set(ctx, map[string]interface{}{"_eveningpsalmref": epref}, firestore.MergeAll)
+		_, err = cdoc.Set(ctx, map[string]interface{}{"_eveningpsalmref": epref}, firestore.MergeAll)
 		if err != nil {
-			log.Fatalf("Set EPRef: %v, %s, %s/%s", err, epref, collection, doc)
+			log.Fatalf("Set EPRef: %v", err)
 		}
 	}
 
@@ -91,7 +93,6 @@ func GetOremus(ctx context.Context, e FirestoreEvent) error {
 	if e.Value.Fields.MorningCache.StringValue != "" {
 		return nil
 	}
-
 	morning, err := oremus.Get(ctx, e.Value.Fields.Morning.StringValue)
 	if err != nil {
 		log.Fatalf("FetchOremus: %v", err)
@@ -100,7 +101,7 @@ func GetOremus(ctx context.Context, e FirestoreEvent) error {
 	if err != nil {
 		log.Fatalf("FetchOremus: %v", err)
 	}
-	_, err = client.Collection(collection).Doc(doc).Set(ctx, map[string]interface{}{"_evening": evening, "_morning": morning}, firestore.MergeAll)
+	_, err = cdoc.Set(ctx, map[string]interface{}{"_evening": evening, "_morning": morning}, firestore.MergeAll)
 	if err != nil {
 		log.Fatalf("M/E Cache Set: %v", err)
 	}
@@ -156,7 +157,6 @@ func psalmRef(ctx context.Context, ref string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	log.Printf("created %s: %s\n", cleanref, newDoc.ID)
 	return newDoc.ID, err
 }
 
