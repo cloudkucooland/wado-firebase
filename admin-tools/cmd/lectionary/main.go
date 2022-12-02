@@ -31,9 +31,41 @@ func main() {
 		panic(err)
 	}
 
-	fetchLections(ctx, "A", true)
-	fetchLections(ctx, "B", false)
-	fetchLections(ctx, "C", false)
+	clearLectionsCache(ctx, "A")
+	clearLectionsCache(ctx, "B")
+	clearLectionsCache(ctx, "C")
+	// fetchLections(ctx, "A", false)
+	// fetchLections(ctx, "B", false)
+	// fetchLections(ctx, "C", false)
+}
+
+func clearLectionsCache(ctx context.Context, year string) {
+	batch := fsclient.BulkWriter(ctx)
+	rl := ratelimit.New(5)
+
+	iter := fsclient.Collection("lections/" + year + "/l").Documents(ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			panic(err)
+		}
+		rl.Take() // don't overload oremus via the trigger
+		_, err = batch.Update(doc.Ref, []firestore.Update{
+			{Path: "_morning", Value: firestore.Delete},
+			{Path: "_evening", Value: firestore.Delete},
+			{Path: "_morningpsalm", Value: firestore.Delete},
+			{Path: "_eveningpsalm", Value: firestore.Delete},
+			{Path: "_morningpsalmref", Value: firestore.Delete},
+			{Path: "_eveningpsalmref", Value: firestore.Delete},
+		})
+		if err != nil {
+			panic(err)
+		}
+	}
+	batch.End()
 }
 
 func fetchLections(ctx context.Context, year string, force bool) {
@@ -101,7 +133,7 @@ func fetchLections(ctx context.Context, year string, force bool) {
 }
 
 func psalmRef(ctx context.Context, ref string) (string, error) {
-	cleanref := strings.TrimSpaces(ref)
+	cleanref := strings.TrimSpace(ref)
 	if cleanref == "" {
 		return "", errors.New("bad ref")
 	}
