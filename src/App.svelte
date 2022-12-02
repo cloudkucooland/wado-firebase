@@ -135,16 +135,14 @@
       <Nav class="ms-auto" navbar>
         {#if loggedIn}
           <Dropdown nav inNavbar>
-            <DropdownToggle nav caret>Admin</DropdownToggle>
+            <DropdownToggle nav caret>Tools</DropdownToggle>
             <DropdownMenu>
               <DropdownItem href="#/search">Search</DropdownItem>
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
-              <DropdownItem href="#/lectionary/A"
-                >Lectionary Editor</DropdownItem
-              >
+              <DropdownItem href="#/lectionary/A">Lectionary</DropdownItem>
               <DropdownItem href="#/browse">Location Browser</DropdownItem>
               <DropdownItem href="#/admin">Admin Screen</DropdownItem>
-              <DropdownItem href="#/addPrayer">Add Prayer</DropdownItem>
+              <DropdownItem href="#/addPrayer">Add a Prayer</DropdownItem>
             </DropdownMenu>
           </Dropdown>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
