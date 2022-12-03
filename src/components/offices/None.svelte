@@ -2,6 +2,7 @@
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
+  import PsalmLection from "../PsalmLection.svelte";
 
   export let proper;
 </script>
@@ -18,8 +19,7 @@
 <Location name="NONE-PRAYER" {proper} />
 
 <h3>Psalter</h3>
-<Rubric>(commonly sung to psalm tone three or said in unison)</Rubric>
-<Location name="NONE-PSALTER" {proper} />
+<PsalmLection {proper} office="VESPERS" />
 <Location name="GENERAL-GLORIA" {proper} />
 
 <h3>The Little Chapter</h3>
