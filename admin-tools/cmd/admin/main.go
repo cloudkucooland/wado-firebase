@@ -13,10 +13,10 @@ import (
 	firebase "firebase.google.com/go/v4"
 	"firebase.google.com/go/v4/auth"
 
+	secretmanager "cloud.google.com/go/secretmanager/apiv1"
+	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
-        secretmanager "cloud.google.com/go/secretmanager/apiv1"
-        "cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 
 	"github.com/meilisearch/meilisearch-go"
 )
@@ -47,12 +47,11 @@ func main() {
 		panic(err)
 	}
 
-        secrets, err = secretmanager.NewClient(ctx, option.WithCredentialsFile("keyfile.json"))
-        if err != nil {
-                panic(err)
-        }
-        defer secrets.Close()
-
+	secrets, err = secretmanager.NewClient(ctx, option.WithCredentialsFile("keyfile.json"))
+	if err != nil {
+		panic(err)
+	}
+	defer secrets.Close()
 
 	updateEditors(ctx)
 	// revokeReviewed(ctx)
@@ -104,13 +103,13 @@ func updateMeiliSearch(ctx context.Context) {
 	}
 
 	c := meilisearch.NewClient(meilisearch.ClientConfig{
-                Host: "https://osl.indievisible.org:7700",
-                APIKey: key,
-        })
+		Host:   "https://osl.indievisible.org:7700",
+		APIKey: key,
+	})
 	// c.DeleteIndex("prayers")
 
 	index := c.Index("prayers")
-	_, err = index.UpdateFilterableAttributes(&[]string{ "Class", "License", "Reviewed" })
+	_, err = index.UpdateFilterableAttributes(&[]string{"Class", "License", "Reviewed"})
 	if err != nil {
 		panic(err)
 	}
@@ -161,13 +160,13 @@ func purgeOldLectionary(ctx context.Context) {
 }
 
 func getMeiliKey(ctx context.Context) (string, error) {
-        accessRequest := &secretmanagerpb.AccessSecretVersionRequest{
-                Name: "projects/912288843295/secrets/firestore-meilisearch-MEILISEARCH_API_KEY/versions/latest",
-        }
+	accessRequest := &secretmanagerpb.AccessSecretVersionRequest{
+		Name: "projects/912288843295/secrets/meili/versions/latest",
+	}
 
-        result, err := secrets.AccessSecretVersion(ctx, accessRequest)
-        if err != nil {
+	result, err := secrets.AccessSecretVersion(ctx, accessRequest)
+	if err != nil {
 		return "", err
-        }
+	}
 	return string(result.Payload.Data), nil
 }
