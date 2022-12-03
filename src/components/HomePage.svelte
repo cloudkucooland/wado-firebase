@@ -9,12 +9,13 @@
     TabContent,
     TabPane,
     Input,
+    Tooltip,
   } from "sveltestrap";
   import proper from "../model/proper";
   import { auth, screenView } from "../firebase";
-  import { getOffice, offices } from "../model/offices";
+  import { getOffice, offices, currentOffice } from "../model/offices";
   import { toasts } from "svelte-toasts";
-  import { onMount, afterUpdate } from "svelte";
+  import { onMount, afterUpdate, tick } from "svelte";
   import user from "../model/user";
 
   const now = new Date();
@@ -37,22 +38,9 @@
   });
 
   afterUpdate(() => {
-    // console.log("afterUpdate", forProper.propername, forProper);
+    console.log("afterUpdate", forProper.propername, forProper);
     screenView(officeName, { proper: forProper.propername });
   });
-
-  // move this to model/offices.ts
-  function currentOffice() {
-    const d = new Date();
-    const hour = d.getHours();
-
-    if (hour >= 5 && hour < 9) return "Lauds";
-    if (hour >= 9 && hour < 12) return "Terce";
-    if (hour >= 12 && hour < 15) return "Sext";
-    if (hour >= 15 && hour < 17) return "None";
-    if (hour >= 17 && hour < 21) return "Vespers"; // if day is Saturday, do Vigil
-    return "Compline";
-  }
 
   async function scrolling() {
     if (scrolled) return; // remove the handler?
@@ -88,15 +76,16 @@
     </Col>
     <Col xs="2">
       <Input
-        type="date"
-        on:change={(e) => {
-          // if (officeDate == e.target.value) return;
+        on:change={async (e) => {
+          if (officeDate == e.target.value) return;
           officeDate = e.target.value;
-          window.location.assign("#/office/" + officeName + "/" + officeDate);
-          forProper = proper.fromDate(officeDate); // updates w/o this, but one late...
+          window.location.assign(
+            "#/office/" + officeName + "/" + e.target.value
+          );
           // officeName = officeName;
-          // console.log(officeName, e.target.value, forProper.propername);
+          await tick(); // still needed?
         }}
+        type="date"
       />
     </Col>
   </Row>
