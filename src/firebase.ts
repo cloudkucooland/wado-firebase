@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, registerVersion } from "firebase/app";
 import { getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
@@ -26,6 +26,7 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+registerVersion("WADO");
 const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
