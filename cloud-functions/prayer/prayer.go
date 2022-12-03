@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"time"
+    "strings"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -83,7 +84,7 @@ func init() {
 }
 
 func UpdateMeiliSearch(ctx context.Context, e FirestorePrayerEvent) error {
-    needsupdate := false
+    /* needsupdate := false
 	if e.Value.Fields.Body.StringValue != e.OldValue.Fields.Body.StringValue {
         needsupdate = true
     }
@@ -98,13 +99,17 @@ func UpdateMeiliSearch(ctx context.Context, e FirestorePrayerEvent) error {
     }
 
     if !needsupdate {
+        log.Println("no need to update")
         return nil
-    }
+    } */
+
+    chunks := strings.Split(e.Value.Name, "/")
+    id := chunks[len(chunks)-1]
 
 	index := meili.Index("prayers")
     documents := make([]map[string]interface{}, 0)
     documents = append(documents, map[string]interface{}{
-        "fsid": e.Value.Name,
+        "fsid": id,
         "Author": e.Value.Fields.Author.StringValue,
         "Body": e.Value.Fields.Body.StringValue,
         "Name": e.Value.Fields.Name.StringValue,
