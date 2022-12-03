@@ -6,7 +6,7 @@ import (
 	"fmt"
 	// "net/http"
 	// "encoding/json"
-	"os"
+	// "os"
 
 	"cloud.google.com/go/firestore"
 	// "google.golang.org/api/iterator"
@@ -15,6 +15,8 @@ import (
 
 	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
+        secretmanager "cloud.google.com/go/secretmanager/apiv1"
+        "cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 
 	"github.com/meilisearch/meilisearch-go"
 )
@@ -22,40 +24,49 @@ import (
 var client *auth.Client
 var fsclient *firestore.Client
 var app *firebase.App
+var secrets *secretmanager.Client
 
 func main() {
 	var err error
 
 	config := &firebase.Config{ProjectID: "osl-dailyoffice"}
+	ctx := context.Background()
 
-	app, err = firebase.NewApp(context.Background(), config, option.WithCredentialsFile("keyfile.json"))
+	app, err = firebase.NewApp(ctx, config, option.WithCredentialsFile("keyfile.json"))
 	if err != nil {
 		panic(err)
 	}
 
-	client, err = app.Auth(context.Background())
+	client, err = app.Auth(ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	fsclient, err = app.Firestore(context.Background())
+	fsclient, err = app.Firestore(ctx)
 	if err != nil {
 		panic(err)
 	}
 
-	// updateEditors()
-	// revokeReviewed()
-	// assocCleanup()
-	updateMeiliSearch()
-	// purgeOldLectionary()
+        secrets, err = secretmanager.NewClient(ctx, option.WithCredentialsFile("keyfile.json"))
+        if err != nil {
+                panic(err)
+        }
+        defer secrets.Close()
+
+
+	updateEditors(ctx)
+	// revokeReviewed(ctx)
+	// assocCleanup(ctx)
+	// updateMeiliSearch(ctx)
+	// purgeOldLectionary(ctx)
 }
 
-func updateEditors() {
-	editors := []string{"PsfIgw0szbhCX14JEwCnR4XNxxz1", "E8axm9DyN7eZ2gh7pGs6CrPOJLD3", "idlyS5Ansvhj23AsKmdrC3Ufbcb2", "hBk6r6Wq8STqGxOoPhPWHGtXo8Q2", "1a5UG6WjcSeLOXgcmZJKbjt7Dav1"}
+func updateEditors(ctx context.Context) {
+	editors := []string{"PsfIgw0szbhCX14JEwCnR4XNxxz1", "E8axm9DyN7eZ2gh7pGs6CrPOJLD3", "idlyS5Ansvhj23AsKmdrC3Ufbcb2", "hBk6r6Wq8STqGxOoPhPWHGtXo8Q2", "1a5UG6WjcSeLOXgcmZJKbjt7Dav1", "8yFu045fSdY6OLfcE1A4oGPqct22"}
 
 	for _, s := range editors {
 		claims := map[string]interface{}{"role": "Editor"}
-		err := client.SetCustomUserClaims(context.Background(), s, claims)
+		err := client.SetCustomUserClaims(ctx, s, claims)
 		if err != nil {
 			panic(err)
 		}
@@ -63,10 +74,10 @@ func updateEditors() {
 }
 
 // if there are a lot, run it multiple times. 500 is a limit of firestore
-func revokeReviewed() {
+func revokeReviewed(ctx context.Context) {
 	batch := fsclient.Batch()
 
-	iter := fsclient.Collection("prayers").Where("Reviewed", "==", true).Limit(500).Documents(context.Background())
+	iter := fsclient.Collection("prayers").Where("Reviewed", "==", true).Limit(500).Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -80,14 +91,18 @@ func revokeReviewed() {
 		batch.Set(doc.Ref, map[string]interface{}{"Reviewed": false}, firestore.MergeAll)
 	}
 
-	_, err := batch.Commit(context.Background())
+	_, err := batch.Commit(ctx)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func updateMeiliSearch() {
-	key := os.Getenv("MEILIADMINKEY")
+func updateMeiliSearch(ctx context.Context) {
+	key, err := getMeiliKey(ctx)
+	if err != nil {
+		panic(err)
+	}
+
 	c := meilisearch.NewClient(meilisearch.ClientConfig{
                 Host: "https://osl.indievisible.org:7700",
                 APIKey: key,
@@ -95,14 +110,14 @@ func updateMeiliSearch() {
 	// c.DeleteIndex("prayers")
 
 	index := c.Index("prayers")
-	_, err := index.UpdateFilterableAttributes(&[]string{ "Class", "License", "Reviewed" })
+	_, err = index.UpdateFilterableAttributes(&[]string{ "Class", "License", "Reviewed" })
 	if err != nil {
 		panic(err)
 	}
 
 	var documents []map[string]interface{}
 
-	iter := fsclient.Collection("prayers").Where("License", "==", true).Documents(context.Background())
+	iter := fsclient.Collection("prayers").Where("License", "==", true).Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -123,10 +138,9 @@ func updateMeiliSearch() {
 	}
 }
 
-func purgeOldLectionary() {
+func purgeOldLectionary(ctx context.Context) {
 	batch := fsclient.Batch()
 
-	ctx := context.Background();
 	iter := fsclient.Collection("associations").Where("Location", "==", "LAUDS-PSALTER-ANTIPHON").Limit(500).Documents(ctx)
 	for {
 		doc, err := iter.Next()
@@ -146,3 +160,14 @@ func purgeOldLectionary() {
 	}
 }
 
+func getMeiliKey(ctx context.Context) (string, error) {
+        accessRequest := &secretmanagerpb.AccessSecretVersionRequest{
+                Name: "projects/912288843295/secrets/firestore-meilisearch-MEILISEARCH_API_KEY/versions/latest",
+        }
+
+        result, err := secrets.AccessSecretVersion(ctx, accessRequest)
+        if err != nil {
+		return "", err
+        }
+	return string(result.Payload.Data), nil
+}
