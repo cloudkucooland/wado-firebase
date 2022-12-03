@@ -1,0 +1,1 @@
+gcloud functions deploy UpdateMeiliSearch --entry-point UpdateMeiliSearch --runtime go118 --trigger-event "providers/cloud.firestore/eventTypes/document.write" --trigger-resource "projects/osl-dailyoffice/databases/(default)/documents/prayers/{id}" --max-instances 5 --memory=128 
