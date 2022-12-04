@@ -39,6 +39,7 @@
   import AddPrayer from "./components/AddPrayer.svelte";
   import Search from "./components/Search.svelte";
   import Users from "./components/Users.svelte";
+  import user from "./model/user";
 
   const routes = {
     "/": HomePage,
@@ -58,11 +59,15 @@
   };
 
   $: loggedIn = false;
-  onAuthStateChanged(auth, async (user) => {
-    if (user) {
+  onAuthStateChanged(auth, async (u) => {
+    if (u) {
       loggedIn = true;
+      console.log(u);
+      me = user.me();
+      if (!me.displayName) me.setDisplayName(u.displayName);
+      me.logAction();
       if ((await isEditor()) === true) {
-        toasts.info("Editor permissions", user.displayName, { uid: 11 });
+        toasts.info("Editor permissions", u.displayName, { uid: 11 });
       }
     } else {
       loggedIn = false;

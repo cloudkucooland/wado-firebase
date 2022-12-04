@@ -2,10 +2,18 @@ import { auth, db } from "../firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export default class user {
-  public userName: string;
+  public displayName: string;
+  public longestStreak: string;
+  public consecutiveDays: string;
+  public lastDay: string;
+  public lastActivity: string;
 
   constructor(obj: any) {
-    this.userName = obj.userName;
+    this.displayName = obj.displayName;
+    this.longestSream = obj.longestSream;
+    this.consecutiveDays = obj.consecutiveDays;
+    this.lastDay = obj.lastDay;
+    this.lastActivity = obj.lastActivity;
   }
 
   public toString() {
@@ -17,8 +25,40 @@ export default class user {
 
     const res = await auth.currentUser.getIdTokenResult();
     console.log(res);
-    // this.userName = res.name;
-    // load data from firestore...
+    try {
+      const ref = doc(db, "user", res.id);
+      const loaded = await getDoc(ref);
+      const u = new user(loaded.data());
+      console.log(u);
+      return u;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async setDisplayName(newname: string) {
+    this.displayName = newname;
+    this.lastActivity = new Date();
+    const res = await auth.currentUser.getIdTokenResult();
+    const ref = doc(db, "user", res.id);
+
+    try {
+      await setDoc(ref, this.toJSON());
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  public async logAction() {
+    this.lastActivity = new Date();
+    const res = await auth.currentUser.getIdTokenResult();
+    const ref = doc(db, "user", res.id);
+
+    try {
+      await setDoc(ref, this.toJSON());
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   public static async UpdateStreak(uid: string) {
