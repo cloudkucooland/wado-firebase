@@ -15,7 +15,6 @@ export default class user {
     this.consecutiveDays = obj.consecutiveDays;
     this.lastDay = obj.lastDay;
     this.lastActivity = obj.lastActivity;
-    console.log(this.toJSON());
   }
 
   public toString() {

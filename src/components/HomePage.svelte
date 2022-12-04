@@ -38,7 +38,7 @@
   });
 
   afterUpdate(() => {
-    console.log("afterUpdate", forProper.propername, forProper);
+    // console.log("afterUpdate", forProper.propername, forProper);
     screenView(officeName, { proper: forProper.propername });
   });
 
