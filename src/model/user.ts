@@ -7,67 +7,92 @@ export default class user {
   public consecutiveDays: string;
   public lastDay: string;
   public lastActivity: string;
+  private _userID;
 
   constructor(obj: any) {
     this.displayName = obj.displayName;
-    this.longestSream = obj.longestSream;
+    this.longestStreak = obj.longestStreak;
     this.consecutiveDays = obj.consecutiveDays;
     this.lastDay = obj.lastDay;
     this.lastActivity = obj.lastActivity;
+    console.log(this.toJSON());
   }
 
   public toString() {
-    return this.userName;
+    return this.displayName;
   }
 
+  public toJSON() {
+    const u = {};
+    if (this.displayName) u.displayName = this.displayName;
+    if (this.longestStreak) u.longestStreak = this.longestStreak;
+    if (this.consecutiveDays) u.consecutiveDays = this.consecutiveDays;
+    if (this.lastDay) u.lastDay = this.lastDay;
+    if (this.lastActivity) u.lastActivity = this.lastActivity;
+    return u;
+  }
+
+  // load from firestore
   public static async me() {
-    if (!auth.currentUser) return false;
+    if (!auth.currentUser) {
+      console.log("not logged in, returning empty 'me'");
+      return new user({ lastActivity: "0" });
+    }
 
-    const res = await auth.currentUser.getIdTokenResult();
-    console.log(res);
+    const ref = doc(db, "user", auth.currentUser.uid);
     try {
-      const ref = doc(db, "user", res.id);
       const loaded = await getDoc(ref);
-      const u = new user(loaded.data());
-      console.log(u);
-      return u;
+      if (loaded.exists()) {
+        const u = new user(loaded.data());
+        u._userID = auth.currentUser.uid;
+        return u;
+      }
     } catch (err) {
       console.log(err);
     }
+
+    const u = new user({ lastActivity: "0" });
+    u._userID = auth.currentUser.uid;
+    await setDoc(ref, u.toJSON());
+    return u;
   }
 
+  // update firestore
   public async setDisplayName(newname: string) {
+    if (!this._userID) return;
+    const ref = doc(db, "user", this._userID);
+
     this.displayName = newname;
-    this.lastActivity = new Date();
-    const res = await auth.currentUser.getIdTokenResult();
-    const ref = doc(db, "user", res.id);
-
     try {
-      await setDoc(ref, this.toJSON());
+      await setDoc(ref, this.toJSON(), { merge: true });
     } catch (err) {
       console.log(err);
     }
   }
 
+  // report that there has been activity
   public async logAction() {
-    this.lastActivity = new Date();
-    const res = await auth.currentUser.getIdTokenResult();
-    const ref = doc(db, "user", res.id);
+    if (!this._userID) return;
+    const ref = doc(db, "user", this._userID);
 
+    this.lastActivity = new Date().toJSON();
     try {
-      await setDoc(ref, this.toJSON());
+      await setDoc(ref, this.toJSON()), { merge: true };
     } catch (err) {
       console.log(err);
     }
   }
 
-  public static async UpdateStreak(uid: string) {
+  // can probably be simplified since other things access the userdata on the server....
+  public async UpdateStreak() {
+    if (!this._userID) return false;
+
     const now = new Date();
     const d =
       now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    const ref = doc(db, "user", uid);
+    const ref = doc(db, "user", this._userID);
 
     try {
       const loaded = await getDoc(ref);
