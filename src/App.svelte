@@ -1,7 +1,6 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
   import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
-
   import {
     Collapse,
     Navbar,
@@ -15,12 +14,7 @@
     DropdownMenu,
     DropdownItem,
   } from "sveltestrap";
-  import {
-    recordEvent,
-    auth,
-    isEditor,
-    enableOfflineDataMode,
-  } from "./firebase";
+  import { recordEvent, auth, enableOfflineDataMode } from "./firebase";
   import {
     FacebookAuthProvider,
     GoogleAuthProvider,
@@ -28,6 +22,8 @@
     signOut,
     onAuthStateChanged,
   } from "firebase/auth";
+  import { setContext } from "svelte";
+  import { writable } from "svelte/store";
   import HomePage from "./components/HomePage.svelte";
   import Admin from "./components/Admin.svelte";
   import Settings from "./components/Settings.svelte";
@@ -59,17 +55,16 @@
   };
 
   $: loggedIn = false;
-  let me;
+  let me = writable("me");
+  setContext("me", me);
 
   onAuthStateChanged(auth, async (u) => {
     if (u) {
       loggedIn = true;
-      me = await user.me();
-      if (!me.displayName) await me.setDisplayName(u.displayName);
-      await me.logAction();
-      if ((await isEditor()) === true) {
+      $me = await user.me();
+      await $me.logAction();
+      if ($me.isEditor)
         toasts.info("Editor permissions", u.displayName, { uid: 11 });
-      }
     } else {
       loggedIn = false;
     }

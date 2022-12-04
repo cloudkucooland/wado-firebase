@@ -7,7 +7,9 @@ export default class user {
   public consecutiveDays: string;
   public lastDay: string;
   public lastActivity: string;
-  private _userID;
+  private _userID: string;
+  private _isEditor: boolean;
+  private _loggedIn: boolean;
 
   constructor(obj: any) {
     this.displayName = obj.displayName;
@@ -15,6 +17,8 @@ export default class user {
     this.consecutiveDays = obj.consecutiveDays;
     this.lastDay = obj.lastDay;
     this.lastActivity = obj.lastActivity;
+    this._isEditor = false;
+    this._loggedIn = false;
   }
 
   public toString() {
@@ -37,6 +41,7 @@ export default class user {
       console.log("not logged in, returning empty 'me'");
       return new user({ lastActivity: "0" });
     }
+    console.log(auth.currentUser);
 
     const ref = doc(db, "user", auth.currentUser.uid);
     try {
@@ -44,15 +49,19 @@ export default class user {
       if (loaded.exists()) {
         const u = new user(loaded.data());
         u._userID = auth.currentUser.uid;
+        const res = await auth.currentUser.getIdTokenResult();
+        u._isEditor = res.claims.role == "Editor";
+        u._loggedIn = true;
         return u;
       }
     } catch (err) {
       console.log(err);
     }
 
+    // write something back, so future reads succeed
     const u = new user({ lastActivity: "0" });
     u._userID = auth.currentUser.uid;
-    await setDoc(ref, u.toJSON());
+    await setDoc(ref, u.toJSON(), { merge: true });
     return u;
   }
 
@@ -136,5 +145,9 @@ export default class user {
       console.log(err);
       return err.message;
     }
+  }
+
+  get isEditor() {
+    return this._isEditor;
   }
 }
