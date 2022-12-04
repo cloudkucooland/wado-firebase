@@ -103,7 +103,7 @@ func updateMeiliSearch(ctx context.Context) {
 	}
 
 	c := meilisearch.NewClient(meilisearch.ClientConfig{
-		Host:   "https://osl.indievisible.org:7700",
+		Host:   "https://saint-luke.net:7700",
 		APIKey: key,
 	})
 	// c.DeleteIndex("prayers")
