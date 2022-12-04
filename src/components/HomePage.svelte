@@ -47,7 +47,8 @@
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
       if (!auth.currentUser) return;
       scrolled = true;
-      const res = await user.UpdateStreak(auth.currentUser.uid);
+      const me = await user.me();
+      const res = await me.UpdateStreak();
       toasts.success("Daily Streak", res);
     }
   }

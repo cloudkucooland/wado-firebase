@@ -59,13 +59,14 @@
   };
 
   $: loggedIn = false;
+  let me;
+
   onAuthStateChanged(auth, async (u) => {
     if (u) {
       loggedIn = true;
-      console.log(u);
-      me = user.me();
-      if (!me.displayName) me.setDisplayName(u.displayName);
-      me.logAction();
+      me = await user.me();
+      if (!me.displayName) await me.setDisplayName(u.displayName);
+      await me.logAction();
       if ((await isEditor()) === true) {
         toasts.info("Editor permissions", u.displayName, { uid: 11 });
       }
@@ -76,7 +77,6 @@
 
   async function doFBLogin() {
     try {
-      // await setPersistence(auth, browserLocalPersistence);
       await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
       recordEvent("Facebook login");
