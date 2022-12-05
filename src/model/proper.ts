@@ -112,6 +112,16 @@ export default class proper {
       proper1 = this._addDays(proper1, 7 - proper1.getDay());
     }
 
+    // if Trinity Sunday falls before May 22...
+    let trinity = this._addDays(easter, 56);
+    let proper0 = new Date(year, 4, 22, 0, 0, 0);
+    if (proper0.getDay() != 0) {
+      proper0 = this._addDays(proper0, 7 - proper0.getDay());
+    }
+    if (trinity < proper0) {
+      console.log("use proper-zero season");
+    }
+
     this._feasts = new Map<string, Date>([
       ["easter", easter],
 
@@ -126,10 +136,11 @@ export default class proper {
       ["ascensioneve", this._addDays(easter, 38)],
       ["ascension", this._addDays(easter, 39)],
       ["pentecost", this._addDays(easter, 49)],
-      ["trinity", this._addDays(easter, 56)],
+      ["trinity", trinity],
       ["stluke", new Date(year, 9, 18, 0, 0, 0)],
 
       // when "proper 1" starts: first Sunday after May 1
+      ["proper0", proper0],
       ["proper1", proper1],
 
       // First Sunday after Jan 6 */
