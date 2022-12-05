@@ -26,20 +26,11 @@ export default class user {
   }
 
   public toJSON() {
-    class Out {
-      displayName?: string;
-      longestStreak?: string;
-      consecutiveDays?: string;
-      lastDay?: string;
-      lastActivity?: string;
-    }
-    const u = new Out();
-    if (this.displayName) u.displayName = this.displayName;
-    if (this.longestStreak) u.longestStreak = this.longestStreak;
-    if (this.consecutiveDays) u.consecutiveDays = this.consecutiveDays;
-    if (this.lastDay) u.lastDay = this.lastDay;
-    if (this.lastActivity) u.lastActivity = this.lastActivity;
-    return u;
+    const o = {...this};
+    if (o._userID) delete o._userID;
+    delete o._isEditor;
+    delete o._loggedIn;
+    return o;
   }
 
   // load from firestore
