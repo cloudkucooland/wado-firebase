@@ -12,6 +12,8 @@ import {
   getDocFromServer,
   Query,
   DocumentReference,
+  terminate,
+  waitForPendingWrites,
 } from "firebase/firestore";
 import { toasts } from "svelte-toasts";
 
@@ -28,15 +30,20 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 registerVersion("WADO", "2.0");
 export const auth = getAuth(app);
-export const db = getFirestore(app);
+export let db = getFirestore(app);
 export const storage = getStorage();
 let analytics: any;
 let _analyticsRunning: boolean = false;
 
 // make this callable from the browser's js console
+// @ts-ignore
 window.wado = {};
-window.wado.clearCache = () => {
-  clearIndexedDbPersistence(db);
+// @ts-ignore
+window.wado.clearCache = async () => {
+  await waitForPendingWrites(db);
+  await terminate(db);
+  await clearIndexedDbPersistence(db);
+  db = getFirestore(app);
 };
 
 export function initAnalytics() {
