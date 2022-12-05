@@ -5,21 +5,22 @@
   import season from "../model/season";
   import Psalm from "./prayerClasses/Psalm.svelte";
   import { toasts } from "svelte-toasts";
+  import { getContext } from "svelte";
 
   export let office;
-  export let proper;
+  let proper = getContext("forProper");
 
   async function loaddata() {
-    const s = season.LUT.get(proper.season);
+    const s = season.LUT.get($proper.season);
 
     const wheres = new Array();
-    wheres.push(where("season", "==", proper.season));
-    if (s.maxProper > 0 && proper.proper >= 0)
-      wheres.push(where("proper", "==", proper.proper));
-    if (s.useWeekdays && proper.weekday >= 0)
-      wheres.push(where("weekday", "==", proper.weekday));
+    wheres.push(where("season", "==", $proper.season));
+    if (s.maxProper > 0 && $proper.proper >= 0)
+      wheres.push(where("proper", "==", $proper.proper));
+    if (s.useWeekdays && $proper.weekday >= 0)
+      wheres.push(where("weekday", "==", $proper.weekday));
 
-    let q = query(collection(db, "lections", proper.year, "l"), ...wheres);
+    let q = query(collection(db, "lections", $proper.year, "l"), ...wheres);
 
     let res = await getDocsCacheFirst(q);
     if (res.empty)

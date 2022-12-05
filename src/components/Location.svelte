@@ -4,6 +4,7 @@
   import { Spinner } from "sveltestrap";
   import { db, getDocCacheFirst, getDocsCacheFirst } from "../firebase";
   import { showEdit, showAlt } from "../model/preferences";
+  import { getContext } from "svelte";
   import Alternatives from "./Alternatives.svelte";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
@@ -12,8 +13,8 @@
   import Psalm from "./prayerClasses/Psalm.svelte";
   import Antiphon from "./prayerClasses/Antiphon.svelte";
 
+  let proper = getContext("forProper");
   export let name;
-  export let proper;
   export let max = 1;
   export let maxAlt = 0;
   export let bold = false;
@@ -41,7 +42,7 @@
     let q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Calendar Date", "==", proper.caldate),
+      where("Calendar Date", "==", $proper.caldate),
       orderBy(order),
       limit(realMax)
     );
@@ -59,10 +60,10 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", proper.season),
-      where("Proper", "==", proper.proper),
-      where("Weekday", "==", proper.weekday),
-      where("Year", "==", proper.year),
+      where("Season", "==", $proper.season),
+      where("Proper", "==", $proper.proper),
+      where("Weekday", "==", $proper.weekday),
+      where("Year", "==", $proper.year),
       orderBy(order),
       limit(realMax - m.size)
     );
@@ -80,9 +81,9 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", proper.season),
-      where("Proper", "==", proper.proper),
-      where("Weekday", "==", proper.weekday),
+      where("Season", "==", $proper.season),
+      where("Proper", "==", $proper.proper),
+      where("Weekday", "==", $proper.weekday),
       where("Year", "==", "Any"),
       orderBy(order),
       limit(realMax - m.size)
@@ -101,8 +102,8 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", proper.season),
-      where("Proper", "==", proper.proper),
+      where("Season", "==", $proper.season),
+      where("Proper", "==", $proper.proper),
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),
       orderBy(order),
@@ -122,9 +123,9 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", proper.season),
+      where("Season", "==", $proper.season),
       where("Proper", "==", -1),
-      where("Weekday", "==", proper.weekday),
+      where("Weekday", "==", $proper.weekday),
       where("Year", "==", "Any"),
       orderBy(order),
       limit(realMax - m.size)
@@ -143,7 +144,7 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", proper.season),
+      where("Season", "==", $proper.season),
       where("Proper", "==", -1),
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),

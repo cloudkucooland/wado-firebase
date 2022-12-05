@@ -4,21 +4,19 @@
   import Rubric from "../Rubric.svelte";
   import Lection from "../Lection.svelte";
   import PsalmLection from "../PsalmLection.svelte";
-
-  export let proper;
 </script>
 
 <h3>Opening</h3>
 <h4>Entrance of the Light</h4>
-<Location name="VESPERS-LIGHT" {proper} altMax="3" />
+<Location name="VESPERS-LIGHT" altMax="3" />
 
 <h4>Hymn of Light (The Phos Hilaron)</h4>
-<Location name="PHOS-HILARON" {proper} altMax="3" />
+<Location name="PHOS-HILARON" altMax="3" />
 
 <h4>+ Thanksgiving for Light</h4>
 <Rubric>(Always included in Festive Vespers or Evensong)</Rubric>
-<Location name="GENERAL-WITHYOU" {proper} />
-<Location name="VESPER-COLLECT1" {proper} altMax="3" />
+<Location name="GENERAL-WITHYOU" />
+<Location name="VESPER-COLLECT1" altMax="3" />
 <Rubric>The community is seated.</Rubric>
 
 <h4>Evening Prayer Canticle</h4>
@@ -28,30 +26,30 @@
 </Rubric>
 
 <h4>Prayer of awareness</h4>
-<Location name="VESPER-CONFESSION" {proper} altMax="3" />
+<Location name="VESPER-CONFESSION" altMax="3" />
 <Silence>silent recollection and examination of conscience</Silence>
 
 <h4>Words of Assurance:</h4>
-<Location name="VESPER-PARDON" {proper} />
+<Location name="VESPER-PARDON" />
 
 <h3>Psalter</h3>
-<PsalmLection {proper} office="VESPERS" />
-<Location name="VESPER-GLORIA" {proper} />
+<PsalmLection office="VESPERS" />
+<Location name="VESPER-GLORIA" />
 <Silence />
 
 <h3>Word</h3>
 <h4>Scripture</h4>
-<Lection office="VESPERS" {proper} />
-<Location name="GENERAL-RESPONSE-SCRIPTURE" {proper} />
+<Lection office="VESPERS" />
+<Location name="GENERAL-RESPONSE-SCRIPTURE" />
 
 <h4>Silence for Reflection</h4>
 
 <h4>Canticle of Mary (The Magnificat; Luke 1:39-56)</h4>
-<Location name="MAGNIFICAT" {proper} />
+<Location name="MAGNIFICAT" />
 
 <Rubric>(unison)</Rubric>
 
-<Location name="VESPER-GLORIA" {proper} />
+<Location name="VESPER-GLORIA" />
 <h4>A Reading for Meditation and Reflection</h4>
 
 <h3>Prayers</h3>
@@ -62,33 +60,33 @@
 >
 
 <h4>Prayer of Thanksgiving</h4>
-<Location name="VESPER-SUPPLICATION" {proper} altMax="3" />
+<Location name="VESPER-SUPPLICATION" altMax="3" />
 <h4>Evening Collects</h4>
 <Rubric>One and usually more of the following collects.</Rubric>
-<Location name="VESPER-COLLECT2" {proper} max="10" />
+<Location name="VESPER-COLLECT2" max="10" />
 
 <h4>Prayers of Special Intention</h4>
 <h5>Collect of Commemoration</h5>
 <Rubric>Proper collects for holy days and major feasts</Rubric>
-<Location name="VESPER-COMMEMORATION" {proper} altMax="3" />
+<Location name="VESPER-COMMEMORATION" altMax="3" />
 
 <h5>Intercession for the Order of Saint Luke</h5>
-<Location name="OSL" {proper} />
+<Location name="OSL" />
 
 <h4>The Lord’s Prayer</h4>
-<Location name="GENERAL-LORDS" {proper} /><br />
+<Location name="GENERAL-LORDS" /><br />
 <h4>Concluding Collect</h4>
-<Location name="VESPER-COLLECT3" {proper} altMax="3" />
+<Location name="VESPER-COLLECT3" altMax="3" />
 
 <h4>Hymn</h4>
-<Location name="VESPER-HYMN" {proper} altMax="3" />
+<Location name="VESPER-HYMN" altMax="3" />
 
 <h4>Commendation and Canticle of Simeon</h4>
-<Location name="SIMEON" {proper} altMax="3" /><br />
+<Location name="SIMEON" altMax="3" /><br />
 
 <h3>Going Forth</h3>
-<Location name="VESPER-BENEDICTION" {proper} />
-<Location name="VESPER-DISMISSAL" {proper} />
+<Location name="VESPER-BENEDICTION" />
+<Location name="VESPER-DISMISSAL" />
 
 <style>
   h4 {
