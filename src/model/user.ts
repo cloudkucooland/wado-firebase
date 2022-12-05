@@ -7,7 +7,7 @@ export default class user {
   public consecutiveDays: string;
   public lastDay: string;
   public lastActivity: string;
-  private _userID: string;
+  private _userID?: string;
   private _isEditor: boolean;
   private _loggedIn: boolean;
 
@@ -26,7 +26,14 @@ export default class user {
   }
 
   public toJSON() {
-    const u = {};
+    class Out {
+      displayName?: string;
+      longestStreak?: string;
+      consecutiveDays?: string;
+      lastDay?: string;
+      lastActivity?: string;
+    }
+    const u = new Out();
     if (this.displayName) u.displayName = this.displayName;
     if (this.longestStreak) u.longestStreak = this.longestStreak;
     if (this.consecutiveDays) u.consecutiveDays = this.consecutiveDays;
@@ -121,6 +128,7 @@ export default class user {
 
       const sd = dd.lastDay.split("-");
       const lastDate = new Date(sd[0], sd[1] - 1, sd[2]);
+      // @ts-expect-error
       const diff = today - lastDate;
       if (diff <= 86400001) {
         // 1 day + 1 msec
@@ -149,5 +157,9 @@ export default class user {
 
   get isEditor() {
     return this._isEditor;
+  }
+
+  get loggedIn() {
+    return this._loggedIn;
   }
 }
