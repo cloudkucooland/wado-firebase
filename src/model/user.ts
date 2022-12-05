@@ -26,7 +26,7 @@ export default class user {
   }
 
   public toJSON() {
-    const o = {...this};
+    const o = { ...this };
     if (o._userID) delete o._userID;
     delete o._isEditor;
     delete o._loggedIn;
