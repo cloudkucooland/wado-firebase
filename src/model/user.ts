@@ -41,7 +41,7 @@ export default class user {
       console.log("not logged in, returning empty 'me'");
       return new user({ lastActivity: "0" });
     }
-    console.log(auth.currentUser);
+    // console.log(auth.currentUser);
 
     const ref = doc(db, "user", auth.currentUser.uid);
     try {

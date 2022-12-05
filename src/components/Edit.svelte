@@ -27,10 +27,10 @@
     setDoc,
     deleteDoc,
   } from "firebase/firestore";
-  import { db, isEditor, auth, recordEvent, screenView } from "../firebase";
+  import { db, auth, recordEvent, screenView } from "../firebase";
   import { classes, getClass } from "../model/prayerClasses";
   import { toasts } from "svelte-toasts";
-  import { onMount } from "svelte";
+  import { getContext, onMount } from "svelte";
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
 
@@ -57,12 +57,12 @@
   import association from "../model/association";
   import prayer from "../model/prayer";
 
+  let me = getContext("me");
   export let params = { id };
   const id = params.id ? params.id : "exnihilo";
   let modalId = "";
   let assocEditResult;
   let assocAddResult;
-  let editorPerm = false;
   $: prayerData = new prayer({ name: "Loading", body: "Loading" });
   $: associations = new Array();
 
@@ -209,7 +209,6 @@
   onMount(async () => {
     screenView("Edit Prayer");
     await loadPrayer();
-    editorPerm = await isEditor();
   });
 </script>
 
@@ -221,7 +220,7 @@
   <Row>
     <Col>
       <Card class="mb-2">
-        {#if editorPerm}
+        {#if $me.isEditor}
           <CardHeader>Editing: {prayerData.name}</CardHeader>
         {:else}
           <CardHeader>Displaying: {prayerData.name}</CardHeader>
@@ -236,7 +235,7 @@
                     name="name"
                     id="name"
                     bind:value={prayerData.name}
-                    disabled={!editorPerm}
+                    disabled={!$me.isEditor}
                   />
                 </FormGroup>
               </Col>
@@ -260,7 +259,7 @@
                       name="hymntune"
                       id="hymntune"
                       bind:value={prayerData.hymntune}
-                      disabled={!editorPerm}
+                      disabled={!$me.isEditor}
                     />
                   </FormGroup>
                 </Col>
@@ -271,7 +270,7 @@
                       name="hymnmeter"
                       id="hymnmeter"
                       bind:value={prayerData.hymnmeter}
-                      disabled={!editorPerm}
+                      disabled={!$me.isEditor}
                     />
                   </FormGroup>
                 </Col>
@@ -286,7 +285,7 @@
                       name="psalmrubric"
                       id="psalmrubric"
                       bind:value={prayerData.rubric}
-                      disabled={!editorPerm}
+                      disabled={!$me.isEditor}
                     />
                   </FormGroup>
                 </Col>
@@ -301,7 +300,7 @@
                     name="class"
                     id="class"
                     bind:value={prayerData.class}
-                    disabled={!editorPerm}
+                    disabled={!$me.isEditor}
                   >
                     {#each Array.from(classes.keys()) as key}
                       <option value={key}>{key}</option>
@@ -316,7 +315,7 @@
                     name="author"
                     id="author"
                     bind:value={prayerData.author}
-                    disabled={!editorPerm}
+                    disabled={!$me.isEditor}
                   />
                 </FormGroup>
               </Col>
@@ -352,7 +351,7 @@
                     name="license"
                     id="license"
                     bind:checked={prayerData.license}
-                    disabled={!editorPerm}
+                    disabled={!$me.isEditor}
                   />
                 </FormGroup>
               </Col>
@@ -364,13 +363,13 @@
                     name="reviewed"
                     id="reviewed"
                     bind:checked={prayerData.reviewed}
-                    disabled={!editorPerm}
+                    disabled={!$me.isEditor}
                   />
                 </FormGroup>
               </Col>
               <Col sm="7">&nbsp;</Col>
               <Col sm="1">
-                {#if editorPerm}
+                {#if $me.isEditor}
                   <Button size="sm" color="primary" on:click={saveChanges}>
                     Save
                   </Button>
@@ -410,7 +409,7 @@
                   <td>{v.Year}</td>
                   <td>{v.Weight}</td>
                   <td>
-                    {#if editorPerm}
+                    {#if $me.isEditor}
                       <Button
                         size="sm"
                         color="warning"
@@ -429,7 +428,7 @@
               {/each}
             </tbody>
           </Table>
-          {#if editorPerm}
+          {#if $me.isEditor}
             <Button size="sm" color="success" on:click={toggleAddAssocOpen}
               >Add</Button
             >

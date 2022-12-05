@@ -24,22 +24,16 @@
     setDoc,
     getDocs,
   } from "firebase/firestore";
-  import {
-    db,
-    recordEvent,
-    isEditor,
-    screenView,
-    getDocsCacheFirst,
-  } from "../firebase";
+  import { db, recordEvent, screenView, getDocsCacheFirst } from "../firebase";
   import proper from "../model/proper";
-  import { onMount } from "svelte";
+  import { onMount, getContext } from "svelte";
   import { toasts } from "svelte-toasts";
 
   export let params; //  = { y };
   $: year = params.y ? params.y : "A";
   $: lections = new Map();
-  let editorPerm = false;
   $: modalData = {};
+  let me = getContext("me");
 
   async function loadLections(y) {
     let progressBarString = "starting";
@@ -106,7 +100,6 @@
   onMount(async () => {
     lections = await loadLections(year);
     screenView("Lection List");
-    editorPerm = await isEditor();
   });
 
   let lectionModalOpen = false;
@@ -231,7 +224,7 @@
             <ListGroupItem>
               <Row class="align-items-center">
                 <Col xs="12" mx="auto">
-                  {#if editorPerm}
+                  {#if $me.isEditor}
                     <Button
                       color="success"
                       on:click={toggleLectionModalOpen}

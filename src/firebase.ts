@@ -61,17 +61,6 @@ export function screenView(name: string) {
   recordEvent("screen_view", { firebase_screen: name });
 }
 
-export async function isEditor() {
-  if (!auth.currentUser) return false;
-
-  const res = await auth.currentUser.getIdTokenResult();
-  if (res.claims.role == "Editor") {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 export async function getDocsCacheFirst(q: Query) {
   try {
     const res = await getDocsFromCache(q);

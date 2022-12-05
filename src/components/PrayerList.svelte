@@ -28,19 +28,18 @@
   import {
     db,
     recordEvent,
-    isEditor,
     screenView,
     // getDocsCacheFirst,
   } from "../firebase";
   import prayer from "../model/prayer";
-  import { onMount } from "svelte";
+  import { onMount, getContext } from "svelte";
   import { toasts } from "svelte-toasts";
 
   export let params = { c };
   $: prayerClass = params.c ? params.c : "prayer";
   $: prayers = new Map();
-  let editorPerm = false;
   let modalId = "exnihilo";
+  let me = getContext("me");
 
   const cs = new Array("prayer", "hymn", "psalm", "antiphon");
 
@@ -84,7 +83,6 @@
 
   // https://github.com/firebase/snippets-web/blob/36740fb2c39383621c0c0a948236e9eab8a71516/snippets/firestore-next/test-firestore/paginate.js#L8-L23
   async function loadClass(pc) {
-    console.log("loadclass", pc);
     const m = new Map();
     try {
       const q = query(
@@ -106,7 +104,6 @@
   onMount(async () => {
     prayers = await loadClass(prayerClass);
     screenView("Prayer List");
-    editorPerm = await isEditor();
   });
 </script>
 
@@ -162,7 +159,7 @@
                   <td>{v.license}</td>
                   <td>{v.reviewed}</td>
                   <td>
-                    {#if editorPerm}
+                    {#if $me.isEditor}
                       <Button
                         on:click={toggleDeleteOpen}
                         value={k}
