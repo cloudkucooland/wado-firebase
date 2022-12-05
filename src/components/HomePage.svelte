@@ -83,14 +83,15 @@
     </Col>
     <Col xs="2">
       <Input
-        on:change={async (e) => {
+        type="date"
+        on:change={(e) => {
           if (params.officeDate == e.target.value) return;
           window.location.assign(
             "#/office/" + officeName + "/" + e.target.value
           );
           $forProper = proper.fromDate(e.target.value);
         }}
-        type="date"
+        disabled={!$me.isEditor}
       />
     </Col>
   </Row>
