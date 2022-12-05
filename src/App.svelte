@@ -14,7 +14,12 @@
     DropdownMenu,
     DropdownItem,
   } from "sveltestrap";
-  import { recordEvent, auth, enableOfflineDataMode } from "./firebase";
+  import {
+    recordEvent,
+    auth,
+    enableOfflineDataMode,
+    initAnalytics,
+  } from "./firebase";
   import {
     FacebookAuthProvider,
     GoogleAuthProvider,
@@ -36,6 +41,25 @@
   import Search from "./components/Search.svelte";
   import Users from "./components/Users.svelte";
   import user from "./model/user";
+
+  import "@beyonk/gdpr-cookie-consent-banner/dist/style.css";
+  import GdprBanner from "@beyonk/gdpr-cookie-consent-banner";
+  const choices = {
+    necessary: {
+      label: "Necessary cookies",
+      description: "Used for cookie control. Can't be turned off.",
+      value: true,
+    },
+    tracking: false,
+    analytics: {
+      label: "Analytics cookies",
+      description:
+        "Used to control Google Analytics, a 3rd party tool offered by Google to track user actions in order to improve WADO.",
+      value: true,
+    },
+    marketing: false,
+  };
+  const showEditIcon = false;
 
   const routes = {
     "/": HomePage,
@@ -61,8 +85,11 @@
   onAuthStateChanged(auth, async (u) => {
     if (u) {
       loggedIn = true;
+      // @ts-ignore
       $me = await user.me();
+      // @ts-ignore
       await $me.logAction();
+      // @ts-ignore
       if ($me.isEditor)
         toasts.info("Editor permissions", u.displayName, { uid: 11 });
     } else {
@@ -106,8 +133,6 @@
 
   // if ($offline)
   enableOfflineDataMode();
-
-  // appInstaller();
 
   recordEvent("startup");
 </script>
@@ -174,7 +199,7 @@
 
 <footer class="footer mx-5">
   <p class="small text-end">
-    This site uses cookies for authentication purposes. <a
+    This site uses cookies for authentication and analytics. <a
       href="/wado-privacy"
       target="new">Privacy Policy</a
     >
@@ -191,6 +216,13 @@
     <a href="https://github.com/cloudkucooland/wado-firebase"> GitHub </a>
   </p>
 </footer>
+<GdprBanner
+  description="WADO uses cookies to for authentication and analytics"
+  cookieName="wadogdpr"
+  {choices}
+  on:analytics={initAnalytics}
+  {showEditIcon}
+/>
 
 <style>
   :global(html),

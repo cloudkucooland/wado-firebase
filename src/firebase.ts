@@ -27,13 +27,31 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 registerVersion("WADO", "2.0");
-const analytics = getAnalytics(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage();
+let analytics: any;
+let _analyticsRunning: boolean = false;
 
-// enable this if indexdb gets messed up...
-if (false) clearIndexedDbPersistence(db);
+// make this callable from the browser's js console
+window.wado = {};
+window.wado.clearCache = () => {
+  clearIndexedDbPersistence(db);
+};
+
+export function initAnalytics() {
+  analytics = getAnalytics(app);
+  _analyticsRunning = true;
+}
+
+export function recordEvent(name: string, details?: object) {
+  if (!_analyticsRunning || !name) return;
+  logEvent(analytics, name, details);
+}
+
+export function screenView(name: string) {
+  recordEvent("screen_view", { firebase_screen: name });
+}
 
 export function enableOfflineDataMode() {
   // toasts.info("Starting offline data mode", null, { uid: 21, duration: 5 });
@@ -50,15 +68,6 @@ export function enableOfflineDataMode() {
       });
     }
   });
-}
-
-export function recordEvent(name: string, details?: object) {
-  if (!name) return;
-  logEvent(analytics, name, details);
-}
-
-export function screenView(name: string) {
-  recordEvent("screen_view", { firebase_screen: name });
 }
 
 export async function getDocsCacheFirst(q: Query) {
