@@ -37,7 +37,6 @@
   export let params = { id };
   const id = params.id ? params.id : "GENERAL-ANYTHING";
   $: associations = new Map();
-  // let editorPerm = false;
   let modalId = "exnihilo";
   let assocEditResult;
   const size = "xl";
