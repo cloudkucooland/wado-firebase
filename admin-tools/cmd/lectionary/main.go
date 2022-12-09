@@ -196,6 +196,8 @@ func validateReferences(ctx context.Context) error {
 
     for _, doc := range docs {
         d := doc.Data()
+        writeback := false
+        towrite := make(map[string]interface{})
 
         morning, ok := d["morning"]
         if ok && morning != "" {
@@ -206,7 +208,8 @@ func validateReferences(ctx context.Context) error {
             }
             if res != morning.(string) {
                 log.Printf("[%s] => [%s] did not round-trip cleanly", morning.(string), res)
-                // write clean back to fs
+                towrite["morning"] = res
+                writeback = true
             }
         }
 
@@ -219,7 +222,8 @@ func validateReferences(ctx context.Context) error {
             }
             if res != morningpsalm.(string) {
                 log.Printf("[%s] => [%s] did not round-trip cleanly", morningpsalm.(string), res)
-                // write clean back to fs
+                towrite["morningpsalm"] = res
+                writeback = true
             }
         }
 
@@ -232,7 +236,8 @@ func validateReferences(ctx context.Context) error {
             }
             if res != evening.(string) {
                 log.Printf("[%s] => [%s] did not round-trip cleanly", evening.(string), res)
-                // write clean back to fs
+                towrite["evening"] = res
+                writeback = true
             }
         }
 
@@ -245,8 +250,12 @@ func validateReferences(ctx context.Context) error {
             }
             if res != evening.(string) {
                 log.Printf("[%s] => [%s] did not round-trip cleanly", eveningpsalm.(string), res)
-                // write clean back to fs
+                towrite["eveningpsalm"] = res
+                writeback = true
             }
+        }
+        if writeback {
+            doc.Ref.Set(ctx, towrite, firestore.MergeAll)
         }
 	}
 
