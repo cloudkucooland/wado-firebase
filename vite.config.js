@@ -7,10 +7,10 @@ export default defineConfig({
   plugins: [
     svelte({
       onwarn(warning, defaultHandler) {
-        if (warning.code == 'a11y-click-events-have-key-events') return;
+        if (warning.code == "a11y-click-events-have-key-events") return;
         // handle all other warnings normally
         defaultHandler(warning);
-      }
+      },
     }),
     replace({
       __buildDate__: () => JSON.stringify(new Date()),
