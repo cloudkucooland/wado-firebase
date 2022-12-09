@@ -31,12 +31,12 @@ func main() {
 		panic(err)
 	}
 
-	clearLectionsCache(ctx, "A")
-	clearLectionsCache(ctx, "B")
-	clearLectionsCache(ctx, "C")
-	// fetchLections(ctx, "A", false)
-	// fetchLections(ctx, "B", false)
-	// fetchLections(ctx, "C", false)
+    // years := []string{"A", "B", "C"}
+    // for _, v := range years {
+	    // clearLectionsCache(ctx, y)
+	    // fetchLections(ctx, y, false)
+    //}
+    validateReferences(ctx)
 }
 
 func clearLectionsCache(ctx context.Context, year string) {
@@ -185,4 +185,79 @@ func psalmRef(ctx context.Context, ref string) (string, error) {
 	}
 	log.Printf("created %s: %s\n", cleanref, newDoc.ID)
 	return newDoc.ID, err
+}
+
+func validateReferences(ctx context.Context) error {
+	docs, err := fsclient.Collection("lections/A/l").Documents(ctx).GetAll()
+    if err != nil {
+        log.Println(err.Error())
+        return err
+    }
+
+    for _, doc := range docs {
+        d := doc.Data()
+        writeback := false
+        towrite := make(map[string]interface{})
+
+        morning, ok := d["morning"]
+        if ok && morning != "" {
+            res, err := oremus.CleanReference(morning.(string))
+            if err != nil {
+                log.Printf("[%s]: %s", morning.(string), err.Error())
+                continue
+            }
+            if res != morning.(string) {
+                log.Printf("[%s] => [%s] did not round-trip cleanly", morning.(string), res)
+                towrite["morning"] = res
+                writeback = true
+            }
+        }
+
+        morningpsalm, ok := d["morningpsalm"]
+        if ok && morningpsalm != "" {
+            res, err := oremus.CleanReference(morningpsalm.(string))
+            if err != nil {
+                log.Printf("[%s]: %s", morningpsalm.(string), err.Error())
+                continue
+            }
+            if res != morningpsalm.(string) {
+                log.Printf("[%s] => [%s] did not round-trip cleanly", morningpsalm.(string), res)
+                towrite["morningpsalm"] = res
+                writeback = true
+            }
+        }
+
+        evening, ok := d["evening"]
+        if ok && evening != "" {
+            res, err := oremus.CleanReference(evening.(string))
+            if err != nil {
+                log.Printf("[%s]: %s", evening.(string), err.Error())
+                continue
+            }
+            if res != evening.(string) {
+                log.Printf("[%s] => [%s] did not round-trip cleanly", evening.(string), res)
+                towrite["evening"] = res
+                writeback = true
+            }
+        }
+
+        eveningpsalm, ok := d["eveningpsalm"]
+        if ok && eveningpsalm != "" {
+            res, err := oremus.CleanReference(eveningpsalm.(string))
+            if err != nil {
+                log.Printf("[%s]: %s", eveningpsalm.(string), err.Error())
+                continue
+            }
+            if res != evening.(string) {
+                log.Printf("[%s] => [%s] did not round-trip cleanly", eveningpsalm.(string), res)
+                towrite["eveningpsalm"] = res
+                writeback = true
+            }
+        }
+        if writeback {
+            doc.Ref.Set(ctx, towrite, firestore.MergeAll)
+        }
+	}
+
+    return nil
 }
