@@ -64,19 +64,19 @@ func init() {
 	}
 }
 
-// this costs 3 writes per, but should be infrequent enough
+// this costs 3-5 writes per, but should be infrequent enough
 // batch or transaction ?
 func GetOremus(ctx context.Context, e FirestoreLectionEvent) error {
 	fullPath := strings.Split(e.Value.Name, "/documents/")[1]
 	pathParts := strings.Split(fullPath, "/")
 	collection := pathParts[0]
-	doc := strings.Join(pathParts[1:], "/")
-	cdoc := client.Collection(collection).Doc(doc)
+	docPath := strings.Join(pathParts[1:], "/")
+	doc := client.Collection(collection).Doc(docPath)
 
 	// update the psalm references if they are empty
 	if e.Value.Fields.MorningPsalmRef.StringValue == "" {
 		mpref, err := psalmRef(ctx, e.Value.Fields.MorningPsalm.StringValue)
-		_, err = cdoc.Set(ctx, map[string]interface{}{"_morningpsalmref": mpref}, firestore.MergeAll)
+		_, err = doc.Set(ctx, map[string]interface{}{"_morningpsalmref": mpref}, firestore.MergeAll)
 		if err != nil {
 			log.Fatalf("Set MPRef: %v", err)
 		}
@@ -84,25 +84,49 @@ func GetOremus(ctx context.Context, e FirestoreLectionEvent) error {
 
 	if e.Value.Fields.EveningPsalmRef.StringValue == "" {
 		epref, err := psalmRef(ctx, e.Value.Fields.EveningPsalm.StringValue)
-		_, err = cdoc.Set(ctx, map[string]interface{}{"_eveningpsalmref": epref}, firestore.MergeAll)
+		_, err = doc.Set(ctx, map[string]interface{}{"_eveningpsalmref": epref}, firestore.MergeAll)
 		if err != nil {
 			log.Fatalf("Set EPRef: %v", err)
 		}
 	}
 
+    mRefClean, err := oremus.CleanReference(e.Value.Fields.Morning.StringValue)
+    if err != nil {
+        log.Printf("[%s] => [%s]: %v", e.Value.Fields.Morning.StringValue, mRefClean, err)
+        mRefClean = e.Value.Fields.Morning.StringValue
+    }
+    if  mRefClean != e.Value.Fields.Morning.StringValue {
+	   _, err = doc.Set(ctx, map[string]interface{}{"morning": mRefClean}, firestore.MergeAll)
+      if err != nil {
+          log.Fatalf("Clean Morning: %v", err)
+      }
+    }
+
+    eRefClean, err := oremus.CleanReference(e.Value.Fields.Evening.StringValue)
+    if err != nil {
+        log.Printf("[%s] => [%s]: %v", e.Value.Fields.Evening.StringValue, eRefClean, err)
+        eRefClean = e.Value.Fields.Evening.StringValue
+    }
+    if  eRefClean != e.Value.Fields.Morning.StringValue {
+	   _, err = doc.Set(ctx, map[string]interface{}{"evening": eRefClean}, firestore.MergeAll)
+      if err != nil {
+          log.Fatalf("Clean Evening: %v", err)
+      }
+    }
+
 	// prevent loops -- the UI clears all cache entries if necessary
 	if e.Value.Fields.MorningCache.StringValue != "" {
 		return nil
 	}
-	morning, err := oremus.Get(ctx, e.Value.Fields.Morning.StringValue)
+	morning, err := oremus.Get(ctx, mRefClean)
 	if err != nil {
-		log.Fatalf("FetchOremus: %v", err)
+		log.Fatalf("FetchOremus morning: %v", err)
 	}
-	evening, err := oremus.Get(ctx, e.Value.Fields.Evening.StringValue)
+	evening, err := oremus.Get(ctx, eRefClean)
 	if err != nil {
-		log.Fatalf("FetchOremus: %v", err)
+		log.Fatalf("FetchOremus evening: %v", err)
 	}
-	_, err = cdoc.Set(ctx, map[string]interface{}{"_evening": evening, "_morning": morning}, firestore.MergeAll)
+	_, err = doc.Set(ctx, map[string]interface{}{"_evening": evening, "_morning": morning}, firestore.MergeAll)
 	if err != nil {
 		log.Fatalf("M/E Cache Set: %v", err)
 	}
