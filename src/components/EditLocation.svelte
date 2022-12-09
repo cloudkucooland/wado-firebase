@@ -6,20 +6,28 @@
     Card,
     CardHeader,
     CardBody,
+    CardFooter,
     Table,
     Button,
     Modal,
     ModalHeader,
     ModalBody,
     ModalFooter,
+    Form,
+    FormGroup,
+    Label,
+    Input,
   } from "sveltestrap";
   import {
     collection,
     query,
     where,
     doc,
+    getDoc,
+    getDocs,
     deleteDoc,
     setDoc,
+    addDoc,
   } from "firebase/firestore";
   import {
     db,
@@ -33,12 +41,14 @@
   import { onMount } from "svelte";
   import { toasts } from "svelte-toasts";
   import EditAssoc from "./EditAssoc.svelte";
+  import AddAssoc from "./AddAssoc.svelte";
 
   export let params = { id };
-  const id = params.id ? params.id : "GENERAL-ANYTHING";
+  $: id = params.id ? params.id : "Any";
   $: associations = new Map();
   let modalId = "exnihilo";
   let assocEditResult;
+  let assocAddResult;
   const size = "xl";
 
   let deleteModalOpen = false;
@@ -70,10 +80,9 @@
   }
 
   let editModalOpen = false;
-  async function toggleEditOpen(e) {
+  function toggleEditOpen(e) {
     screenView("toggleEditOpen");
     editModalOpen = !editModalOpen;
-
     if (editModalOpen) {
       modalId = e.target.value;
     }
@@ -110,14 +119,38 @@
     }
   }
 
-  async function loadLocation() {
+  let addModalAssocOpen = false;
+  function toggleAddAssocOpen(e) {
+    screenView("toggleAddAssocOpen");
+    addModalAssocOpen = !addModalAssocOpen;
+    if (addModalAssocOpen) {
+      modalId = e.target.value;
+    }
+  }
+
+  async function confirmAddAssoc(e) {
+    addModalAssocOpen = !addModalAssocOpen;
+
+    try {
+      const added = await addDoc(
+        collection(db, "associations"),
+        assocAddResult.toFirebase()
+      );
+      loadLocation(id); // lazy but does the job -- redo if assocs get HUGE
+    } catch (err) {
+      console.log(err);
+      toasts.error(err.message);
+    }
+  }
+
+  async function loadLocation(id) {
     const newAssn = new Map();
     try {
       const q = query(
         collection(db, "associations"),
         where("Location", "==", id)
       );
-      const res = await getDocsCacheFirst(q);
+      const res = await getDocs(q);
       for (const a of res.docs) {
         const n = new association(a);
 
@@ -128,7 +161,7 @@
           continue;
         }
 
-        const rawprayer = await getDocCacheFirst(n.Reference);
+        const rawprayer = await getDoc(n.Reference);
         if (!rawprayer || !rawprayer.exists()) {
           console.error("bad reference, deleting association");
           deleteDoc(doc(db, "associations", n.id)); // no need to await here
@@ -149,7 +182,7 @@
 
   onMount(async () => {
     screenView("EditLocation");
-    await loadLocation();
+    await loadLocation(id);
   });
 </script>
 
@@ -158,6 +191,29 @@
 </svelte:head>
 
 <Container>
+  <Row>
+    <Col>
+      <Form>
+        <FormGroup>
+          <Label for="locations">Location</Label>
+          <Input
+            type="select"
+            name="locations"
+            on:change={(e) => {
+              id = e.target.value;
+              document.location.assign("#/editlocation/" + e.target.value);
+              loadLocation(e.target.value);
+            }}
+          >
+            <option>Any</option>
+            {#each association.locations as L}
+              <option>{L}</option>
+            {/each}
+          </Input>
+        </FormGroup>
+      </Form>
+    </Col>
+  </Row>
   <Row>
     <Col>
       <Card>
@@ -210,6 +266,11 @@
             </tbody>
           </Table>
         </CardBody>
+        <CardFooter>
+          <Button size="sm" color="success" on:click={toggleAddAssocOpen}
+            >Add</Button
+          >
+        </CardFooter>
       </Card>
     </Col>
   </Row>
@@ -241,6 +302,25 @@
       Cancel
     </Button>
     <Button color="success" size="sm" on:click={confirmEdit} value={modalId}>
+      Confirm
+    </Button>
+  </ModalFooter>
+</Modal>
+<Modal id="addAssoc" isOpen={addModalAssocOpen} {toggleAddAssocOpen} {size}>
+  <ModalHeader {toggleAddAssocOpen}>Add Association</ModalHeader>
+  <ModalBody>
+    <AddAssoc id={modalId} bind:result={assocAddResult} location={id} />
+  </ModalBody>
+  <ModalFooter>
+    <Button color="secondary" size="sm" on:click={toggleAddAssocOpen}>
+      Cancel
+    </Button>
+    <Button
+      color="success"
+      size="sm"
+      on:click={confirmAddAssoc}
+      value={modalId}
+    >
       Confirm
     </Button>
   </ModalFooter>
