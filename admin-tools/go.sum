@@ -28,6 +28,10 @@ github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
 github.com/cloudkucooland/go-oremus v0.0.0-20221208155441-9a52563352b6 h1:wdfp5vWOwnwGYyISJrknjaex/9KCTXpml1sJ8jkPqiQ=
 github.com/cloudkucooland/go-oremus v0.0.0-20221208155441-9a52563352b6/go.mod h1:bHH+aHMUIMLXg9RqYZa3WSZOjmbN4bwnV/+5tBkyIrI=
+github.com/cloudkucooland/go-oremus v0.0.0-20221208214455-358a53b6a78b h1:zXJowUbIYSjC7tLCTbO3CBpv8h5wMufWLgcoVu2uMZk=
+github.com/cloudkucooland/go-oremus v0.0.0-20221208214455-358a53b6a78b/go.mod h1:bHH+aHMUIMLXg9RqYZa3WSZOjmbN4bwnV/+5tBkyIrI=
+github.com/cloudkucooland/go-oremus v0.0.0-20221208224504-18f57002ba23 h1:ie0939feg672SrSNw41xGwRXNrMTF8oG1K2dYtTciIw=
+github.com/cloudkucooland/go-oremus v0.0.0-20221208224504-18f57002ba23/go.mod h1:bHH+aHMUIMLXg9RqYZa3WSZOjmbN4bwnV/+5tBkyIrI=
 github.com/cncf/udpa/go v0.0.0-20191209042840-269d4d468f6f/go.mod h1:M8M6+tZqaGXZJjfX53e64911xZQV5JYwmTeXPW+k8Sc=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
