@@ -32,7 +32,6 @@
   import HomePage from "./components/HomePage.svelte";
   import Admin from "./components/Admin.svelte";
   import Settings from "./components/Settings.svelte";
-  import Browse from "./components/Browse.svelte";
   import Edit from "./components/Edit.svelte";
   import EditLocation from "./components/EditLocation.svelte";
   import PrayerList from "./components/PrayerList.svelte";
@@ -65,7 +64,6 @@
     "/": HomePage,
     "/admin": Admin,
     "/settings": Settings,
-    "/browse": Browse,
     "/office/:officeName/:officeDate?": HomePage,
     "/office/:officeName/date/:officeDate": HomePage,
     "/edit/:id": Edit,
@@ -165,7 +163,6 @@
               <DropdownItem href="#/search">Search</DropdownItem>
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
               <DropdownItem href="#/lectionary/A">Lectionary</DropdownItem>
-              <DropdownItem href="#/browse">Location Browser</DropdownItem>
               <DropdownItem href="#/admin">Admin Screen</DropdownItem>
               <DropdownItem href="#/addPrayer">Add a Prayer</DropdownItem>
             </DropdownMenu>
