@@ -41,6 +41,8 @@
   import Users from "./components/Users.svelte";
   import user from "./model/user";
 
+  const worker = new Worker(new URL('./worker.js', import.meta.url))
+
   import "@beyonk/gdpr-cookie-consent-banner/dist/style.css";
   import GdprBanner from "@beyonk/gdpr-cookie-consent-banner";
   const choices = {
@@ -161,6 +163,9 @@
             <DropdownToggle nav caret>Tools</DropdownToggle>
             <DropdownMenu>
               <DropdownItem href="#/search">Search</DropdownItem>
+              <DropdownItem href="#/editlocation/UNSET"
+                >Location List</DropdownItem
+              >
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
               <DropdownItem href="#/lectionary/A">Lectionary</DropdownItem>
               <DropdownItem href="#/admin">Admin Screen</DropdownItem>

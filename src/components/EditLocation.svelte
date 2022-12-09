@@ -132,10 +132,7 @@
     addModalAssocOpen = !addModalAssocOpen;
 
     try {
-      const added = await addDoc(
-        collection(db, "associations"),
-        assocAddResult.toFirebase()
-      );
+      await addDoc(collection(db, "associations"), assocAddResult.toFirebase());
       loadLocation(id); // lazy but does the job -- redo if assocs get HUGE
     } catch (err) {
       console.log(err);

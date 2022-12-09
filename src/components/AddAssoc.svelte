@@ -4,7 +4,7 @@
   import { onMount, afterUpdate } from "svelte";
   import association from "../model/association";
   import season from "../model/season";
-  import { Container, Row, Col, Input } from "sveltestrap";
+  import { Container, Row, Col, Input, Button } from "sveltestrap";
   import Select from "svelte-select";
   import { index } from "../meili";
 
@@ -86,8 +86,11 @@
 <Container fluid>
   <Row>
     <Col sm="2">Location</Col>
-    <Col sm="10">
+    <Col sm="6">
       {location}
+    </Col>
+    <Col sm="4">
+      <Button href="#/addPrayer" target="_new">Add Prayer</Button>
     </Col>
   </Row>
   <Row>
@@ -95,10 +98,10 @@
     <Col sm="10">
       <Select
         name="prayer"
+        {groupBy}
         placeholder="search for prayer"
         {loadOptions}
         on:select={doSelect}
-        {groupBy}
       />
     </Col>
   </Row>
