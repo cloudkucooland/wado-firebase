@@ -50,12 +50,12 @@
 
   function doUpload() {
     if (!file.type.includes("audio")) {
-      toast.error("must be an audio file", file.type);
+      toasts.error("must be an audio file", file.type);
       return;
     }
 
     if (file.size > 10485760) {
-      toast.error("Too large: (10MB limit)", file.size / 1048576);
+      toasts.error("Too large: (10MB limit)", file.size / 1048576);
       return;
     }
 
