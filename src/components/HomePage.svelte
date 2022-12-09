@@ -9,7 +9,6 @@
     TabContent,
     TabPane,
     Input,
-    Tooltip,
   } from "sveltestrap";
   import proper from "../model/proper";
   import { auth, screenView } from "../firebase";
