@@ -139,7 +139,6 @@
   }
 
   async function confirmAddAssoc(e) {
-    recordEvent("edit_assoc", { id: id, assoc: e.target.value });
     addAssocModalOpen = !addAssocModalOpen;
 
     try {
