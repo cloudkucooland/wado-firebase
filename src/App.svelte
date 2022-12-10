@@ -136,6 +136,9 @@
   }
 
   enableOfflineDataMode();
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
 </script>
 
 <header>
