@@ -34,7 +34,7 @@
   import prayer from "../model/prayer";
   import { onMount, getContext } from "svelte";
   import { toasts } from "svelte-toasts";
-  import { push } from "svelt-spa-router";
+  import { push } from "svelte-spa-router";
 
   export let params = { c };
   $: prayerClass = params.c ? params.c : "prayer";
