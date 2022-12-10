@@ -1,13 +1,14 @@
 {
   "name": "wado-firebase",
   "version": "1.0.0",
-  "description": "Order of St. Luke Web-Amplified Daily Office",
+  "description": "Order of St. Luke: Web-Amplified Daily Office (WADO)",
   "private": true,
   "scripts": {
     "build": "vite build",
     "dev": "vite",
     "check": "svelte-check --tsconfig ./tsconfig.json",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "prod": "scp -r dist/* osl.indievisible.org:/www/osl/wado/"
   },
   "repository": {
     "type": "git",
