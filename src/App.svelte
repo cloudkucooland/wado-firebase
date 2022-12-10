@@ -1,5 +1,6 @@
 <script lang="ts">
   import Router from "svelte-spa-router";
+  // import { wrap } from "svelte-spa-router/wrap";
   import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
   import {
     Collapse,
@@ -29,19 +30,22 @@
   } from "firebase/auth";
   import { setContext } from "svelte";
   import { writable } from "svelte/store";
+  import user from "./model/user";
+
+  // public
   import HomePage from "./components/HomePage.svelte";
-  import Admin from "./components/Admin.svelte";
+
+  // for authenticated users
   import Settings from "./components/Settings.svelte";
+  import Users from "./components/Users.svelte";
+  import Search from "./components/Search.svelte";
+
+  // for editors
   import Edit from "./components/Edit.svelte";
   import EditLocation from "./components/EditLocation.svelte";
   import PrayerList from "./components/PrayerList.svelte";
   import LectionList from "./components/LectionList.svelte";
   import AddPrayer from "./components/AddPrayer.svelte";
-  import Search from "./components/Search.svelte";
-  import Users from "./components/Users.svelte";
-  import user from "./model/user";
-
-  const worker = new Worker(new URL("./worker.js", import.meta.url));
 
   import "@beyonk/gdpr-cookie-consent-banner/dist/style.css";
   import GdprBanner from "@beyonk/gdpr-cookie-consent-banner";
@@ -55,7 +59,7 @@
     analytics: {
       label: "Analytics cookies",
       description:
-        "Used to control Google Analytics, a 3rd party tool offered by Google to track user actions in order to improve WADO.",
+        "Used to control Google Analytics, a 3rd party tool offered by Google which provides metrics used to improve WADO.",
       value: true,
     },
     marketing: false,
@@ -64,17 +68,18 @@
 
   const routes = {
     "/": HomePage,
-    "/admin": Admin,
+    "/office/:officeName/:officeDate": HomePage,
+
     "/settings": Settings,
-    "/office/:officeName/:officeDate?": HomePage,
-    "/office/:officeName/date/:officeDate": HomePage,
+    "/search": Search,
+    "/users": Users,
+
     "/edit/:id": Edit,
+    // "/edit/:id": wrap({ asyncComponent: () => import('./components/Edit.svelte') }),
     "/editlocation/:id": EditLocation,
     "/prayers/:c": PrayerList,
     "/addPrayer": AddPrayer,
     "/lectionary/:y": LectionList,
-    "/search": Search,
-    "/users": Users,
     "*": HomePage,
   };
 
@@ -90,8 +95,7 @@
       // @ts-ignore
       await $me.logAction();
       // @ts-ignore
-      if ($me.isEditor)
-        toasts.info("Editor permissions", u.displayName, { uid: 11 });
+      if ($me.isEditor) toasts.info("Editor permissions", u.displayName);
     } else {
       loggedIn = false;
     }
@@ -102,9 +106,9 @@
       await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
       recordEvent("Facebook login");
-    } catch (e) {
-      toasts.error(e.message, null, { uid: 13 });
-      console.log(e);
+    } catch (err) {
+      toasts.error(err.message);
+      console.log(err);
     }
   }
 
@@ -113,9 +117,9 @@
       await signInWithPopup(auth, new GoogleAuthProvider());
       loggedIn = true;
       recordEvent("Google login");
-    } catch (e) {
-      toasts.error(e.message, null, { uid: 14 });
-      console.log(e);
+    } catch (err) {
+      toasts.error(err.message);
+      console.log(err);
     }
   }
 
@@ -124,26 +128,15 @@
       await signOut(auth);
       loggedIn = false;
       recordEvent("log out");
-      toasts.success("logged out", null, { uid: 12 });
-    } catch (e) {
-      toasts.error(e, null, { uid: 15 });
-      console.log(e);
+      toasts.success("logged out");
+    } catch (err) {
+      toasts.error(err.messasge);
+      console.log(err);
     }
   }
 
-  // if ($offline)
   enableOfflineDataMode();
-
-  recordEvent("startup");
 </script>
-
-<link
-  rel="stylesheet"
-  href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
-/>
-<svelte:head>
-  <title>The Order of Saint Luke: Web Amplified Daily Office (WADO)</title>
-</svelte:head>
 
 <header>
   <Navbar container={false} color="dark" dark expand="lg">
@@ -168,7 +161,6 @@
               >
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
               <DropdownItem href="#/lectionary/A">Lectionary</DropdownItem>
-              <DropdownItem href="#/admin">Admin Screen</DropdownItem>
               <DropdownItem href="#/addPrayer">Add a Prayer</DropdownItem>
             </DropdownMenu>
           </Dropdown>
