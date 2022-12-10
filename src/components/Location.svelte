@@ -6,6 +6,7 @@
   import { showEdit, showAlt } from "../model/preferences";
   import { getContext } from "svelte";
   import Alternatives from "./Alternatives.svelte";
+  import { link } from "svelte-spa-router";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
   import Hymn from "./prayerClasses/Hymn.svelte";
@@ -191,7 +192,7 @@
   <Spinner color="primary" />
 {:then data}
   {#if $showEdit}<div class="edit">
-      <a href="#/editlocation/{name}">Edit {name}</a>
+      <a href="/editlocation/{name}" use:link>Edit {name}</a>
     </div>{/if}
   {#if maxAlt > 0 && $showAlt && data.size > 1}
     <Alternatives {data} />

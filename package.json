@@ -25,6 +25,7 @@
     "@rollup/plugin-replace": "^5.0.1",
     "@sveltejs/vite-plugin-svelte": "^1.4.0",
     "@tsconfig/svelte": "^3.0.0",
+    "@types/beyonk__gdpr-cookie-consent-banner": "^9.0.0",
     "@types/ckeditor__ckeditor5-build-decoupled-document": "^29.1.1",
     "prettier-plugin-svelte": "^2.8.0",
     "svelte": "^3.53.1",

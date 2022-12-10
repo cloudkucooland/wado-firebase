@@ -17,7 +17,6 @@
   import { getContext, setContext, onMount, afterUpdate } from "svelte";
   import { push } from "svelte-spa-router";
   import { writable } from "svelte/store";
-  import user from "../model/user";
 
   const now = new Date();
   const nowString =
@@ -69,7 +68,7 @@
         on:tab={(e) => {
           if (officeName == e.detail) return;
           officeName = e.detail;
-          push("#/office/" + officeName + "/" + params.officeDate);
+          push("/office/" + officeName + "/" + params.officeDate);
         }}
       >
         {#each offices as o}
@@ -82,8 +81,8 @@
         type="date"
         on:change={(e) => {
           if (params.officeDate == e.target.value) return;
-          push("#/office/" + officeName + "/" + e.target.value);
-          // $forProper = proper.fromDate(e.target.value);
+          $forProper = proper.fromDate(e.target.value);
+          push("/office/" + officeName + "/" + e.target.value);
         }}
         disabled={!$me.isEditor}
       />

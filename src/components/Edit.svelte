@@ -30,6 +30,7 @@
   import { db, auth, recordEvent, screenView } from "../firebase";
   import { classes, getClass } from "../model/prayerClasses";
   import { toasts } from "svelte-toasts";
+  import { link } from "svelte-spa-router";
   import { getContext, onMount } from "svelte";
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
@@ -399,7 +400,9 @@
               {#each associations as v}
                 <tr id={v.id} class={v.dirtyStyle}>
                   <td>
-                    <a href="#/editlocation/{v.Location}">{v.Location}</a>
+                    <a href="/editlocation/{v.Location}" use:link
+                      >{v.Location}</a
+                    >
                   </td>
                   <td>{v.CalendarDate}</td>
                   <td>{v.Season}</td>

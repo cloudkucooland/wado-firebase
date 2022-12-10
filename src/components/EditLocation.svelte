@@ -29,13 +29,8 @@
     setDoc,
     addDoc,
   } from "firebase/firestore";
-  import {
-    db,
-    recordEvent,
-    screenView,
-    getDocsCacheFirst,
-    getDocCacheFirst,
-  } from "../firebase";
+  import { db, recordEvent, screenView, getDocCacheFirst } from "../firebase";
+  import { push } from "svelte-spa-router";
   import association from "../model/association";
   import prayer from "../model/prayer";
   import { onMount } from "svelte";
@@ -198,7 +193,7 @@
             name="locations"
             on:change={(e) => {
               id = e.target.value;
-              document.location.assign("#/editlocation/" + e.target.value);
+              push("/editlocation/" + e.target.value);
               loadLocation(e.target.value);
             }}
           >

@@ -28,6 +28,7 @@
   import proper from "../model/proper";
   import { onMount, getContext } from "svelte";
   import { toasts } from "svelte-toasts";
+  import { link } from "svelte-spa-router";
 
   export let params; //  = { y };
   $: year = params.y ? params.y : "A";
@@ -242,8 +243,9 @@
                   <Col xs="2"
                     ><em class="text-success"
                       ><a
-                        href="#/edit/{v._morningpsalmref}"
+                        href="/edit/{v._morningpsalmref}"
                         target="_blank"
+                        use:link
                         rel="noopener noreferrer">{v.morningpsalm}</a
                       ></em
                     ></Col
@@ -270,7 +272,8 @@
                   <Col xs="2"
                     ><em class="text-success"
                       ><a
-                        href="#/edit/{v._eveningpsalmref}"
+                        href="/edit/{v._eveningpsalmref}"
+                        use:link
                         target="_blank"
                         rel="noopener noreferrer">{v.eveningpsalm}</a
                       ></em

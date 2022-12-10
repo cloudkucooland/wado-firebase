@@ -9,27 +9,6 @@
 <Container>
   <Row>
     <Col>
-      <h3>Prayer Management</h3>
-      <a href="#/prayers/prayer">Prayer List</a>
-
-      <h3>Browse</h3>
-      <a href="#/browse">Browse by location</a>
-      <div>
-        Use this to see which prayers are connected at various locations
-      </div>
-
-      <h3>Lectionary</h3>
-      <a href="#/lectionary">Lectionary List</a>
-      <div>Not written yet</div>
-
-      <h3>Settings</h3>
-      <a href="#/settings">Settings</a>
-      <div>User settings</div>
-    </Col>
-  </Row>
-
-  <Row>
-    <Col>
       <h2>WADO Overview</h2>
       <div>
         <em>The top level of WADO are the offices.</em> These are hard-coded

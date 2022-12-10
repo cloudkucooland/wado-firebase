@@ -3,6 +3,7 @@
   import { addDoc, getDocFromServer, collection } from "firebase/firestore";
   import { db, auth, recordEvent } from "../firebase";
   import { toasts } from "svelte-toasts";
+  import { push, link } from "svelte-spa-router";
   import prayer from "../model/prayer";
 
   async function addPrayer() {
@@ -24,13 +25,10 @@
         collection(db, "prayers"),
         placeholder.toFirebase()
       );
-      console.log("added, now refetching");
       const refetched = await getDocFromServer(added);
-      console.log("refetched", refetched);
       toasts.success("created");
-      recordEvent("add_prayer", { id: added.id, new: added.id });
-      console.log("loading edit screen", added.id);
-      document.location.assign("#/edit/" + added.id);
+      recordEvent("add_prayer", { id: added.id, new: refetched.id });
+      push("/edit/" + added.id);
       return added.id;
     } catch (err) {
       console.log(err);
@@ -42,5 +40,5 @@
 {#await addPrayer()}
   <Spinner />
 {:then e}
-  <a href="#/edit/{e}">Edit New Prayer</a>
+  <a href="/edit/{e}" use:link>Edit New Prayer</a>
 {/await}

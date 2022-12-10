@@ -10,6 +10,7 @@
   import { index } from "../meili";
   import { toasts } from "svelte-toasts";
   import { recordEvent } from "../firebase";
+  import { link } from "svelte-spa-router";
 
   let result = {
     hits: new Array(),
@@ -73,7 +74,7 @@
               <Row class="align-items-center">
                 <Col>
                   <strong class="mb-0"
-                    ><a href="#/edit/{r.fsid}">{r.Name}</a></strong
+                    ><a href="/edit/{r.fsid}" use:link>{r.Name}</a></strong
                   >
                   <p class="mb-0">{@html r.Body}</p>
                 </Col>
