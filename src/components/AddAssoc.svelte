@@ -1,5 +1,5 @@
 <script>
-  import { getDoc, doc } from "firebase/firestore";
+  import { doc } from "firebase/firestore";
   import { db } from "../firebase";
   import { onMount, afterUpdate } from "svelte";
   import association from "../model/association";
