@@ -41,7 +41,7 @@
   import Users from "./components/Users.svelte";
   import user from "./model/user";
 
-  const worker = new Worker(new URL('./worker.js', import.meta.url))
+  const worker = new Worker(new URL("./worker.js", import.meta.url));
 
   import "@beyonk/gdpr-cookie-consent-banner/dist/style.css";
   import GdprBanner from "@beyonk/gdpr-cookie-consent-banner";

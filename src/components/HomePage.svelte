@@ -15,6 +15,7 @@
   import { getOffice, offices, currentOffice } from "../model/offices";
   import { toasts } from "svelte-toasts";
   import { getContext, setContext, onMount, afterUpdate } from "svelte";
+  import { push } from "svelte-spa-router";
   import { writable } from "svelte/store";
   import user from "../model/user";
 
@@ -35,14 +36,12 @@
   let scrolled = false; // not yet scrolled to end
 
   onMount(() => {
-    // console.log("proper onMount:", $forProper, "me", $me);
     // set the URL so that "poking the ox" always takes you to "now"
-    window.location.assign("#/office/" + officeName + "/" + params.officeDate);
+    push("/office/" + officeName + "/" + params.officeDate);
     screenView(officeName, { proper: $forProper.propername });
   });
 
   afterUpdate(() => {
-    // console.log("proper afterUpdate:", $forProper, "me", $me);
     screenView(officeName, { proper: $forProper.propername });
   });
 
@@ -70,9 +69,7 @@
         on:tab={(e) => {
           if (officeName == e.detail) return;
           officeName = e.detail;
-          window.location.replace(
-            "#/office/" + officeName + "/" + params.officeDate
-          );
+          push("#/office/" + officeName + "/" + params.officeDate);
         }}
       >
         {#each offices as o}
@@ -85,10 +82,8 @@
         type="date"
         on:change={(e) => {
           if (params.officeDate == e.target.value) return;
-          window.location.assign(
-            "#/office/" + officeName + "/" + e.target.value
-          );
-          $forProper = proper.fromDate(e.target.value);
+          push("#/office/" + officeName + "/" + e.target.value);
+          // $forProper = proper.fromDate(e.target.value);
         }}
         disabled={!$me.isEditor}
       />

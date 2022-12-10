@@ -34,6 +34,7 @@
   import prayer from "../model/prayer";
   import { onMount, getContext } from "svelte";
   import { toasts } from "svelte-toasts";
+  import { push } from "svelt-spa-router";
 
   export let params = { c };
   $: prayerClass = params.c ? params.c : "prayer";
@@ -124,7 +125,7 @@
     <NavLink>
       <Button
         on:click={() => {
-          window.location.assign("#/addPrayer");
+          push("/addPrayer");
         }}
         color="success">Add Prayer</Button
       >
