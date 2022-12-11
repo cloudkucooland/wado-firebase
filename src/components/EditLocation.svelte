@@ -317,3 +317,9 @@
     </Button>
   </ModalFooter>
 </Modal>
+
+<style>
+  tr.dirty {
+    background-color: yellow !important;
+  }
+</style>
