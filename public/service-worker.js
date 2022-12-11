@@ -2,7 +2,10 @@ let fbkey = { key: "unset" };
 
 self.addEventListener("install", (event) => {
   console.log("wado prayer reminder installed");
-  if (Notification.permission === "default") {
+  if (
+    Notification.permission === "default" &&
+    "requestPermission" in Notification
+  ) {
     Notification.requestPermission(() => {
       console.log("granted notification permission");
     });
@@ -11,11 +14,6 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   console.log("wado prayer reminder activated, starting reminders");
-  if (Notification.permission === "default") {
-    Notification.requestPermission(() => {
-      console.log("granted notification permission");
-    });
-  }
   nextOffice(remindToPray);
 });
 
@@ -36,7 +34,7 @@ self.addEventListener("notificationclick", (event) => {
   console.log("wado prayer reminder notificationclick", event);
 });
 
-function nextOffice(func) {
+function nextOffice() {
   const now = new Date();
   const next = new Date();
 
@@ -56,21 +54,33 @@ function nextOffice(func) {
   next.setSeconds(0);
   next.setMilliseconds(0);
 
+  console.log("next reminder:", next);
+
   const when = next - now;
-  const timer = setTimeout(func, when);
+  // shouldn't happen, but... sleep for 3 hours
+  if (when < 0) {
+    when = 3 * 3600 * 1000;
+  }
+  console.log("setTimeout ms:", when);
+  const timer = setTimeout(remindToPray, when);
 }
 
 function remindToPray() {
   try {
-    if (Notification.permission === "granted") {
-      registration.showNotification("WADO Reminder (direct)");
+    if (
+      Notification.permission === "granted" &&
+      "showNotification" in self.registration
+    ) {
+      console.log("sending reminder:", new Date());
+      self.registration.showNotification("WADO Reminder");
     } else {
-      console.log(Notification.permission);
+      console.log("shutting down reminder loop");
+      return; // break the loop, no reason to keep going
     }
   } catch (err) {
     console.log(err);
   }
 
-  // keep going
-  nextOffice(remindToPray);
+  // keep going, after an hour off
+  setTimeout(nextOffice, 3600 * 1000);
 }
