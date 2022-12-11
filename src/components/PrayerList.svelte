@@ -116,7 +116,7 @@
   <Nav>
     {#each cs as cx}
       <NavLink
-        href="/prayers/{cx}/"
+        href="#/prayers/{cx}/"
         on:click={async () => {
           prayers = await loadClass(cx);
         }}>{cx}</NavLink
