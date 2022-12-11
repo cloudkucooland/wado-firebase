@@ -180,7 +180,7 @@ export default class season {
       "greatfifty",
       new season({
         name: "greatfifty",
-        churhcPos: 17,
+        churchPos: 17,
         maxProper: 7,
         useWeekdays: true,
         color: "white",
@@ -260,7 +260,7 @@ export default class season {
       "Any",
       new season({
         name: "Any",
-        churchPos: 4,
+        churchPos: 256,
         maxProper: 0,
         useWeekdays: true,
         color: "green",
