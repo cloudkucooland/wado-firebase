@@ -1,14 +1,35 @@
+let fbkey = { key: "unset" };
+
 self.addEventListener("install", (event) => {
   console.log("wado prayer reminder installed");
+  if (Notification.permission === "default") {
+    Notification.requestPermission(() => {
+      console.log("granted notification permission");
+    });
+  }
 });
 
 self.addEventListener("activate", (event) => {
   console.log("wado prayer reminder activated, starting reminders");
+  if (Notification.permission === "default") {
+    Notification.requestPermission(() => {
+      console.log("granted notification permission");
+    });
+  }
   nextOffice(remindToPray);
 });
 
 self.addEventListener("message", (event) => {
-  console.log("wado prayer reminder message", event.data);
+  switch (event.data.eventType) {
+    case "keyChanged":
+      fbkey = event.data;
+      break;
+    case "ping":
+      console.log("ping");
+      break;
+    default:
+      console.log("unknown message type", event.data);
+  }
 });
 
 self.addEventListener("notificationclick", (event) => {
@@ -41,10 +62,11 @@ function nextOffice(func) {
 
 function remindToPray() {
   try {
-    self.registration.showNotification("WADO Reminder", {
-      vibrate: [200, 100, 200, 100, 200],
-    });
-    registration.showNotification("WADO Reminder (direct)");
+    if (Notification.permission === "granted") {
+      registration.showNotification("WADO Reminder (direct)");
+    } else {
+      console.log(Notification.permission);
+    }
   } catch (err) {
     console.log(err);
   }

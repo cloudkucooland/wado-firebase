@@ -136,8 +136,14 @@
   }
 
   enableOfflineDataMode();
+
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("service-worker.js");
+    if (Notification.permission === "default") {
+      Notification.requestPermission(() => {
+        console.log("granted notification permission");
+      });
+    }
   }
 </script>
 
