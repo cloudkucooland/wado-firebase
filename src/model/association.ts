@@ -165,7 +165,7 @@ export default class association {
 
     const anyLastNumber = (n: number) => {
       if (n < 0) return 256;
-      return n;
+      return String(n).padStart(3, "0");
     };
 
     /* a calendar date always wins
