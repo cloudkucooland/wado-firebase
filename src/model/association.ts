@@ -164,7 +164,7 @@ export default class association {
     };
 
     const anyLastNumber = (n: number) => {
-      if (n < 0) return 99;
+      if (n < 0) return 256;
       return n;
     };
 
@@ -178,7 +178,7 @@ export default class association {
     // instead of doing each value by hand, just turn it into an easily sortable string and do that
     // like, follow and subscribe for more kludgey life-hacks
     const astr =
-      season.LUT.get(A.Season).churchPos +
+      String(season.LUT.get(A.Season).churchPos).padStart(3, "0") +
       " " +
       anyLastNumber(A.Proper) +
       " " +
@@ -188,7 +188,7 @@ export default class association {
       " " +
       A.Weight;
     const bstr =
-      season.LUT.get(B.Season).churchPos +
+      String(season.LUT.get(B.Season).churchPos).padStart(3, "0") +
       " " +
       anyLastNumber(B.Proper) +
       " " +
