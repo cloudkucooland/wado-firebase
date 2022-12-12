@@ -140,7 +140,7 @@
     if (typeof Notification === "undefined") return;
     // permission neither granted nor denied
     if (Notification.permission === "default") {
-      toasts.success(
+      const tp = toasts.success(
         "WADO Reminders",
         "Click to allow WADO to send reminders to pray",
         {
@@ -148,6 +148,7 @@
             Promise.resolve(Notification.requestPermission()).then((p) => {
               console.log("granted notification permission", p);
             });
+            tp.remove();
           },
           duration: 0,
         }
