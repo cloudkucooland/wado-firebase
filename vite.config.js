@@ -1,6 +1,7 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import replace from "@rollup/plugin-replace";
+import sveltePreprocess from "svelte-preprocess";
 
 export default defineConfig({
   base: "/wado/",
@@ -11,6 +12,9 @@ export default defineConfig({
         // handle all other warnings normally
         defaultHandler(warning);
       },
+      preprocess: sveltePreprocess({
+          scss: {},
+      }),
     }),
     replace({
       __buildDate__: () => JSON.stringify(new Date()),
