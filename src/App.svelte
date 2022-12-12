@@ -135,15 +135,46 @@
     }
   }
 
+  function startNotification() {
+    // not on a platform that has the Notifications API
+    if (typeof Notification === "undefined") return;
+    // permission neither granted nor denied
+    if (Notification.permission === "default") {
+      toasts.success(
+        "WADO Reminders",
+        "Click to allow WADO to send reminders to pray",
+        {
+          onClick: () => {
+            Promise.resolve(Notification.requestPermission()).then((p) => {
+              console.log("granted notification permission", p);
+            });
+          },
+          duration: 0,
+        }
+      );
+    }
+  }
+
   enableOfflineDataMode();
 
   if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js");
-    if (Notification.permission === "default") {
-      Notification.requestPermission(() => {
-        console.log("granted notification permission");
+    let found = false;
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((r) => {
+        if (
+          r.active.scriptURL ==
+            "https://saint-luke.net/wado/service-worker.js" &&
+          r.active.state == "activated"
+        ) {
+          found = true;
+          r.update();
+        }
       });
+    });
+    if (!found) {
+      navigator.serviceWorker.register("service-worker.js");
     }
+    startNotification();
   }
 </script>
 
