@@ -13,7 +13,7 @@ export default defineConfig({
         defaultHandler(warning);
       },
       preprocess: sveltePreprocess({
-          scss: {},
+        scss: {},
       }),
     }),
     replace({
