@@ -25,8 +25,8 @@
 <style>
   div.prayer {
     font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 1em;
+    line-height: 1.25em;
+    margin-bottom: 0.25em;
     padding-left: 1em;
     text-indent: -1em;
   }
@@ -34,7 +34,7 @@
     font-family: Georgia, serif;
     font-weight: bold;
     line-height: 1.5em;
-    margin-bottom: 1em;
+    margin-bottom: 0.25em;
     padding-left: 1em;
     text-indent: -1em;
   }
@@ -42,6 +42,8 @@
     font-family: Georgia, serif;
     font-style: italic;
     text-align: right;
-    font-variant: small-caps;
+    _font-variant: small-caps;
+    margin-bottom: 0.25em;
+    padding-right: 1em;
   }
 </style>
