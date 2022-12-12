@@ -34,6 +34,7 @@
 
   // public
   import HomePage from "./components/HomePage.svelte";
+  import Styles from "./Styles.svelte";
 
   // for authenticated users
   import Settings from "./components/Settings.svelte";
