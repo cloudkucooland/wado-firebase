@@ -60,7 +60,7 @@ function nextOffice() {
   if (h >= 15 && h < 18) nextHour = 18; // vespers
   if (h >= 18 && h < 21) nextHour = 21; // compline
   if (h >= 21) {
-    next.setDate(now.getDate + 1);
+    next.setDate(now.getDate() + 1);
     nextHour = 7;
   } // lauds tomorrow - does this roll across months correctly?
   next.setHours(nextHour);
