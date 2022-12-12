@@ -1,50 +1,10 @@
 .card {
-  .color-white {
-    p,
-    span,
-    strong,
-    a,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      color: $white !important;
-    }
-  }
-  .text-center {
-    text-align: center;
-    position: relative;
-  }
-  .text-left {
-    text-align: left;
-    position: relative;
-  }
-  .text-right {
-    text-align: right;
-  }
-  .has-text-color {
-    .green {
-      color: $green;
-    }
-    .brown {
-      color: $brown;
-    }
-    .white {
-      color: $white;
-    }
-  }
-  .color-neutral {
-    p,
-    span,
-    strong,
-    a,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-      color: $neutral !important;
-    }
-  }
+}
+.card-header {
+  background: $neutralLighter !important;
+}
+.card-body {
+  background: $neutralLightest !important;
+}
+.card-footer {
 }
