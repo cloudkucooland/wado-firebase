@@ -46,6 +46,7 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   console.log("wado prayer reminder notificationclick", event);
+  clients.openWindow("/wado/#/");
 });
 
 function nextOffice() {
