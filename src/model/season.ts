@@ -93,6 +93,16 @@ export default class season {
       }),
     ],
     [
+      "mardigras",
+      new season({
+        name: "Ash Wednesday",
+        churchPos: 8,
+        maxProper: 0,
+        useWeekdays: false,
+        color: "purple",
+      }),
+    ],
+    [
       "ashwednesday",
       new season({
         name: "ashwednesday",

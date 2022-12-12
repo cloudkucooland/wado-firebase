@@ -128,6 +128,7 @@ export default class proper {
       ["epiphany", new Date(year, 0, 6, 0, 0, 0)],
 
       /* almost everthing is relative to easter */
+      ["mardigras", this._addDays(easter, -45)],
       ["ashwednesday", this._addDays(easter, -46)],
       ["palmsunday", this._addDays(easter, -7)],
       ["maundythursday", this._addDays(easter, -3)],
@@ -214,11 +215,14 @@ export default class proper {
       this.season = "baptismoflord";
       // proper is number of days after epiphany
       this.proper = this.getDayOfYear(forday) - this._fdoy("epiphany");
-    } else if (t > f("epiphany") && t < f("ashwednesday")) {
+    } else if (t > f("epiphany") && t < f("mardigras")) {
       this.season = "afterepiphany";
       const daysintoordtime =
         this.getDayOfYear(forday) - this._fdoy("epiphany") + 1;
       this.proper = Math.floor(daysintoordtime / 7) + 1;
+    } else if (t >= f("mardigras") && t < f("mardigras") + nextday) {
+      this.season = "mardigras";
+      this.proper = 0;
     } else if (t >= f("ashwednesday") && t < f("ashwednesday") + nextday) {
       this.season = "ashwednesday";
       this.proper = 0;
@@ -346,6 +350,8 @@ export default class proper {
         return (
           "Epiphany (ordinary) " + this.proper + ", " + this._weekdayDisplay()
         );
+      case "mardigras":
+        return "Mardi Gras";
       case "ashwednesday":
         return "Ash Wednesday";
       case "lent":
