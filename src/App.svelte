@@ -261,45 +261,6 @@
 />
 
 <style>
-  :global(html),
-  :global(body) {
-    height: 100%;
-    font-weight: normal;
-  }
-  :global(body) {
-    display: flex;
-    flex-direction: column;
-  }
-  :global(a:hover) {
-    text-decoration: none;
-  }
-  :global(.navbar) {
-    padding-right: 10px !important;
-    padding-left: 10px !important;
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
-  }
-  :global(.navbar a) {
-    font-weight: 700;
-    border-bottom: 1px solid transparent;
-  }
-  :global(.navbar a:hover) {
-    border-bottom: 1px solid #a30e15ff;
-  }
-  :global(.content-area) {
-    padding: 0 16px 16px 16px;
-  }
-  :global(.card) {
-    margin-top: 20px;
-  }
-  :global(.card-header) {
-    font-size: 150%;
-    font-weight: 700;
-  }
-  :global(footer) {
-    font-size: 80%;
-    font-weight: 500;
-  }
   .text-muted {
     font-weight: normal;
   }
