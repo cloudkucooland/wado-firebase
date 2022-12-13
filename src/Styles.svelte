@@ -7,29 +7,9 @@
   // Variable overrides second
   @import "./scss/color";
   @import "./scss/block";
-  @import "./scss/card";
   @import "./scss/navbar";
+  @import "./scss/typography";
   $enable-shadows: true;
-  html,
-  body {
-    height: 100%;
-    font-weight: normal;
-    display: flex;
-    flex-direction: column;
-  }
-  a {
-    color: $secondary;
-  }
-  a:hover {
-    text-decoration: none;
-  }
-  .content-area {
-    padding: 0 8px 8px 8px;
-  }
-  footer {
-    font-size: 80%;
-    font-weight: 500;
-  }
 
   // Required Bootstrap imports
   @import "../node_modules/bootstrap-scss/variables";
@@ -43,6 +23,7 @@
   @import "../node_modules/bootstrap-scss/grid";
   @import "../node_modules/bootstrap-scss/helpers";
   @import "../node_modules/bootstrap-scss/utilities/api";
+  @import "../node_modules/bootstrap-scss/card";
   @import "../node_modules/bootstrap-scss/nav";
   @import "../node_modules/bootstrap-scss/navbar";
   @import "../node_modules/bootstrap-scss/forms";
