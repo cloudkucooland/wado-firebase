@@ -49,8 +49,10 @@
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
       if (!auth.currentUser) return;
       scrolled = true;
-      const res = await $me.UpdateStreak();
-      toasts.success("Daily Streak", res);
+      if ($me.UpdateStreak) {
+        const res = await $me.UpdateStreak();
+        toasts.success("Daily Streak", res);
+      }
     }
   }
 </script>
@@ -90,7 +92,7 @@
   </Row>
   <Container>
     <Row>
-      <Col>
+      <Col class="nopadding">
         <Card>
           <CardHeader>{officeName}: {$forProper.propername}</CardHeader>
           <CardBody>
