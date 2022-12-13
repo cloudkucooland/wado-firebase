@@ -27,7 +27,7 @@ export default class proper {
     if (this.season == "beforeadvent") this.season = "afterpentecost";
 
     if (!season.LUT.has(this.season)) {
-      console.error("invalid season");
+      console.error("invalid season", this.season);
       throw new Error("invalid season");
     }
     const s = season.LUT.get(this.season);

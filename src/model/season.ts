@@ -95,7 +95,7 @@ export default class season {
     [
       "mardigras",
       new season({
-        name: "Ash Wednesday",
+        name: "mardigras",
         churchPos: 8,
         maxProper: 0,
         useWeekdays: false,
