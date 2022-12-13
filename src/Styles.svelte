@@ -10,11 +10,6 @@
   @import "./scss/card";
   @import "./scss/navbar";
   $enable-shadows: true;
-
-  // Required Bootstrap imports
-  @import "../node_modules/bootstrap-scss/variables";
-  @import "../node_modules/bootstrap-scss/mixins";
-  @import "../node_modules/bootstrap-scss/root";
   html,
   body {
     height: 100%;
@@ -35,6 +30,11 @@
     font-size: 80%;
     font-weight: 500;
   }
+
+  // Required Bootstrap imports
+  @import "../node_modules/bootstrap-scss/variables";
+  @import "../node_modules/bootstrap-scss/mixins";
+  @import "../node_modules/bootstrap-scss/root";
 
   // Optional components
   @import "../node_modules/bootstrap-scss/utilities";
