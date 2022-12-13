@@ -64,3 +64,15 @@
 {:catch error}
   <div>{error.message}</div>
 {/await}
+
+<style>
+  p {
+    font-family: Georgia, serif;
+    line-height: 1.25em;
+    word-wrap: break-word;
+  }
+
+  .adonai {
+    font-variant: small-caps;
+  }
+</style>

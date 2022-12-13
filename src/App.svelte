@@ -240,7 +240,7 @@
       target="new">Privacy Policy</a
     >
   </p>
-  <p class="text-muted text-end small">
+  <p class="text-muted small text-end">
     Copyright &copy; <a href="https://saint-luke.net/">
       The Order of St. Luke &reg;
     </a> 2022. All Rights Reserved. &nbsp;|&nbsp; Build date: __buildDate__
