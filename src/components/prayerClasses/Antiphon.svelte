@@ -15,22 +15,6 @@
 <h6>Antiphon</h6>
 <div class="antiphon">{@html ant.body}</div>
 {#if ant.author}
-  <div class="credit">{ant.author}</div>
+  <div class="antiphon-credit">{ant.author}</div>
 {/if}
 <Media mediaUrl={ant.media} />
-
-<style>
-  div.antiphon {
-    font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 1em;
-    padding-left: 1em;
-    text-indent: -1em;
-  }
-  div.credit {
-    font-family: Georgia, serif;
-    font-style: italic;
-    text-align: right;
-    font-variant: small-caps;
-  }
-</style>

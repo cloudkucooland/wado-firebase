@@ -18,25 +18,6 @@
 {/if}
 <div class="psalm">{@html p.body}</div>
 {#if p.author}
-  <div class="credit">{p.author}</div>
+  <div class="psalm-credit">{p.author}</div>
 {/if}
 <Media mediaUrl={p.media} />
-
-<style>
-  div.psalm {
-    font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 1.5em;
-  }
-  div.psalm-rubric {
-    font-family: Georgia, serif;
-    font-style: italic;
-    text-align: center;
-  }
-  div.credit {
-    font-family: Georgia, serif;
-    font-style: italic;
-    text-align: right;
-    font-variant: small-caps;
-  }
-</style>

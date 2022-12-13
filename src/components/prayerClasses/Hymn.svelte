@@ -23,22 +23,3 @@
   {/if}
 </div>
 <Media mediaUrl={h.media} />
-
-<style>
-  div.hymn {
-    font-family: Georgia, serif;
-    line-height: 1.5em;
-    margin-bottom: 2em;
-  }
-  div.hymndata {
-    text-align: right;
-  }
-  span.hymntune {
-    font-family: Georgia, serif;
-    font-variant: small-caps;
-  }
-  span.hymnmeter {
-    font-family: Georgia, serif;
-    font-variant: all-caps;
-  }
-</style>
