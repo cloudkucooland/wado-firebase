@@ -8,6 +8,7 @@
   @import "./scss/color";
   @import "./scss/block";
   @import "./scss/card";
+  @import "./scss/navbar";
   $enable-shadows: true;
 
   // Required Bootstrap imports
@@ -18,36 +19,17 @@
   body {
     height: 100%;
     font-weight: normal;
-  }
-  body {
     display: flex;
     flex-direction: column;
+  }
+  a {
+    color: $secondary;
   }
   a:hover {
     text-decoration: none;
   }
-  .navbar {
-    padding-right: 10px !important;
-    padding-left: 10px !important;
-    padding-top: 0px !important;
-    padding-bottom: 0px !important;
-  }
-  .navbar a {
-    font-weight: 700;
-    border-bottom: 1px solid transparent;
-  }
-  .navbar a:hover {
-    border-bottom: 1px solid #a30e15ff;
-  }
   .content-area {
-    padding: 0 16px 16px 16px;
-  }
-  .card {
-    margin-top: 20px;
-  }
-  .card-header {
-    font-size: 150%;
-    font-weight: 700;
+    padding: 0 8px 8px 8px;
   }
   footer {
     font-size: 80%;

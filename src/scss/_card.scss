@@ -1,7 +1,10 @@
 .card {
+  margin-top: 10px;
 }
 .card-header {
   background: $neutralLighter;
+  font-size: 150%;
+  font-weight: 700;
 }
 .card-body {
   background: $neutralLightest;

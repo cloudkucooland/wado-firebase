@@ -1,0 +1,13 @@
+.navbar {
+  padding-right: 10px;
+  padding-left: 10px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+.navbar a {
+  font-weight: 700;
+  border-bottom: 1px solid transparent;
+}
+.navbar a:hover {
+  border-bottom: 1px solid $secondary;
+}
