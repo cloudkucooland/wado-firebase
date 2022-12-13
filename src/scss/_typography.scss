@@ -1,0 +1,129 @@
+$-wado-font-serif: Georgia, Times, "Times New Roman", Merriweather, serif;
+$-wado-line-height: 1.25em;
+$-wado-margin-bottom: 0.25rem;
+
+.silence {
+  font-family: $-wado-font-serif;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-style: italic;
+}
+
+.rubric {
+  font-family: $-wado-font-serif;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-style: italic;
+}
+
+.lection {
+  font-family: $-wado-font-serif;
+  margin-top: 0;
+  margin-bottom: $-wado-margin-bottom;
+  line-height: $-wado-line-height;
+}
+
+.antiphon {
+  font-family: $-wado-font-serif;
+  margin-top: 0;
+  margin-bottom: $-wado-margin-bottom;
+  line-height: $-wado-line-height;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.antiphon-credit {
+  font-family: $-wado-font-serif;
+  font-style: italic;
+  text-align: right;
+  font-variant: small-caps;
+  margin-top: 0;
+  margin-bottom: $-wado-margin-bottom;
+  padding-right: 1em;
+}
+
+.heartword {
+  font-family: $-wado-font-serif;
+  line-height: $-wado-line-height;
+  margin-bottom: $-wado-margin-bottom;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.heartword-credit {
+  font-family: $-wado-font-serif;
+  font-style: italic;
+  text-align: right;
+  margin-top: 0;
+  margin-bottom: $-wado-margin-bottom;
+  padding-right: 1em;
+}
+
+.hymn {
+  font-family: $-wado-font-serif;
+  line-height: $-wado-line-height;
+  margin-bottom: $-wado-margin-bottom;
+}
+.hymndata {
+  font-family: $-wado-font-serif;
+  line-height: $-wado-line-height;
+  margin-bottom: $-wado-margin-bottom;
+  text-align: right;
+}
+.hymntune {
+  font-variant: small-caps;
+}
+.hymnmeter {
+  font-variant: all-caps;
+}
+
+.prayer {
+  font-family: $-wado-font-serif;
+  margin-top: 0;
+  margin-bottom: $-wado-margin-bottom;
+  line-height: $-wado-line-height;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.prayer-bold {
+  font-family: $-wado-font-serif;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: $-wado-margin-bottom;
+  line-height: $-wado-line-height;
+  padding-left: 1em;
+  text-indent: -1em;
+}
+
+.prayer-credit {
+  font-family: $-wado-font-serif;
+  font-style: italic;
+  text-align: right;
+  margin-bottom: $-wado-margin-bottom;
+  line-height: $-wado-line-height;
+  padding-right: 1em;
+}
+
+.psalm {
+  font-family: $-wado-font-serif;
+  margin-top: 0;
+  margin-bottom: $-wado-margin-bottom;
+  line-height: $-wado-line-height;
+}
+
+.psalm-rubric {
+  font-family: $-wado-font-serif;
+  font-style: italic;
+  text-align: center;
+}
+
+.psalm-credit {
+  font-family: $-wado-font-serif;
+  font-style: italic;
+  text-align: right;
+  font-variant: small-caps;
+  padding-right: 1em;
+}

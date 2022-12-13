@@ -1,8 +1,9 @@
 .navbar {
-  padding-right: 10px;
-  padding-left: 10px;
-  padding-top: 0px;
-  padding-bottom: 0px;
+  padding-right: 20px;
+  padding-left: 5px;
+  padding-top: 0rem !important;
+  padding-bottom: 0rem !important;
+  border-bottom: 0rem;
 }
 .navbar a {
   font-weight: 700;
@@ -10,4 +11,12 @@
 }
 .navbar a:hover {
   border-bottom: 1px solid $secondary;
+}
+.navbar-brand {
+  padding-top: 0rem;
+  padding-bottom: 0rem;
+  margin-right: 1rem;
+}
+.bg-dark {
+  // background-color: rgba(var(--bs-dark-rgb),var(--bs-bg-opacity));
 }

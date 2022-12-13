@@ -19,8 +19,6 @@ $light-text: #ffffff;
 $strong: #000000;
 $dark-text: #37373f;
 
-$link: #067957;
-
 $neutralDarker: #000000;
 $neutrayDark: #000000;
 $neutral: #3d3d3d;
@@ -46,3 +44,8 @@ $pink: #fd5d5d;
 $blue: #007bc1;
 $brown: #bfa678;
 $purple: #69089f;
+
+$warning: $tertiary;
+$danger: $secondary;
+$info: $orange;
+$link: $secondary;
