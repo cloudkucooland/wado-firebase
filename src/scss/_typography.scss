@@ -2,6 +2,14 @@ $-wado-font-serif: Georgia, Times, "Times New Roman", Merriweather, serif;
 $-wado-line-height: 1.25em;
 $-wado-margin-bottom: 0.25rem;
 
+@mixin typography($style: roman) {
+  font-family: $-wado-font-serif;
+  margin-bottom: $-wado-margin-bottom;
+  line-height: $-wado-line-height;
+  margin-top: 0;
+  font-style: $style;
+}
+
 .silence {
   font-family: $-wado-font-serif;
   margin-top: 1rem;
@@ -19,57 +27,40 @@ $-wado-margin-bottom: 0.25rem;
 }
 
 .lection {
-  font-family: $-wado-font-serif;
-  margin-top: 0;
-  margin-bottom: $-wado-margin-bottom;
-  line-height: $-wado-line-height;
+  @include typography;
 }
 
 .antiphon {
-  font-family: $-wado-font-serif;
-  margin-top: 0;
-  margin-bottom: $-wado-margin-bottom;
-  line-height: $-wado-line-height;
+  @include typography;
   padding-left: 1em;
   text-indent: -1em;
 }
 
 .antiphon-credit {
-  font-family: $-wado-font-serif;
-  font-style: italic;
+  @include typography(italic);
   text-align: right;
   font-variant: small-caps;
-  margin-top: 0;
-  margin-bottom: $-wado-margin-bottom;
   padding-right: 1em;
 }
 
 .heartword {
-  font-family: $-wado-font-serif;
-  line-height: $-wado-line-height;
-  margin-bottom: $-wado-margin-bottom;
+  @include typography;
   padding-left: 1em;
   text-indent: -1em;
 }
 
 .heartword-credit {
-  font-family: $-wado-font-serif;
-  font-style: italic;
+  @include typography(italic);
   text-align: right;
-  margin-top: 0;
-  margin-bottom: $-wado-margin-bottom;
   padding-right: 1em;
 }
 
 .hymn {
-  font-family: $-wado-font-serif;
-  line-height: $-wado-line-height;
-  margin-bottom: $-wado-margin-bottom;
+  @include typography;
 }
+
 .hymndata {
-  font-family: $-wado-font-serif;
-  line-height: $-wado-line-height;
-  margin-bottom: $-wado-margin-bottom;
+  @include typography;
   text-align: right;
 }
 .hymntune {
@@ -80,38 +71,26 @@ $-wado-margin-bottom: 0.25rem;
 }
 
 .prayer {
-  font-family: $-wado-font-serif;
-  margin-top: 0;
-  margin-bottom: $-wado-margin-bottom;
-  line-height: $-wado-line-height;
+  @include typography;
   padding-left: 1em;
   text-indent: -1em;
 }
 
 .prayer-bold {
-  font-family: $-wado-font-serif;
+  @include typography;
   font-weight: bold;
-  margin-top: 0;
-  margin-bottom: $-wado-margin-bottom;
-  line-height: $-wado-line-height;
   padding-left: 1em;
   text-indent: -1em;
 }
 
 .prayer-credit {
-  font-family: $-wado-font-serif;
-  font-style: italic;
+  @include typography(italic);
   text-align: right;
-  margin-bottom: $-wado-margin-bottom;
-  line-height: $-wado-line-height;
   padding-right: 1em;
 }
 
 .psalm {
-  font-family: $-wado-font-serif;
-  margin-top: 0;
-  margin-bottom: $-wado-margin-bottom;
-  line-height: $-wado-line-height;
+  @include typography(italic);
 }
 
 .psalm-rubric {
