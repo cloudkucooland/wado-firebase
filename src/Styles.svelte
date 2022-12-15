@@ -9,10 +9,12 @@
   @import "./scss/block";
   @import "./scss/navbar";
   @import "./scss/typography";
+  // $prefix "wado-"
   $enable-shadows: true;
 
   // Required Bootstrap imports
   @import "../node_modules/bootstrap-scss/variables";
+  @import "../node_modules/bootstrap-scss/maps";
   @import "../node_modules/bootstrap-scss/mixins";
   @import "../node_modules/bootstrap-scss/root";
 
@@ -32,5 +34,5 @@
   @import "../node_modules/bootstrap-scss/close";
   @import "../node_modules/bootstrap-scss/dropdown";
   @import "../node_modules/bootstrap-scss/spinners";
-  @import "../node_modules/bootstrap-scss/tables";
+  // @import "../node_modules/bootstrap-scss/tables";
 </style>
