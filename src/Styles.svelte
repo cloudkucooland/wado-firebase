@@ -34,5 +34,5 @@
   @import "../node_modules/bootstrap-scss/close";
   @import "../node_modules/bootstrap-scss/dropdown";
   @import "../node_modules/bootstrap-scss/spinners";
-  // @import "../node_modules/bootstrap-scss/tables";
+  @import "../node_modules/bootstrap-scss/tables";
 </style>
