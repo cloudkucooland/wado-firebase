@@ -98,10 +98,10 @@
     <Col sm="10">
       <Select
         name="prayer"
-        {groupBy}
         placeholder="search for prayer"
         {loadOptions}
         on:select={doSelect}
+        {groupBy}
       />
     </Col>
   </Row>
