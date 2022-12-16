@@ -90,12 +90,11 @@ $-wado-margin-bottom: 0.25rem;
 }
 
 .psalm {
-  @include typography(italic);
+  @include typography;
 }
 
 .psalm-rubric {
-  font-family: $-wado-font-serif;
-  font-style: italic;
+  @include typography(italic);
   text-align: center;
 }
 
