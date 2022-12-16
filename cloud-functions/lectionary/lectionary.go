@@ -31,19 +31,45 @@ type FirestoreLectionValue struct {
 }
 
 type LectionData struct {
-	Morning struct { StringValue string `json:"stringValue"` } `json:"morning"`
-	MorningTitle struct { StringValue string `json:"stringValue"` } `json:"morningtitle"`
-	MorningCache struct { StringValue string `json:"stringValue"` } `json:"_morning"`
-	MorningPsalm struct { StringValue string `json:"stringValue"` } `json:"morningpsalm"`
-	MorningPsalmRef struct { StringValue string `json:"stringValue"` } `json:"_morningpsalmref"`
-	Evening struct { StringValue string `json:"stringValue"` } `json:"evening"`
-	EveningTitle struct { StringValue string `json:"stringValue"` } `json:"eveningtitle"`
-	EveningCache struct { StringValue string `json:"stringValue"` } `json:"_evening"`
-	EveningPsalm struct { StringValue string `json:"stringValue"` } `json:"eveningpsalm"`
-	EveningPsalmRef struct { StringValue string `json:"stringValue"` } `json:"_eveningpsalmref"`
-	Season struct { StringValue string `json:"stringValue"` } `json:"season"`
-	Proper struct { StringValue string `json:"integerValue"` } `json:"proper"`
-	Weekday struct { StringValue string `json:"integerValue"` } `json:"weekday"`
+	Morning struct {
+		StringValue string `json:"stringValue"`
+	} `json:"morning"`
+	MorningTitle struct {
+		StringValue string `json:"stringValue"`
+	} `json:"morningtitle"`
+	MorningCache struct {
+		StringValue string `json:"stringValue"`
+	} `json:"_morning"`
+	MorningPsalm struct {
+		StringValue string `json:"stringValue"`
+	} `json:"morningpsalm"`
+	MorningPsalmRef struct {
+		StringValue string `json:"stringValue"`
+	} `json:"_morningpsalmref"`
+	Evening struct {
+		StringValue string `json:"stringValue"`
+	} `json:"evening"`
+	EveningTitle struct {
+		StringValue string `json:"stringValue"`
+	} `json:"eveningtitle"`
+	EveningCache struct {
+		StringValue string `json:"stringValue"`
+	} `json:"_evening"`
+	EveningPsalm struct {
+		StringValue string `json:"stringValue"`
+	} `json:"eveningpsalm"`
+	EveningPsalmRef struct {
+		StringValue string `json:"stringValue"`
+	} `json:"_eveningpsalmref"`
+	Season struct {
+		StringValue string `json:"stringValue"`
+	} `json:"season"`
+	Proper struct {
+		StringValue string `json:"integerValue"`
+	} `json:"proper"`
+	Weekday struct {
+		StringValue string `json:"integerValue"`
+	} `json:"weekday"`
 }
 
 var projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
@@ -90,29 +116,29 @@ func GetOremus(ctx context.Context, e FirestoreLectionEvent) error {
 		}
 	}
 
-    mRefClean, err := oremus.CleanReference(e.Value.Fields.Morning.StringValue)
-    if err != nil {
-        log.Printf("[%s] => [%s]: %v", e.Value.Fields.Morning.StringValue, mRefClean, err)
-        mRefClean = e.Value.Fields.Morning.StringValue
-    }
-    if  mRefClean != e.Value.Fields.Morning.StringValue {
-	   _, err = doc.Set(ctx, map[string]interface{}{"morning": mRefClean}, firestore.MergeAll)
-      if err != nil {
-          log.Fatalf("Clean Morning: %v", err)
-      }
-    }
+	mRefClean, err := oremus.CleanReference(e.Value.Fields.Morning.StringValue)
+	if err != nil {
+		log.Printf("[%s] => [%s]: %v", e.Value.Fields.Morning.StringValue, mRefClean, err)
+		mRefClean = e.Value.Fields.Morning.StringValue
+	}
+	if mRefClean != e.Value.Fields.Morning.StringValue {
+		_, err = doc.Set(ctx, map[string]interface{}{"morning": mRefClean}, firestore.MergeAll)
+		if err != nil {
+			log.Fatalf("Clean Morning: %v", err)
+		}
+	}
 
-    eRefClean, err := oremus.CleanReference(e.Value.Fields.Evening.StringValue)
-    if err != nil {
-        log.Printf("[%s] => [%s]: %v", e.Value.Fields.Evening.StringValue, eRefClean, err)
-        eRefClean = e.Value.Fields.Evening.StringValue
-    }
-    if  eRefClean != e.Value.Fields.Morning.StringValue {
-	   _, err = doc.Set(ctx, map[string]interface{}{"evening": eRefClean}, firestore.MergeAll)
-      if err != nil {
-          log.Fatalf("Clean Evening: %v", err)
-      }
-    }
+	eRefClean, err := oremus.CleanReference(e.Value.Fields.Evening.StringValue)
+	if err != nil {
+		log.Printf("[%s] => [%s]: %v", e.Value.Fields.Evening.StringValue, eRefClean, err)
+		eRefClean = e.Value.Fields.Evening.StringValue
+	}
+	if eRefClean != e.Value.Fields.Morning.StringValue {
+		_, err = doc.Set(ctx, map[string]interface{}{"evening": eRefClean}, firestore.MergeAll)
+		if err != nil {
+			log.Fatalf("Clean Evening: %v", err)
+		}
+	}
 
 	// prevent loops -- the UI clears all cache entries if necessary
 	if e.Value.Fields.MorningCache.StringValue != "" {
@@ -184,4 +210,3 @@ func psalmRef(ctx context.Context, ref string) (string, error) {
 	}
 	return newDoc.ID, err
 }
-
