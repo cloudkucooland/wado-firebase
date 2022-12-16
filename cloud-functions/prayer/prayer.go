@@ -49,9 +49,9 @@ type PrayerData struct {
 	Author struct {
 		StringValue string `json:"stringValue"`
 	} `json:"Author"`
-    HymnTune struct {
-        StringValue string `json:"stringValue"`
-    } `json:"Hymn Tune"`
+	HymnTune struct {
+		StringValue string `json:"stringValue"`
+	} `json:"Hymn Tune"`
 }
 
 var projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
@@ -105,14 +105,14 @@ func UpdateMeiliSearch(ctx context.Context, e FirestorePrayerEvent) error {
 	index := meili.Index("prayers")
 	documents := make([]map[string]interface{}, 0)
 	documents = append(documents, map[string]interface{}{
-		"fsid":     id,
-		"Author":   e.Value.Fields.Author.StringValue,
-		"Body":     e.Value.Fields.Body.StringValue,
-		"Name":     e.Value.Fields.Name.StringValue,
-		"Class":    e.Value.Fields.Class.StringValue,
-		"Reviewed": e.Value.Fields.Reviewed.StringValue == "true",
-		"License":  e.Value.Fields.License.StringValue == "true",
-		"Hymn Tune":  e.Value.Fields.HymnTune.StringValue,
+		"fsid":      id,
+		"Author":    e.Value.Fields.Author.StringValue,
+		"Body":      e.Value.Fields.Body.StringValue,
+		"Name":      e.Value.Fields.Name.StringValue,
+		"Class":     e.Value.Fields.Class.StringValue,
+		"Reviewed":  e.Value.Fields.Reviewed.StringValue == "true",
+		"License":   e.Value.Fields.License.StringValue == "true",
+		"Hymn Tune": e.Value.Fields.HymnTune.StringValue,
 	})
 
 	_, err := index.UpdateDocuments(documents, "fsid")
