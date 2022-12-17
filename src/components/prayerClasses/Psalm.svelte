@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import psalm from "../../model/psalm";
 
-  export let data;
-  export let id;
+  export let data: string;
+  export let id: string;
 
   const p = new psalm(data);
 </script>
