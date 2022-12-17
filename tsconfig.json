@@ -12,9 +12,5 @@
   },
 
   "include": ["src/**/*.ts", "src/**/*.svelte"],
-  "exclude": [
-    "node_modules/*",
-    "public/*",
-    "dist/*"
-  ]
+  "exclude": ["node_modules/*", "public/*", "dist/*"]
 }
