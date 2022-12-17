@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { Spinner } from "sveltestrap";
   import { addDoc, getDocFromServer, collection } from "firebase/firestore";
   import { db, auth, recordEvent } from "../firebase";
