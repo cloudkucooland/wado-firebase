@@ -33,12 +33,14 @@
         eveningpsalm: "Lectionary incomplete",
         _eveningpsalm:
           "<h5>No Psalm set for today, consult the lectionary</h5><br />",
+        id: 0,
       };
     if (res.size != 1) {
       toasts.error("Multiple lection matches?!");
       console.log("multiple matches, this should not happen");
     }
     const d = res.docs[0].data();
+    d.id = res.docs[0].id;
 
     if (office == "LAUDS" && d._morningpsalmref) {
       try {
@@ -69,7 +71,7 @@
 {:then data}
   {#if office == "LAUDS"}
     {#if data._morningpsalmresolved}
-      <Psalm data={data._morningpsalmresolved} id={data.fsid} />
+      <Psalm data={data._morningpsalmresolved} id={data.id} />
     {:else}
       <a
         href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
@@ -78,7 +80,7 @@
       </a>
     {/if}
   {:else if data._eveningpsalmresolved}
-    <Psalm data={data._eveningpsalmresolved} id={data.fsid} />
+    <Psalm data={data._eveningpsalmresolved} id={data.id} />
   {:else}
     <a
       href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
