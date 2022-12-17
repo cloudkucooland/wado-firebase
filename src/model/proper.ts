@@ -439,7 +439,7 @@ export default class proper {
   public static AllYear(lectionaryYear: string) {
     const ll = new Map();
 
-    for (const [k, v] of season.LUT) {
+    for (const [_k, v] of season.LUT) {
       // broad exceptions go here
       if (v.name == "beforeadvent" || v.name == "Any") continue;
 
