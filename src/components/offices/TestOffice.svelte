@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
@@ -12,7 +12,7 @@
 <Location name="LAUDS-LECTIONARY" maxAlt={5} />
 
 <h3>KYRIE w/ alternates</h3>
-<Location name="KYRIE" maxAlt="5" />
+<Location name="KYRIE" maxAlt={5} />
 
 <h3>The Lord's Prayer w/ alternatives</h3>
 <Location name="GENERAL-LORDS" maxAlt={5} />

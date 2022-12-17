@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
@@ -15,7 +15,7 @@
 <Location name="LAUDS-HYMN1" maxAlt={5} />
 
 <h4><i>Morning Prayer</i></h4>
-<Location name="LAUDS-COLLECT1" max="5" maxAlt={5} />
+<Location name="LAUDS-COLLECT1" max={5} maxAlt={5} />
 
 <h3>Psalter</h3>
 <PsalmLection office="LAUDS" />
@@ -43,8 +43,8 @@
 <h4><i>Prayers of Thanksgiving and Supplication</i></h4>
 <Location name="LAUDS-SUPPLICATION" maxAlt={5} /><br />
 <Rubric>Morning Collects (one or more of the following)</Rubric>
-<Location name="LAUDS-COLLECT2" max="3" maxAlt={5} />
-<Location name="LAUDS-SEASONAL" max="3" maxAlt={5} />
+<Location name="LAUDS-COLLECT2" max={3} maxAlt={5} />
+<Location name="LAUDS-SEASONAL" max={3} maxAlt={5} />
 
 <h4><i>Collect for the Order of Saint Luke</i></h4>
 <Location name="OSL" />

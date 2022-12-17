@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
@@ -25,7 +25,7 @@
 <Silence>A brief time of silent prayer</Silence>
 
 <h3>The Lord's Prayer</h3>
-<Location bold="true" name="GENERAL-LORDS" />
+<Location bold={true} name="GENERAL-LORDS" />
 
 <h3>Concluding Prayer</h3>
 <Location name="NONE-CONCLUDING" />

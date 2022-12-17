@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
@@ -8,15 +8,15 @@
 
 <h3>Opening</h3>
 <h4>Entrance of the Light</h4>
-<Location name="VESPERS-LIGHT" altMax="3" />
+<Location name="VESPERS-LIGHT" maxAlt={3} />
 
 <h4>Hymn of Light (The Phos Hilaron)</h4>
-<Location name="PHOS-HILARON" altMax="3" />
+<Location name="PHOS-HILARON" maxAlt={3} />
 
 <h4>+ Thanksgiving for Light</h4>
 <Rubric>(Always included in Festive Vespers or Evensong)</Rubric>
 <Location name="GENERAL-WITHYOU" />
-<Location name="VESPER-COLLECT1" altMax="3" />
+<Location name="VESPER-COLLECT1" maxAlt={3} />
 <Rubric>The community is seated.</Rubric>
 
 <h4>Evening Prayer Canticle</h4>
@@ -26,7 +26,7 @@
 </Rubric>
 
 <h4>Prayer of awareness</h4>
-<Location name="VESPER-CONFESSION" altMax="3" />
+<Location name="VESPER-CONFESSION" maxAlt={3} />
 <Silence>silent recollection and examination of conscience</Silence>
 
 <h4>Words of Assurance:</h4>
@@ -60,15 +60,15 @@
 >
 
 <h4>Prayer of Thanksgiving</h4>
-<Location name="VESPER-SUPPLICATION" altMax="3" />
+<Location name="VESPER-SUPPLICATION" maxAlt={3} />
 <h4>Evening Collects</h4>
 <Rubric>One and usually more of the following collects.</Rubric>
-<Location name="VESPER-COLLECT2" max="10" />
+<Location name="VESPER-COLLECT2" max={10} />
 
 <h4>Prayers of Special Intention</h4>
 <h5>Collect of Commemoration</h5>
 <Rubric>Proper collects for holy days and major feasts</Rubric>
-<Location name="VESPER-COMMEMORATION" altMax="3" />
+<Location name="VESPER-COMMEMORATION" maxAlt={3} />
 
 <h5>Intercession for the Order of Saint Luke</h5>
 <Location name="OSL" />
@@ -76,13 +76,13 @@
 <h4>The Lord’s Prayer</h4>
 <Location name="GENERAL-LORDS" /><br />
 <h4>Concluding Collect</h4>
-<Location name="VESPER-COLLECT3" altMax="3" />
+<Location name="VESPER-COLLECT3" maxAlt={3} />
 
 <h4>Hymn</h4>
-<Location name="VESPER-HYMN" altMax="3" />
+<Location name="VESPER-HYMN" maxAlt={3} />
 
 <h4>Commendation and Canticle of Simeon</h4>
-<Location name="SIMEON" altMax="3" /><br />
+<Location name="SIMEON" maxAlt={3} /><br />
 
 <h3>Going Forth</h3>
 <Location name="VESPER-BENEDICTION" />

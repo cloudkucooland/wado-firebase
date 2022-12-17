@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import Location from "../Location.svelte";
   import Silence from "../Silence.svelte";
   import Rubric from "../Rubric.svelte";
@@ -37,7 +37,7 @@
 
 <h4>Night Prayers</h4>
 <Rubric>(selected from among the following)</Rubric>
-<Location name="COMPLINE-PRAYER" max="10" />
+<Location name="COMPLINE-PRAYER" max={10} />
 
 <h3>Concluding Prayer</h3>
 <Location name="COMPLINE-CONCLUDING" />
