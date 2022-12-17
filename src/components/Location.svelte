@@ -1,5 +1,4 @@
-<script>
-  // type="ts"
+<script lang="ts">
   import { collection, query, where, limit, orderBy } from "firebase/firestore";
   import { Spinner } from "sveltestrap";
   import { db, getDocCacheFirst, getDocsCacheFirst } from "../firebase";
@@ -7,6 +6,8 @@
   import { getContext } from "svelte";
   import Alternatives from "./Alternatives.svelte";
   import { link } from "svelte-spa-router";
+  import type { Writable } from "svelte/store";
+  import type proper from "../../types/model/proper";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
   import Hymn from "./prayerClasses/Hymn.svelte";
@@ -14,11 +15,11 @@
   import Psalm from "./prayerClasses/Psalm.svelte";
   import Antiphon from "./prayerClasses/Antiphon.svelte";
 
-  let proper = getContext("forProper");
-  export let name;
-  export let max = 1;
-  export let maxAlt = 0;
-  export let bold = false;
+  let proper: Writable<proper> = getContext("forProper");
+  export let name: string;
+  export let max: number = 1;
+  export let maxAlt: number = 0;
+  export let bold: boolean = false;
 
   export const lookup = new Map([
     ["heartwords", Heartwords],
