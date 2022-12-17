@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     Input,
     Container,
@@ -11,22 +11,26 @@
   import { toasts } from "svelte-toasts";
   import { recordEvent } from "../firebase";
   import { link } from "svelte-spa-router";
+  import type { SearchResponse } from "../../node_modules/meilisearch/dist/types/types/types";
 
-  let result = {
+  let result: SearchResponse = {
     hits: new Array(),
+    processingTimeMs: 0,
+    query: "",
   };
 
-  async function doSearchLetter(e) {
-    if (e.target.value.length < 4) return;
+  async function doSearchLetter(e: Event) {
+    const t = e.target as HTMLInputElement;
+    if (t.value.length < 4) return;
 
     try {
-      result = await index.search(e.target.value, {
+      result = await index.search(t.value, {
         attributesToRetrieve: ["fsid", "Name", "Body"],
         filter: [["Class = Prayer", "Class = Hymn", "Class = Antiphon"]],
       });
       recordEvent("search", {
         short: true,
-        query: e.target.value,
+        query: t.value,
         results: result.estimatedTotalHits,
       });
     } catch (err) {
@@ -35,9 +39,10 @@
     }
   }
 
-  async function doSearch(e) {
+  async function doSearch(e: Event) {
+    const t = e.target as HTMLInputElement;
     try {
-      result = await index.search(e.target.value, {
+      result = await index.search(t.value, {
         attributesToRetrieve: ["fsid", "Name", "Body"],
         filter: [["Class = Prayer", "Class = Hymn", "Class = Antiphon"]],
       });
@@ -47,7 +52,7 @@
       );
       recordEvent("search", {
         short: false,
-        query: e.target.value,
+        query: t.value,
         results: result.estimatedTotalHits,
       });
     } catch (err) {
@@ -63,7 +68,7 @@
 
 <Container>
   <Row class="justify-content-center">
-    <Col xs="12" lg="10" xl="8" mx="auto">
+    <Col xs="12" lg="10" xl="8">
       <h2 class="h3 mb-4 page-title">Search</h2>
       <Input on:change={doSearch} on:keypress={doSearchLetter} />
       <div class="my-4">
