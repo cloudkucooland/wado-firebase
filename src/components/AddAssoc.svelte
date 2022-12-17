@@ -72,7 +72,7 @@
     return items;
   }
 
-  function doSelect(e) {
+  function doSelect(e: any) {
     try {
       a.Reference = doc(db, "prayers", e.detail.value);
     } catch (err) {

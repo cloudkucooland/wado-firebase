@@ -45,7 +45,7 @@
     const ay = proper.AllYear(y);
 
     let i = 0;
-    for (const [k, v] of ay) {
+    for (const [_k, v] of ay) {
       progressBarString = i;
       progressBar.update({
         title: "Loading data",

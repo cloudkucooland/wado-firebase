@@ -123,7 +123,7 @@
     }
   }
 
-  async function confirmAddAssoc(e) {
+  async function confirmAddAssoc() {
     addModalAssocOpen = !addModalAssocOpen;
 
     try {
