@@ -14,6 +14,7 @@ export default defineConfig({
       },
       preprocess: sveltePreprocess({
         scss: {},
+        typescript: {},
       }),
     }),
     replace({
@@ -30,4 +31,5 @@ export default defineConfig({
       output: {},
     },
   },
+  rollupdedupe: ["svelte"],
 });

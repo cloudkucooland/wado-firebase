@@ -2,15 +2,19 @@
   "extends": "@tsconfig/svelte/tsconfig.json",
   "compilerOptions": {
     "isolatedModules": true,
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "allowJs": false,
+    "checkJs": false,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types",
+    "declarationMap": false
   },
 
-  "include": ["src/**/*"],
+  "include": ["src/**/*.ts", "src/**/*.svelte"],
   "exclude": [
     "node_modules/*",
-    "__sapper__/*",
     "public/*",
-    "src/test",
     "dist/*"
   ]
 }
