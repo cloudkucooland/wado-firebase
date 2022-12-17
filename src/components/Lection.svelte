@@ -1,15 +1,17 @@
-<script>
+<script lang="ts">
   import { collection, query, where } from "firebase/firestore";
   import { Spinner } from "sveltestrap";
   import { db, getDocsCacheFirst } from "../firebase";
   import season from "../model/season";
   import { getContext } from "svelte";
+  import type Proper from "../../types/model/proper";
+  import type { Writable } from "svelte/store";
 
-  export let office;
-  let proper = getContext("forProper");
+  export let office: string;
+  let proper: Writable<Proper> = getContext("forProper");
 
   async function loaddata() {
-    const s = season.LUT.get($proper.season);
+    const s: season = season.LUT.get($proper.season);
 
     // this is how to dynamically build a query
     const wheres = new Array();
