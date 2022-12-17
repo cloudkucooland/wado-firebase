@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     Container,
     Row,
@@ -33,34 +33,39 @@
   } from "../firebase";
   import prayer from "../model/prayer";
   import { onMount, getContext } from "svelte";
+  import type { Writable } from "svelte/store";
+  import type User from "../../types/model/user";
   import { toasts } from "svelte-toasts";
   import { push } from "svelte-spa-router";
 
   export let params = { c };
   $: prayerClass = params.c ? params.c : "prayer";
-  $: prayers = new Map();
-  let modalId = "exnihilo";
-  let me = getContext("me");
+  const _pp: Map<string, prayer> = new Map();
+  $: prayers = _pp;
+  let modalId: string = "exnihilo";
+  let me: Writable<User> = getContext("me");
 
   const cs = new Array("prayer", "hymn", "psalm", "antiphon");
 
   let deleteModalOpen = false;
-  function toggleDeleteOpen(e) {
+  function toggleDeleteOpen(e: Event) {
     screenView("toggleDeleteOpen");
     deleteModalOpen = !deleteModalOpen;
-    if (deleteModalOpen) modalId = e.target.value;
+    const t = e.target as HTMLInputElement;
+    if (deleteModalOpen) modalId = t.value;
   }
 
-  async function confirmDelete(e) {
-    recordEvent("delete_prayer", { id: e.target.value });
+  async function confirmDelete(e: Event) {
+    const t = e.target as HTMLInputElement;
+    recordEvent("delete_prayer", { id: t.value });
     deleteModalOpen = !deleteModalOpen;
 
     try {
-      const toDelete = doc(db, "prayers", e.target.value);
+      const toDelete = doc(db, "prayers", t.value);
 
       const q = query(
         collection(db, "associations"),
-        where("Reference", "==", doc(db, "prayers", e.target.value))
+        where("Reference", "==", doc(db, "prayers", t.value))
       );
       const res = await getDocs(q);
       for (const asn of res.docs) {
@@ -72,18 +77,18 @@
       console.log(err);
       toasts.error(err.message);
     }
-    const newPrayers = new Array();
-    for (const p of prayers) {
-      if (p.id != e.target.value) {
-        newPrayers.push(p);
+    const newPrayers: Map<string, prayer> = new Map();
+    for (const [k, p] of prayers) {
+      if (k != t.value) {
+        newPrayers.set(k, p);
       }
     }
     prayers = newPrayers;
-    toasts.success("Prayer deleted", e.target.value);
+    toasts.success("Prayer deleted", t.value);
   }
 
   // https://github.com/firebase/snippets-web/blob/36740fb2c39383621c0c0a948236e9eab8a71516/snippets/firestore-next/test-firestore/paginate.js#L8-L23
-  async function loadClass(pc) {
+  async function loadClass(pc: string) {
     const m = new Map();
     try {
       const q = query(
@@ -179,13 +184,8 @@
     </Col>
   </Row>
 </Container>
-<Modal
-  id="deleteModal"
-  isOpen={deleteModalOpen}
-  backdrop="static"
-  {toggleDeleteOpen}
->
-  <ModalHeader {toggleDeleteOpen}>Delete Prayer</ModalHeader>
+<Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
+  <ModalHeader>Delete Prayer</ModalHeader>
   <ModalBody>Confirm Delete</ModalBody>
   <ModalFooter>
     <Button color="primary" size="sm" on:click={toggleDeleteOpen}>
