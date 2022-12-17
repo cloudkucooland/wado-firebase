@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     ref,
     uploadBytesResumable,
@@ -10,16 +10,17 @@
   import { Input, Button, Row, Col } from "sveltestrap";
   import { toasts } from "svelte-toasts";
 
-  export let id;
-  export let media;
+  export let id: string;
+  export let media: string;
 
-  let file;
+  let file: Blob;
 
-  function loadFile(e) {
-    file = e.target.files[0];
+  function loadFile(e: Event) {
+    const t = e.target as HTMLInputElement;
+    file = t.files[0];
     const reader = new FileReader();
 
-    const button = document.getElementById("upload");
+    const button = document.getElementById("upload") as HTMLInputElement;
     button.disabled = false;
 
     reader.onload = () => {
@@ -55,11 +56,11 @@
     }
 
     if (file.size > 10485760) {
-      toasts.error("Too large: (10MB limit)", file.size / 1048576);
+      toasts.error("Too large: (10MB limit)", (file.size / 1048576).toString());
       return;
     }
 
-    let progressBarString = "starting";
+    let progressBarString: string = "starting";
     const progressBar = toasts.success("Uploading", progressBarString, {
       duration: 0,
     });
@@ -144,7 +145,7 @@
     try {
       await deleteObject(ref(storage, "media/" + id));
       await updateDoc(doc(db, "prayers", id), { Media: deleteField() });
-      media = false;
+      media = null;
     } catch (error) {
       console.log(error);
       toasts.error(error.message, id, { uid: 72 });
@@ -163,7 +164,7 @@
     <Input type="file" name="file" id="fileData" on:change={loadFile} />
   </Col>
   <Col sm="2">
-    <Button disabled="true" color="primary" id="upload" on:click={doUpload}>
+    <Button disabled={true} color="primary" id="upload" on:click={doUpload}>
       Upload
     </Button>
   </Col>

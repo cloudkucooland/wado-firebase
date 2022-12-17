@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { collection, query, where, doc } from "firebase/firestore";
   import { Spinner } from "sveltestrap";
   import { db, getDocCacheFirst, getDocsCacheFirst } from "../firebase";
@@ -6,12 +6,14 @@
   import Psalm from "./prayerClasses/Psalm.svelte";
   import { toasts } from "svelte-toasts";
   import { getContext } from "svelte";
+  import type Proper from "../../types/model/proper";
+  import type { Writable } from "svelte/store";
 
-  export let office;
-  let proper = getContext("forProper");
+  export let office: string;
+  let proper: Writable<Proper> = getContext("forProper");
 
   async function loaddata() {
-    const s = season.LUT.get($proper.season);
+    const s: season = season.LUT.get($proper.season);
 
     const wheres = new Array();
     wheres.push(where("season", "==", $proper.season));
@@ -67,7 +69,7 @@
 {:then data}
   {#if office == "LAUDS"}
     {#if data._morningpsalmresolved}
-      <Psalm data={data._morningpsalmresolved} />
+      <Psalm data={data._morningpsalmresolved} id={data.fsid} />
     {:else}
       <a
         href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
@@ -76,7 +78,7 @@
       </a>
     {/if}
   {:else if data._eveningpsalmresolved}
-    <Psalm data={data._eveningpsalmresolved} />
+    <Psalm data={data._eveningpsalmresolved} id={data.fsid} />
   {:else}
     <a
       href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
