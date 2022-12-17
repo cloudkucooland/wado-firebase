@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { doc } from "firebase/firestore";
   import { db } from "../firebase";
   import { onMount, afterUpdate } from "svelte";
@@ -8,9 +8,9 @@
   import Select from "svelte-select";
   import { index } from "../meili";
 
-  export let result;
-  export let location = "";
-  const dummyData = {
+  export let result: any;
+  export let location: string = "";
+  const dummyData: any = {
     Location: location,
     Season: "Any",
     Proper: -1,
@@ -24,11 +24,11 @@
       return dummyData;
     },
   };
-  let a = new association(dummy);
+  let a: association = new association(dummy);
 
-  let calDateSet = false;
-  let selectedSeason = season.LUT.get(a.Season);
-  let properName = "Proper";
+  let calDateSet: boolean = false;
+  let selectedSeason: season = season.LUT.get(a.Season);
+  let properName: string = "Proper";
 
   onMount(async () => {
     result = a;
@@ -47,7 +47,7 @@
       : "Proper";
   });
 
-  async function loadOptions(searchString) {
+  async function loadOptions(searchString: string) {
     const items = [];
 
     try {
@@ -80,7 +80,7 @@
     }
   }
 
-  const groupBy = (item) => item.group;
+  const groupBy = (item: any) => item.group;
 </script>
 
 <Container fluid>

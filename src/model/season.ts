@@ -7,6 +7,7 @@ export default class season {
   public maxWeekday: number;
   public desc: string;
   public color: string;
+  public properName: string;
 
   public constructor(obj: any) {
     this.name = obj.name;
@@ -17,6 +18,7 @@ export default class season {
     this.maxWeekday = obj.maxWeekday ? obj.maxWeekday : 0;
     this.desc = obj.desc ? obj.desc : "";
     this.color = obj.color;
+    this.properName = obj.properName ? obj.properName : "Proper";
   }
 
   public static LUT = new Map([
@@ -58,6 +60,7 @@ export default class season {
         maxProper: 12,
         useWeekdays: false,
         color: "white",
+        properName: "Day of Christmas",
       }),
     ],
     [

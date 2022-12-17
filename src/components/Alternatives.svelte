@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { TabContent, TabPane } from "sveltestrap";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
@@ -16,16 +16,17 @@
     ["antiphon", Antiphon],
   ]);
 
-  export let data;
+  export let data: Map<string, any>; // any should be a prayer class
 
-  let isA = 0;
-  function isActive(key) {
+  // this needs to be redone properly
+  let isA: number = 0;
+  function isActive() {
     isA = isA + 1;
     if (isA == 1) return true;
     return false;
   }
 
-  function shortname(name) {
+  function shortname(name: string) {
     if (name.length < 30) return name;
 
     const words = name.split(" ");
@@ -42,7 +43,7 @@
 
 <TabContent>
   {#each [...data] as [k, d]}
-    <TabPane tabId={k} tab={shortname(d.Name)} active={isActive(k)}>
+    <TabPane tabId={k} tab={shortname(d.Name)} active={isActive()}>
       <svelte:component this={lookup.get(d.Class)} data={d} id={k} />
     </TabPane>
   {/each}
