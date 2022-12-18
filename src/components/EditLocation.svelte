@@ -196,6 +196,7 @@
             type="select"
             name="locations"
             on:change={(e) => {
+              // @ts-ignore
               id = e.target.value;
               push("/editlocation/" + id);
               loadLocation(id);
