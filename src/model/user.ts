@@ -12,11 +12,11 @@ export default class user {
   private _loggedIn: boolean;
 
   constructor(obj: any) {
-    this.displayName = obj.displayName;
-    this.longestStreak = obj.longestStreak;
-    this.consecutiveDays = obj.consecutiveDays;
-    this.lastDay = obj.lastDay;
-    this.lastActivity = obj.lastActivity;
+    this.displayName = obj.displayName ? obj.displayName : "Anon";
+    this.longestStreak = obj.longestStreak ? obj.longestStreak : "0";
+    this.consecutiveDays = obj.consecutiveDays ? obj.consecutiveDays : "0";
+    this.lastDay = obj.lastDay ? obj.lastDay : "2020-01-01";
+    this.lastActivity = obj.lastActivity ? obj.lastActivity : "2023-01-01";
     this._isEditor = false;
     this._loggedIn = false;
   }
@@ -39,7 +39,6 @@ export default class user {
       console.log("not logged in, returning empty 'me'");
       return new user({ lastActivity: "0" });
     }
-    // console.log(auth.currentUser);
 
     const ref = doc(db, "user", auth.currentUser.uid);
     try {
