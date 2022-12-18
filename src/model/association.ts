@@ -154,7 +154,7 @@ export default class association {
   }
 
   // A negative number if a occurs before b; positive if the a occurs after b ; 0 if they are equivalent.
-  static sort(a: association, b: association) {
+  static sort(a: [string, association], b: [string, association]): number {
     const A = a[1];
     const B = b[1];
 
