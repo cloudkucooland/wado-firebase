@@ -1,11 +1,11 @@
-<script>
+<script lang="ts">
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import prayer from "../../model/prayer";
 
-  export let data;
-  export let bold;
-  export let id;
+  export let data: string;
+  export let bold: boolean;
+  export let id: string;
 
   let cssClass = "prayer";
   if (bold) {

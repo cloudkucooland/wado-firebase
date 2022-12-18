@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     Container,
     Col,
@@ -16,32 +16,35 @@
   import { toasts } from "svelte-toasts";
   import { getContext, setContext, onMount, afterUpdate } from "svelte";
   import { push } from "svelte-spa-router";
-  import { writable } from "svelte/store";
+  import { type Writable, writable } from "svelte/store";
+  import type User from "../../types/model/user";
 
-  const now = new Date();
-  const nowString =
+  const now: Date = new Date();
+  const nowString: string =
     now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
-  let forProper = writable(proper.fromDate(params.officeDate));
+  let forProper: Writable<proper> = writable(
+    proper.fromDate(params.officeDate)
+  );
   setContext("forProper", forProper);
 
   $: officeName = params.officeName;
   $: office = getOffice(officeName);
 
-  let me = getContext("me");
+  let me: Writable<User> = getContext("me");
 
   // for streak tracking
-  let scrolled = false; // not yet scrolled to end
+  let scrolled: boolean = false; // not yet scrolled to end
 
   onMount(() => {
     // set the URL so that "poking the ox" always takes you to "now"
     push("/office/" + officeName + "/" + params.officeDate);
-    screenView(officeName, { proper: $forProper.propername });
+    screenView(officeName);
   });
 
   afterUpdate(() => {
-    screenView(officeName, { proper: $forProper.propername });
+    screenView(officeName);
   });
 
   async function scrolling() {
@@ -69,7 +72,7 @@
       <TabContent
         on:tab={(e) => {
           if (officeName == e.detail) return;
-          officeName = e.detail;
+          officeName = e.detail.toString();
           push("/office/" + officeName + "/" + params.officeDate);
         }}
       >
@@ -82,9 +85,11 @@
       <Input
         type="date"
         on:change={(e) => {
-          if (params.officeDate == e.target.value) return;
-          $forProper = proper.fromDate(e.target.value);
-          push("/office/" + officeName + "/" + e.target.value);
+          // @ts-ignore
+          const t = e.target.value; // as HTMLInputElement;
+          if (params.officeDate == t) return;
+          $forProper = proper.fromDate(t);
+          push("/office/" + officeName + "/" + t);
         }}
         disabled={!$me.isEditor}
       />

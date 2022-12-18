@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import heartword from "../../model/heartword";
 
-  export let data;
-  export let id;
+  export let data: string;
+  export let id: string;
 
   const hw = new heartword(data);
 </script>

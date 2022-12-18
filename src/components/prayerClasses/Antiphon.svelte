@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import antiphon from "../../model/antiphon";
 
-  export let data;
-  export let id;
+  export let data: string;
+  export let id: string;
 
   const ant = new antiphon(data);
 </script>

@@ -1,10 +1,10 @@
-<script>
+<script lang="ts">
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import hymn from "../../model/hymn";
 
-  export let data;
-  export let id;
+  export let data: string;
+  export let id: string;
 
   const h = new hymn(data);
 </script>
