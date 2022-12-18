@@ -1,6 +1,8 @@
-<script>
+<script lang="ts">
   import { showMedia, showEdit, showAlt } from "../model/preferences";
   import { onMount, getContext } from "svelte";
+  import type { Writable } from "svelte/store";
+  import type User from "../../types/model/user";
 
   import {
     Container,
@@ -10,17 +12,19 @@
     ListGroup,
     ListGroupItem,
   } from "sveltestrap";
-  let me = getContext("me");
+  let me: Writable<User> = getContext("me");
 
   // does bind not work?
   onMount(() => {
     try {
-      // document.getElementById("offline").checked = $offline;
-      document.getElementById("showMedia").checked = $showMedia;
-      document.getElementById("showEdit").checked = $showEdit;
-      document.getElementById("showAlt").checked = $showAlt;
-    } catch (e) {
-      console.log(e);
+      const sm = document.getElementById("showMedia") as HTMLInputElement;
+      sm.checked = $showMedia;
+      const se = document.getElementById("showEdit") as HTMLInputElement;
+      se.checked = $showEdit;
+      const sa = document.getElementById("showAlt") as HTMLInputElement;
+      sa.checked = $showAlt;
+    } catch (err) {
+      console.log(err);
     }
   });
 </script>
@@ -31,7 +35,7 @@
 
 <Container>
   <Row class="justify-content-center">
-    <Col xs="12" lg="10" xl="8" mx="auto">
+    <Col xs="12" lg="10" xl="8" class="mx-auto">
       <h2 class="h3 mb-4 page-title">Settings</h2>
       <div class="my-4">
         <strong class="mb-0">Display</strong>
@@ -51,6 +55,7 @@
                     class="custom-control-input"
                     id="showMedia"
                     on:change={(e) => {
+                      // @ts-ignore
                       showMedia.set(e.target.checked);
                     }}
                   />
@@ -74,6 +79,7 @@
                     class="custom-control-input"
                     id="showAlt"
                     on:change={(e) => {
+                      // @ts-ignore
                       showAlt.set(e.target.checked);
                     }}
                   />
@@ -97,6 +103,7 @@
                     class="custom-control-input"
                     id="showEdit"
                     on:change={(e) => {
+                      // @ts-ignore
                       showEdit.set(e.target.checked);
                     }}
                   />
@@ -122,6 +129,7 @@
                     class="custom-control-input"
                     id="displayName"
                     on:change={(e) => {
+                      // @ts-ignore
                       $me.setDisplayName(e.target.value);
                     }}
                     value={$me.displayName}
