@@ -23,7 +23,7 @@
       return dummyData;
     },
   };
-  let a: association  = new association(dummy);
+  let a: association = new association(dummy);
 
   let calDateSet: boolean = false;
   let selectedSeason: season = season.LUT.get(a.Season);
