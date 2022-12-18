@@ -24,7 +24,7 @@ export default class association {
   get WeekdayDisplay(): string;
   get ProperDisplay(): number | "Any";
   get ReferenceDisplay(): any;
-  static sort(a: association, b: association): number;
+  static sort(a: [string, association], b: [string, association]): number;
   get dirty(): boolean;
   get dirtyStyle(): "dirty" | "clean";
   static locations: string[];
