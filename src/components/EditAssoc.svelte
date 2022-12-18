@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { getDoc, doc } from "firebase/firestore";
   import { db } from "../firebase";
   import { onMount, afterUpdate } from "svelte";
@@ -6,9 +6,9 @@
   import season from "../model/season";
   import { Container, Row, Col, Input } from "sveltestrap";
 
-  export let id;
-  export let result;
-  export let addToID = "";
+  export let id: string;
+  export let result: association;
+  export let addToID: string = "";
   const dummyData = {
     Location: "UNSET",
     Season: "Any",
@@ -23,11 +23,11 @@
       return dummyData;
     },
   };
-  let a = new association(dummy);
+  let a: association  = new association(dummy);
 
-  let calDateSet = false;
-  let selectedSeason = season.LUT.get(a.Season);
-  let properName = "Proper";
+  let calDateSet: boolean = false;
+  let selectedSeason: season = season.LUT.get(a.Season);
+  let properName: string = "Proper";
 
   onMount(async () => {
     if (addToID != "") {
