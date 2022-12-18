@@ -38,6 +38,7 @@
   import { toasts } from "svelte-toasts";
   import { push } from "svelte-spa-router";
 
+  // @ts-ignore
   export let params = { c };
   $: prayerClass = params.c ? params.c : "prayer";
   const _pp: Map<string, prayer> = new Map();
