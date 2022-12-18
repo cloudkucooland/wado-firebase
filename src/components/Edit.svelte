@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     Container,
     Row,
@@ -32,6 +32,8 @@
   import { toasts } from "svelte-toasts";
   import { link } from "svelte-spa-router";
   import { getContext, onMount } from "svelte";
+  import type { Writable } from "svelte/store";
+  import type User from "../../types/model/user";
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
 
@@ -57,89 +59,90 @@
 
   import association from "../model/association";
   import prayer from "../model/prayer";
+  import type Hymn from "../../types/model/hymn";
+  import type Psalm from "../../types/model/psalm";
 
-  let me = getContext("me");
+  let me: Writable<User> = getContext("me");
+  // @ts-ignore
   export let params = { id };
-  const id = params.id ? params.id : "exnihilo";
-  let modalId = "";
-  let assocEditResult;
-  let assocAddResult;
-  $: prayerData = new prayer({ name: "Loading", body: "Loading" });
-  $: associations = new Array();
+  const id: string = params.id ? params.id : "exnihilo";
+  let modalId: string = "";
+  let assocEditResult: association;
+  let assocAddResult: association;
+  const _p: prayer | Hymn | Psalm  = new prayer({ name: "Loading", body: "Loading" });
+  $: prayerData = _p;
+  const _a: Array<association> = new Array();
+  $: associations = _a;
 
-  let deleteModalOpen = false;
-  function toggleDeleteOpen(e) {
+  let deleteModalOpen: boolean = false;
+  function toggleDeleteOpen(e: Event): void {
+    const t = e.target as HTMLInputElement;
     screenView("toggleDeleteOpen");
     deleteModalOpen = !deleteModalOpen;
-    if (deleteModalOpen) modalId = e.target.value;
+    if (deleteModalOpen) modalId = t.value;
   }
 
-  async function confirmDelete(e) {
-    recordEvent("delete_assoc", { id: id, assoc: e.target.value });
+  async function confirmDelete(e: Event): Promise<void> {
+    const t = e.target as HTMLInputElement;
+    recordEvent("delete_assoc", { id: id, assoc: t.value });
     deleteModalOpen = !deleteModalOpen;
 
     try {
-      await deleteDoc(doc(db, "associations", e.target.value));
+      await deleteDoc(doc(db, "associations", t.value));
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
     }
-    const newAssn = new Array();
+    const newAssn: Array<association> = new Array();
     for (const a of associations) {
-      if (a.id != e.target.value) {
-        newAssn.push(a);
-      }
+      if (a.id != t.value) newAssn.push(a);
     }
     associations = newAssn;
-    toasts.success("Association deleted", e.target.value);
+    toasts.success("Association deleted", t.value);
   }
 
-  let editModalOpen = false;
-  async function toggleEditOpen(e) {
+  let editModalOpen: boolean = false;
+  async function toggleEditOpen(e: Event): Promise<void> {
+    const t = e.target as HTMLInputElement;
     screenView("toggleEditOpen");
     editModalOpen = !editModalOpen;
 
-    if (editModalOpen) {
-      modalId = e.target.value;
-    }
+    if (editModalOpen) modalId = t.value;
   }
 
-  async function confirmEdit(e) {
-    recordEvent("edit_assoc", { id: id, assoc: e.target.value });
+  async function confirmEdit(e: Event) {
+    const t = e.target as HTMLInputElement;
+    recordEvent("edit_assoc", { id: id, assoc: t.value });
     editModalOpen = !editModalOpen;
 
-    console.log("edit result", assocEditResult);
     try {
       await setDoc(
-        doc(db, "associations", e.target.value),
+        doc(db, "associations", t.value),
         assocEditResult.toFirebase()
       );
-      const newAssn = new Array();
+      const newAssn: Array<association> = new Array();
       for (const a of associations) {
-        if (a.id != e.target.value) {
-          newAssn.push(a);
-        }
+        if (a.id != t.value) newAssn.push(a);
       }
       newAssn.push(assocEditResult);
       associations = newAssn;
-      toasts.success("Saved Association", e.target.value);
+      toasts.success("Saved Association", t.value);
     } catch (error) {
       console.log(error);
       toasts.error(error.Message);
     }
   }
 
-  let addAssocModalOpen = false;
-  async function toggleAddAssocOpen(e) {
+  let addAssocModalOpen: boolean = false;
+  async function toggleAddAssocOpen(e: Event): Promise<void> {
+    const t = e.target as HTMLInputElement;
     screenView("toggleAddAssocOpen");
     addAssocModalOpen = !addAssocModalOpen;
 
-    if (addAssocModalOpen) {
-      modalId = e.target.value;
-    }
+    if (addAssocModalOpen) modalId = t.value;
   }
 
-  async function confirmAddAssoc() {
+  async function confirmAddAssoc(): Promise<void> {
     addAssocModalOpen = !addAssocModalOpen;
 
     try {
@@ -157,7 +160,7 @@
     }
   }
 
-  async function loadPrayer() {
+  async function loadPrayer(): Promise<void> {
     const ref = doc(db, "prayers/" + id);
 
     try {
@@ -182,7 +185,7 @@
     }
   }
 
-  async function saveChanges() {
+  async function saveChanges(): Promise<void> {
     recordEvent("save_prayer", { id: id });
 
     try {
@@ -196,7 +199,7 @@
     }
   }
 
-  function onReady({ detail: editor }) {
+  function onReady({ detail: editor }): void {
     // Insert the toolbar before the editable area.
     editor.ui
       .getEditableElement()
@@ -324,7 +327,7 @@
                   <Label for="lastEditor">Last Editor</Label>
                   <Input
                     name="lastEditor"
-                    disabled="true"
+                    disabled={true}
                     id="lastEditor"
                     bind:value={prayerData.lastEditor}
                   />
@@ -335,7 +338,7 @@
                   <Label for="lastEdited" type="date">Last Edited</Label>
                   <Input
                     name="lastEdited"
-                    disabled="true"
+                    disabled={true}
                     id="lastEdited"
                     bind:value={prayerData.lastEdited}
                   />
@@ -444,9 +447,8 @@
   id="deleteModal"
   isOpen={deleteModalOpen}
   backdrop="static"
-  {toggleDeleteOpen}
 >
-  <ModalHeader {toggleDeleteOpen}>Delete Association</ModalHeader>
+  <ModalHeader>Delete Association</ModalHeader>
   <ModalBody>Confirm Delete</ModalBody>
   <ModalFooter>
     <Button color="primary" size="sm" on:click={toggleDeleteOpen}>
@@ -457,8 +459,8 @@
     </Button>
   </ModalFooter>
 </Modal>
-<Modal id="editModal" isOpen={editModalOpen} {toggleEditOpen} size="xl">
-  <ModalHeader {toggleEditOpen}>Edit Association</ModalHeader>
+<Modal id="editModal" isOpen={editModalOpen} size="xl">
+  <ModalHeader>Edit Association</ModalHeader>
   <ModalBody>
     <EditAssoc id={modalId} bind:result={assocEditResult} />
   </ModalBody>
@@ -474,10 +476,9 @@
 <Modal
   id="addAssocModal"
   isOpen={addAssocModalOpen}
-  {toggleAddAssocOpen}
   size="xl"
 >
-  <ModalHeader {toggleAddAssocOpen}>Add Association</ModalHeader>
+  <ModalHeader>Add Association</ModalHeader>
   <ModalBody>
     <EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />
   </ModalBody>
