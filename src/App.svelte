@@ -29,12 +29,12 @@
     onAuthStateChanged,
   } from "firebase/auth";
   import { setContext } from "svelte";
-  import { writable } from "svelte/store";
+  import { type Writable, writable } from "svelte/store";
   import user from "./model/user";
 
   // public
   import HomePage from "./components/HomePage.svelte";
-  import Styles from "./Styles.svelte";
+  import _Styles from "./Styles.svelte";
 
   // for authenticated users
   import Settings from "./components/Settings.svelte";
@@ -85,7 +85,7 @@
   };
 
   $: loggedIn = false;
-  let me = writable("me");
+  let me: Writable<user> = writable(new user({}));
   setContext("me", me);
 
   onAuthStateChanged(auth, async (u) => {
@@ -102,7 +102,7 @@
     }
   });
 
-  async function doFBLogin() {
+  async function doFBLogin(): Promise<void> {
     try {
       await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
@@ -113,7 +113,7 @@
     }
   }
 
-  async function doGLogin() {
+  async function doGLogin(): Promise<void> {
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
       loggedIn = true;
@@ -124,7 +124,7 @@
     }
   }
 
-  async function doLogout() {
+  async function doLogout(): Promise<void> {
     try {
       await signOut(auth);
       loggedIn = false;
@@ -136,7 +136,7 @@
     }
   }
 
-  function startNotification() {
+  function startNotification(): void {
     // not on a platform that has the Notifications API
     if (typeof Notification === "undefined") return;
     // permission neither granted nor denied
