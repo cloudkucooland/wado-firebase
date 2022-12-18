@@ -69,7 +69,10 @@
   let modalId: string = "";
   let assocEditResult: association;
   let assocAddResult: association;
-  const _p: prayer | Hymn | Psalm  = new prayer({ name: "Loading", body: "Loading" });
+  const _p: prayer | Hymn | Psalm = new prayer({
+    name: "Loading",
+    body: "Loading",
+  });
   $: prayerData = _p;
   const _a: Array<association> = new Array();
   $: associations = _a;
@@ -443,11 +446,7 @@
     </Col>
   </Row>
 </Container>
-<Modal
-  id="deleteModal"
-  isOpen={deleteModalOpen}
-  backdrop="static"
->
+<Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
   <ModalHeader>Delete Association</ModalHeader>
   <ModalBody>Confirm Delete</ModalBody>
   <ModalFooter>
@@ -473,11 +472,7 @@
     </Button>
   </ModalFooter>
 </Modal>
-<Modal
-  id="addAssocModal"
-  isOpen={addAssocModalOpen}
-  size="xl"
->
+<Modal id="addAssocModal" isOpen={addAssocModalOpen} size="xl">
   <ModalHeader>Add Association</ModalHeader>
   <ModalBody>
     <EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />
