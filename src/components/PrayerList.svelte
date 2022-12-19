@@ -91,6 +91,8 @@
 
   // https://github.com/firebase/snippets-web/blob/36740fb2c39383621c0c0a948236e9eab8a71516/snippets/firestore-next/test-firestore/paginate.js#L8-L23
   async function loadClass(pc: string) {
+    const progressBar = toasts.success("Loading Data", pc, { duration: 0 });
+
     const m = new Map();
     try {
       const q = query(
@@ -107,6 +109,7 @@
     } catch (e) {
       console.log(e);
     }
+    progressBar.remove();
     return m;
   }
 
