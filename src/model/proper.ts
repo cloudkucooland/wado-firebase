@@ -411,7 +411,7 @@ export default class proper {
   }
 
   // Convert cardinal number to friendly ordinal numbers for display (English)
-  private cardToOrd(card: number) {
+  private cardToOrd(card: number): string {
     const lut = new Map([
       [0, ""],
       [1, "First"],
@@ -436,12 +436,12 @@ export default class proper {
     return lut.get(card);
   }
 
-  public static AllYear(lectionaryYear: string) {
-    const ll = new Map();
+  public static AllYear(lectionaryYear: string): Map<string, proper> {
+    const ll: Map<string, proper> = new Map();
 
     for (const [_k, v] of season.LUT) {
       // broad exceptions go here
-      if (v.name == "beforeadvent" || v.name == "Any") continue;
+      if (v.name == "Any") continue;
 
       const obj: any = { year: lectionaryYear, season: v.name };
 
@@ -452,7 +452,7 @@ export default class proper {
         continue;
       }
 
-      let i = 1;
+      let i: number = 1;
       while (i <= v.maxProper) {
         // exceptions go here
         if (v.name == "christmas" && i == 1) {
@@ -464,7 +464,7 @@ export default class proper {
 
         if (v.useWeekdays) {
           // Most seasons start on Monday, except for lent, which counts from Wednesdays
-          let d = v.startWeekday;
+          let d: number = v.startWeekday;
           if (v.name == "greatfifty" && i == 1) d = 1; // do not display Easter twice, otherwise greatfifty is normal
           if (v.name == "afterpentecost" && i == 1) d = 1; // do not display Pentecost twice, otherwise afterpentecost is normal
 
