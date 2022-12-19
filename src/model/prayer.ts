@@ -12,14 +12,23 @@ export default class prayer {
   public class: string;
 
   public constructor(obj: prayerFromFirestore) {
+    this.name = "• New Prayer";
     if (obj.Name) this.name = obj.Name;
+    this.body = " -- nothing -- ";
     if (obj.Body) this.body = obj.Body;
+    this.author = "";
     if (obj.Author) this.author = obj.Author;
+    this.reviewed = false;
     if (obj.Reviewed) this.reviewed = obj.Reviewed;
+    this.license = false;
     if (obj.License) this.license = obj.License;
+    this.lastEditor = "unknown";
     if (obj["Last Editor"]) this.lastEditor = obj["Last Editor"];
+    this.lastEdited = "2010-01-01T00:00:00.000Z";
     if (obj["Last Edited"]) this.lastEdited = obj["Last Edited"];
+    this.media = "";
     if (obj.Media) this.media = obj.Media;
+    this.class = "Prayer";
     if (obj.Class) this.class = obj.Class;
   }
 
