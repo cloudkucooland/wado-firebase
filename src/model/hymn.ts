@@ -1,14 +1,15 @@
+import type { prayerFromFirestore } from "./types";
 import prayer from "./prayer";
 
 export default class hymn extends prayer {
   public hymntune: string;
   public hymnmeter: string;
 
-  public constructor(obj: any) {
+  public constructor(obj: prayerFromFirestore) {
     super(obj);
-    this.hymntune = obj["Hymn Tune"] ? obj["Hymn Tune"] : false;
-    this.hymnmeter = obj["Hymn Meter"] ? obj["Hymn Meter"] : false;
-    this.class = obj["Class"] ? obj["Class"] : "hymn";
+    if (obj["Hymn Tune"]) this.hymntune = obj["Hymn Tune"];
+    if (obj["Hymn Meter"]) this.hymnmeter = obj["Hymn Meter"];
+    if (obj.Class) this.class = obj.Class;
   }
 
   public toFirebase() {

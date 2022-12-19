@@ -37,6 +37,7 @@
   import { toasts } from "svelte-toasts";
   import EditAssoc from "./EditAssoc.svelte";
   import AddAssoc from "./AddAssoc.svelte";
+  import type { prayerFromFirestore } from "../model/types";
 
   // @ts-ignore
   export let params = { id };
@@ -102,8 +103,9 @@
         if (k != t.value) newAssn.set(k, v);
       }
 
-      const rawprayer = await getDocCacheFirst(assocEditResult.Reference);
-      const pp = new prayer(rawprayer.data());
+      const rp = await getDocCacheFirst(assocEditResult.Reference);
+      const tp = rp.data() as prayerFromFirestore;
+      const pp = new prayer(tp);
       // @ts-ignore
       assocEditResult._PrayerName = pp.name;
       newAssn.set(t.value, assocEditResult);
@@ -156,14 +158,15 @@
           continue;
         }
 
-        const rawprayer = await getDoc(n.Reference);
-        if (!rawprayer || !rawprayer.exists()) {
+        const rp = await getDoc(n.Reference);
+        if (!rp || !rp.exists()) {
           console.error("bad reference, deleting association");
           deleteDoc(doc(db, "associations", n.id)); // no need to await here
           toasts.info("Deleting Invalid Association", n.id);
           continue;
         }
-        const pp: prayer = new prayer(rawprayer.data());
+        const tp = rp.data() as prayerFromFirestore;
+        const pp: prayer = new prayer(tp);
         // @ts-ignore
         n._PrayerName = pp.name;
         newAssn.set(a.id, n);

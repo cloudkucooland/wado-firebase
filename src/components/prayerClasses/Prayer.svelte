@@ -2,8 +2,9 @@
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import prayer from "../../model/prayer";
+  import type { prayerFromFirestore } from "../../model/types";
 
-  export let data: string;
+  export let data: prayerFromFirestore;
   export let bold: boolean;
   export let id: string;
 

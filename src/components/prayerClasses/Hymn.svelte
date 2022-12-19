@@ -2,8 +2,9 @@
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import hymn from "../../model/hymn";
+  import type { prayerFromFirestore } from "../../model/types";
 
-  export let data: string;
+  export let data: prayerFromFirestore;
   export let id: string;
 
   const h = new hymn(data);

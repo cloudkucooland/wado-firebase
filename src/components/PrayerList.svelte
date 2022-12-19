@@ -37,6 +37,7 @@
   import type User from "../../types/model/user";
   import { toasts } from "svelte-toasts";
   import { push } from "svelte-spa-router";
+  import type { prayerFromFirestore } from "../model/types";
 
   // @ts-ignore
   export let params = { c };
@@ -99,7 +100,8 @@
       );
       const res = await getDocs(q);
       for (const a of res.docs) {
-        const p = new prayer(a.data());
+        const ta = a.data() as prayerFromFirestore;
+        const p = new prayer(ta);
         m.set(a.id, p);
       }
     } catch (e) {

@@ -2,8 +2,9 @@
   import { showEdit } from "../../model/preferences";
   import Media from "../Media.svelte";
   import psalm from "../../model/psalm";
+  import type { prayerFromFirestore } from "../../model/types";
 
-  export let data: string;
+  export let data: prayerFromFirestore;
   export let id: string;
 
   const p = new psalm(data);

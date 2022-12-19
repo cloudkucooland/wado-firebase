@@ -1,3 +1,5 @@
+import type { prayerFromFirestore } from "./types";
+
 export default class prayer {
   public name: string;
   public body: string;
@@ -9,16 +11,16 @@ export default class prayer {
   public media: string;
   public class: string;
 
-  public constructor(obj: any) {
-    this.name = obj.Name;
-    this.body = obj.Body;
-    this.author = obj.Author ? obj.Author : "";
-    this.reviewed = obj.Reviewed ? obj.Reviewed : false;
-    this.license = obj.License ? obj.License : false;
-    this.lastEditor = obj["Last Editor"] ? obj["Last Editor"] : "";
-    this.lastEdited = obj["Last Edited"] ? obj["Last Edited"] : "";
-    this.media = obj["Media"] ? obj["Media"] : "";
-    this.class = obj["Class"] ? obj["Class"] : "prayer";
+  public constructor(obj: prayerFromFirestore) {
+    if (obj.Name) this.name = obj.Name;
+    if (obj.Body) this.body = obj.Body;
+    if (obj.Author) this.author = obj.Author;
+    if (obj.Reviewed) this.reviewed = obj.Reviewed;
+    if (obj.License) this.license = obj.License;
+    if (obj["Last Editor"]) this.lastEditor = obj["Last Editor"];
+    if (obj["Last Edited"]) this.lastEdited = obj["Last Edited"];
+    if (obj.Media) this.media = obj.Media;
+    if (obj.Class) this.class = obj.Class;
   }
 
   public toFirebase() {

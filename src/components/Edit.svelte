@@ -34,6 +34,7 @@
   import { getContext, onMount } from "svelte";
   import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
+  import type { prayerFromFirestore } from "../model/types";
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
 
@@ -61,6 +62,7 @@
   import prayer from "../model/prayer";
   import type Hymn from "../../types/model/hymn";
   import type Psalm from "../../types/model/psalm";
+  import type Antiphon from "../../types/model/antiphon";
 
   let me: Readable<User> = getContext("me");
   // @ts-ignore
@@ -69,9 +71,9 @@
   let modalId: string = "";
   let assocEditResult: association;
   let assocAddResult: association;
-  const _p: prayer | Hymn | Psalm = new prayer({
-    name: "Loading",
-    body: "Loading",
+  const _p: prayer | Hymn | Psalm | Antiphon = new prayer({
+    Name: "Loading",
+    Body: "Loading",
   });
   $: prayerData = _p;
   const _a: Array<association> = new Array();
@@ -168,7 +170,7 @@
 
     try {
       const toEdit = await getDoc(ref);
-      const d = toEdit.data();
+      const d = toEdit.data() as prayerFromFirestore;
 
       const c = getClass(d.Class);
       prayerData = new c(d);
