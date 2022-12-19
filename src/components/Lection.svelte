@@ -1,16 +1,17 @@
 <script lang="ts">
   import { collection, query, where } from "firebase/firestore";
-  import { Spinner } from "sveltestrap";
   import { db, getDocsCacheFirst } from "../firebase";
   import season from "../model/season";
-  import { getContext } from "svelte";
+  import { getContext, beforeUpdate } from "svelte";
   import type Proper from "../../types/model/proper";
   import type { Writable } from "svelte/store";
+  import lection from "../model/lection";
 
   export let office: string;
   let proper: Writable<Proper> = getContext("forProper");
+  let data: lection = { morning: "Loading", evening: "Loading" };
 
-  async function loaddata() {
+  async function loaddata(): Promise<lection> {
     const s: season = season.LUT.get($proper.season);
 
     // this is how to dynamically build a query
@@ -29,43 +30,41 @@
         _morning: "No passage set for today, consult the lectionary",
         _evening: "No passage set for today, consult the lectionary",
       };
-    return res.docs[0].data();
+    return new lection(res.docs[0].data());
   }
+
+  beforeUpdate(async () => {
+    data = await loaddata();
+  });
 </script>
 
-{#await loaddata()}
-  <Spinner color="secondary" />
-{:then data}
-  {#if office == "LAUDS"}
-    {#if data.morningtitle}<h5>{data.morning}: {data.morningtitle}</h5>{/if}
-    {#if data._morning}
-      <p>{@html data._morning}</p>
-    {:else}
-      <p>
-        <a
-          href="https://www.biblegateway.com/passage/?search={data.morning}&version=NRSVUE"
-        >
-          {data.morning}
-        </a>
-      </p>
-    {/if}
+{#if office == "LAUDS"}
+  {#if data.morningtitle}<h5>{data.morning}: {data.morningtitle}</h5>{/if}
+  {#if data._morning}
+    <p>{@html data._morning}</p>
   {:else}
-    {#if data.eveningtitle}<h5>{data.evening}: {data.eveningtitle}</h5>{/if}
-    {#if data._evening}
-      <p>{@html data._evening}</p>
-    {:else}
-      <p>
-        <a
-          href="https://www.biblegateway.com/passage/?search={data.evening}&version=NRSVUE"
-        >
-          {data.evening}
-        </a>
-      </p>
-    {/if}
+    <p>
+      <a
+        href="https://www.biblegateway.com/passage/?search={data.morning}&version=NRSVUE"
+      >
+        {data.morning}
+      </a>
+    </p>
   {/if}
-{:catch error}
-  <div>{error.message}</div>
-{/await}
+{:else}
+  {#if data.eveningtitle}<h5>{data.evening}: {data.eveningtitle}</h5>{/if}
+  {#if data._evening}
+    <p>{@html data._evening}</p>
+  {:else}
+    <p>
+      <a
+        href="https://www.biblegateway.com/passage/?search={data.evening}&version=NRSVUE"
+      >
+        {data.evening}
+      </a>
+    </p>
+  {/if}
+{/if}
 
 <style>
   p {
@@ -73,7 +72,6 @@
     line-height: 1.25em;
     word-wrap: break-word;
   }
-
   .adonai {
     font-variant: small-caps;
   }
