@@ -10,7 +10,6 @@
 
   export let office: string;
   let proper: Readable<Proper> = getContext("forProper");
-  let data: lection = { morning: "Loading", evening: "Loading" };
 
   async function loaddata(p: Proper): Promise<lection> {
     const s: season = season.LUT.get(p.season);
@@ -65,6 +64,8 @@
       </p>
     {/if}
   {/if}
+{:catch error}
+  <h5>Unable to load: {error.message}</h5>
 {/await}
 
 <style>

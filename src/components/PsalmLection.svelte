@@ -98,4 +98,6 @@
   {:else}
     <h5>No Psalm Specified for today</h5>
   {/if}
+{:catch error}
+  <h5>Unable to load: {error.message}</h5>
 {/await}

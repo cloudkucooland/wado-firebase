@@ -204,4 +204,6 @@
       <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} />
     {/each}
   {/if}
+{:catch error}
+  <h5>Unable to load: {error.message}</h5>
 {/await}
