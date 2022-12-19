@@ -156,7 +156,8 @@
     lectionModalOpen = !lectionModalOpen;
 
     // do not write the cached data back, refetch it
-    const data: mdClass = new mdClass({
+    // firebase only accepts generic objects
+    const data: object = {
       morning: modalData.morning,
       morningpsalm: modalData.morningpsalm,
       morningtitle: modalData.morningtitle,
@@ -165,8 +166,10 @@
       eveningtitle: modalData.eveningtitle,
       season: modalData.season,
       proper: modalData.proper,
-      weekday: modalData.weekday,
-    });
+    };
+
+    // @ts-ignore
+    if (modalData.weekday) data.weekday = modalData.weekday;
 
     // try to link to the formatted psalms
     try {
@@ -177,6 +180,7 @@
       );
       let res = await getDocsCacheFirst(q);
       for (const a of res.docs) {
+        // @ts-ignore
         data._morningpsalmref = a.id;
       }
 
@@ -187,6 +191,7 @@
       );
       res = await getDocsCacheFirst(q);
       for (const a of res.docs) {
+        // @ts-ignore
         data._eveningpsalmref = a.id;
       }
     } catch (err) {
@@ -200,7 +205,7 @@
         const added = await addDoc(collection(db, "lections", year, "l"), data);
         modalData.path = added.path;
       } else {
-        await setDoc(doc(db, modalData.path as object), data);
+        await setDoc(doc(db, modalData.path), data);
       }
     } catch (err) {
       console.log(err);
