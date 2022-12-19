@@ -109,7 +109,7 @@
         for (const a of res.docs) {
           const n = a.data();
           const newLection: lection = new lection(n);
-          newLection.path = a.ref.path;
+          newLection.path = a.ref.path; // kludge
           out.set(k, [v, newLection]);
         }
       } catch (e) {
@@ -145,7 +145,7 @@
         season: p.season,
         proper: p.proper,
         weekday: p.weekday,
-        path: p.path,
+        path: l.path, // kludge
         key: t.value,
       });
     }

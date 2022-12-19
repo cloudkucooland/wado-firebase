@@ -72,7 +72,4 @@
     line-height: 1.25em;
     word-wrap: break-word;
   }
-  .adonai {
-    font-variant: small-caps;
-  }
 </style>

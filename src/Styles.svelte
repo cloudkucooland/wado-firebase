@@ -11,6 +11,9 @@
   @import "./scss/typography";
   // $prefix "wado-"
   $enable-shadows: true;
+  .adonai {
+    font-variant: small-caps;
+  }
 
   // Required Bootstrap imports
   @import "../node_modules/bootstrap-scss/variables";
