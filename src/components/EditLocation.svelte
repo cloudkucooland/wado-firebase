@@ -141,6 +141,8 @@
   }
 
   async function loadLocation(id: string): Promise<void> {
+    const progressBar = toasts.success("Loading Data", id, { duration: 0 });
+
     const newAssn: Map<string, association> = new Map();
     try {
       const q = query(
@@ -177,6 +179,7 @@
     } catch (error) {
       console.log(error);
     }
+    progressBar.remove();
   }
 
   onMount(async () => {
