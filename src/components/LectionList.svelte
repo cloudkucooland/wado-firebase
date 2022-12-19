@@ -200,7 +200,7 @@
         const added = await addDoc(collection(db, "lections", year, "l"), data);
         modalData.path = added.path;
       } else {
-        await setDoc(doc(db, modalData.path), data);
+        await setDoc(doc(db, modalData.path as object), data);
       }
     } catch (err) {
       console.log(err);

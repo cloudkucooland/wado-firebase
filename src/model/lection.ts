@@ -15,7 +15,7 @@ export default class lection {
     if (obj.evening) this.evening = obj.evening;
     if (obj.morningpsalm) this.morningpsalm = obj.morningpsalm;
     if (obj.eveningpsalm) this.eveningpsalm = obj.eveningpsalm;
-    if (obj.morningtitle) this.morningtitle = obj.morningpsalm;
+    if (obj.morningtitle) this.morningtitle = obj.morningtitle;
     if (obj.eveningtitle) this.eveningtitle = obj.eveningtitle;
     if (obj._morning) this._morning = obj._morning;
     if (obj._evening) this._evening = obj._evening;
