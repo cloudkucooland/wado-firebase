@@ -32,7 +32,7 @@
   import { toasts } from "svelte-toasts";
   import { link } from "svelte-spa-router";
   import { getContext, onMount } from "svelte";
-  import type { Writable } from "svelte/store";
+  import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
@@ -62,7 +62,7 @@
   import type Hymn from "../../types/model/hymn";
   import type Psalm from "../../types/model/psalm";
 
-  let me: Writable<User> = getContext("me");
+  let me: Readable<User> = getContext("me");
   // @ts-ignore
   export let params = { id };
   const id: string = params.id ? params.id : "exnihilo";

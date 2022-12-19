@@ -4,12 +4,13 @@
   import season from "../model/season";
   import Psalm from "./prayerClasses/Psalm.svelte";
   import { toasts } from "svelte-toasts";
-  import { getContext, beforeUpdate } from "svelte";
+  import { getContext } from "svelte";
   import type Proper from "../../types/model/proper";
-  import type { Writable } from "svelte/store";
+  import type { Readable } from "svelte/store";
+  import { Spinner } from "sveltestrap";
 
   export let office: string;
-  let proper: Writable<Proper> = getContext("forProper");
+  let proper: Readable<Proper> = getContext("forProper");
 
   class plClass {
     id: string;
@@ -28,23 +29,17 @@
     }
   }
 
-  let data: plClass = new plClass({
-    id: "Loading...",
-    morningpsalm: "Psalm 1",
-    eveningpsalm: "Psalm 150",
-  });
-
-  async function loaddata(): Promise<plClass> {
-    const s: season = season.LUT.get($proper.season);
+  async function loaddata(p: Proper): Promise<plClass> {
+    const s: season = season.LUT.get(p.season);
 
     const wheres = new Array();
-    wheres.push(where("season", "==", $proper.season));
-    if (s.maxProper > 0 && $proper.proper >= 0)
-      wheres.push(where("proper", "==", $proper.proper));
-    if (s.useWeekdays && $proper.weekday >= 0)
-      wheres.push(where("weekday", "==", $proper.weekday));
+    wheres.push(where("season", "==", p.season));
+    if (s.maxProper > 0 && p.proper >= 0)
+      wheres.push(where("proper", "==", p.proper));
+    if (s.useWeekdays && p.weekday >= 0)
+      wheres.push(where("weekday", "==", p.weekday));
 
-    let q = query(collection(db, "lections", $proper.year, "l"), ...wheres);
+    let q = query(collection(db, "lections", p.year, "l"), ...wheres);
 
     let res = await getDocsCacheFirst(q);
     if (res.empty)
@@ -83,24 +78,24 @@
     }
     return d;
   }
-
-  beforeUpdate(async () => {
-    data = await loaddata();
-  });
 </script>
 
-{#if data._resolved}
-  <Psalm data={data._resolved} id={data.id} />
-{:else if office == "LAUDS"}
-  <a
-    href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
-    >{data.morningpsalm}</a
-  >
-{:else if office != "LAUDS"}
-  <a
-    href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
-    >{data.eveningpsalm}</a
-  >
-{:else}
-  <h5>No Psalm Specified for today</h5>
-{/if}
+{#await loaddata($proper)}
+  <Spinner color="primary" />
+{:then data}
+  {#if data._resolved}
+    <Psalm data={data._resolved} id={data.id} />
+  {:else if office == "LAUDS"}
+    <a
+      href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
+      >{data.morningpsalm}</a
+    >
+  {:else if office != "LAUDS"}
+    <a
+      href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
+      >{data.eveningpsalm}</a
+    >
+  {:else}
+    <h5>No Psalm Specified for today</h5>
+  {/if}
+{/await}

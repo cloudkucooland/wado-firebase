@@ -33,7 +33,7 @@
   } from "../firebase";
   import prayer from "../model/prayer";
   import { onMount, getContext } from "svelte";
-  import type { Writable } from "svelte/store";
+  import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
   import { toasts } from "svelte-toasts";
   import { push } from "svelte-spa-router";
@@ -44,7 +44,7 @@
   const _pp: Map<string, prayer> = new Map();
   $: prayers = _pp;
   let modalId: string = "exnihilo";
-  let me: Writable<User> = getContext("me");
+  let me: Readable<User> = getContext("me");
 
   const cs = new Array("prayer", "hymn", "psalm", "antiphon");
 

@@ -30,7 +30,7 @@
   import { toasts } from "svelte-toasts";
   import { link } from "svelte-spa-router";
   import lection from "../model/lection";
-  import type { Writable } from "svelte/store";
+  import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
 
   // @ts-ignore
@@ -38,7 +38,7 @@
   $: year = params.y ? params.y : "A";
   const _ll: Map<string, [proper, lection]> = new Map();
   $: lections = _ll;
-  let me: Writable<User> = getContext("me");
+  let me: Readable<User> = getContext("me");
 
   class mdClass {
     morning?: string;

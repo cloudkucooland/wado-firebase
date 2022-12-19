@@ -2,27 +2,28 @@
   import { collection, query, where } from "firebase/firestore";
   import { db, getDocsCacheFirst } from "../firebase";
   import season from "../model/season";
-  import { getContext, beforeUpdate } from "svelte";
+  import { getContext } from "svelte";
   import type Proper from "../../types/model/proper";
-  import type { Writable } from "svelte/store";
+  import type { Readable } from "svelte/store";
   import lection from "../model/lection";
+  import { Spinner } from "sveltestrap";
 
   export let office: string;
-  let proper: Writable<Proper> = getContext("forProper");
+  let proper: Readable<Proper> = getContext("forProper");
   let data: lection = { morning: "Loading", evening: "Loading" };
 
-  async function loaddata(): Promise<lection> {
-    const s: season = season.LUT.get($proper.season);
+  async function loaddata(p: Proper): Promise<lection> {
+    const s: season = season.LUT.get(p.season);
 
     // this is how to dynamically build a query
     const wheres = new Array();
-    wheres.push(where("season", "==", $proper.season));
-    if (s.maxProper > 0 && $proper.proper >= 0)
-      wheres.push(where("proper", "==", $proper.proper));
-    if (s.useWeekdays && $proper.weekday >= 0)
-      wheres.push(where("weekday", "==", $proper.weekday));
+    wheres.push(where("season", "==", p.season));
+    if (s.maxProper > 0 && p.proper >= 0)
+      wheres.push(where("proper", "==", p.proper));
+    if (s.useWeekdays && p.weekday >= 0)
+      wheres.push(where("weekday", "==", p.weekday));
 
-    let q = query(collection(db, "lections", $proper.year, "l"), ...wheres);
+    let q = query(collection(db, "lections", p.year, "l"), ...wheres);
 
     let res = await getDocsCacheFirst(q);
     if (res.empty)
@@ -32,39 +33,39 @@
       };
     return new lection(res.docs[0].data());
   }
-
-  beforeUpdate(async () => {
-    data = await loaddata();
-  });
 </script>
 
-{#if office == "LAUDS"}
-  {#if data.morningtitle}<h5>{data.morning}: {data.morningtitle}</h5>{/if}
-  {#if data._morning}
-    <p>{@html data._morning}</p>
+{#await loaddata($proper)}
+  <Spinner />
+{:then data}
+  {#if office == "LAUDS"}
+    {#if data.morningtitle}<h5>{data.morning}: {data.morningtitle}</h5>{/if}
+    {#if data._morning}
+      <p>{@html data._morning}</p>
+    {:else}
+      <p>
+        <a
+          href="https://www.biblegateway.com/passage/?search={data.morning}&version=NRSVUE"
+        >
+          {data.morning}
+        </a>
+      </p>
+    {/if}
   {:else}
-    <p>
-      <a
-        href="https://www.biblegateway.com/passage/?search={data.morning}&version=NRSVUE"
-      >
-        {data.morning}
-      </a>
-    </p>
+    {#if data.eveningtitle}<h5>{data.evening}: {data.eveningtitle}</h5>{/if}
+    {#if data._evening}
+      <p>{@html data._evening}</p>
+    {:else}
+      <p>
+        <a
+          href="https://www.biblegateway.com/passage/?search={data.evening}&version=NRSVUE"
+        >
+          {data.evening}
+        </a>
+      </p>
+    {/if}
   {/if}
-{:else}
-  {#if data.eveningtitle}<h5>{data.evening}: {data.eveningtitle}</h5>{/if}
-  {#if data._evening}
-    <p>{@html data._evening}</p>
-  {:else}
-    <p>
-      <a
-        href="https://www.biblegateway.com/passage/?search={data.evening}&version=NRSVUE"
-      >
-        {data.evening}
-      </a>
-    </p>
-  {/if}
-{/if}
+{/await}
 
 <style>
   p {

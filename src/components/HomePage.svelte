@@ -44,6 +44,7 @@
   });
 
   afterUpdate(() => {
+    console.log("after update");
     screenView(officeName);
   });
 

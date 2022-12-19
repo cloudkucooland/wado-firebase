@@ -1,13 +1,13 @@
 <script lang="ts">
   import { collection, query, where, limit, orderBy } from "firebase/firestore";
-  import { Spinner } from "sveltestrap";
   import { db, getDocCacheFirst, getDocsCacheFirst } from "../firebase";
   import { showEdit, showAlt } from "../model/preferences";
   import { getContext } from "svelte";
   import Alternatives from "./Alternatives.svelte";
   import { link } from "svelte-spa-router";
-  import type { Writable } from "svelte/store";
+  import type { Readable } from "svelte/store";
   import type proper from "../../types/model/proper";
+  import { Spinner } from "sveltestrap";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
   import Hymn from "./prayerClasses/Hymn.svelte";
@@ -15,7 +15,7 @@
   import Psalm from "./prayerClasses/Psalm.svelte";
   import Antiphon from "./prayerClasses/Antiphon.svelte";
 
-  let proper: Writable<proper> = getContext("forProper");
+  let proper: Readable<proper> = getContext("forProper");
   export let name: string;
   export let max: number = 1;
   export let maxAlt: number = 0;
@@ -37,14 +37,14 @@
   const order = "Weight";
 
   // this needs to be refactored
-  async function loaddata() {
-    const m = new Map();
+  async function loaddata(p: proper): Promise<Map<string, any>> {
+    const m: Map<string, any> = new Map();
 
     // try with caldate
     let q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Calendar Date", "==", $proper.caldate),
+      where("Calendar Date", "==", p.caldate),
       orderBy(order),
       limit(realMax)
     );
@@ -62,10 +62,10 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", $proper.season),
-      where("Proper", "==", $proper.proper),
-      where("Weekday", "==", $proper.weekday),
-      where("Year", "==", $proper.year),
+      where("Season", "==", p.season),
+      where("Proper", "==", p.proper),
+      where("Weekday", "==", p.weekday),
+      where("Year", "==", p.year),
       orderBy(order),
       limit(realMax - m.size)
     );
@@ -83,9 +83,9 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", $proper.season),
-      where("Proper", "==", $proper.proper),
-      where("Weekday", "==", $proper.weekday),
+      where("Season", "==", p.season),
+      where("Proper", "==", p.proper),
+      where("Weekday", "==", p.weekday),
       where("Year", "==", "Any"),
       orderBy(order),
       limit(realMax - m.size)
@@ -104,8 +104,8 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", $proper.season),
-      where("Proper", "==", $proper.proper),
+      where("Season", "==", p.season),
+      where("Proper", "==", p.proper),
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),
       orderBy(order),
@@ -125,9 +125,9 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", $proper.season),
+      where("Season", "==", p.season),
       where("Proper", "==", -1),
-      where("Weekday", "==", $proper.weekday),
+      where("Weekday", "==", p.weekday),
       where("Year", "==", "Any"),
       orderBy(order),
       limit(realMax - m.size)
@@ -146,7 +146,7 @@
     q = query(
       collection(db, "associations"),
       where("Location", "==", name),
-      where("Season", "==", $proper.season),
+      where("Season", "==", p.season),
       where("Proper", "==", -1),
       where("Weekday", "==", -1),
       where("Year", "==", "Any"),
@@ -189,12 +189,14 @@
   }
 </script>
 
-{#await loaddata()}
+{#await loaddata($proper)}
   <Spinner color="primary" />
 {:then data}
-  {#if $showEdit}<div class="edit">
+  {#if $showEdit}
+    <div class="edit">
       <a href="/editlocation/{name}" use:link>Edit {name}</a>
-    </div>{/if}
+    </div>
+  {/if}
   {#if maxAlt > 0 && $showAlt && data.size > 1}
     <Alternatives {data} />
   {:else}
@@ -202,6 +204,4 @@
       <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} />
     {/each}
   {/if}
-{:catch error}
-  <div>{name}: {error.message}</div>
 {/await}

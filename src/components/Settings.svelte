@@ -1,7 +1,7 @@
 <script lang="ts">
   import { showMedia, showEdit, showAlt } from "../model/preferences";
   import { onMount, getContext } from "svelte";
-  import type { Writable } from "svelte/store";
+  import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
 
   import {
@@ -12,7 +12,7 @@
     ListGroup,
     ListGroupItem,
   } from "sveltestrap";
-  let me: Writable<User> = getContext("me");
+  let me: Readable<User> = getContext("me");
 
   // does bind not work?
   onMount(() => {
