@@ -3,7 +3,7 @@ import prayer from "./prayer";
 export default class psalm extends prayer {
   public rubric: string;
 
-  public constructor(obj: any) {
+  public constructor(obj: string) {
     super(obj);
     this.class = obj["Class"] ? obj["Class"] : "psalm";
     this.rubric = obj["Rubric"] ? obj["Rubric"] : "";

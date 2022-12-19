@@ -1,18 +1,40 @@
 <script lang="ts">
   import { collection, query, where, doc } from "firebase/firestore";
-  import { Spinner } from "sveltestrap";
   import { db, getDocCacheFirst, getDocsCacheFirst } from "../firebase";
   import season from "../model/season";
   import Psalm from "./prayerClasses/Psalm.svelte";
   import { toasts } from "svelte-toasts";
-  import { getContext } from "svelte";
+  import { getContext, beforeUpdate } from "svelte";
   import type Proper from "../../types/model/proper";
   import type { Writable } from "svelte/store";
 
   export let office: string;
   let proper: Writable<Proper> = getContext("forProper");
 
-  async function loaddata() {
+  class plClass {
+    id: string;
+    morningpsalm?: string;
+    eveningpsalm?: string;
+    _morningpsalmref?: string;
+    _eveningpsalmref?: string;
+    _resolved?: any; // model/psalm
+
+    constructor(obj: any) {
+      if (obj.id) this.id = obj.id;
+      if (obj.morningpsalm) this.morningpsalm = obj.morningpsalm;
+      if (obj.eveningpsalm) this.eveningpsalm = obj.eveningpsalm;
+      if (obj._morningpsalmref) this._morningpsalmref = obj._morningpsalmref;
+      if (obj._eveningpsalmref) this._eveningpsalmref = obj._eveningpsalmref;
+    }
+  }
+
+  let data: plClass = new plClass({
+    id: "Loading...",
+    morningpsalm: "Psalm 1",
+    eveningpsalm: "Psalm 150",
+  });
+
+  async function loaddata(): Promise<plClass> {
     const s: season = season.LUT.get($proper.season);
 
     const wheres = new Array();
@@ -26,27 +48,24 @@
 
     let res = await getDocsCacheFirst(q);
     if (res.empty)
-      return {
-        morningpsalm: "Lectionary incomplete",
-        _morningpsalm:
-          "<h5>No Psalm set for today, consult the lectionary</h5><br />",
-        eveningpsalm: "Lectionary incomplete",
-        _eveningpsalm:
-          "<h5>No Psalm set for today, consult the lectionary</h5><br />",
-        id: 0,
-      };
+      return new plClass({
+        id: "Empty Result...",
+        morningpsalm: "Psalm 1",
+        eveningpsalm: "Psalm 150",
+      });
+
     if (res.size != 1) {
       toasts.error("Multiple lection matches?!");
       console.log("multiple matches, this should not happen");
     }
-    const d = res.docs[0].data();
+    const d = new plClass(res.docs[0].data());
     d.id = res.docs[0].id;
 
     if (office == "LAUDS" && d._morningpsalmref) {
       try {
         const ps = doc(db, "prayers", d._morningpsalmref);
         const res = await getDocCacheFirst(ps);
-        d._morningpsalmresolved = res.data();
+        d._resolved = res.data();
       } catch (err) {
         console.log(err);
         toasts.error(err.message);
@@ -56,7 +75,7 @@
       try {
         const ps = doc(db, "prayers", d._eveningpsalmref);
         const res = await getDocCacheFirst(ps);
-        d._eveningpsalmresolved = res.data();
+        d._resolved = res.data();
       } catch (err) {
         console.log(err);
         toasts.error(err.message);
@@ -64,30 +83,24 @@
     }
     return d;
   }
+
+  beforeUpdate(async () => {
+    data = await loaddata();
+  });
 </script>
 
-{#await loaddata()}
-  <Spinner color="secondary" />
-{:then data}
-  {#if office == "LAUDS"}
-    {#if data._morningpsalmresolved}
-      <Psalm data={data._morningpsalmresolved} id={data.id} />
-    {:else}
-      <a
-        href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
-      >
-        {data.morningpsalm}
-      </a>
-    {/if}
-  {:else if data._eveningpsalmresolved}
-    <Psalm data={data._eveningpsalmresolved} id={data.id} />
-  {:else}
-    <a
-      href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
-    >
-      {data.eveningpsalm}
-    </a>
-  {/if}
-{:catch error}
-  <div>{error.message}</div>
-{/await}
+{#if data._resolved}
+  <Psalm data={data._resolved} id={data.id} />
+{:else if office == "LAUDS"}
+  <a
+    href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
+    >{data.morningpsalm}</a
+  >
+{:else if office != "LAUDS"}
+  <a
+    href="https://www.biblegateway.com/passage/?search={data.eveningpsalm}&version=NRSVUE"
+    >{data.eveningpsalm}</a
+  >
+{:else}
+  <h5>No Psalm Specified for today</h5>
+{/if}
