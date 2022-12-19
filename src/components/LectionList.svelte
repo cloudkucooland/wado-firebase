@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import {
     Container,
     Row,
@@ -29,36 +29,72 @@
   import { onMount, getContext } from "svelte";
   import { toasts } from "svelte-toasts";
   import { link } from "svelte-spa-router";
+  import lection from "../model/lection";
+  import type { Writable } from "svelte/store";
+  import type User from "../../types/model/user";
 
-  export let params; //  = { y };
+  // @ts-ignore
+  export let params = { y };
   $: year = params.y ? params.y : "A";
-  $: lections = new Map();
-  $: modalData = {};
-  let me = getContext("me");
+  const _ll: Map<string, [proper, lection]> = new Map();
+  $: lections = _ll;
+  let me: Writable<User> = getContext("me");
 
-  async function loadLections(y) {
+  class mdClass {
+    morning?: string;
+    evening?: string;
+    morningtitle?: string;
+    eveningtitle?: string;
+    morningpsalm?: string;
+    eveningpsalm?: string;
+    season?: string;
+    proper?: number;
+    weekday?: number;
+    key?: string;
+    path?: string;
+    _morningpsalmref?: string;
+    _eveningpsalmref?: string;
+
+    constructor(obj: any) {
+      if (obj.morning) this.morning = obj.morning;
+      if (obj.evening) this.evening = obj.evening;
+      if (obj.morningtitle) this.morningtitle = obj.morningtitle;
+      if (obj.eveningtitle) this.eveningtitle = obj.eveningtitle;
+      if (obj.morningpsalm) this.morningpsalm = obj.morningpsalm;
+      if (obj.eveningpsalm) this.eveningpsalm = obj.eveningpsalm;
+      if (obj.season) this.season = obj.season;
+      if (obj.proper) this.proper = obj.proper;
+      if (obj.weekday) this.weekday = obj.weekday;
+      if (obj.key) this.key = obj.key;
+      if (obj.path) this.path = obj.path;
+      if (obj._morningpsalmref) this._morningpsalmref = obj._morningpsalmref;
+      if (obj._eveningpsalmref) this._eveningpsalmref = obj._eveningpsalmref;
+    }
+  }
+  const _md: mdClass = new mdClass({});
+  $: modalData = _md;
+
+  async function loadLections(
+    y: string
+  ): Promise<Map<string, [proper, lection]>> {
     let progressBarString = "starting";
     const progressBar = toasts.success("Loading Data", progressBarString, {
       duration: 0,
     });
 
-    const ay = proper.AllYear(y);
+    const ay: Map<string, proper> = proper.AllYear(y);
+    const out: Map<string, [proper, lection]> = new Map();
+    const empty: lection = new lection({});
 
     let i = 0;
-    for (const [_k, v] of ay) {
-      progressBarString = i;
+    for (const [k, v] of ay) {
+      out.set(k, [v, empty]);
+      progressBarString = i.toString();
       progressBar.update({
         title: "Loading data",
         description: progressBarString,
       });
       i = i + 1;
-
-      v.morning = "";
-      v.evening = "";
-      v.morningpsalm = "";
-      v.eveningpsalm = "";
-      v.morningtitle = "";
-      v.eveningtitle = "";
 
       try {
         const q = query(
@@ -72,22 +108,9 @@
         const res = await getDocs(q);
         for (const a of res.docs) {
           const n = a.data();
-          v.path = a.ref.path;
-          v.morning = n.morning;
-          v.evening = n.evening;
-          v.morningpsalm = n.morningpsalm;
-          v.eveningpsalm = n.eveningpsalm;
-          if (n.morningtitle) v.morningtitle = n.morningtitle;
-          if (n.eveningtitle) v.eveningtitle = n.eveningtitle;
-
-          // get caches if set
-          if (n._morning) v._morning = n._morning;
-          if (n._evening) v._evening = n._evening;
-          if (n._morningpsalm) v._morningpsalm = n._morningpsalm;
-          if (n._eveningpsalm) v._eveningpsalm = n._eveningpsalm;
-          if (n._morningpsalmref) v._morningpsalmref = n._morningpsalmref;
-          if (n._eveningpsalmref) v._eveningpsalmref = n._eveningpsalmref;
-          // ay.set(k, v); // update with data from firestore // needed?
+          const newLection: lection = new lection(n);
+          newLection.path = a.ref.path;
+          out.set(k, [v, newLection]);
         }
       } catch (e) {
         toasts.error(e.message);
@@ -95,7 +118,7 @@
       }
     }
     progressBar.remove();
-    return ay;
+    return out;
   }
 
   onMount(async () => {
@@ -104,35 +127,36 @@
   });
 
   let lectionModalOpen = false;
-  async function toggleLectionModalOpen(e) {
+  async function toggleLectionModalOpen(e: Event): Promise<void> {
     screenView("lectionModalOpen");
     lectionModalOpen = !lectionModalOpen;
 
     // discard the caches, do not copy them here
     if (lectionModalOpen) {
-      const v = lections.get(e.target.value);
-      modalData = {
-        morning: v.morning,
-        evening: v.evening,
-        morningpsalm: v.morningpsalm,
-        eveningpsalm: v.eveningpsalm,
-        morningtitle: v.morningtitle,
-        eveningtitle: v.eveningtitle,
-        season: v.season,
-        proper: v.proper,
-        weekday: v.weekday,
-        path: v.path,
-        key: e.target.value,
-      };
+      const t = e.target as HTMLInputElement;
+      const [p, l] = lections.get(t.value);
+      modalData = new mdClass({
+        morning: l.morning,
+        evening: l.evening,
+        morningpsalm: l.morningpsalm,
+        eveningpsalm: l.eveningpsalm,
+        morningtitle: l.morningtitle,
+        eveningtitle: l.eveningtitle,
+        season: p.season,
+        proper: p.proper,
+        weekday: p.weekday,
+        path: p.path,
+        key: t.value,
+      });
     }
   }
 
-  async function confirmLectionModal() {
+  async function confirmLectionModal(): Promise<void> {
     recordEvent("edit_lection", { key: modalData.key });
     lectionModalOpen = !lectionModalOpen;
 
     // do not write the cached data back, refetch it
-    const data = {
+    const data: mdClass = new mdClass({
       morning: modalData.morning,
       morningpsalm: modalData.morningpsalm,
       morningtitle: modalData.morningtitle,
@@ -142,7 +166,7 @@
       season: modalData.season,
       proper: modalData.proper,
       weekday: modalData.weekday,
-    };
+    });
 
     // try to link to the formatted psalms
     try {
@@ -182,7 +206,9 @@
       console.log(err);
       toasts.error(err.message);
     }
-    lections.set(modalData.key, modalData);
+    const _p: proper = new proper(modalData);
+    const _l: lection = new lection(modalData);
+    lections.set(modalData.key, [_p, _l]);
     toasts.success("lection saved");
     lections = lections;
   }
@@ -194,13 +220,13 @@
 
 <Container>
   <Row>
-    <Col mx="auto">
+    <Col class="mx-auto">
       <h2>Lectionary Editor: Year {year}</h2>
     </Col>
   </Row>
 
   <Row>
-    <Col mx="auto">
+    <Col class="mx-auto">
       <TabContent
         on:tab={async (e) => {
           if (e.detail == year) return;
@@ -218,13 +244,13 @@
   </Row>
 
   <Row>
-    <Col mx="auto">
+    <Col class="mx-auto">
       <div class="my-4">
         <ListGroup class="mb-5 shadow">
           {#each [...lections] as [k, v]}
             <ListGroupItem>
               <Row class="align-items-center">
-                <Col xs="12" mx="auto">
+                <Col xs="12" class="mx-auto">
                   {#if $me.isEditor}
                     <Button
                       color="success"
@@ -239,61 +265,53 @@
               </Row>
               <Row class="align-items-center">
                 <Col xs="2"><strong>Morning Psalm:</strong></Col>
-                {#if v._morningpsalmref}
+                {#if v[1]._morningpsalmref}
                   <Col xs="2"
                     ><em class="text-success"
                       ><a
-                        href="/edit/{v._morningpsalmref}"
+                        href="/edit/{v[1]._morningpsalmref}"
                         target="_blank"
                         use:link
-                        rel="noopener noreferrer">{v.morningpsalm}</a
+                        rel="noopener noreferrer">{v[1].morningpsalm}</a
                       ></em
                     ></Col
                   >
-                {:else if v._morningpsalm}
-                  <Col xs="2"
-                    ><em class="text-warning">{v.morningpsalm}</em></Col
-                  >
                 {:else}
-                  <Col xs="2">{v.morningpsalm}</Col>
+                  <Col xs="2">{v[1].morningpsalm}</Col>
                 {/if}
                 <Col xs="1"><strong>Morning:</strong></Col>
-                {#if v._morning}
-                  <Col xs="2"><em class="text-success">{v.morning}</em></Col>
+                {#if v[1]._morning}
+                  <Col xs="2"><em class="text-success">{v[1].morning}</em></Col>
                 {:else}
-                  <Col xs="2">{v.morning}</Col>
+                  <Col xs="2">{v[1].morning}</Col>
                 {/if}
                 <Col xs="2"><strong>Morning Title:</strong></Col>
-                <Col xs="3">{v.morningtitle}</Col>
+                <Col xs="3">{v[1].morningtitle}</Col>
               </Row>
               <Row class="align-items-center">
                 <Col xs="2"><strong>Evening Psalm:</strong></Col>
-                {#if v._eveningpsalmref}
+                {#if v[1]._eveningpsalmref}
                   <Col xs="2"
                     ><em class="text-success"
                       ><a
-                        href="/edit/{v._eveningpsalmref}"
+                        href="/edit/{v[1]._eveningpsalmref}"
                         use:link
                         target="_blank"
-                        rel="noopener noreferrer">{v.eveningpsalm}</a
+                        rel="noopener noreferrer">{v[1].eveningpsalm}</a
                       ></em
                     ></Col
                   >
-                {:else if v._eveningpsalm}
-                  <Col xs="2"
-                    ><em class="text-warning">{v.eveningpsalm}</em></Col
-                  >
                 {:else}
-                  <Col xs="2">{v.eveningpsalm}</Col>
+                  <Col xs="2">{v[1].eveningpsalm}</Col>
                 {/if}
                 <Col xs="1"><strong>Evening:</strong></Col>
-                {#if v._evening}
-                  <Col xs="2"><em class="text-success">{v.evening}</em></Col>
+                {#if v[1]._evening}
+                  <Col xs="2"><em class="text-success">{v[1].evening}</em></Col>
                 {:else}
-                  <Col xs="2">{v.evening}</Col>
+                  <Col xs="2">{v[1].evening}</Col>
                 {/if}
                 <Col xs="2"><strong>Evening Title:</strong></Col>
-                <Col xs="3">{v.eveningtitle}</Col>
+                <Col xs="3">{v[1].eveningtitle}</Col>
               </Row>
             </ListGroupItem>
           {/each}
@@ -303,15 +321,8 @@
   </Row>
 </Container>
 
-<Modal
-  id="lectionModal"
-  isOpen={lectionModalOpen}
-  {toggleLectionModalOpen}
-  size="xl"
->
-  <ModalHeader {toggleLectionModalOpen}
-    >Edit Lection: {modalData.key}</ModalHeader
-  >
+<Modal id="lectionModal" isOpen={lectionModalOpen} size="xl">
+  <ModalHeader>Edit Lection: {modalData.key}</ModalHeader>
   <ModalBody>
     M Psalm: <Input bind:value={modalData.morningpsalm} />
     M: <Input bind:value={modalData.morning} />
