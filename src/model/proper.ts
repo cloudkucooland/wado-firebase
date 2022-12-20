@@ -394,10 +394,27 @@ export default class proper {
       case "pentecost":
         return "Pentecost";
       case "afterpentecost":
+        const start: Date = new Date(2022, 4, 1, 0, 0, 0);
+        const days: number = (this.proper - 1) * 7;
+        start.setDate(start.getDate() + days);
+        const end: Date = new Date(2022, 4, 1, 0, 0, 0);
+        end.setDate(end.getDate() + days + 7);
+
+        const inclusive: string =
+          this._months[start.getMonth()] +
+          "-" +
+          start.getDate() +
+          " - " +
+          this._months[end.getMonth()] +
+          "-" +
+          end.getDate();
+
         return (
           "Proper " +
           this.proper +
-          "; after Pentecost, " +
+          "; after Pentecost (" +
+          inclusive +
+          "), " +
           this._weekdayDisplay()
         );
       case "trinity":
@@ -486,4 +503,19 @@ export default class proper {
     }
     return ll;
   }
+
+  private _months: Array<string> = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 }
