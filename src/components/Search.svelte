@@ -43,7 +43,7 @@
     const t = e.target as HTMLInputElement;
     try {
       result = await index.search(t.value, {
-        attributesToRetrieve: ["fsid", "Name", "Body"],
+        attributesToRetrieve: ["fsid", "Name", "Body", "Class"],
         filter: [["Class = Prayer", "Class = Hymn", "Class = Antiphon"]],
       });
       toasts.success(
@@ -78,9 +78,10 @@
             <ListGroupItem>
               <Row class="align-items-center">
                 <Col>
-                  <strong class="mb-0"
-                    ><a href="/edit/{r.fsid}" use:link>{r.Name}</a></strong
-                  >
+                  <strong class="mb-0">
+                    <a href="/edit/{r.fsid}" use:link>{r.Name}</a>
+                    <span class="adonai">( {r.Class} )</span>
+                  </strong>
                   <p class="mb-0">{@html r.Body}</p>
                 </Col>
               </Row>
