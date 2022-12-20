@@ -22,5 +22,6 @@ export default class proper {
   private _getSeason;
   get propername(): string;
   private cardToOrd;
-  static AllYear(lectionaryYear: string): Map<any, any>;
+  static AllYear(lectionaryYear: string): Map<string, proper>;
+  private _months;
 }

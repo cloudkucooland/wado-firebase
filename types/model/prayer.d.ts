@@ -1,3 +1,4 @@
+import type { prayerFromFirestore } from "./types";
 export default class prayer {
   name: string;
   body: string;
@@ -8,7 +9,7 @@ export default class prayer {
   author: string;
   media: string;
   class: string;
-  constructor(obj: any);
+  constructor(obj: prayerFromFirestore);
   toFirebase(): {
     Name: string;
     Body: string;

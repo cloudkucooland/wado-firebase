@@ -1,8 +1,9 @@
+import type { prayerFromFirestore } from "./types";
 import prayer from "./prayer";
 export default class hymn extends prayer {
   hymntune: string;
   hymnmeter: string;
-  constructor(obj: any);
+  constructor(obj: prayerFromFirestore);
   toFirebase(): {
     Name: string;
     Body: string;
