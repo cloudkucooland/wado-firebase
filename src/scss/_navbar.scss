@@ -1,9 +1,14 @@
+// see https://github.com/crissdev/bootstrap-scss/blob/master/_navbar.scss
+// https://github.com/crissdev/bootstrap-scss/blob/08cd8aab53654dc7f4c8c6d44e94d657bcd990de/_variables.scss#L1082
+
 .navbar {
   padding-right: 20px;
   padding-left: 5px;
-  padding-top: 0rem !important;
-  padding-bottom: 0rem !important;
   border-bottom: 0rem;
+  $navbar-padding-x: 0rem;
+  // $navbar-dark-hover-color: $secondary;
+  $navbar-brand-padding-y: 0;
+  $navbar-brand-margin-end: 1rem;
 }
 .navbar a {
   font-weight: 700;
@@ -12,11 +17,11 @@
 .navbar a:hover {
   border-bottom: 1px solid $secondary;
 }
-.navbar-brand {
-  padding-top: 0rem;
-  padding-bottom: 0rem;
-  margin-right: 1rem;
-}
+// .navbar-brand {
+//  padding-top: 0rem;
+//  padding-bottom: 0rem;
+//  margin-right: 1rem;
+// }
 .bg-dark {
   // background-color: rgba(var(--bs-dark-rgb),var(--bs-bg-opacity));
 }

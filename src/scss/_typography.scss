@@ -1,7 +1,11 @@
+// https://github.com/crissdev/bootstrap-scss/blob/master/_variables.scss
+
+// define defaults here
 $-wado-font-serif: Georgia, Times, "Times New Roman", Merriweather, serif;
 $-wado-line-height: 1.25em;
 $-wado-margin-bottom: 0.25rem;
 
+// the standard set, overridden by classes below
 @mixin typography($style: roman) {
   font-family: $-wado-font-serif;
   margin-bottom: $-wado-margin-bottom;

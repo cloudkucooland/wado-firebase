@@ -1,42 +1,60 @@
+// see https://github.com/crissdev/bootstrap-scss/blob/master/_variables.scss
+// for the full list of bootstrap variables
+
+// used by bootstrap elements
 $primary: #067966;
+// not used by bootstrap
 $primaryLight: #067957;
 $primaryDark: #064835;
 
+// used
 $secondary: #da0403;
+// not used
 $secondaryLight: #cb183f;
 $secondaryDark: #731b2e;
 
+// used indirectly for $warning below
 $tertiary: #bfa678;
+// not used
 $tertiaryLight: #bfa678;
 $tertiaryDark: #bfa678;
 
+// not used -- probably can be deleted
 $quaternary: #77b82b;
 $quaternaryLight: lighten($quaternary, 5%);
 $quaternaryDark: darken($quaternary, 10%);
 
+// used by bootstrap (I think)
 $text: #3d3d3d;
 $light-text: #ffffff;
 $strong: #000000;
 $dark-text: #37373f;
 
+// used by some WADO classes
 $neutralDarker: #000000;
-$neutrayDark: #000000;
+$neutralDark: #000000;
 $neutral: #3d3d3d;
 $neutralLight: #67686a;
 $neutralLighter: #abacad;
 $neutralLightest: #f2f2f2;
 
+// used by bootstrap
 $orange: #ff6929;
+// probably unused
 $orangeLight: #faad60;
 $orangeDark: #ef4627;
 
+// used by bootstrap
 $green: #067966;
+// probably unused
 $greenLight: #067957;
 $greenDark: #064835;
 
+// dunno
 $white: #ffffff;
 $black: #000000;
 
+// dunno which are used and which not
 $red: #990000;
 $grey: #d8d8d8;
 $yellow: #ffa900;
@@ -46,8 +64,8 @@ $brown: #bfa678;
 $purple: #69089f;
 $gold: palegoldenrod;
 
+// used by bootstrap
 $warning: $tertiary;
 $danger: $secondary;
 $info: $orange;
 $link: $secondary;
-
