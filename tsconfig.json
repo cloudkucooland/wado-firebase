@@ -3,12 +3,14 @@
   "compilerOptions": {
     "isolatedModules": true,
     "types": ["vite/client"],
+    "declaration": true,
     "allowJs": false,
     "checkJs": false,
-    "declaration": true,
     "emitDeclarationOnly": true,
     "outDir": "types",
-    "declarationMap": false
+    "declarationMap": false,
+    "target": "es2020",
+    "module": "esnext"
   },
 
   "include": ["src/**/*.ts", "src/**/*.svelte"],
