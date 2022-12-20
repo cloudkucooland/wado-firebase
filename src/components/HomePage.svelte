@@ -44,7 +44,7 @@
   });
 
   afterUpdate(() => {
-    console.log("after update");
+    // figure out why this double-fires 
     screenView(officeName);
   });
 
@@ -67,7 +67,7 @@
 
 <svelte:window on:scroll|passive|stopPropagation={scrolling} />
 
-<Container class="cover-container mx-auto">
+<Container class="cover-container mx-auto {$forProper.season}">
   <Row>
     <Col xs="10">
       <TabContent

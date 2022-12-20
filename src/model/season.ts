@@ -6,7 +6,6 @@ export default class season {
   public startWeekday: number;
   public maxWeekday: number;
   public desc: string;
-  public color: string;
   public properName: string;
 
   public constructor(obj: any) {
@@ -17,7 +16,6 @@ export default class season {
     this.startWeekday = obj.startWeekday ? obj.startWeekday : 0;
     this.maxWeekday = obj.maxWeekday ? obj.maxWeekday : 0;
     this.desc = obj.desc ? obj.desc : "";
-    this.color = obj.color;
     this.properName = obj.properName ? obj.properName : "Proper";
   }
 
@@ -29,7 +27,6 @@ export default class season {
         churchPos: 0,
         maxProper: 4,
         useWeekdays: true,
-        color: "purple",
       }),
     ],
     [
@@ -39,7 +36,6 @@ export default class season {
         churchPos: 1,
         maxProper: 0,
         useWeekdays: false,
-        color: "purple",
       }),
     ],
     [
@@ -49,7 +45,6 @@ export default class season {
         churchPos: 2,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -59,7 +54,6 @@ export default class season {
         churchPos: 3,
         maxProper: 12,
         useWeekdays: false,
-        color: "white",
         properName: "Day of Christmas",
       }),
     ],
@@ -70,7 +64,6 @@ export default class season {
         churchPos: 5,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -80,7 +73,6 @@ export default class season {
         churchPos: 6,
         maxProper: 6,
         useWeekdays: false,
-        color: "white",
         comment: "Jan 7 to Epiphany-1-Sunday",
       }),
     ],
@@ -92,7 +84,6 @@ export default class season {
         maxProper: 10,
         maxWeekday: 2,
         useWeekdays: true,
-        color: "green",
       }),
     ],
     [
@@ -102,7 +93,6 @@ export default class season {
         churchPos: 8,
         maxProper: 0,
         useWeekdays: false,
-        color: "purple",
       }),
     ],
     [
@@ -112,7 +102,6 @@ export default class season {
         churchPos: 9,
         maxProper: 0,
         useWeekdays: false,
-        color: "black",
       }),
     ],
     [
@@ -124,7 +113,6 @@ export default class season {
         useWeekdays: true,
         startWeekday: 4,
         maxWeekday: 6,
-        color: "purple",
       }),
     ],
     [
@@ -134,7 +122,6 @@ export default class season {
         churchPos: 11,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -146,7 +133,6 @@ export default class season {
         useWeekdays: true,
         startWeekday: 1,
         maxWeekday: 3,
-        color: "white",
       }),
     ],
     [
@@ -156,7 +142,6 @@ export default class season {
         churchPos: 13,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -166,7 +151,6 @@ export default class season {
         churchPos: 14,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -176,7 +160,6 @@ export default class season {
         churchPos: 15,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -186,7 +169,6 @@ export default class season {
         churchPos: 16,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -196,7 +178,6 @@ export default class season {
         churchPos: 17,
         maxProper: 7,
         useWeekdays: true,
-        color: "white",
       }),
     ],
     [
@@ -206,7 +187,6 @@ export default class season {
         churchPos: 18,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -216,7 +196,6 @@ export default class season {
         churchPos: 19,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -226,7 +205,6 @@ export default class season {
         churchPos: 20,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -236,7 +214,6 @@ export default class season {
         churchPos: 21,
         maxProper: 0,
         useWeekdays: false,
-        color: "red",
       }),
     ],
     [
@@ -246,7 +223,6 @@ export default class season {
         churchPos: 22,
         maxProper: 25,
         useWeekdays: true,
-        color: "red",
       }),
     ],
     [
@@ -256,7 +232,6 @@ export default class season {
         churchPos: 23,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -266,7 +241,6 @@ export default class season {
         churchPos: 24,
         maxProper: 0,
         useWeekdays: false,
-        color: "white",
       }),
     ],
     [
@@ -276,7 +250,6 @@ export default class season {
         churchPos: 256,
         maxProper: 0,
         useWeekdays: true,
-        color: "green",
       }),
     ],
   ]);

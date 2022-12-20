@@ -9,6 +9,7 @@
   @import "./scss/block";
   @import "./scss/navbar";
   @import "./scss/typography";
+  @import "./scss/season";
   // $prefix "wado-"
   $enable-shadows: true;
   .adonai {
