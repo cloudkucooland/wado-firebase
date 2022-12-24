@@ -6,6 +6,7 @@
   import Prayer from "./prayerClasses/Prayer.svelte";
   import Psalm from "./prayerClasses/Psalm.svelte";
   import Antiphon from "./prayerClasses/Antiphon.svelte";
+  import type { prayerFromFirestore } from "../model/types";
 
   export const lookup = new Map([
     ["heartwords", Heartwords],
@@ -16,7 +17,7 @@
     ["antiphon", Antiphon],
   ]);
 
-  export let data: Map<string, any>; // any should be a prayer class
+  export let data: Map<string, prayerFromFirestore>;
 
   // this needs to be redone properly
   let isA: number = 0;
@@ -42,9 +43,9 @@
 </script>
 
 <TabContent>
-  {#each [...data] as [k, d]}
-    <TabPane tabId={k} tab={shortname(d.Name)} active={isActive()}>
-      <svelte:component this={lookup.get(d.Class)} data={d} id={k} />
+  {#each [...data] as [id, d]}
+    <TabPane tabId={id} tab={shortname(d.Name)} active={isActive()}>
+      <svelte:component this={lookup.get(d.Class)} data={d} {id} />
     </TabPane>
   {/each}
 </TabContent>

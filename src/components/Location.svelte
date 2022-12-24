@@ -14,6 +14,7 @@
   import Prayer from "./prayerClasses/Prayer.svelte";
   import Psalm from "./prayerClasses/Psalm.svelte";
   import Antiphon from "./prayerClasses/Antiphon.svelte";
+  import type { prayerFromFirestore } from "../model/types";
 
   let proper: Readable<proper> = getContext("forProper");
   export let name: string;
@@ -37,8 +38,10 @@
   const order = "Weight";
 
   // this needs to be refactored
-  async function loaddata(p: proper): Promise<Map<string, any>> {
-    const m: Map<string, any> = new Map();
+  async function loaddata(
+    p: proper
+  ): Promise<Map<string, prayerFromFirestore>> {
+    const m: Map<string, prayerFromFirestore> = new Map();
 
     // try with caldate
     let q = query(
@@ -52,7 +55,7 @@
     let res = await getDocsCacheFirst(q);
     for (const a of res.docs) {
       const doc = await getDocCacheFirst(a.data().Reference);
-      m.set(doc.id, doc.data());
+      m.set(doc.id, doc.data() as prayerFromFirestore);
     }
     if (m.size >= realMax) {
       return m;
@@ -74,7 +77,7 @@
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
-      m.set(doc.id, doc.data());
+      m.set(doc.id, doc.data() as prayerFromFirestore);
     }
     if (m.size >= realMax) {
       return m;
@@ -95,7 +98,7 @@
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
-      m.set(doc.id, doc.data());
+      m.set(doc.id, doc.data() as prayerFromFirestore);
     }
     if (m.size >= realMax) {
       return m;
@@ -116,7 +119,7 @@
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
-      m.set(doc.id, doc.data());
+      m.set(doc.id, doc.data() as prayerFromFirestore);
     }
     if (m.size >= realMax) {
       return m;
@@ -137,7 +140,7 @@
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
-      m.set(doc.id, doc.data());
+      m.set(doc.id, doc.data() as prayerFromFirestore);
     }
     if (m.size >= realMax) {
       return m;
@@ -158,7 +161,7 @@
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
-      m.set(doc.id, doc.data());
+      m.set(doc.id, doc.data() as prayerFromFirestore);
     }
     if (m.size >= realMax) {
       return m;
@@ -180,7 +183,7 @@
     for (const a of res.docs) {
       if (a.data().CalendarDate != "Any") continue;
       const doc = await getDocCacheFirst(a.data().Reference);
-      m.set(doc.id, doc.data());
+      m.set(doc.id, doc.data() as prayerFromFirestore);
     }
 
     if (m.size == 0) console.debug("no results found for", name);
@@ -200,8 +203,8 @@
   {#if maxAlt > 0 && $showAlt && data.size > 1}
     <Alternatives {data} />
   {:else}
-    {#each [...data] as [k, d]}
-      <svelte:component this={lookup.get(d.Class)} data={d} id={k} {bold} />
+    {#each [...data] as [id, d]}
+      <svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} />
     {/each}
   {/if}
 {:catch error}
