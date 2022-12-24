@@ -39,22 +39,12 @@
   import EditAssoc from "./EditAssoc.svelte";
 
   import CKEditor from "ckeditor5-svelte";
-  import DecoupledEditor from "@ckeditor/ckeditor5-build-decoupled-document/build/ckeditor";
+  import ClassicEditor from "@ckeditor/ckeditor5-build-classic/build/ckeditor";
 
-  const editor = DecoupledEditor;
+  const editor = ClassicEditor;
   const editorConfig = {
     toolbar: {
-      items: [
-        "bold",
-        "italic",
-        "underline",
-        "|",
-        "outdent",
-        "indent",
-        "|",
-        "undo",
-        "redo",
-      ],
+      items: ["bold", "italic", "|", "outdent", "indent", "|", "undo", "redo"],
     },
   };
 
