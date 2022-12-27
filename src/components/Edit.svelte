@@ -38,15 +38,13 @@
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
 
-  import CKEditor from "ckeditor5-svelte";
-  import ClassicEditor from "@ckeditor/ckeditor5-build-classic/build/ckeditor";
-
-  const editor = ClassicEditor;
-  const editorConfig = {
-    toolbar: {
-      items: ["bold", "italic", "|", "outdent", "indent", "|", "undo", "redo"],
-    },
-  };
+  import {
+    createEditor,
+    Editor,
+    EditorContent,
+    BubbleMenu,
+  } from "svelte-tiptap";
+  import StarterKit from "@tiptap/starter-kit";
 
   import association from "../model/association";
   import prayer from "../model/prayer";
@@ -55,6 +53,8 @@
   import type Antiphon from "../../types/model/antiphon";
 
   let me: Readable<User> = getContext("me");
+  let editor: Readable<Editor>;
+
   // @ts-ignore
   export let params = { id };
   const id: string = params.id ? params.id : "exnihilo";
@@ -184,6 +184,7 @@
     recordEvent("save_prayer", { id: id });
 
     try {
+      prayerData.body = $editor.getHTML();
       prayerData.lastEditor = auth.currentUser.displayName;
       prayerData.lastEdited = new Date().toISOString();
       await setDoc(doc(db, "prayers", id), prayerData.toFirebase());
@@ -194,19 +195,13 @@
     }
   }
 
-  function onReady({ detail: editor }): void {
-    // Insert the toolbar before the editable area.
-    editor.ui
-      .getEditableElement()
-      .parentElement.insertBefore(
-        editor.ui.view.toolbar.element,
-        editor.ui.getEditableElement()
-      );
-  }
-
   onMount(async () => {
     screenView("Edit Prayer");
     await loadPrayer();
+    editor = createEditor({
+      extensions: [StarterKit],
+      content: prayerData.body,
+    });
   });
 </script>
 
@@ -240,12 +235,15 @@
             </Row>
             <Row>
               <Col sm="12">
-                <CKEditor
-                  {editor}
-                  on:ready={onReady}
-                  config={editorConfig}
-                  bind:value={prayerData.body}
-                />
+                {#if $me.isEditor}
+                  <Button size="sm" color="secondary" on:click={$editor.chain().focus().toggleBold().run()}>Bold</Button>
+                  <Button size="sm" color="secondary" on:click={$editor.chain().focus().toggleItalic().run()}>Italic</Button>
+                  <Button size="sm" color="secondary" on:click={$editor.chain().focus().toggleUnderline().run()}>Underline</Button>
+                  <EditorContent editor={$editor} />
+                  {#if $editor}<BubbleMenu editor={$editor} />{/if}
+                {:else}
+                  <p>{@html prayerData.body}</p>
+                {/if}
               </Col>
             </Row>
             {#if prayerData.class == "hymn"}
