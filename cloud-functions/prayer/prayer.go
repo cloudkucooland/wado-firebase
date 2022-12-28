@@ -7,10 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"cloud.google.com/go/firestore"
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
-	firebase "firebase.google.com/go/v4"
 
 	"github.com/meilisearch/meilisearch-go"
 )
@@ -54,24 +52,11 @@ type PrayerData struct {
 	} `json:"Hymn Tune"`
 }
 
-var projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
 var meilihost = os.Getenv("MEILI_HOST")
-var client *firestore.Client
 var meili *meilisearch.Client
 
 func init() {
-	conf := &firebase.Config{ProjectID: projectID}
 	ctx := context.Background()
-
-	app, err := firebase.NewApp(ctx, conf)
-	if err != nil {
-		log.Fatalf("firebase.NewApp: %v", err)
-	}
-
-	client, err = app.Firestore(ctx)
-	if err != nil {
-		log.Fatalf("app.Firestore: %v", err)
-	}
 
 	if meilihost == "" {
 		meilihost = "https://saint-luke.net:7700"
