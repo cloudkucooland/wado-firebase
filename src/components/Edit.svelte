@@ -236,9 +236,24 @@
             <Row>
               <Col sm="12">
                 {#if $me.isEditor}
-                  <Button size="sm" color="secondary" on:click={$editor.chain().focus().toggleBold().run()}>Bold</Button>
-                  <Button size="sm" color="secondary" on:click={$editor.chain().focus().toggleItalic().run()}>Italic</Button>
-                  <Button size="sm" color="secondary" on:click={$editor.chain().focus().toggleUnderline().run()}>Underline</Button>
+                  <Button
+                    size="sm"
+                    color="secondary"
+                    on:click={$editor.chain().focus().toggleBold().run()}
+                    >Bold</Button
+                  >
+                  <Button
+                    size="sm"
+                    color="secondary"
+                    on:click={$editor.chain().focus().toggleItalic().run()}
+                    >Italic</Button
+                  >
+                  <Button
+                    size="sm"
+                    color="secondary"
+                    on:click={$editor.chain().focus().toggleUnderline().run()}
+                    >Underline</Button
+                  >
                   <EditorContent editor={$editor} />
                   {#if $editor}<BubbleMenu editor={$editor} />{/if}
                 {:else}
