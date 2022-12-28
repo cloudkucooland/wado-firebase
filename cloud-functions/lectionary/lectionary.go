@@ -102,6 +102,9 @@ func GetOremus(ctx context.Context, e FirestoreLectionEvent) error {
 	// update the psalm references if they are empty
 	if e.Value.Fields.MorningPsalmRef.StringValue == "" {
 		mpref, err := psalmRef(ctx, e.Value.Fields.MorningPsalm.StringValue)
+		if err != nil {
+			log.Fatalf("Set MPRef: %v", err)
+		}
 		_, err = doc.Set(ctx, map[string]interface{}{"_morningpsalmref": mpref}, firestore.MergeAll)
 		if err != nil {
 			log.Fatalf("Set MPRef: %v", err)
@@ -110,6 +113,9 @@ func GetOremus(ctx context.Context, e FirestoreLectionEvent) error {
 
 	if e.Value.Fields.EveningPsalmRef.StringValue == "" {
 		epref, err := psalmRef(ctx, e.Value.Fields.EveningPsalm.StringValue)
+		if err != nil {
+			log.Fatalf("Set EPRef: %v", err)
+		}
 		_, err = doc.Set(ctx, map[string]interface{}{"_eveningpsalmref": epref}, firestore.MergeAll)
 		if err != nil {
 			log.Fatalf("Set EPRef: %v", err)
