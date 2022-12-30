@@ -33,7 +33,7 @@ export default class season {
       "christmaseve",
       new season({
         name: "christmaseve",
-        churchPos: 1,
+        churchPos: 5,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -42,7 +42,7 @@ export default class season {
       "christmasday",
       new season({
         name: "christmasday",
-        churchPos: 2,
+        churchPos: 10,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -51,7 +51,7 @@ export default class season {
       "christmas",
       new season({
         name: "christmas",
-        churchPos: 3,
+        churchPos: 15,
         maxProper: 12,
         useWeekdays: false,
         properName: "Day of Christmas",
@@ -61,7 +61,7 @@ export default class season {
       "epiphany",
       new season({
         name: "epiphany",
-        churchPos: 5,
+        churchPos: 20,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -70,7 +70,7 @@ export default class season {
       "baptismoflord",
       new season({
         name: "baptismoflord",
-        churchPos: 6,
+        churchPos: 25,
         maxProper: 6,
         useWeekdays: false,
         comment: "Jan 7 to Epiphany-1-Sunday",
@@ -80,7 +80,7 @@ export default class season {
       "afterepiphany",
       new season({
         name: "afterepiphany",
-        churchPos: 7,
+        churchPos: 30,
         maxProper: 10,
         maxWeekday: 2,
         useWeekdays: true,
@@ -90,7 +90,7 @@ export default class season {
       "mardigras",
       new season({
         name: "mardigras",
-        churchPos: 8,
+        churchPos: 35,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -99,7 +99,7 @@ export default class season {
       "ashwednesday",
       new season({
         name: "ashwednesday",
-        churchPos: 9,
+        churchPos: 40,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -108,7 +108,7 @@ export default class season {
       "lent",
       new season({
         name: "lent",
-        churchPos: 10,
+        churchPos: 45,
         maxProper: 6,
         useWeekdays: true,
         startWeekday: 4,
@@ -119,7 +119,7 @@ export default class season {
       "palmsunday",
       new season({
         name: "palmsunday",
-        churchPos: 11,
+        churchPos: 50,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -128,7 +128,7 @@ export default class season {
       "holyweek",
       new season({
         name: "holyweek",
-        churchPos: 12,
+        churchPos: 55,
         maxProper: 1,
         useWeekdays: true,
         startWeekday: 1,
@@ -139,7 +139,7 @@ export default class season {
       "maundythursday",
       new season({
         name: "maundythursday",
-        churchPos: 13,
+        churchPos: 60,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -148,7 +148,7 @@ export default class season {
       "goodfriday",
       new season({
         name: "goodfriday",
-        churchPos: 14,
+        churchPos: 65,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -157,7 +157,7 @@ export default class season {
       "holysaturday",
       new season({
         name: "holysaturday",
-        churchPos: 15,
+        churchPos: 70,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -166,7 +166,7 @@ export default class season {
       "easter",
       new season({
         name: "easter",
-        churchPos: 16,
+        churchPos: 75,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -175,7 +175,7 @@ export default class season {
       "greatfifty",
       new season({
         name: "greatfifty",
-        churchPos: 17,
+        churchPos: 80,
         maxProper: 7,
         useWeekdays: true,
       }),
@@ -184,7 +184,7 @@ export default class season {
       "ascensioneve",
       new season({
         name: "ascensioneve",
-        churchPos: 18,
+        churchPos: 85,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -193,7 +193,7 @@ export default class season {
       "ascension",
       new season({
         name: "ascension",
-        churchPos: 19,
+        churchPos: 90,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -202,7 +202,7 @@ export default class season {
       "pentecosteve",
       new season({
         name: "pentecosteve",
-        churchPos: 20,
+        churchPos: 95,
         maxProper: 0,
         useWeekdays: false,
       }),
@@ -211,17 +211,8 @@ export default class season {
       "pentecost",
       new season({
         name: "pentecost",
-        churchPos: 21,
+        churchPos: 100,
         maxProper: 0,
-        useWeekdays: false,
-      }),
-    ],
-    [
-      "afterpentecost",
-      new season({
-        name: "afterpentecost",
-        churchPos: 22,
-        maxProper: 25,
         useWeekdays: true,
       }),
     ],
@@ -229,16 +220,25 @@ export default class season {
       "trinity",
       new season({
         name: "trinity",
-        churchPos: 23,
+        churchPos: 110,
         maxProper: 0,
-        useWeekdays: false,
+        useWeekdays: true,
+      }),
+    ],
+    [
+      "afterpentecost",
+      new season({
+        name: "afterpentecost",
+        churchPos: 200,
+        maxProper: 25,
+        useWeekdays: true,
       }),
     ],
     [
       "christking",
       new season({
         name: "christking",
-        churchPos: 24,
+        churchPos: 250,
         maxProper: 0,
         useWeekdays: false,
       }),

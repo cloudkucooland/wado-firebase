@@ -24,8 +24,6 @@ export default class proper {
     this.weekday = typeof inObj.weekday != "undefined" ? inObj.weekday : -1;
     this.year = inObj.year ? inObj.year : "Any";
 
-    if (this.season == "beforeadvent") this.season = "afterpentecost";
-
     if (!season.LUT.has(this.season)) {
       console.error("invalid season", this.season);
       throw new Error("invalid season");
@@ -106,21 +104,8 @@ export default class proper {
       christking = this._addDays(christking, 7 - christking.getDay());
     }
 
-    // afterpentecost propers start the first Sunday after May 1
-    let proper1 = new Date(year, 4, 2, 0, 0, 0);
-    if (proper1.getDay() != 0) {
-      proper1 = this._addDays(proper1, 7 - proper1.getDay());
-    }
-
-    // if Trinity Sunday falls before May 22...
-    let trinity = this._addDays(easter, 56);
-    let proper0 = new Date(year, 4, 22, 0, 0, 0);
-    if (proper0.getDay() != 0) {
-      proper0 = this._addDays(proper0, 7 - proper0.getDay());
-    }
-    if (trinity < proper0) {
-      console.log("use proper-zero season");
-    }
+    // the earliest Trinity Sunday can possibly be is May 17 (1818 and 2285)
+    // week 0 happens when Trinity Sunday falls between May 17 and May 22
 
     this._feasts = new Map<string, Date>([
       ["easter", easter],
@@ -137,12 +122,10 @@ export default class proper {
       ["ascensioneve", this._addDays(easter, 38)],
       ["ascension", this._addDays(easter, 39)],
       ["pentecost", this._addDays(easter, 49)],
-      ["trinity", trinity],
+      ["trinity", this._addDays(easter, 56)],
       ["stluke", new Date(year, 9, 18, 0, 0, 0)],
 
-      // when "proper 1" starts: first Sunday after May 1
-      ["proper0", proper0],
-      ["proper1", proper1],
+      ["proper0", new Date(year, 4, 17, 0, 0, 0)],
 
       // First Sunday after Jan 6 */
       ["sundayafterepi", sundayafterepi],
@@ -269,18 +252,19 @@ export default class proper {
       this.season = "pentecost";
       this.proper = 0;
     } else if (t > f("pentecost") && t < f("trinity")) {
-      this.season = "afterpentecost";
-      const daysafterp =
-        this.getDayOfYear(forday) - (this._fdoy("proper1") + 1);
-      this.proper = Math.floor(daysafterp / 7) + 1;
-    } else if (t >= f("trinity") && t < f("trinity") + nextday) {
+      this.season = "pentecost";
+      this.proper = 0;
+    } else if (t >= f("trinity") && t < f("trinity") + nextday * 6) {
       this.season = "trinity";
       this.proper = 0;
-    } else if (t > f("trinity") && t < f("christking")) {
+    } else if (
+      t >= f("trinity") + nextday * 6 &&
+      t >= f("proper0") &&
+      t < f("christking")
+    ) {
       this.season = "afterpentecost";
-      const daysafterp =
-        this.getDayOfYear(forday) - (this._fdoy("proper1") + 1);
-      this.proper = Math.floor(daysafterp / 7) + 1;
+      const pd = this.getDayOfYear(forday) - (this._fdoy("proper0") + 1);
+      this.proper = Math.floor(pd / 7);
     } else if (t >= f("christking") && t < f("christking") + nextday) {
       this.season = "christking";
       this.proper = 0;
@@ -320,8 +304,6 @@ export default class proper {
   }
 
   get propername(): string {
-    if (this.season == "beforeadvent") this.season = "afterpentecost";
-
     if (!this.season || !season.LUT.has(this.season)) {
       console.error("invalid season", this);
       return "unknown";
@@ -392,13 +374,15 @@ export default class proper {
       case "pentecosteve":
         return "Pentecost Eve";
       case "pentecost":
-        return "Pentecost";
+        return "Pentecost (" + this._weekdayDisplay() + ")";
+      case "trinity":
+        return "Trinity " + this._weekdayDisplay();
       case "afterpentecost":
-        const start: Date = new Date(2022, 4, 1, 0, 0, 0);
+        const start: Date = new Date(1818, 4, 22, 0, 0, 0); // 1818 is earliest easter
         const days: number = (this.proper - 1) * 7;
         start.setDate(start.getDate() + days);
-        const end: Date = new Date(2022, 4, 1, 0, 0, 0);
-        end.setDate(end.getDate() + days + 7);
+        const end: Date = new Date(1818, 4, 22, 0, 0, 0);
+        end.setDate(end.getDate() + days + 6);
 
         const inclusive: string =
           this._months[start.getMonth()] +
@@ -417,8 +401,6 @@ export default class proper {
           "), " +
           this._weekdayDisplay()
         );
-      case "trinity":
-        return "Trinity Sunday";
       case "christking":
         return "Christ the King Sunday";
     }
@@ -453,6 +435,8 @@ export default class proper {
     return lut.get(card);
   }
 
+  // return a map with every possible proper keyed by the proper's friendly name
+  // used to generate lectionary lists
   public static AllYear(lectionaryYear: string): Map<string, proper> {
     const ll: Map<string, proper> = new Map();
 
@@ -463,13 +447,27 @@ export default class proper {
       const obj: any = { year: lectionaryYear, season: v.name };
 
       // one-day "season"
-      if (v.maxProper == 0) {
+      if (v.maxProper == 0 && !v.useWeekdays) {
         const p = new proper(obj);
         ll.set(p.propername, p);
         continue;
       }
 
+      if (v.maxProper == 0 && v.useWeekdays) {
+        let d: number = v.startWeekday;
+        while (d <= 6 + v.startWeekday) {
+          obj.proper = 0;
+          obj.weekday = d % 7;
+          const p = new proper(obj);
+          ll.set(p.propername, p);
+          d = d + 1;
+        }
+        continue;
+      }
+
       let i: number = 1;
+      if (v.name == "afterpentecost") i = 0; // afteradvent has proper0 in vary rare years
+
       while (i <= v.maxProper) {
         // exceptions go here
         if (v.name == "christmas" && i == 1) {
@@ -482,8 +480,9 @@ export default class proper {
         if (v.useWeekdays) {
           // Most seasons start on Monday, except for lent, which counts from Wednesdays
           let d: number = v.startWeekday;
+
+          // assenctioneve and other eves
           if (v.name == "greatfifty" && i == 1) d = 1; // do not display Easter twice, otherwise greatfifty is normal
-          if (v.name == "afterpentecost" && i == 1) d = 1; // do not display Pentecost twice, otherwise afterpentecost is normal
 
           while (d <= 6 + v.startWeekday) {
             // for seasons that END on a day other than Sunday (Ordinary after Epiphany)
