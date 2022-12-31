@@ -378,7 +378,15 @@ export default class proper {
       case "trinity":
         return "Trinity " + this._weekdayDisplay();
       case "afterpentecost":
-        const start: Date = new Date(1818, 4, 22, 0, 0, 0); // 1818 is earliest easter
+        if (this.weekday != 0)
+          return (
+            "Proper " +
+            this.proper +
+            " after Pentecost: " +
+            this._weekdayDisplay()
+          );
+
+        const start: Date = new Date(1818, 4, 22, 0, 0, 0); // 1818 is earliest Easter
         const days: number = (this.proper - 1) * 7;
         start.setDate(start.getDate() + days);
         const end: Date = new Date(1818, 4, 22, 0, 0, 0);
@@ -396,10 +404,11 @@ export default class proper {
         return (
           "Proper " +
           this.proper +
-          "; after Pentecost (" +
+          " after Pentecost: " +
+          this._weekdayDisplay() +
+          " (between " +
           inclusive +
-          "), " +
-          this._weekdayDisplay()
+          ")"
         );
       case "christking":
         return "Christ the King Sunday";
@@ -446,15 +455,16 @@ export default class proper {
 
       const obj: any = { year: lectionaryYear, season: v.name };
 
-      // one-day "season"
+      // one-day "seasons"
       if (v.maxProper == 0 && !v.useWeekdays) {
         const p = new proper(obj);
         ll.set(p.propername, p);
         continue;
       }
 
+      // week-of "seasons" -- need to move some others to this way of doing things (Christmas?)
       if (v.maxProper == 0 && v.useWeekdays) {
-        let d: number = v.startWeekday;
+        let d: number = 0;
         while (d <= 6 + v.startWeekday) {
           obj.proper = 0;
           obj.weekday = d % 7;
@@ -466,7 +476,9 @@ export default class proper {
       }
 
       let i: number = 1;
-      if (v.name == "afterpentecost") i = 0; // afteradvent has proper0 in vary rare years
+      // afteradvent has proper0 in vary rare years
+      // this triggers -1 in the object creation, need to rework the logic carefully
+      // if (v.name == "afterpentecost") i = 0;
 
       while (i <= v.maxProper) {
         // exceptions go here
