@@ -63,8 +63,18 @@
       if (obj.morningpsalm) this.morningpsalm = obj.morningpsalm;
       if (obj.eveningpsalm) this.eveningpsalm = obj.eveningpsalm;
       if (obj.season) this.season = obj.season;
-      if (obj.proper) this.proper = obj.proper;
-      if (obj.weekday) this.weekday = obj.weekday;
+      if (typeof obj.proper == "number") {
+        this.proper = obj.proper;
+      } else {
+        console.debug("forcing proper");
+        obj.proper = 0;
+      }
+      if (typeof obj.weekday == "number") {
+        this.weekday = obj.weekday;
+      } else {
+        console.debug("forcing weekday");
+        obj.weekday = 0;
+      }
       if (obj.key) this.key = obj.key;
       if (obj.path) this.path = obj.path;
       if (obj._morningpsalmref) this._morningpsalmref = obj._morningpsalmref;
@@ -134,6 +144,7 @@
     // discard the caches, do not copy them here
     if (lectionModalOpen) {
       const t = e.target as HTMLInputElement;
+      console.debug(t.value);
       const [p, l] = lections.get(t.value);
       modalData = new mdClass({
         morning: l.morning,
@@ -149,6 +160,7 @@
         key: t.value,
       });
     }
+    console.debug(modalData);
   }
 
   async function confirmLectionModal(): Promise<void> {
@@ -166,10 +178,9 @@
       eveningtitle: modalData.eveningtitle,
       season: modalData.season,
       proper: modalData.proper,
+      weekday: modalData.weekday,
     };
-
-    // @ts-ignore
-    if (modalData.weekday) data.weekday = modalData.weekday;
+    console.debug("to bare object", data);
 
     // try to link to the formatted psalms
     try {
@@ -200,6 +211,7 @@
     }
 
     // send to firestore
+    console.debug("after refs", data);
     try {
       if (modalData.path == "" || typeof modalData.path == "undefined") {
         const added = await addDoc(collection(db, "lections", year, "l"), data);
@@ -207,15 +219,16 @@
       } else {
         await setDoc(doc(db, modalData.path), data);
       }
+      const _p: proper = new proper(modalData);
+      const _l: lection = new lection(modalData);
+      console.debug(_p, _l);
+      lections.set(modalData.key, [_p, _l]);
+      toasts.success("lection saved");
+      lections = lections; // force svelte update
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
     }
-    const _p: proper = new proper(modalData);
-    const _l: lection = new lection(modalData);
-    lections.set(modalData.key, [_p, _l]);
-    toasts.success("lection saved");
-    lections = lections;
   }
 </script>
 
