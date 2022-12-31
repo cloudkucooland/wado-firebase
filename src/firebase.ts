@@ -1,5 +1,5 @@
 import { initializeApp, registerVersion } from "firebase/app";
-import { getAnalytics, logEvent } from "firebase/analytics";
+import { type Analytics, getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import {
@@ -32,7 +32,7 @@ registerVersion("WADO", "2.0");
 export const auth = getAuth(app);
 export let db = getFirestore(app);
 export const storage = getStorage();
-let analytics: any;
+let analytics: Analytics;
 let _analyticsRunning: boolean = false;
 
 // make this callable from the browser's js console
