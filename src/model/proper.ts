@@ -127,6 +127,9 @@ export default class proper {
 
       ["proper0", new Date(year, 4, 17, 0, 0, 0)],
 
+      // break between afterpentecost and beforeadvent
+      ["sept4", new Date(year, 8, 1, 0, 0, 0)],
+
       // First Sunday after Jan 6 */
       ["sundayafterepi", sundayafterepi],
 
@@ -260,16 +263,20 @@ export default class proper {
     } else if (
       t >= f("trinity") + nextday * 6 &&
       t >= f("proper0") &&
-      t < f("christking")
+      t < f("sept4")
     ) {
       this.season = "afterpentecost";
       const pd = this.getDayOfYear(forday) - (this._fdoy("proper0") + 1);
+      this.proper = Math.floor(pd / 7);
+    } else if (t >= f("sept4") && t < f("christking")) {
+      this.season = "beforeadvent";
+      const pd = this.getDayOfYear(forday) - (this._fdoy("sept4") + 1);
       this.proper = Math.floor(pd / 7);
     } else if (t >= f("christking") && t < f("christking") + nextday) {
       this.season = "christking";
       this.proper = 0;
     } else if (t > f("christking") && t < f("advent")) {
-      this.season = "afterpentecost";
+      this.season = "beforeadvent";
       const daysafterp =
         this.getDayOfYear(forday) - (this._fdoy("pentecost") + 1);
       this.proper = Math.floor(daysafterp / 7) + 1;
@@ -385,31 +392,67 @@ export default class proper {
             " after Pentecost: " +
             this._weekdayDisplay()
           );
+        {
+          const start: Date = new Date(1818, 4, 22, 0, 0, 0); // 1818 is earliest Easter
+          const days: number = (this.proper - 1) * 7;
+          start.setDate(start.getDate() + days);
+          const end: Date = new Date(1818, 4, 22, 0, 0, 0);
+          end.setDate(end.getDate() + days + 6);
 
-        const start: Date = new Date(1818, 4, 22, 0, 0, 0); // 1818 is earliest Easter
-        const days: number = (this.proper - 1) * 7;
-        start.setDate(start.getDate() + days);
-        const end: Date = new Date(1818, 4, 22, 0, 0, 0);
-        end.setDate(end.getDate() + days + 6);
+          const inclusive: string =
+            this._months[start.getMonth()] +
+            "-" +
+            start.getDate() +
+            " - " +
+            this._months[end.getMonth()] +
+            "-" +
+            end.getDate();
 
-        const inclusive: string =
-          this._months[start.getMonth()] +
-          "-" +
-          start.getDate() +
-          " - " +
-          this._months[end.getMonth()] +
-          "-" +
-          end.getDate();
+          return (
+            "Proper " +
+            this.proper +
+            " after Pentecost: " +
+            this._weekdayDisplay() +
+            " (between " +
+            inclusive +
+            ")"
+          );
+        }
+      case "beforeadvent":
+        if (this.weekday != 0)
+          return (
+            "Proper " +
+            this.proper +
+            " before Advent: " +
+            this._weekdayDisplay()
+          );
 
-        return (
-          "Proper " +
-          this.proper +
-          " after Pentecost: " +
-          this._weekdayDisplay() +
-          " (between " +
-          inclusive +
-          ")"
-        );
+        {
+          const start: Date = new Date(2022, 8, 4, 0, 0, 0);
+          const days: number = (this.proper - 1) * 7;
+          start.setDate(start.getDate() + days);
+          const end: Date = new Date(2022, 8, 10, 0, 0, 0);
+          end.setDate(end.getDate() + days);
+
+          const inclusive: string =
+            this._months[start.getMonth()] +
+            "-" +
+            start.getDate() +
+            " - " +
+            this._months[end.getMonth()] +
+            "-" +
+            end.getDate();
+
+          return (
+            "Proper " +
+            this.proper +
+            " before Advent: " +
+            this._weekdayDisplay() +
+            " (between " +
+            inclusive +
+            ")"
+          );
+        }
       case "christking":
         return "Christ the King Sunday";
     }

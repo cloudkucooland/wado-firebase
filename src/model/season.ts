@@ -230,7 +230,16 @@ export default class season {
       new season({
         name: "afterpentecost",
         churchPos: 200,
-        maxProper: 25,
+        maxProper: 15,
+        useWeekdays: true,
+      }),
+    ],
+    [
+      "beforeadvent",
+      new season({
+        name: "beforeadvent",
+        churchPos: 210,
+        maxProper: 10,
         useWeekdays: true,
       }),
     ],
