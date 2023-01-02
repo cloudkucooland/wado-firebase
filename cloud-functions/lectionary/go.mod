@@ -5,18 +5,18 @@ go 1.18
 require (
 	cloud.google.com/go/firestore v1.9.0
 	firebase.google.com/go/v4 v4.10.0
-	github.com/cloudkucooland/go-oremus v0.0.0-20221208224504-18f57002ba23
-	google.golang.org/api v0.104.0
+	github.com/cloudkucooland/go-oremus v0.0.0-20221227033145-098ce2123fc3
+	google.golang.org/api v0.105.0
 )
 
 require (
 	cloud.google.com/go v0.107.0 // indirect
 	cloud.google.com/go/compute v1.14.0 // indirect
-	cloud.google.com/go/compute/metadata v0.2.2 // indirect
-	cloud.google.com/go/iam v0.8.0 // indirect
+	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/iam v0.9.0 // indirect
 	cloud.google.com/go/longrunning v0.3.0 // indirect
 	cloud.google.com/go/storage v1.28.1 // indirect
-	github.com/MicahParks/keyfunc v1.7.0 // indirect
+	github.com/MicahParks/keyfunc v1.9.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.4.3 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
@@ -34,7 +34,7 @@ require (
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/appengine/v2 v2.0.2 // indirect
-	google.golang.org/genproto v0.0.0-20221207170731-23e4bf6bdc37 // indirect
+	google.golang.org/genproto v0.0.0-20221227171554-f9683d7f8bef // indirect
 	google.golang.org/grpc v1.51.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 )
