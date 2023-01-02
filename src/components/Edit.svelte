@@ -45,6 +45,8 @@
     BubbleMenu,
   } from "svelte-tiptap";
   import StarterKit from "@tiptap/starter-kit";
+  import Underline from "@tiptap/extension-underline";
+  import Typography from "@tiptap/extension-typography";
 
   import association from "../model/association";
   import prayer from "../model/prayer";
@@ -199,7 +201,7 @@
     screenView("Edit Prayer");
     await loadPrayer();
     editor = createEditor({
-      extensions: [StarterKit],
+      extensions: [StarterKit, Underline, Typography],
       content: prayerData.body,
     });
   });
@@ -253,6 +255,18 @@
                     color="secondary"
                     on:click={$editor.chain().focus().toggleUnderline().run()}
                     >Underline</Button
+                  >
+                  <Button
+                    size="sm"
+                    color="secondary"
+                    on:click={$editor.chain().focus().undo().run()}
+                    >Undo</Button
+                  >
+                  <Button
+                    size="sm"
+                    color="secondary"
+                    on:click={$editor.chain().focus().redo().run()}
+                    >Redo</Button
                   >
                   <EditorContent editor={$editor} />
                   {#if $editor}<BubbleMenu editor={$editor} />{/if}

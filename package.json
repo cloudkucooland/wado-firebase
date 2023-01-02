@@ -42,5 +42,9 @@
     "svelte-toasts": "^1.1.2",
     "sveltestrap": "^5.10.0",
     "vite": "^4.0.0"
+  },
+  "dependencies": {
+    "@tiptap/extension-typography": "^2.0.0-beta.209",
+    "@tiptap/extension-underline": "^2.0.0-beta.209"
   }
 }
