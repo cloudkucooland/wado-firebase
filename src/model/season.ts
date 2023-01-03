@@ -239,7 +239,7 @@ export default class season {
       new season({
         name: "beforeadvent",
         churchPos: 210,
-        maxProper: 10,
+        maxProper: 11,
         useWeekdays: true,
       }),
     ],
@@ -249,7 +249,7 @@ export default class season {
         name: "christking",
         churchPos: 250,
         maxProper: 0,
-        useWeekdays: false,
+        useWeekdays: true,
       }),
     ],
     [

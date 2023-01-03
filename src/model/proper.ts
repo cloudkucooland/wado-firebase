@@ -276,10 +276,8 @@ export default class proper {
       this.season = "christking";
       this.proper = 0;
     } else if (t > f("christking") && t < f("advent")) {
-      this.season = "beforeadvent";
-      const daysafterp =
-        this.getDayOfYear(forday) - (this._fdoy("pentecost") + 1);
-      this.proper = Math.floor(daysafterp / 7) + 1;
+      this.season = "christking";
+      this.proper = (t - f("christking")) / nextday + 1;
     } else if (t >= f("advent") && t < f("christmaseve")) {
       this.season = "advent";
       isnextlectyear = true;
@@ -454,7 +452,8 @@ export default class proper {
           );
         }
       case "christking":
-        return "Christ the King Sunday";
+        if (this.weekday == 0) return "Christ the King Sunday";
+        return "Reign of Christ " + this._weekdayDisplay();
     }
 
     console.error("invalid season", this);
