@@ -71,9 +71,9 @@ export default class season {
       new season({
         name: "baptismoflord",
         churchPos: 25,
-        maxProper: 6,
+        maxProper: 0,
         useWeekdays: false,
-        comment: "Jan 7 to Epiphany-1-Sunday",
+        comment: "Same as Epiphany-1-Sunday",
       }),
     ],
     [

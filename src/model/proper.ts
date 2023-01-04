@@ -90,12 +90,9 @@ export default class proper {
     const easter = this.getEaster(year);
 
     // BOL is Sunday
-    let sundayafterepi = new Date(year, 0, 6, 0, 0, 0);
-    if (sundayafterepi.getDay() != 0) {
-      sundayafterepi = this._addDays(
-        sundayafterepi,
-        7 - sundayafterepi.getDay()
-      );
+    let baptismoflord = new Date(year, 0, 6, 0, 0, 0);
+    if (baptismoflord.getDay() != 0) {
+      baptismoflord = this._addDays(baptismoflord, 7 - baptismoflord.getDay());
     }
 
     // Christ the King is always on Sunday
@@ -131,7 +128,7 @@ export default class proper {
       ["sept4", new Date(year, 8, 1, 0, 0, 0)],
 
       // First Sunday after Jan 6 */
-      ["sundayafterepi", sundayafterepi],
+      ["baptismoflord", baptismoflord],
 
       /* Christ the King is Sunday on or after Nov 20 */
       ["christking", christking],
@@ -197,10 +194,12 @@ export default class proper {
     } else if (t >= f("epiphany") && t < f("epiphany") + nextday) {
       this.season = "epiphany";
       this.proper = 0;
-    } else if (t >= f("epiphany") + nextday && t < f("sundayafterepi")) {
+    } else if (t >= f("epiphany") + nextday && t < f("baptismoflord")) {
+      this.season = "afterepiphany";
+      this.proper = 0;
+    } else if (t >= f("baptismoflord") && t < f("baptismoflord") + nextday) {
       this.season = "baptismoflord";
-      // proper is number of days after epiphany
-      this.proper = this.getDayOfYear(forday) - this._fdoy("epiphany");
+      this.proper = 0;
     } else if (t > f("epiphany") && t < f("mardigras")) {
       this.season = "afterepiphany";
       const daysintoordtime =
@@ -331,8 +330,7 @@ export default class proper {
       case "epiphany":
         return "Epiphany";
       case "baptismoflord":
-        const day = 6 + this.proper;
-        return "January " + day + " (after Epiphany)";
+        return "Baptism of the Lord";
       case "afterepiphany":
         return (
           "Epiphany (ordinary) " + this.proper + ", " + this._weekdayDisplay()
@@ -518,12 +516,12 @@ export default class proper {
       }
 
       let i: number = 1;
-      // afteradvent has proper0 in vary rare years
-      // this triggers -1 in the object creation, need to rework the logic carefully
+      // afterepiphany-0
+      // if (v.name == "afterepiphany") i = 0;
+      // afterpentecost has proper0 in vary rare years
       // if (v.name == "afterpentecost") i = 0;
 
       while (i <= v.maxProper) {
-        // exceptions go here
         if (v.name == "christmas" && i == 1) {
           i = i + 1;
           continue;
@@ -537,6 +535,7 @@ export default class proper {
 
           // assenctioneve and other eves
           if (v.name == "greatfifty" && i == 1) d = 1; // do not display Easter twice, otherwise greatfifty is normal
+          if (v.name == "afterepiphany" && i == 1) d = 1; // afterepiphany-1-sunday is baptismoflord
 
           while (d <= 6 + v.startWeekday) {
             // for seasons that END on a day other than Sunday (Ordinary after Epiphany)
