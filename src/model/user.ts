@@ -1,12 +1,21 @@
 import { auth, db } from "../firebase";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  getDoc,
+  query,
+  collection,
+  where,
+  orderBy,
+  getDocs,
+} from "firebase/firestore";
 
 export default class user {
   public displayName: string;
   public longestStreak: string;
   public consecutiveDays: string;
   public lastDay: string;
-  public lastActivity: string;
+  public lastActivity: Date;
   private _userID?: string;
   private _isEditor: boolean;
   private _loggedIn: boolean;
@@ -16,7 +25,8 @@ export default class user {
     this.longestStreak = obj.longestStreak ? obj.longestStreak : "0";
     this.consecutiveDays = obj.consecutiveDays ? obj.consecutiveDays : "0";
     this.lastDay = obj.lastDay ? obj.lastDay : "2020-01-01";
-    this.lastActivity = obj.lastActivity ? obj.lastActivity : "2023-01-01";
+    const la = obj.lastActivity ? obj.lastActivity : "2023-01-01";
+    this.lastActivity = new Date(la);
     this._isEditor = false;
     this._loggedIn = false;
   }
@@ -28,6 +38,8 @@ export default class user {
   public toJSON() {
     const o = { ...this };
     if (o._userID) delete o._userID;
+    // @ts-ignore
+    o.lastActivity = this.lastActivity.toJSON(); // necessary, or is this automatic?
     delete o._isEditor;
     delete o._loggedIn;
     return o;
@@ -37,7 +49,7 @@ export default class user {
   public static async me() {
     if (!auth.currentUser) {
       console.log("not logged in, returning empty 'me'");
-      return new user({ lastActivity: "0" });
+      return new user({ lastActivity: new Date("2023-01-01") });
     }
 
     const ref = doc(db, "user", auth.currentUser.uid);
@@ -56,7 +68,7 @@ export default class user {
     }
 
     // write something back, so future reads succeed
-    const u = new user({ lastActivity: "0" });
+    const u = new user({ lastActivity: new Date("2023-01-01") });
     u._userID = auth.currentUser.uid;
     await setDoc(ref, u.toJSON(), { merge: true });
     return u;
@@ -80,7 +92,7 @@ export default class user {
     if (!this._userID) return;
     const ref = doc(db, "user", this._userID);
 
-    this.lastActivity = new Date().toJSON();
+    this.lastActivity = new Date();
     try {
       await setDoc(ref, this.toJSON()), { merge: true };
     } catch (err) {
@@ -151,5 +163,23 @@ export default class user {
 
   get loggedIn() {
     return this._loggedIn;
+  }
+
+  public static async getRecent() {
+    const users = new Array();
+    const lastweek = new Date().getTime() - 604800000; // 1 week
+    const recent = new Date(lastweek);
+
+    let q = query(
+      collection(db, "user"),
+      where("lastActivity", ">", recent.toJSON()),
+      orderBy("lastActivity", "desc")
+    );
+
+    let res = await getDocs(q);
+    for (const a of res.docs) {
+      users.push(new user(a.data()));
+    }
+    return users;
   }
 }
