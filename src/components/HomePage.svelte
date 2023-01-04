@@ -44,7 +44,7 @@
   });
 
   afterUpdate(() => {
-    // figure out why this double-fires 
+    // figure out why this double-fires
     screenView(officeName);
   });
 

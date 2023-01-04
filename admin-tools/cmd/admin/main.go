@@ -61,7 +61,8 @@ func main() {
 }
 
 func updateEditors(ctx context.Context) {
-	editors := []string{"PsfIgw0szbhCX14JEwCnR4XNxxz1", "E8axm9DyN7eZ2gh7pGs6CrPOJLD3", "idlyS5Ansvhj23AsKmdrC3Ufbcb2", "hBk6r6Wq8STqGxOoPhPWHGtXo8Q2", "1a5UG6WjcSeLOXgcmZJKbjt7Dav1", "8yFu045fSdY6OLfcE1A4oGPqct22"}
+	// editors := []string{"PsfIgw0szbhCX14JEwCnR4XNxxz1", "E8axm9DyN7eZ2gh7pGs6CrPOJLD3", "idlyS5Ansvhj23AsKmdrC3Ufbcb2", "hBk6r6Wq8STqGxOoPhPWHGtXo8Q2", "1a5UG6WjcSeLOXgcmZJKbjt7Dav1", "8yFu045fSdY6OLfcE1A4oGPqct22", "bETXa0FpNGVhaU0zABlzB11oZSs2"}
+	editors := []string{"bETXa0FpNGVhaU0zABlzB11oZSs2"}
 
 	for _, s := range editors {
 		claims := map[string]interface{}{"role": "Editor"}
