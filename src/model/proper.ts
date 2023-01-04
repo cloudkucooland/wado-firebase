@@ -194,8 +194,9 @@ export default class proper {
     } else if (t >= f("epiphany") && t < f("epiphany") + nextday) {
       this.season = "epiphany";
       this.proper = 0;
-    } else if (t >= f("epiphany") + nextday && t < f("baptismoflord")) {
-      this.season = "afterepiphany";
+    } else if (t >= f("epiphany") && t < f("baptismoflord")) {
+      // Jan 7 - Jan 13, (or less)
+      this.season = "epi2bol";
       this.proper = 0;
     } else if (t >= f("baptismoflord") && t < f("baptismoflord") + nextday) {
       this.season = "baptismoflord";
@@ -329,6 +330,8 @@ export default class proper {
         return this.cardToOrd(this.proper) + " day of Christmas";
       case "epiphany":
         return "Epiphany";
+      case "epi2bol":
+        return this._weekdayDisplay() + " before Baptism of the Lord";
       case "baptismoflord":
         return "Baptism of the Lord";
       case "afterepiphany":
@@ -502,7 +505,7 @@ export default class proper {
         continue;
       }
 
-      // week-of "seasons" -- need to move some others to this way of doing things (Christmas?)
+      // week-of "seasons" (Christmas, days after Epiphany until Baptism of Lord)
       if (v.maxProper == 0 && v.useWeekdays) {
         let d: number = 0;
         while (d <= 6 + v.startWeekday) {
@@ -516,11 +519,6 @@ export default class proper {
       }
 
       let i: number = 1;
-      // afterepiphany-0
-      // if (v.name == "afterepiphany") i = 0;
-      // afterpentecost has proper0 in vary rare years
-      // if (v.name == "afterpentecost") i = 0;
-
       while (i <= v.maxProper) {
         if (v.name == "christmas" && i == 1) {
           i = i + 1;
@@ -533,7 +531,7 @@ export default class proper {
           // Most seasons start on Monday, except for lent, which counts from Wednesdays
           let d: number = v.startWeekday;
 
-          // assenctioneve and other eves
+          // specific exceptions
           if (v.name == "greatfifty" && i == 1) d = 1; // do not display Easter twice, otherwise greatfifty is normal
           if (v.name == "afterepiphany" && i == 1) d = 1; // afterepiphany-1-sunday is baptismoflord
 

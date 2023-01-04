@@ -67,6 +67,16 @@ export default class season {
       }),
     ],
     [
+      "epi2bol",
+      new season({
+        name: "epi2bol",
+        churchPos: 21,
+        maxProper: 0,
+        useWeekdays: true,
+        comment: "Epiphany to Baptism of Lord: Jan 7 - 13(?)",
+      }),
+    ],
+    [
       "baptismoflord",
       new season({
         name: "baptismoflord",
