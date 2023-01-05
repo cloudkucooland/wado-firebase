@@ -6,6 +6,7 @@ export default class user {
   lastActivity: string;
   private _userID?;
   private _isEditor;
+  private _isMediaManager;
   private _loggedIn;
   constructor(obj: any);
   toString(): string;
@@ -15,5 +16,6 @@ export default class user {
   logAction(): Promise<void>;
   UpdateStreak(): Promise<any>;
   get isEditor(): boolean;
+  get isMediaManager(): boolean;
   get loggedIn(): boolean;
 }
