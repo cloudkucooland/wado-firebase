@@ -204,6 +204,7 @@
               <DropdownItem href="#/prayers/prayer">Prayer List</DropdownItem>
               <DropdownItem href="#/lectionary/A">Lectionary</DropdownItem>
               <DropdownItem href="#/addPrayer">Add a Prayer</DropdownItem>
+              <DropdownItem href="#/users">Recent Users</DropdownItem>
             </DropdownMenu>
           </Dropdown>
           <NavItem><NavLink href="#/settings">Settings</NavLink></NavItem>
