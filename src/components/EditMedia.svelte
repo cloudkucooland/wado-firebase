@@ -9,10 +9,13 @@
   import { storage, db } from "../firebase";
   import { Input, Button, Row, Col } from "sveltestrap";
   import { toasts } from "svelte-toasts";
+  import type { Readable } from "svelte/store";
+  import type User from "../../types/model/user";
 
   export let id: string;
   export let media: string;
 
+  let me: Readable<User> = getContext("me");
   let file: Blob;
 
   function loadFile(e: Event) {
@@ -160,22 +163,24 @@
       <audio controls><source src={media} /></audio>
     {/if}
   </Col>
-  <Col sm="4">
-    <Input type="file" name="file" id="fileData" on:change={loadFile} />
-  </Col>
-  <Col sm="2">
-    <Button disabled={true} color="primary" id="upload" on:click={doUpload}>
-      Upload
-    </Button>
-  </Col>
-  <Col sm="2">
-    <Button
-      disabled={!media}
-      color="warning"
-      id="remove"
-      on:click={removeMedia}
-    >
-      Remove
-    </Button>
-  </Col>
+  {#if $me.isMediaManager}
+    <Col sm="4">
+      <Input type="file" name="file" id="fileData" on:change={loadFile} />
+    </Col>
+    <Col sm="2">
+      <Button disabled={true} color="primary" id="upload" on:click={doUpload}>
+        Upload
+      </Button>
+    </Col>
+    <Col sm="2">
+      <Button
+        disabled={!media}
+        color="warning"
+        id="remove"
+        on:click={removeMedia}
+      >
+        Remove
+      </Button>
+    </Col>
+  {/if}
 </Row>
