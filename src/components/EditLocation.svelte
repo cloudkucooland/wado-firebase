@@ -114,7 +114,7 @@
       toasts.success("Saved Association", t.value);
     } catch (error) {
       console.log(error);
-      toasts.error(error.Message);
+      toasts.error(error.message);
     }
   }
 
@@ -178,6 +178,7 @@
       associations = new Map([...newAssn].sort(association.sort));
     } catch (error) {
       console.log(error);
+      toasts.error(error.message);
     }
     progressBar.remove();
   }

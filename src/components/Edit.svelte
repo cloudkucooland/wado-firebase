@@ -126,7 +126,7 @@
       toasts.success("Saved Association", t.value);
     } catch (error) {
       console.log(error);
-      toasts.error(error.Message);
+      toasts.error(error.message);
     }
   }
 
