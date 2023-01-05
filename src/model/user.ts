@@ -18,6 +18,7 @@ export default class user {
   public lastActivity: Date;
   private _userID?: string;
   private _isEditor: boolean;
+  private _isMediaManager: boolean;
   private _loggedIn: boolean;
 
   constructor(obj: any) {
@@ -28,6 +29,7 @@ export default class user {
     const la = obj.lastActivity ? obj.lastActivity : "2023-01-01";
     this.lastActivity = new Date(la);
     this._isEditor = false;
+    this._isMediaManager = false;
     this._loggedIn = false;
   }
 
@@ -41,6 +43,7 @@ export default class user {
     // @ts-ignore
     o.lastActivity = this.lastActivity.toJSON(); // necessary, or is this automatic?
     delete o._isEditor;
+    delete o._isMediaManager;
     delete o._loggedIn;
     return o;
   }
@@ -60,6 +63,7 @@ export default class user {
         u._userID = auth.currentUser.uid;
         const res = await auth.currentUser.getIdTokenResult();
         u._isEditor = res.claims.role == "Editor";
+        u._isMediaManager = res.claims.role == "Media";
         u._loggedIn = true;
         return u;
       }
@@ -159,6 +163,10 @@ export default class user {
 
   get isEditor() {
     return this._isEditor;
+  }
+
+  get isMediaManager() {
+    return this._isEditor || this._isMediaManager;
   }
 
   get loggedIn() {

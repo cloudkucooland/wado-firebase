@@ -53,7 +53,8 @@ func main() {
 	}
 	defer secrets.Close()
 
-	updateEditors(ctx)
+	// updateEditors(ctx)
+	updateMediaManagers(ctx)
 	// revokeReviewed(ctx)
 	// assocCleanup(ctx)
 	// updateMeiliSearch(ctx)
@@ -66,6 +67,18 @@ func updateEditors(ctx context.Context) {
 
 	for _, s := range editors {
 		claims := map[string]interface{}{"role": "Editor"}
+		err := client.SetCustomUserClaims(ctx, s, claims)
+		if err != nil {
+			panic(err)
+		}
+	}
+}
+
+func updateMediaManagers(ctx context.Context) {
+	mediamanagers := []string{"WzAJzSFn6gRIdv4A47ODGhK0Pkw2"}
+
+	for _, s := range mediamanagers {
+		claims := map[string]interface{}{"role": "Media"}
 		err := client.SetCustomUserClaims(ctx, s, claims)
 		if err != nil {
 			panic(err)
