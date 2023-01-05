@@ -11,6 +11,7 @@
   import { toasts } from "svelte-toasts";
   import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
+  import { getContext } from "svelte";
 
   export let id: string;
   export let media: string;
