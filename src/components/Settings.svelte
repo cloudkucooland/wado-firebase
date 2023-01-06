@@ -134,13 +134,12 @@
                     }}
                     value={$me.displayName}
                   />
-                  <span class="custom-control-label">Currently Unused.</span>
                 </div>
               </Col>
             </Row>
           </ListGroupItem>
         </ListGroup>
-      </div></Col
-    >
+      </div>
+    </Col>
   </Row>
 </Container>
