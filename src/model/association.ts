@@ -16,7 +16,6 @@ export default class association {
   constructor(obj: any) {
     this.id = obj.id;
     const d = obj.data();
-    // console.debug(d);
 
     this.Location = d.Location ? d.Location : "UNSET";
     if (association.locations.indexOf(this.Location) == -1) {

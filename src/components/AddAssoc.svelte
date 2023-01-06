@@ -7,15 +7,16 @@
   import { Container, Row, Col, Input, Button } from "sveltestrap";
   import Select from "svelte-select";
   import { index } from "../meili";
+  import { toasts } from "svelte-toasts";
 
   export let result: any;
   export let location: string = "";
-  const dummyData: any = {
+  const dummyData: unknown = {
     Location: location,
     Season: "Any",
     Proper: -1,
-    Weekday: "Any",
-    Weight: "1",
+    Weekday: -1,
+    Weight: 1,
     Reference: doc(db, "ex", "nihilo"),
   };
   const dummy = {
@@ -48,6 +49,7 @@
   });
 
   async function loadOptions(searchString: string) {
+    // console.log(searchString);
     const items = [];
 
     try {
@@ -68,15 +70,18 @@
       }
     } catch (err) {
       console.log(err);
+      toasts.error(err.message);
     }
     return items;
   }
 
   function doSelect(e: any) {
+    console.log(e.detail);
     try {
       a.Reference = doc(db, "prayers", e.detail.value);
     } catch (err) {
       console.log(err);
+      toasts.error(err.message);
     }
   }
 
@@ -100,7 +105,7 @@
         name="prayer"
         placeholder="search for prayer"
         {loadOptions}
-        on:select={doSelect}
+        on:change={doSelect}
         {groupBy}
       />
     </Col>

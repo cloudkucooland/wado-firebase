@@ -132,6 +132,7 @@
     addModalAssocOpen = !addModalAssocOpen;
 
     try {
+      console.debug(assocAddResult);
       await addDoc(collection(db, "associations"), assocAddResult.toFirebase());
       loadLocation(id); // lazy but does the job -- redo if assocs get HUGE
     } catch (err) {
@@ -142,6 +143,7 @@
 
   async function loadLocation(id: string): Promise<void> {
     const progressBar = toasts.success("Loading Data", id, { duration: 0 });
+    let res: unknown; // FIXME
 
     const newAssn: Map<string, association> = new Map();
     try {
@@ -149,37 +151,57 @@
         collection(db, "associations"),
         where("Location", "==", id)
       );
-      const res = await getDocs(q);
-      for (const a of res.docs) {
-        const n: association = new association(a);
+      res = await getDocs(q);
+    } catch (error) {
+      console.log(error);
+      toasts.error(error.message);
+    }
 
-        if (!n.Reference || n.Reference == "FIXME") {
-          console.error("bad reference, deleting association");
-          deleteDoc(doc(db, "associations", n.id)); // no need to await here
-          toasts.info("Deleting Invalid Association", n.id);
-          continue;
-        }
+    for (const a of res.docs) {
+      const n: association = new association(a);
 
-        const rp = await getDoc(n.Reference);
-        if (!rp || !rp.exists()) {
-          console.error("bad reference, deleting association");
+      if (
+        !n.Reference ||
+        n.Reference == "FIXME" ||
+        n.Reference.path == "ex/nihilo"
+      ) {
+        // "FIXME" is an err in conversion, "ex/nihilo" is an error in the new add logic
+        console.error("bad reference, deleting association", a, n);
+        toasts.info("Deleting Invalid Association", n.id);
+        try {
           deleteDoc(doc(db, "associations", n.id)); // no need to await here
-          toasts.info("Deleting Invalid Association", n.id);
-          continue;
+        } catch (err) {
+          console.log(err);
         }
+        continue;
+      }
+
+      const rp = await getDoc(n.Reference);
+      if (!rp || !rp.exists()) {
+        console.error("bad reference, deleting association", a, n, rp);
+        toasts.info("Deleting Invalid Association", n.id);
+        try {
+          deleteDoc(doc(db, "associations", n.id)); // no need to await here
+        } catch (err) {
+          console.log(err);
+        }
+        continue;
+      }
+
+      try {
         const tp = rp.data() as prayerFromFirestore;
         const pp: prayer = new prayer(tp);
         // @ts-ignore
         n._PrayerName = pp.name;
         newAssn.set(a.id, n);
+      } catch (err) {
+        console.log(err);
+        toasts.error(err.message);
       }
-
-      // now that the full list is built, sort it
-      associations = new Map([...newAssn].sort(association.sort));
-    } catch (error) {
-      console.log(error);
-      toasts.error(error.message);
     }
+
+    // now that the full list is built, sort it
+    associations = new Map([...newAssn].sort(association.sort));
     progressBar.remove();
   }
 

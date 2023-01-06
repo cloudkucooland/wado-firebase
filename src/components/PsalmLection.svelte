@@ -50,8 +50,11 @@
       });
 
     if (res.size != 1) {
-      toasts.error("Multiple lection matches?!");
-      console.log("multiple matches, this should not happen");
+      toasts.error("Multiple psalm lection matches");
+      console.log("multiple matches, this should not happen", p);
+      for (const psalm of res.docs) {
+        console.log(psalm.data());
+      }
     }
     const d = new plClass(res.docs[0].data());
     d.id = res.docs[0].id;
