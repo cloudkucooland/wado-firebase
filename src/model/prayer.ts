@@ -10,6 +10,7 @@ export default class prayer {
   public author: string;
   public media: string;
   public class: string;
+  private _id: string;
 
   public constructor(obj: prayerFromFirestore) {
     this.name = "• New Prayer";
@@ -58,5 +59,13 @@ export default class prayer {
       i = i + 1;
     }
     return shortName;
+  }
+
+  set id(n: string) {
+    this._id = n;
+  }
+
+  get id(): string {
+    return this._id;
   }
 }

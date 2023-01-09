@@ -10,7 +10,7 @@
   import { index } from "../meili";
   import { toasts } from "svelte-toasts";
   import { recordEvent } from "../firebase";
-  import { link } from "svelte-spa-router";
+  // import { link } from "svelte-spa-router"; // fails on subsequent queries?
   import type { SearchResponse } from "../../node_modules/meilisearch/dist/types/types/types";
 
   let result: SearchResponse = {
@@ -19,15 +19,17 @@
     query: "",
   };
 
+  const searchParams = {
+    attributesToRetrieve: ["fsid", "Name", "Body", "Class"],
+    filter: [["Class = Prayer", "Class = Hymn", "Class = Antiphon"]],
+  };
+
   async function doSearchLetter(e: Event) {
     const t = e.target as HTMLInputElement;
     if (t.value.length < 4) return;
 
     try {
-      result = await index.search(t.value, {
-        attributesToRetrieve: ["fsid", "Name", "Body"],
-        filter: [["Class = Prayer", "Class = Hymn", "Class = Antiphon"]],
-      });
+      result = await index.search(t.value, searchParams);
       recordEvent("search", {
         short: true,
         query: t.value,
@@ -42,10 +44,7 @@
   async function doSearch(e: Event) {
     const t = e.target as HTMLInputElement;
     try {
-      result = await index.search(t.value, {
-        attributesToRetrieve: ["fsid", "Name", "Body", "Class"],
-        filter: [["Class = Prayer", "Class = Hymn", "Class = Antiphon"]],
-      });
+      result = await index.search(t.value, searchParams);
       toasts.success(
         "Found " + result.estimatedTotalHits,
         "Displaying " + result.hits.length
@@ -79,7 +78,7 @@
               <Row class="align-items-center">
                 <Col>
                   <strong class="mb-0">
-                    <a href="/edit/{r.fsid}" use:link>{r.Name}</a>
+                    <a href="#/edit/{r.fsid}">{r.Name}</a>
                     <span class="adonai">( {r.Class} )</span>
                   </strong>
                   <p class="mb-0">{@html r.Body}</p>

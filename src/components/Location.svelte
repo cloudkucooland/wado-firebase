@@ -7,7 +7,7 @@
   import { link } from "svelte-spa-router";
   import type { Readable } from "svelte/store";
   import type proper from "../../types/model/proper";
-  import { Spinner } from "sveltestrap";
+  import { Spinner, Icon } from "sveltestrap";
 
   import Heartwords from "./prayerClasses/Heartwords.svelte";
   import Hymn from "./prayerClasses/Hymn.svelte";
@@ -197,7 +197,9 @@
 {:then data}
   {#if $showEdit}
     <div class="edit">
-      <a href="/editlocation/{name}" use:link>Edit {name}</a>
+      <a href="/editlocation/{name}" use:link
+        ><Icon name="calendar-week" /> {name}</a
+      >
     </div>
   {/if}
   {#if maxAlt > 0 && $showAlt && data.size > 1}

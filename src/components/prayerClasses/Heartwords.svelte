@@ -8,6 +8,7 @@
   export let id: string;
 
   const hw = new heartword(data);
+  hw.id = id;
 </script>
 
 {#if $showEdit}<div class="edit">

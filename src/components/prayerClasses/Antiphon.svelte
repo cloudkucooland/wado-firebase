@@ -8,6 +8,7 @@
   export let id: string;
 
   const ant = new antiphon(data);
+  ant.id = id;
 </script>
 
 {#if $showEdit}<div class="edit">

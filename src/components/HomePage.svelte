@@ -9,6 +9,11 @@
     TabContent,
     TabPane,
     Input,
+    Modal,
+    ModalHeader,
+    ModalBody,
+    ModalFooter,
+    Button,
   } from "sveltestrap";
   import proper from "../model/proper";
   import { auth, screenView } from "../firebase";
@@ -16,8 +21,12 @@
   import { toasts } from "svelte-toasts";
   import { getContext, setContext, onMount, afterUpdate } from "svelte";
   import { push } from "svelte-spa-router";
-  import { type Writable, writable } from "svelte/store";
+  import { type Writable, type Readable, writable } from "svelte/store";
+  import QuickEdit from "./QuickEdit.svelte";
   import type User from "../../types/model/user";
+  import type prayer from "../../types/model/prayer";
+  import { doc, setDoc } from "firebase/firestore";
+  import { db } from "../firebase";
 
   const now: Date = new Date();
   const nowString: string =
@@ -32,23 +41,23 @@
   $: officeName = params.officeName;
   $: office = getOffice(officeName);
 
-  let me: Writable<User> = getContext("me");
+  let me: Readable<User> = getContext("me");
 
   // for streak tracking
   let scrolled: boolean = false; // not yet scrolled to end
 
-  onMount(() => {
+  onMount((): void => {
     // set the URL so that "poking the ox" always takes you to "now"
     push("/office/" + officeName + "/" + params.officeDate);
     screenView(officeName);
   });
 
-  afterUpdate(() => {
+  afterUpdate((): void => {
     // figure out why this double-fires
     screenView(officeName);
   });
 
-  async function scrolling() {
+  async function scrolling(): Promise<void> {
     if (scrolled) return; // remove the handler?
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
       if (!auth.currentUser) return;
@@ -59,6 +68,28 @@
       }
     }
   }
+
+  let quickEditData: prayer;
+  let quickEditOpen: boolean = false;
+  let qe: Writable<unknown> = writable(async (data: unknown): Promise<void> => {
+    quickEditOpen = !quickEditOpen;
+    if (quickEditOpen) {
+      screenView("quickEdit");
+      quickEditData = data;
+    } else {
+      screenView("quickEditSave");
+      try {
+        quickEditData.lastEditor = auth.currentUser.displayName;
+        quickEditData.lastEdited = new Date().toISOString();
+        await setDoc(doc(db, "prayers", quickEditData.id), quickEditData.toFirebase());
+        toasts.success("Saved Prayer", quickEditData.id);
+      } catch (err) {
+        console.log(err);
+        toasts.error(err.message);
+      }
+    }
+  });
+  setContext("qe", qe);
 </script>
 
 <svelte:head>
@@ -109,3 +140,22 @@
     </Row>
   </Container>
 </Container>
+
+<Modal id="quickEditModal" isOpen={quickEditOpen} size="xl">
+  <ModalHeader>Quick Edit</ModalHeader>
+  <ModalBody>
+    <QuickEdit bind:result={quickEditData} />
+  </ModalBody>
+  <ModalFooter>
+    <Button
+      color="secondary"
+      size="sm"
+      on:click={() => {
+        quickEditOpen = false;
+      }}
+    >
+      Cancel
+    </Button>
+    <Button color="success" size="sm" on:click={$qe}>Confirm</Button>
+  </ModalFooter>
+</Modal>

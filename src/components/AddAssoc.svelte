@@ -171,9 +171,9 @@
   </Row>
   <Row>
     <Col sm="2">&nbsp;</Col>
-    <Col sm="8"
-      >(fixed-dates are very rare; "Any" to use season-relative dates)</Col
-    >
+    <Col sm="8">
+      (fixed-dates are very rare; "Any" to use season-relative dates)
+    </Col>
     <Col sm="2">&nbsp;</Col>
   </Row>
   <Row>
