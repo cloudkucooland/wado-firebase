@@ -180,6 +180,13 @@
   }
 </script>
 
+<svelte:head>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+  />
+</svelte:head>
+
 <header>
   <Navbar container={false} color="dark" dark expand="lg">
     <NavbarBrand href="/wado/#/"
