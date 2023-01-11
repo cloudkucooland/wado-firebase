@@ -17,7 +17,8 @@
     Proper: result && result.Proper ? result.Proper : -1,
     Weekday: result && result.Weekday ? result.Weekday : -1,
     Weight: result && result.Weight ? result.Weight : 1,
-    Reference: result && result.Reference ? result.Reference : doc(db, "ex", "nihilo"),
+    Reference:
+      result && result.Reference ? result.Reference : doc(db, "ex", "nihilo"),
   });
 
   let calDateSet: boolean = false;
