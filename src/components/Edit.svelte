@@ -244,30 +244,37 @@
                   <Button
                     size="sm"
                     color="secondary"
-                    on:click={$editor.chain().focus().toggleBold().run()}
-                    >Bold</Button
+                    on:click={() => {
+                      $editor.chain().focus().toggleBold().run();
+                    }}>Bold</Button
                   >
                   <Button
                     size="sm"
                     color="secondary"
-                    on:click={$editor.chain().focus().toggleItalic().run()}
-                    >Italic</Button
+                    on:click={() => {
+                      $editor.chain().focus().toggleItalic().run();
+                    }}>Italic</Button
                   >
                   <Button
                     size="sm"
                     color="secondary"
-                    on:click={$editor.chain().focus().toggleUnderline().run()}
-                    >Underline</Button
+                    on:click={() => {
+                      $editor.chain().focus().toggleUnderline().run();
+                    }}>Underline</Button
                   >
                   <Button
                     size="sm"
                     color="secondary"
-                    on:click={$editor.chain().focus().undo().run()}>Undo</Button
+                    on:click={() => {
+                      $editor.chain().focus().undo().run();
+                    }}>Undo</Button
                   >
                   <Button
                     size="sm"
                     color="secondary"
-                    on:click={$editor.chain().focus().redo().run()}>Redo</Button
+                    on:click={() => {
+                      $editor.chain().focus().redo().run();
+                    }}>Redo</Button
                   >
                   <EditorContent editor={$editor} />
                   {#if $editor}<BubbleMenu editor={$editor} />{/if}
