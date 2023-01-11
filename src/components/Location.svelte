@@ -4,7 +4,7 @@
   import { showEdit, showAlt } from "../model/preferences";
   import { getContext } from "svelte";
   import Alternatives from "./Alternatives.svelte";
-  import { link } from "svelte-spa-router";
+  import { link, push } from "svelte-spa-router";
   import type { Readable } from "svelte/store";
   import type proper from "../../types/model/proper";
   import { Spinner, Icon } from "sveltestrap";
@@ -17,7 +17,7 @@
   import type { prayerFromFirestore } from "../model/types";
 
   let proper: Readable<proper> = getContext("forProper");
-  let qaa: Readable<unknown> = getContext("qaa");
+  let qaa: Readable<any> = getContext("qaa");
 
   export let name: string;
   export let max: number = 1;
@@ -199,11 +199,19 @@
 {:then data}
   {#if $showEdit}
     <div class="edit">
-      <a href="/editlocation/{name}" use:link target="_new">
-        {name}
+      {name}
+      <button
+        on:click={() => {
+          push("#/editlocation/" + name);
+        }}
+      >
         <Icon name="calendar-week" />
-      </a>
-      <button on:click={$qaa(name)}>
+      </button>
+      <button
+        on:click={() => {
+          $qaa(name);
+        }}
+      >
         <Icon name="calendar-plus" />
       </button>
     </div>
