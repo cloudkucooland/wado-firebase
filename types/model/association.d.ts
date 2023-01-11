@@ -1,3 +1,4 @@
+import type proper from "./proper";
 export default class association {
   id: string;
   CalendarDate: string;
@@ -10,7 +11,7 @@ export default class association {
   Reference: any;
   private _dirty;
   private _season;
-  constructor(obj: any);
+  constructor(id: string, d: any);
   toFirebase(): {
     CalendarDate: string;
     Location: string;
@@ -27,5 +28,6 @@ export default class association {
   static sort(a: [string, association], b: [string, association]): number;
   get dirty(): boolean;
   get dirtyStyle(): "dirty" | "clean";
+  static fromProper(p: proper): association;
   static locations: string[];
 }

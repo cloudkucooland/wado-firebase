@@ -9,6 +9,7 @@ export default class prayer {
   author: string;
   media: string;
   class: string;
+  private _id;
   constructor(obj: prayerFromFirestore);
   toFirebase(): {
     Name: string;
@@ -22,4 +23,6 @@ export default class prayer {
     Class: string;
   };
   get shortname(): string;
+  set id(n: string);
+  get id(): string;
 }

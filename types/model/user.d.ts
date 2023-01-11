@@ -3,7 +3,7 @@ export default class user {
   longestStreak: string;
   consecutiveDays: string;
   lastDay: string;
-  lastActivity: string;
+  lastActivity: Date;
   private _userID?;
   private _isEditor;
   private _isMediaManager;
@@ -18,4 +18,5 @@ export default class user {
   get isEditor(): boolean;
   get isMediaManager(): boolean;
   get loggedIn(): boolean;
+  static getRecent(): Promise<any[]>;
 }
