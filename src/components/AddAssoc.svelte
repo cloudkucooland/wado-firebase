@@ -9,23 +9,16 @@
   import { index } from "../meili";
   import { toasts } from "svelte-toasts";
 
-  export let result: any;
+  export let result: association;
   export let location: string = "";
-  const dummyData: unknown = {
-    Location: location,
-    Season: "Any",
-    Proper: -1,
-    Weekday: -1,
-    Weight: 1,
-    Reference: doc(db, "ex", "nihilo"),
-  };
-  const dummy = {
-    id: "",
-    data: () => {
-      return dummyData;
-    },
-  };
-  let a: association = new association(dummy);
+  let a: association = new association("", {
+    Location: result && result.Location ? result.Location : location,
+    Season: result && result.Season ? result.Season : "Any",
+    Proper: result && result.Proper ? result.Proper : -1,
+    Weekday: result && result.Weekday ? result.Weekday : -1,
+    Weight: result && result.Weight ? result.Weight : 1,
+    Reference: result && result.Reference ? result.Reference : doc(db, "ex", "nihilo"),
+  });
 
   let calDateSet: boolean = false;
   let selectedSeason: season = season.LUT.get(a.Season);

@@ -16,17 +16,18 @@
     Button,
   } from "sveltestrap";
   import proper from "../model/proper";
-  import { auth, screenView } from "../firebase";
+  import { auth, screenView, db, recordEvent } from "../firebase";
   import { getOffice, offices, currentOffice } from "../model/offices";
   import { toasts } from "svelte-toasts";
   import { getContext, setContext, onMount, afterUpdate } from "svelte";
   import { push } from "svelte-spa-router";
   import { type Writable, type Readable, writable } from "svelte/store";
   import QuickEdit from "./QuickEdit.svelte";
+  import AddAssoc from "./AddAssoc.svelte";
   import type User from "../../types/model/user";
   import type prayer from "../../types/model/prayer";
-  import { doc, setDoc } from "firebase/firestore";
-  import { db } from "../firebase";
+  import association from "../model/association";
+  import { doc, setDoc, addDoc, collection } from "firebase/firestore";
 
   const now: Date = new Date();
   const nowString: string =
@@ -71,25 +72,57 @@
 
   let quickEditData: prayer;
   let quickEditOpen: boolean = false;
-  let qe: Writable<unknown> = writable(async (data: unknown): Promise<void> => {
-    quickEditOpen = !quickEditOpen;
-    if (quickEditOpen) {
-      screenView("quickEdit");
-      quickEditData = data;
-    } else {
-      screenView("quickEditSave");
-      try {
-        quickEditData.lastEditor = auth.currentUser.displayName;
-        quickEditData.lastEdited = new Date().toISOString();
-        await setDoc(doc(db, "prayers", quickEditData.id), quickEditData.toFirebase());
-        toasts.success("Saved Prayer", quickEditData.id);
-      } catch (err) {
-        console.log(err);
-        toasts.error(err.message);
-      }
-    }
+  let qe: Writable<unknown> = writable(async (data: prayer): Promise<void> => {
+    quickEditOpen = true;
+    screenView("quickEdit");
+    quickEditData = data;
   });
   setContext("qe", qe);
+
+  async function qeconfirm(e: Event): Promise<void> {
+    // console.log(e, quickEditData);
+    quickEditOpen = false;
+    try {
+      quickEditData.lastEditor = auth.currentUser.displayName;
+      quickEditData.lastEdited = new Date().toISOString();
+      await setDoc(
+        doc(db, "prayers", quickEditData.id),
+        quickEditData.toFirebase()
+      );
+      toasts.success("Saved Prayer", quickEditData.id);
+    } catch (err) {
+      console.log(err);
+      toasts.error(err.message);
+    }
+  }
+
+  let quickAddAssocData: association = association.fromProper($forProper);
+  let quickAddAssocLocation: string = "";
+  let quickAddAssocOpen: boolean = false;
+  let qaa: Writable<unknown> = writable(
+    async (location: string): Promise<void> => {
+      quickAddAssocLocation = location;
+      quickAddAssocOpen = true;
+      screenView("quickAddAssoc");
+    }
+  );
+  setContext("qaa", qaa);
+
+  async function qaaconfirm(e: Event): Promise<void> {
+    console.log(e, quickAddAssocData.toFirebase());
+    quickAddAssocOpen = false;
+    try {
+      const added = await addDoc(
+        collection(db, "associations"),
+        quickAddAssocData.toFirebase()
+      );
+      recordEvent("add_assoc", { new: added.id });
+      toasts.success("Added Association", added.id);
+    } catch (err) {
+      console.log(err);
+      toasts.error(err.message);
+    }
+  }
 </script>
 
 <svelte:head>
@@ -156,6 +189,28 @@
     >
       Cancel
     </Button>
-    <Button color="success" size="sm" on:click={$qe}>Confirm</Button>
+    <Button color="success" size="sm" on:click={qeconfirm}>Confirm</Button>
+  </ModalFooter>
+</Modal>
+
+<Modal id="quickAddAssoc" isOpen={quickAddAssocOpen} size="xl">
+  <ModalHeader>Quick Add Association</ModalHeader>
+  <ModalBody>
+    <AddAssoc
+      bind:result={quickAddAssocData}
+      bind:location={quickAddAssocLocation}
+    />
+  </ModalBody>
+  <ModalFooter>
+    <Button
+      color="secondary"
+      size="sm"
+      on:click={() => {
+        quickAddAssocOpen = false;
+      }}
+    >
+      Cancel
+    </Button>
+    <Button color="success" size="sm" on:click={qaaconfirm}>Confirm</Button>
   </ModalFooter>
 </Modal>

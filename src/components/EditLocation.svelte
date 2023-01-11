@@ -158,7 +158,7 @@
     }
 
     for (const a of res.docs) {
-      const n: association = new association(a);
+      const n: association = new association(a.id, a.data());
 
       if (
         !n.Reference ||

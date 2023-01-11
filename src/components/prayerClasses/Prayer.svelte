@@ -6,6 +6,7 @@
   import type { Readable } from "svelte/store";
   import { getContext } from "svelte";
   import { Icon } from "sveltestrap";
+  import { push } from "svelte-spa-router";
 
   export let data: prayerFromFirestore;
   export let bold: boolean;
@@ -22,10 +23,16 @@
 </script>
 
 {#if $showEdit}<div class="edit">
-    <a href="#/edit/{id}" target="_new">
+    <button
+      on:click={() => {
+        push("#/edit/" + id);
+      }}
+    >
       <Icon name="pencil" />
-    </a>
-    <i class="bi-pencil-square" on:click={$qe(p)} />
+    </button>
+    <button on:click={$qe(p)}>
+      <Icon name="pencil-square" />
+    </button>
   </div>{/if}
 <div class={cssClass}>{@html p.body}</div>
 {#if p.author}<div class="prayer-credit">{p.author}</div>{/if}

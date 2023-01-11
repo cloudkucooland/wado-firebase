@@ -6,6 +6,7 @@
   import type { Readable } from "svelte/store";
   import { getContext } from "svelte";
   import { Icon } from "sveltestrap";
+  import { push } from "svelte-spa-router";
 
   export let data: prayerFromFirestore;
   export let id: string;
@@ -16,10 +17,16 @@
 </script>
 
 {#if $showEdit}<div class="edit">
-    <a href="#/edit/{id}" target="_new">
+    <button
+      on:click={() => {
+        push("#/edit/" + id);
+      }}
+    >
       <Icon name="pencil" />
-    </a>
-    <i class="bi-pencil-square" on:click={$qe(h)} />
+    </button>
+    <button on:click={$qe(h)}>
+      <Icon name="pencil-square" />
+    </button>
   </div>{/if}
 <h5>{h.name}</h5>
 <div class="hymn">{@html h.body}</div>

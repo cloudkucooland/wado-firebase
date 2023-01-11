@@ -1,4 +1,7 @@
 import season from "./season";
+import type proper from "./proper";
+import { doc } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default class association {
   public id: string;
@@ -13,9 +16,8 @@ export default class association {
   private _dirty: boolean;
   private _season: season;
 
-  constructor(obj: any) {
-    this.id = obj.id;
-    const d = obj.data();
+  constructor(id: string, d: any) {
+    this.id = id;
 
     this.Location = d.Location ? d.Location : "UNSET";
     if (association.locations.indexOf(this.Location) == -1) {
@@ -206,6 +208,19 @@ export default class association {
   public get dirtyStyle() {
     if (this._dirty) return "dirty";
     return "clean";
+  }
+
+  public static fromProper(p: proper) {
+    return new association("", {
+      CalendarDate: p.caldate,
+      Location: "UNSET",
+      Proper: p.proper,
+      Season: p.season,
+      Weekday: p.weekday,
+      Weight: 1,
+      Year: p.year,
+      Reference: doc(db, "ex", "nihilo"),
+    });
   }
 
   public static locations = Array(

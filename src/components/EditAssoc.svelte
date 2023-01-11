@@ -9,7 +9,9 @@
   export let id: string;
   export let result: association;
   export let addToID: string = "";
-  const dummyData = {
+
+  // change this to association.fromProper({});
+  const dummy = {
     Location: "UNSET",
     Season: "Any",
     Proper: -1,
@@ -17,13 +19,7 @@
     Weight: "1",
     Reference: doc(db, "ex", "nihilo"),
   };
-  const dummy = {
-    id: "",
-    data: () => {
-      return dummyData;
-    },
-  };
-  let a: association = new association(dummy);
+  let a: association = new association("", dummy);
 
   let calDateSet: boolean = false;
   let selectedSeason: season = season.LUT.get(a.Season);
@@ -32,15 +28,15 @@
   onMount(async () => {
     if (addToID != "") {
       // use the dummy data if adding
-      dummyData.Reference = doc(db, "prayers", addToID);
-      a = new association(dummy);
+      dummy.Reference = doc(db, "prayers", addToID);
+      a = new association("", dummy);
       result = a;
       return;
     }
 
     // get the current one, from firestore
     const d = await getDoc(doc(db, "associations", id));
-    a = new association(d);
+    a = new association(d.id, d.data());
     selectedSeason = season.LUT.get(a.Season);
     result = a;
     if (result.CalendarDate !== "Any") {

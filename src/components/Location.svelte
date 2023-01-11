@@ -17,6 +17,8 @@
   import type { prayerFromFirestore } from "../model/types";
 
   let proper: Readable<proper> = getContext("forProper");
+  let qaa: Readable<unknown> = getContext("qaa");
+
   export let name: string;
   export let max: number = 1;
   export let maxAlt: number = 0;
@@ -197,9 +199,13 @@
 {:then data}
   {#if $showEdit}
     <div class="edit">
-      <a href="/editlocation/{name}" use:link
-        ><Icon name="calendar-week" /> {name}</a
-      >
+      <a href="/editlocation/{name}" use:link target="_new">
+        {name}
+        <Icon name="calendar-week" />
+      </a>
+      <button on:click={$qaa(name)}>
+        <Icon name="calendar-plus" />
+      </button>
     </div>
   {/if}
   {#if maxAlt > 0 && $showAlt && data.size > 1}

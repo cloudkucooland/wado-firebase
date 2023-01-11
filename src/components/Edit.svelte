@@ -149,7 +149,10 @@
       );
       const refetched = await getDoc(added);
       // https://svelte.dev/tutorial/updating-arrays-and-objects
-      associations = [...associations, new association(refetched)];
+      associations = [
+        ...associations,
+        new association(refetched.id, refetched.data()),
+      ];
       recordEvent("add_assoc", { id: id, new: added.id });
     } catch (err) {
       console.log(err);
@@ -174,7 +177,7 @@
       const res = await getDocs(q);
       for (const a of res.docs) {
         // https://svelte.dev/tutorial/updating-arrays-and-objects
-        associations = [...associations, new association(a)];
+        associations = [...associations, new association(a.id, a.data())];
       }
     } catch (err) {
       console.log(err);
