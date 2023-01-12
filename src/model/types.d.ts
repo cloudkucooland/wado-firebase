@@ -1,3 +1,5 @@
+import type { DocumentReference } from "firebase/firestore";
+
 export interface prayerFromFirestore {
   Name: string;
   Body: string;
@@ -11,4 +13,5 @@ export interface prayerFromFirestore {
   "Hymn Tune"?: string;
   "Hymn Meter"?: string;
   Rubric?: string;
+  Antiphon?: DocumentReference;
 }

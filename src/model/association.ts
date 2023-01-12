@@ -212,7 +212,6 @@ export default class association {
 
   public static fromProper(p: proper) {
     return new association("", {
-      CalendarDate: p.caldate,
       Location: "UNSET",
       Proper: p.proper,
       Season: p.season,

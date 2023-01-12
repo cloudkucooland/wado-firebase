@@ -1,17 +1,20 @@
 import type { prayerFromFirestore } from "./types";
 import prayer from "./prayer";
+import type { DocumentReference } from "firebase/firestore";
 
 export default class psalm extends prayer {
   public rubric: string;
+  public antiphon?: DocumentReference; // a reference to another firestore document
 
   public constructor(obj: prayerFromFirestore) {
     super(obj);
     if (obj.Class) this.class = obj.Class;
     if (obj.Rubric) this.rubric = obj.Rubric;
+    if (obj.Antiphon) this.antiphon = obj.Antiphon;
   }
 
   public toFirebase() {
-    return {
+    const out: any = {
       Name: this.name,
       Body: this.body,
       Author: this.author,
@@ -23,5 +26,7 @@ export default class psalm extends prayer {
       Class: this.class,
       Rubric: this.rubric,
     };
+    if (this.antiphon) out.Antiphon = this.antiphon;
+    return out;
   }
 }
