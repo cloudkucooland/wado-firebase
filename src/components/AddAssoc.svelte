@@ -12,7 +12,7 @@
   export let result: association;
   export let location: string = "";
   let a: association = new association("", {
-    Location: result && result.Location ? result.Location : location,
+    Location: location,
     Season: result && result.Season ? result.Season : "Any",
     Proper: result && result.Proper ? result.Proper : -1,
     Weekday: result && result.Weekday ? result.Weekday : -1,
@@ -20,6 +20,7 @@
     Reference:
       result && result.Reference ? result.Reference : doc(db, "ex", "nihilo"),
   });
+  console.log("location", location, "incoming", result, "built", a);
 
   let calDateSet: boolean = false;
   let selectedSeason: season = season.LUT.get(a.Season);
@@ -114,7 +115,13 @@
   <Row>
     <Col sm="3">
       <Input type="select" bind:value={a.Season} disabled={calDateSet}>
-        <option value="Any">Any</option>
+        <option
+          value="Any"
+          on:change={() => {
+            a.Proper = -1;
+            a.Weekday = -1;
+          }}>Any</option
+        >
         {#each Array.from(season.LUT.keys()) as s}
           <option value={s}>{s}</option>
         {/each}

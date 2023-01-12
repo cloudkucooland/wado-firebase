@@ -37,6 +37,7 @@
   import type { prayerFromFirestore } from "../model/types";
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
+  import EditPsalmAntiphon from "./EditPsalmAntiphon.svelte";
 
   import {
     createEditor,
@@ -323,6 +324,7 @@
                   </FormGroup>
                 </Col>
               </Row>
+              <EditPsalmAntiphon bind:result={prayerData.antiphon} />
             {/if}
             <Row>
               <Col sm="3">
@@ -409,6 +411,13 @@
                 {/if}
               </Col>
             </Row>
+          </Container>
+        </CardBody>
+      </Card>
+      <Card>
+        <CardHeader>Media</CardHeader>
+        <CardBody>
+          <Container>
             <EditMedia {id} media={prayerData.media} />
           </Container>
         </CardBody>
