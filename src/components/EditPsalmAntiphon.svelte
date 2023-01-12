@@ -1,18 +1,22 @@
 <script lang="ts">
   import { db } from "../firebase";
-  import { Input, Button, Row, Col } from "sveltestrap";
+  import { Container, Input, Button, Row, Col } from "sveltestrap";
   import { toasts } from "svelte-toasts";
-  import { doc } from "firebase/firestore";
+  import { getDoc, doc } from "firebase/firestore";
   import { onMount, afterUpdate } from "svelte";
   import Select from "svelte-select";
   import { index } from "../meili";
-  import type { DocumentReference } from "firebase/firestore";
+  import type {
+    DocumentReference,
+    DocumentSnapshot,
+    DocumentData,
+  } from "firebase/firestore";
 
   export let result: DocumentReference;
-  let resolved;
+  let resolved: DocumentData;
 
-  async function loadOptions(searchString: string) {
-    const items = [];
+  async function loadOptions(searchString: string): Promise<Array<any>> {
+    const items: Array<any> = [];
 
     try {
       const searchresult = await index.search(searchString, {
@@ -30,54 +34,51 @@
     return items;
   }
 
-  function doSelect(e: any) {
-    console.debug(e.detail);
+  async function doSelect(e: any): Promise<void> {
     try {
-      const r = doc(db, "prayers", e.detail.value);
-      console.debug(r);
-      result = r.ref;
+      result = doc(db, "prayers", e.detail.value);
+      console.log(result);
+      const snap = await getDoc(result);
+      console.log(snap);
+      resolved = snap.data();
+      console.debug(resolved);
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
     }
   }
 
-  onMount(
-    (async() = {
-      if(result) {
-        try {
-          console.debug(result);
-          resolved = await result.Data();
-          console.debug(resolved);
-        } catch (err) {
-          console.log(err);
-          toasts.error(err.message);
-        }
-      },
-    })
-  );
+  onMount(async () => {
+    if (result) {
+      try {
+        const snap = await getDoc(result);
+        resolved = snap.data();
+      } catch (err) {
+        console.log(err);
+        toasts.error(err.message);
+      }
+    }
+  });
 
   const groupBy = (item: any) => item.group;
 </script>
 
-<Container>
-  <Row>
-    <Col sm="12">
-      {#if resolved}
-        <h3><a href="#/prayer/{resolved.id}">{resolved.Name}</a></h3>
-      {/if}
-    </Col>
-  </Row>
-  <Row>
-    <Col sm="2">Search:</Col>
-    <Col sm="10">
-      <Select
-        name="prayer"
-        placeholder="search for prayer"
-        {loadOptions}
-        on:change={doSelect}
-        {groupBy}
-      />
-    </Col>
-  </Row>
-</Container>
+<Row>
+  <Col sm="12">
+    {#if resolved}
+      Antiphon: <a href="#/edit/{result.id}" target="_new">{resolved.Name}</a>
+    {/if}
+  </Col>
+</Row>
+<Row>
+  <Col sm="2">Antiphon Search:</Col>
+  <Col sm="10">
+    <Select
+      name="antiphon"
+      placeholder="search for antiphon"
+      {loadOptions}
+      on:change={doSelect}
+      {groupBy}
+    />
+  </Col>
+</Row>
