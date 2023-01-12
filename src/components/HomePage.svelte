@@ -20,7 +20,7 @@
   import { getOffice, offices, currentOffice } from "../model/offices";
   import { toasts } from "svelte-toasts";
   import { getContext, setContext, onMount, afterUpdate } from "svelte";
-  import { push } from "svelte-spa-router";
+  import { push, replace } from "svelte-spa-router";
   import { type Writable, type Readable, writable } from "svelte/store";
   import QuickEdit from "./QuickEdit.svelte";
   import AddAssoc from "./AddAssoc.svelte";
@@ -34,9 +34,8 @@
     now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
-  let forProper: Writable<proper> = writable(
-    proper.fromDate(params.officeDate)
-  );
+  const properFromDate = proper.fromDate(params.officeDate);
+  let forProper: Writable<proper> = writable(properFromDate);
   setContext("forProper", forProper);
 
   $: officeName = params.officeName;
@@ -49,12 +48,13 @@
 
   onMount((): void => {
     // set the URL so that "poking the ox" always takes you to "now"
-    push("/office/" + officeName + "/" + params.officeDate);
+    // push("/office/" + officeName + "/" + params.officeDate);
+    replace("/office/" + officeName + "/" + params.officeDate);
     screenView(officeName);
   });
 
   afterUpdate((): void => {
-    // figure out why this double-fires
+    // figure out why this double-fires. Is it because of the onMount push?
     screenView(officeName);
   });
 
@@ -90,6 +90,7 @@
         quickEditData.toFirebase()
       );
       toasts.success("Saved Prayer", quickEditData.id);
+      replace("/office/" + officeName + "/" + params.officeDate);
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
@@ -97,6 +98,7 @@
   }
 
   let quickAddAssocData: association = association.fromProper($forProper);
+  console.log(quickAddAssocData);
   let quickAddAssocLocation: string = "";
   let quickAddAssocOpen: boolean = false;
   let qaa: Writable<unknown> = writable(
@@ -118,6 +120,7 @@
       );
       recordEvent("add_assoc", { new: added.id });
       toasts.success("Added Association", added.id);
+      replace("/office/" + officeName + "/" + params.officeDate);
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
