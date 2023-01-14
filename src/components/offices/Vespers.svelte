@@ -66,9 +66,8 @@
 <Location name="VESPER-COLLECT2" max={10} />
 
 <h4>Prayers of Special Intention</h4>
-<h5>Collect of Commemoration</h5>
 <Rubric>Proper collects for holy days and major feasts</Rubric>
-<Location name="VESPER-COMMEMORATION" maxAlt={3} />
+<Location name="VESPER-COMMEMORATION" />
 
 <h5>Intercession for the Order of Saint Luke</h5>
 <Location name="OSL" />
