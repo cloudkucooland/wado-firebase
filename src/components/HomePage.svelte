@@ -80,7 +80,6 @@
   setContext("qe", qe);
 
   async function qeconfirm(e: Event): Promise<void> {
-    // console.log(e, quickEditData);
     quickEditOpen = false;
     try {
       quickEditData.lastEditor = auth.currentUser.displayName;
@@ -98,7 +97,6 @@
   }
 
   let quickAddAssocData: association = association.fromProper($forProper);
-  console.log(quickAddAssocData);
   let quickAddAssocLocation: string = "";
   let quickAddAssocOpen: boolean = false;
   let qaa: Writable<unknown> = writable(
