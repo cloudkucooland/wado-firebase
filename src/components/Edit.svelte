@@ -326,6 +326,23 @@
               </Row>
               <EditPsalmAntiphon bind:result={prayerData.antiphon} />
             {/if}
+            {#if prayerData.class == "commemoration"}
+              <Row>
+                <Col>
+                  <FormGroup>
+                    <Label for="commemorationcollect"
+                      >Commemoration Collect</Label
+                    >
+                    <Input
+                      name="commemorationcollect"
+                      id="commemorationcollect"
+                      bind:value={prayerData.collect}
+                      disabled={!$me.isEditor}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+            {/if}
             <Row>
               <Col sm="3">
                 <FormGroup>
