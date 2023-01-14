@@ -2,13 +2,13 @@ import type { prayerFromFirestore } from "./types";
 import prayer from "./prayer";
 import type { DocumentReference } from "firebase/firestore";
 
-export default class commendation extends prayer {
+export default class commemoration extends prayer {
   public collect: string;
 
   public constructor(obj: prayerFromFirestore) {
     super(obj);
     if (obj.Class) this.class = obj.Class;
-    if (obj.Collect) this.rubric = obj.Collect;
+    if (obj.Collect) this.collect = obj.Collect;
   }
 
   public toFirebase(): any {
@@ -22,8 +22,8 @@ export default class commendation extends prayer {
       "Last Edited": this.lastEdited,
       Media: this.media,
       Class: this.class,
-      Collect: this.collect,
     };
+    if (this.collect) out.Collect = this.collect;
     return out;
   }
 }
