@@ -69,6 +69,28 @@
       }
     };
 
+    type queryArgs = {
+      location: string;
+      season: string;
+      proper: number;
+      weekday: number;
+      year: string;
+    };
+
+    const makeQuery = (qa: queryArgs) => {
+      return query(
+        collection(db, "associations"),
+        where("Location", "==", qa.location),
+        where("CalendarDate", "==", "Any"),
+        where("Season", "==", qa.season),
+        where("Proper", "==", qa.proper),
+        where("Weekday", "==", qa.weekday),
+        where("Year", "==", qa.year),
+        orderBy(order),
+        limit(realMax - m.size)
+      );
+    };
+
     // try with caldate
     await doQuery(
       query(
@@ -85,17 +107,13 @@
 
     // try with all the details
     await doQuery(
-      query(
-        collection(db, "associations"),
-        where("Location", "==", name),
-        where("CalendarDate", "==", "Any"),
-        where("Season", "==", p.season),
-        where("Proper", "==", p.proper),
-        where("Weekday", "==", p.weekday),
-        where("Year", "==", p.year),
-        orderBy(order),
-        limit(realMax - m.size)
-      )
+      makeQuery({
+        location: name,
+        season: p.season,
+        proper: p.proper,
+        weekday: p.weekday,
+        year: p.year,
+      } as queryArgs)
     );
     if (m.size >= realMax) {
       return m;
@@ -103,17 +121,13 @@
 
     // Any Year
     await doQuery(
-      query(
-        collection(db, "associations"),
-        where("Location", "==", name),
-        where("CalendarDate", "==", "Any"),
-        where("Season", "==", p.season),
-        where("Proper", "==", p.proper),
-        where("Weekday", "==", p.weekday),
-        where("Year", "==", "Any"),
-        orderBy(order),
-        limit(realMax - m.size)
-      )
+      makeQuery({
+        location: name,
+        season: p.season,
+        proper: p.proper,
+        weekday: p.weekday,
+        year: "Any",
+      } as queryArgs)
     );
     if (m.size >= realMax) {
       return m;
@@ -121,17 +135,13 @@
 
     // Any Year or Day
     await doQuery(
-      query(
-        collection(db, "associations"),
-        where("Location", "==", name),
-        where("CalendarDate", "==", "Any"),
-        where("Season", "==", p.season),
-        where("Proper", "==", p.proper),
-        where("Weekday", "==", -1),
-        where("Year", "==", "Any"),
-        orderBy(order),
-        limit(realMax - m.size)
-      )
+      makeQuery({
+        location: name,
+        season: p.season,
+        proper: p.proper,
+        weekday: -1,
+        year: "Any",
+      } as queryArgs)
     );
     if (m.size >= realMax) {
       return m;
@@ -139,17 +149,13 @@
 
     // Season/Weekday
     await doQuery(
-      query(
-        collection(db, "associations"),
-        where("Location", "==", name),
-        where("CalendarDate", "==", "Any"),
-        where("Season", "==", p.season),
-        where("Proper", "==", -1),
-        where("Weekday", "==", p.weekday),
-        where("Year", "==", "Any"),
-        orderBy(order),
-        limit(realMax - m.size)
-      )
+      makeQuery({
+        location: name,
+        season: p.season,
+        proper: -1,
+        weekday: p.weekday,
+        year: "Any",
+      } as queryArgs)
     );
     if (m.size >= realMax) {
       return m;
@@ -157,17 +163,13 @@
 
     // Season only
     await doQuery(
-      query(
-        collection(db, "associations"),
-        where("Location", "==", name),
-        where("CalendarDate", "==", "Any"),
-        where("Season", "==", p.season),
-        where("Proper", "==", -1),
-        where("Weekday", "==", -1),
-        where("Year", "==", "Any"),
-        orderBy(order),
-        limit(realMax - m.size)
-      )
+      makeQuery({
+        location: name,
+        season: p.season,
+        proper: -1,
+        weekday: -1,
+        year: "Any",
+      } as queryArgs)
     );
     if (m.size >= realMax) {
       return m;
@@ -175,17 +177,13 @@
 
     // Location, anys
     await doQuery(
-      query(
-        collection(db, "associations"),
-        where("Location", "==", name),
-        where("CalendarDate", "==", "Any"),
-        where("Season", "==", "Any"),
-        where("Proper", "==", -1),
-        where("Weekday", "==", -1),
-        where("Year", "==", "Any"),
-        orderBy(order),
-        limit(realMax - m.size)
-      )
+      makeQuery({
+        location: name,
+        season: "Any",
+        proper: -1,
+        weekday: -1,
+        year: "Any",
+      } as queryArgs)
     );
 
     if (m.size == 0) console.debug("no results found for", name);

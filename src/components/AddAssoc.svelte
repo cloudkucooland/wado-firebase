@@ -14,9 +14,9 @@
   let a: association = new association("", {
     Location: location,
     Season: result && result.Season ? result.Season : "Any",
-    Proper: result && result.Proper ? result.Proper : -1,
-    Weekday: result && result.Weekday ? result.Weekday : -1,
-    Weight: result && result.Weight ? result.Weight : 1,
+    Proper: result && result.Proper ? +result.Proper : -1,
+    Weekday: result && result.Weekday ? +result.Weekday : -1,
+    Weight: result && result.Weight ? +result.Weight : 1,
     Reference:
       result && result.Reference ? result.Reference : doc(db, "ex", "nihilo"),
   });

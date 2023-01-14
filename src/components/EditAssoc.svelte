@@ -15,8 +15,8 @@
     Location: "UNSET",
     Season: "Any",
     Proper: -1,
-    Weekday: "Any",
-    Weight: "1",
+    Weekday: -1,
+    Weight: 1,
     Reference: doc(db, "ex", "nihilo"),
   };
   let a: association = new association("", dummy);

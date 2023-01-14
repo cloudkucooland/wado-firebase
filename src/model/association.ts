@@ -70,7 +70,7 @@ export default class association {
     }
 
     this.Weekday = d.Weekday ? +d.Weekday : -1; // Any
-    if (this.Weekday < -1 || this.Weekday > 6) {
+    if (this.Weekday < -1 || this.Weekday > 6 || isNaN(d.Weekday)) {
       console.debug("invalid weekday");
       this._dirty = true;
       this.Weekday = -1;
@@ -213,9 +213,9 @@ export default class association {
   public static fromProper(p: proper) {
     return new association("", {
       Location: "UNSET",
-      Proper: p.proper,
+      Proper: +p.proper,
       Season: p.season,
-      Weekday: p.weekday,
+      Weekday: +p.weekday,
       Weight: 1,
       Year: p.year,
       Reference: doc(db, "ex", "nihilo"),
