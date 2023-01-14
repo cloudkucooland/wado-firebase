@@ -56,6 +56,7 @@
             "Class = Hymn",
             "Class = Antiphon",
             "Class = Heartword",
+            "Class = Commemoration",
           ],
         ],
       });
