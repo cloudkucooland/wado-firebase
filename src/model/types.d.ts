@@ -14,4 +14,5 @@ export interface prayerFromFirestore {
   "Hymn Meter"?: string;
   Rubric?: string;
   Antiphon?: DocumentReference;
+  Collect?: string;
 }
