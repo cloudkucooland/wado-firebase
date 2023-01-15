@@ -88,6 +88,14 @@ func UpdateMeiliSearch(ctx context.Context, e FirestorePrayerEvent) error {
 	id := chunks[len(chunks)-1]
 
 	index := meili.Index("prayers")
+
+	// No body value, the prayer has been deleted
+	if e.Value.Fields.Body.StringValue == "" {
+		log.Printf("removing %s from meili index", id)
+		_, err := index.DeleteDocument(id)
+		return err
+	}
+
 	documents := make([]map[string]interface{}, 0)
 	documents = append(documents, map[string]interface{}{
 		"fsid":      id,
