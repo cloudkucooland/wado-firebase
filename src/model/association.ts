@@ -2,6 +2,7 @@ import season from "./season";
 import type proper from "./proper";
 import { doc } from "firebase/firestore";
 import { db } from "../firebase";
+import type { associationFromFirestore } from "./types";
 
 export default class association {
   public id: string;
@@ -16,7 +17,7 @@ export default class association {
   private _dirty: boolean;
   private _season: season;
 
-  constructor(id: string, d: any) {
+  constructor(id: string, d: associationFromFirestore) {
     this.id = id;
 
     this.Location = d.Location ? d.Location : "UNSET";
@@ -210,7 +211,7 @@ export default class association {
     return "clean";
   }
 
-  public static fromProper(p: proper) {
+  public static fromProper(p: proper): association {
     return new association("", {
       Location: "UNSET",
       Proper: +p.proper,

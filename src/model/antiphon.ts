@@ -6,4 +6,18 @@ export default class antiphon extends prayer {
     super(obj);
     if (obj.Class) this.class = obj.Class;
   }
+
+  public toFirebase() {
+    return {
+      Name: this.name,
+      Body: this.body,
+      Author: this.author,
+      Reviewed: this.reviewed,
+      License: this.license,
+      "Last Editor": this.lastEditor,
+      "Last Edited": this.lastEdited,
+      Media: this.media,
+      Class: this.class,
+    };
+  }
 }

@@ -16,3 +16,15 @@ export interface prayerFromFirestore {
   Antiphon?: DocumentReference;
   Collect?: string;
 }
+
+export interface associationFromFirestore {
+  Location: string;
+  Season: string;
+  Proper: number;
+  Weekday: number;
+  Year: string;
+  Weight: number;
+  Year: string;
+  CalendarDate?: string;
+  Reference: DocumentReference;
+}
