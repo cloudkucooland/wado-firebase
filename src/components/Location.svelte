@@ -22,7 +22,10 @@
   import Psalm from "./prayerClasses/Psalm.svelte";
   import Antiphon from "./prayerClasses/Antiphon.svelte";
   import Commemoration from "./prayerClasses/Commemoration.svelte";
-  import type { prayerFromFirestore } from "../model/types";
+  import type {
+    prayerFromFirestore,
+    associationFromFirestore,
+  } from "../model/types";
 
   let proper: Readable<proper> = getContext("forProper");
   let qaa: Readable<any> = getContext("qaa");
@@ -43,22 +46,25 @@
   ]);
 
   if (typeof max !== "number") max = +max;
-  if (typeof maxAlt !== "number") maxAlt = +maxAlt;
-  const realMax = maxAlt > max ? maxAlt : max;
+  let realMax = max;
+  if ($showAlt) {
+    if (typeof maxAlt !== "number") maxAlt = +maxAlt;
+    realMax = maxAlt > max ? maxAlt : max;
+  }
 
-  const order = "Weight";
-
-  // this needs to be refactored
+  // since firestore (currently) only supports one "in" or "inarray" operator, we can't flatten this out
+  // this works for now
   async function loaddata(
     p: proper
   ): Promise<Map<string, prayerFromFirestore>> {
     const m: Map<string, prayerFromFirestore> = new Map();
 
+    // closure - needs m
     const doQuery = async (q) => {
       try {
         const res = await getDocs(q);
         for (const a of res.docs) {
-          const ad = a.data(); // as assocFromFirestore
+          const ad = a.data() as associationFromFirestore;
           const d = await getDocCacheFirst(ad.Reference);
           const dd = d.data() as prayerFromFirestore;
           if (dd.License) m.set(d.id, dd);
@@ -69,6 +75,7 @@
       }
     };
 
+    // just a wrapper to enforce types
     type queryArgs = {
       location: string;
       season: string;
@@ -77,6 +84,7 @@
       year: string;
     };
 
+    // just a wrapper to enforce types
     const makeQuery = (qa: queryArgs) => {
       return query(
         collection(db, "associations"),
@@ -86,7 +94,7 @@
         where("Proper", "==", qa.proper),
         where("Weekday", "==", qa.weekday),
         where("Year", "==", qa.year),
-        orderBy(order),
+        orderBy("Weight"),
         limit(realMax - m.size)
       );
     };
@@ -97,13 +105,11 @@
         collection(db, "associations"),
         where("Location", "==", name),
         where("CalendarDate", "==", p.caldate),
-        orderBy(order),
+        orderBy("Weight"),
         limit(realMax)
       )
     );
-    if (m.size >= realMax) {
-      return m;
-    }
+    if (m.size >= realMax) return m;
 
     // try with all the details
     await doQuery(
@@ -115,9 +121,7 @@
         year: p.year,
       } as queryArgs)
     );
-    if (m.size >= realMax) {
-      return m;
-    }
+    if (m.size >= realMax) return m;
 
     // Any Year
     await doQuery(
@@ -129,9 +133,7 @@
         year: "Any",
       } as queryArgs)
     );
-    if (m.size >= realMax) {
-      return m;
-    }
+    if (m.size >= realMax) return m;
 
     // Any Year or Day
     await doQuery(
@@ -143,9 +145,7 @@
         year: "Any",
       } as queryArgs)
     );
-    if (m.size >= realMax) {
-      return m;
-    }
+    if (m.size >= realMax) return m;
 
     // Season/Weekday
     await doQuery(
@@ -157,9 +157,7 @@
         year: "Any",
       } as queryArgs)
     );
-    if (m.size >= realMax) {
-      return m;
-    }
+    if (m.size >= realMax) return m;
 
     // Season only
     await doQuery(
@@ -171,9 +169,7 @@
         year: "Any",
       } as queryArgs)
     );
-    if (m.size >= realMax) {
-      return m;
-    }
+    if (m.size >= realMax) return m;
 
     // Location, anys
     await doQuery(

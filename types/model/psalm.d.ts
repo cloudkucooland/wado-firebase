@@ -1,18 +1,9 @@
 import type { prayerFromFirestore } from "./types";
 import prayer from "./prayer";
+import type { DocumentReference } from "firebase/firestore";
 export default class psalm extends prayer {
   rubric: string;
+  antiphon?: DocumentReference;
   constructor(obj: prayerFromFirestore);
-  toFirebase(): {
-    Name: string;
-    Body: string;
-    Author: string;
-    Reviewed: boolean;
-    License: boolean;
-    "Last Editor": string;
-    "Last Edited": string;
-    Media: string;
-    Class: string;
-    Rubric: string;
-  };
+  toFirebase(): any;
 }

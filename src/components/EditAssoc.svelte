@@ -3,6 +3,7 @@
   import { db } from "../firebase";
   import { onMount, afterUpdate } from "svelte";
   import association from "../model/association";
+  import type { associationFromFirestore } from "../model/types";
   import season from "../model/season";
   import { Container, Row, Col, Input } from "sveltestrap";
 
@@ -17,8 +18,9 @@
     Proper: -1,
     Weekday: -1,
     Weight: 1,
+    Year: "Any",
     Reference: doc(db, "ex", "nihilo"),
-  };
+  } as associationFromFirestore;
   let a: association = new association("", dummy);
 
   let calDateSet: boolean = false;
@@ -36,7 +38,7 @@
 
     // get the current one, from firestore
     const d = await getDoc(doc(db, "associations", id));
-    a = new association(d.id, d.data());
+    a = new association(d.id, d.data() as associationFromFirestore);
     selectedSeason = season.LUT.get(a.Season);
     result = a;
     if (result.CalendarDate !== "Any") {

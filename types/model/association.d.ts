@@ -1,4 +1,5 @@
 import type proper from "./proper";
+import type { associationFromFirestore } from "./types";
 export default class association {
   id: string;
   CalendarDate: string;
@@ -11,7 +12,7 @@ export default class association {
   Reference: any;
   private _dirty;
   private _season;
-  constructor(id: string, d: any);
+  constructor(id: string, d: associationFromFirestore);
   toFirebase(): {
     CalendarDate: string;
     Location: string;

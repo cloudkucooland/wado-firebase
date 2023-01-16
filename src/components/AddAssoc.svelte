@@ -3,6 +3,7 @@
   import { db } from "../firebase";
   import { onMount, afterUpdate } from "svelte";
   import association from "../model/association";
+  import type { associationFromFirestore } from "../model/types";
   import season from "../model/season";
   import { Container, Row, Col, Input, Button } from "sveltestrap";
   import Select from "svelte-select";
@@ -16,10 +17,11 @@
     Season: result && result.Season ? result.Season : "Any",
     Proper: result && result.Proper ? +result.Proper : -1,
     Weekday: result && result.Weekday ? +result.Weekday : -1,
+    Year: result && result.Year ? result.Year : "Any",
     Weight: result && result.Weight ? +result.Weight : 1,
     Reference:
       result && result.Reference ? result.Reference : doc(db, "ex", "nihilo"),
-  });
+  } as associationFromFirestore);
   console.log("location", location, "incoming", result, "built", a);
 
   let calDateSet: boolean = false;

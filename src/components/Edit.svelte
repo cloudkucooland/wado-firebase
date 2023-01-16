@@ -28,13 +28,16 @@
     deleteDoc,
   } from "firebase/firestore";
   import { db, auth, recordEvent, screenView } from "../firebase";
-  import { classes, getClass } from "../model/prayerClasses";
+  import { classes, getClass, type prayerClass } from "../model/prayerClasses";
   import { toasts } from "svelte-toasts";
   import { link } from "svelte-spa-router";
   import { getContext, onMount } from "svelte";
   import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
-  import type { prayerFromFirestore } from "../model/types";
+  import type {
+    prayerFromFirestore,
+    associationFromFirestore,
+  } from "../model/types";
   import EditMedia from "./EditMedia.svelte";
   import EditAssoc from "./EditAssoc.svelte";
   import EditPsalmAntiphon from "./EditPsalmAntiphon.svelte";
@@ -51,9 +54,10 @@
 
   import association from "../model/association";
   import prayer from "../model/prayer";
-  import type Hymn from "../../types/model/hymn";
-  import type Psalm from "../../types/model/psalm";
-  import type Antiphon from "../../types/model/antiphon";
+  import hymn from "../model/hymn";
+  import psalm from "../model/psalm";
+  import type antiphon from "../model/antiphon";
+  import commemoration from "../model/commemoration";
 
   let me: Readable<User> = getContext("me");
   let editor: Readable<Editor>;
@@ -64,7 +68,7 @@
   let modalId: string = "";
   let assocEditResult: association;
   let assocAddResult: association;
-  const _p: prayer | Hymn | Psalm | Antiphon = new prayer({
+  const _p: prayer | hymn | psalm | antiphon | commemoration = new prayer({
     Name: "Loading",
     Body: "Loading",
   });
@@ -152,7 +156,10 @@
       // https://svelte.dev/tutorial/updating-arrays-and-objects
       associations = [
         ...associations,
-        new association(refetched.id, refetched.data()),
+        new association(
+          refetched.id,
+          refetched.data() as associationFromFirestore
+        ),
       ];
       recordEvent("add_assoc", { id: id, new: added.id });
     } catch (err) {
@@ -168,7 +175,7 @@
       const toEdit = await getDoc(ref);
       const d = toEdit.data() as prayerFromFirestore;
 
-      const c = getClass(d.Class);
+      const c: prayerClass = getClass(d.Class);
       prayerData = new c(d);
 
       const q = query(
@@ -178,7 +185,10 @@
       const res = await getDocs(q);
       for (const a of res.docs) {
         // https://svelte.dev/tutorial/updating-arrays-and-objects
-        associations = [...associations, new association(a.id, a.data())];
+        associations = [
+          ...associations,
+          new association(a.id, a.data() as associationFromFirestore),
+        ];
       }
     } catch (err) {
       console.log(err);
@@ -284,7 +294,7 @@
                 {/if}
               </Col>
             </Row>
-            {#if prayerData.class == "hymn"}
+            {#if prayerData instanceof hymn}
               <Row>
                 <Col sm="6">
                   <FormGroup>
@@ -310,7 +320,7 @@
                 </Col>
               </Row>
             {/if}
-            {#if prayerData.class == "psalm"}
+            {#if prayerData instanceof psalm}
               <Row>
                 <Col>
                   <FormGroup>
@@ -326,7 +336,7 @@
               </Row>
               <EditPsalmAntiphon bind:result={prayerData.antiphon} />
             {/if}
-            {#if prayerData.class == "commemoration"}
+            {#if prayerData instanceof commemoration}
               <Row>
                 <Col>
                   <FormGroup>
