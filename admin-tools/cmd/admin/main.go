@@ -6,7 +6,8 @@ import (
 	"fmt"
 	// "net/http"
 	// "encoding/json"
-	// "os"
+	"log"
+	"os"
 
 	"cloud.google.com/go/firestore"
 	// "google.golang.org/api/iterator"
@@ -19,6 +20,7 @@ import (
 	"google.golang.org/api/option"
 
 	"github.com/meilisearch/meilisearch-go"
+	"github.com/urfave/cli/v2"
 )
 
 var client *auth.Client
@@ -53,37 +55,153 @@ func main() {
 	}
 	defer secrets.Close()
 
-	// updateEditors(ctx)
-	updateMediaManagers(ctx)
-	// revokeReviewed(ctx)
-	// assocCleanup(ctx)
-	// updateMeiliSearch(ctx)
-	// purgeOldLectionary(ctx)
-}
+	app := &cli.App{
+		Name:    "wado-admin",
+		Version: "v0.0.0",
+		Authors: []*cli.Author{
+			{
+				Name:  "Scot C. Bontrager",
+				Email: "scot@saint-luke.net",
+			},
+		},
+		Copyright: "© 2022 Scot C. Bontrager",
+		HelpName:  "wado-admin",
 
-func updateEditors(ctx context.Context) {
-	// editors := []string{"PsfIgw0szbhCX14JEwCnR4XNxxz1", "E8axm9DyN7eZ2gh7pGs6CrPOJLD3", "idlyS5Ansvhj23AsKmdrC3Ufbcb2", "hBk6r6Wq8STqGxOoPhPWHGtXo8Q2", "1a5UG6WjcSeLOXgcmZJKbjt7Dav1", "8yFu045fSdY6OLfcE1A4oGPqct22", "bETXa0FpNGVhaU0zABlzB11oZSs2"}
-	editors := []string{"bETXa0FpNGVhaU0zABlzB11oZSs2"}
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "key",
+				Aliases: []string{"k"},
+				Value:   "keyfile.json",
+				Usage:   "Google Keyfile",
+			},
+		},
+		Commands: []*cli.Command{
+			{
+				Name:    "editor",
+				Aliases: []string{"e"},
+				Usage:   "set access to editor",
+				Action: func(cCtx *cli.Context) error {
+					fmt.Println("set to editor: ", cCtx.Args().First())
+					setEditor(ctx, cCtx.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "media",
+				Aliases: []string{"m"},
+				Usage:   "set access to media manager",
+				Action: func(cCtx *cli.Context) error {
+					fmt.Println("set to media manager: ", cCtx.Args().First())
+					setMediaManager(ctx, cCtx.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "user",
+				Aliases: []string{"u"},
+				Usage:   "set access to user",
+				Action: func(cCtx *cli.Context) error {
+					setUser(ctx, cCtx.Args().First())
+					return nil
+				},
+			},
+			{
+				Name:    "list",
+				Aliases: []string{"l"},
+				Usage:   "list users with roles",
+				Action: func(cCtx *cli.Context) error {
+                    listUsers(ctx, false);
+					return nil
+				},
+			},
+			{
+				Name:    "listall",
+				Aliases: []string{"l"},
+				Usage:   "list all users",
+				Action: func(cCtx *cli.Context) error {
+                    listUsers(ctx, true);
+					return nil
+				},
+			},
+			{
+				Name:    "meili",
+				Aliases: []string{"M"},
+				Usage:   "update meili search",
+				Action: func(cCtx *cli.Context) error {
+					fmt.Println("updating meili")
+					updateMeiliSearch(ctx, false)
+					return nil
+				},
+			},
+			{
+				Name:  "meilifull",
+				Usage: "reindex meili search",
+				Action: func(cCtx *cli.Context) error {
+					fmt.Println("full reindexing meili")
+					updateMeiliSearch(ctx, true)
+					return nil
+				},
+			},
+			{
+				Name:  "unreview",
+				Usage: "remove reviewd bit from all prayers",
+				Action: func(cCtx *cli.Context) error {
+					fmt.Println("unreviewing all")
+					revokeReviewed(ctx)
+					return nil
+				},
+			},
+		},
+	}
 
-	for _, s := range editors {
-		claims := map[string]interface{}{"role": "Editor"}
-		err := client.SetCustomUserClaims(ctx, s, claims)
-		if err != nil {
-			panic(err)
-		}
+	if err := app.Run(os.Args); err != nil {
+		log.Fatal(err)
 	}
 }
 
-func updateMediaManagers(ctx context.Context) {
-	mediamanagers := []string{"WzAJzSFn6gRIdv4A47ODGhK0Pkw2"}
-
-	for _, s := range mediamanagers {
-		claims := map[string]interface{}{"role": "Media"}
-		err := client.SetCustomUserClaims(ctx, s, claims)
-		if err != nil {
-			panic(err)
-		}
+func setEditor(ctx context.Context, s string) {
+	claims := map[string]interface{}{"role": "Editor"}
+	err := client.SetCustomUserClaims(ctx, s, claims)
+	if err != nil {
+		panic(err)
 	}
+}
+
+func setMediaManager(ctx context.Context, s string) {
+	claims := map[string]interface{}{"role": "Media"}
+	err := client.SetCustomUserClaims(ctx, s, claims)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func setUser(ctx context.Context, s string) {
+	claims := map[string]interface{}{}
+	err := client.SetCustomUserClaims(ctx, s, claims)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func listUsers(ctx context.Context, all bool) {
+    ui := client.Users(ctx, "")
+
+    for {
+        user, err := ui.Next()
+        if err != nil && err == iterator.Done {
+            break;
+        }
+        if err != nil {
+            panic(err)
+        }
+        if all || len(user.CustomClaims) > 0 {
+            role, ok := user.CustomClaims["role"]
+            if !ok {
+                role = "User"
+            }
+            fmt.Printf("%s\t%s\t%s\n", user.UserRecord.UserInfo.UID, role, user.UserRecord.UserInfo.DisplayName)
+        }
+    }
 }
 
 // if there are a lot, run it multiple times. 500 is a limit of firestore
@@ -110,7 +228,7 @@ func revokeReviewed(ctx context.Context) {
 	}
 }
 
-func updateMeiliSearch(ctx context.Context) {
+func updateMeiliSearch(ctx context.Context, hardreset bool) {
 	key, err := getMeiliKey(ctx)
 	if err != nil {
 		panic(err)
@@ -120,7 +238,9 @@ func updateMeiliSearch(ctx context.Context) {
 		Host:   "https://saint-luke.net:7700",
 		APIKey: key,
 	})
-	// c.DeleteIndex("prayers")
+	if hardreset {
+		c.DeleteIndex("prayers")
+	}
 
 	index := c.Index("prayers")
 	_, err = index.UpdateFilterableAttributes(&[]string{"Class", "License", "Reviewed"})
@@ -146,28 +266,6 @@ func updateMeiliSearch(ctx context.Context) {
 	}
 
 	_, err = index.AddDocumentsInBatches(documents, 50, "fsid")
-	if err != nil {
-		panic(err)
-	}
-}
-
-func purgeOldLectionary(ctx context.Context) {
-	batch := fsclient.Batch()
-
-	iter := fsclient.Collection("associations").Where("Location", "==", "LAUDS-PSALTER-ANTIPHON").Limit(500).Documents(ctx)
-	for {
-		doc, err := iter.Next()
-		if err == iterator.Done {
-			break
-		}
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println(doc.Ref.ID)
-		batch.Delete(doc.Ref)
-	}
-
-	_, err := batch.Commit(ctx)
 	if err != nil {
 		panic(err)
 	}
