@@ -2,6 +2,8 @@ import type { prayerFromFirestore } from "./types";
 import prayer from "./prayer";
 
 export default class antiphon extends prayer {
+  private _antiphon?: boolean;
+
   public constructor(obj: prayerFromFirestore) {
     super(obj);
     if (obj.Class) this.class = obj.Class;

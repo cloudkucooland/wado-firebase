@@ -18,6 +18,7 @@ export interface prayerClass {
   class: string;
 }
 
+// keys used to generate menu in components/Edit.svelte -- must be exported
 export const classes: Map<string, prayerClass> = new Map([
   ["prayer", prayer],
   ["psalm", psalm],
@@ -27,6 +28,7 @@ export const classes: Map<string, prayerClass> = new Map([
   ["commemoration", commemoration],
 ]);
 
+// use getClass to actually do the lookup
 export function getClass(className: string): prayerClass {
   if (!classes.has(className)) {
     console.log("invalid class", className);
