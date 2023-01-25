@@ -24,6 +24,7 @@
   (may be accompanied by the lighting of incense; always included in Festive
   Vespers or Evensong)
 </Rubric>
+<Location name="VESPER-CANTICLE" />
 
 <h4>Prayer of awareness</h4>
 <Location name="VESPER-CONFESSION" maxAlt={3} />

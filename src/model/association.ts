@@ -276,6 +276,7 @@ export default class association {
     "TERCE-PSALTER",
     "UNSET",
     "VESPER-BENEDICTION",
+    "VESPER-CANTICLE",
     "VESPER-COLLECT1",
     "VESPER-COLLECT2",
     "VESPER-COLLECT3",
