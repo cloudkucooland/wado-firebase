@@ -247,10 +247,8 @@ export default class proper {
       this.season = "ascension";
       this.proper = 0;
     } else if (t > f("ascension") && t < f("pentecost")) {
-      this.season = "greatfifty";
-      const daysaftereaster =
-        this.getDayOfYear(forday) - (this._fdoy("easter") + 1);
-      this.proper = Math.floor(daysaftereaster / 7) + 1;
+      this.season = "postascension";
+      this.proper = this.getDayOfYear(forday) - this._fdoy("ascension");
     } else if (t >= f("pentecost") && t < f("pentecost") + nextday) {
       this.season = "pentecost";
       this.proper = 0;
@@ -377,6 +375,8 @@ export default class proper {
         return "Eve of the Ascension";
       case "ascension":
         return "The Feast of the Ascension";
+      case "postascension":
+        return "" +  this.proper + " days after Ascension";
       case "pentecosteve":
         return "Pentecost Eve";
       case "pentecost":
