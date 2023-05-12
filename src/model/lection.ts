@@ -7,8 +7,8 @@ export default class lection {
   eveningtitle?: string;
   _morning?: string;
   _evening?: string;
-  _morningpsalmref?: string;
-  _eveningpsalmref?: string;
+  _morningpsalmref?: string; // should be a firestore DocumentReference
+  _eveningpsalmref?: string; // should be a firestore DocumentReference
 
   public constructor(obj: any) {
     if (obj.morning) this.morning = obj.morning;
