@@ -13,12 +13,15 @@
 <Location name="COMPLINE-OPENING-HYMN" />
 
 <h4>Confession and Assurance</h4>
-<Location name="COMPILNE-CONFESSION" />
+<Location name="COMPILNE-CONFESSION" /><!-- known typo -->
 <Silence>a time of silence</Silence>
 <Location name="FORGIVEN" />
 
 <h4>Gloria and Psalter</h4>
 <Location name="COMPLINE-PSALTER-PREFIX" />
+SCB: THIS IS NEW
+<Location name="COMPLINE-PSALTER" />
+SCB: Ps 4, 134, 139:1-11 Remove this:
 <PsalmLection office="COMPLINE" />
 <Location name="GENERAL-GLORIA" />
 <Silence />
@@ -41,6 +44,8 @@
 
 <h3>Concluding Prayer</h3>
 <Location name="COMPLINE-CONCLUDING" />
+
+<h3>Hymn</h3>
 <Location name="COMPLINE-HYMN" />
 
 <h3>Commendation</h3>
@@ -49,7 +54,8 @@
 <h3>Canticle of Simeon <i>nunc dimittas</i></h3>
 <Location name="SIMEON" />
 <Location name="GENERAL-GLORIA" />
-<Location name="GENERAL-DISMISSAL" />
+scb: complineday
+<Location name="COMPLINE-DISMISSAL" />
 <Rubric>
   Members of the community continue in prayer,<br />and then depart in silence
   one by one.
