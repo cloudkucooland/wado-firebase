@@ -48,8 +48,8 @@
   import LectionList from "./components/LectionList.svelte";
   import AddPrayer from "./components/AddPrayer.svelte";
 
-  import "@beyonk/gdpr-cookie-consent-banner/dist/style.css";
-  import GdprBanner from "@beyonk/gdpr-cookie-consent-banner";
+  import "@beyonk/gdpr-cookie-consent-banner/style.css";
+  import { Banner as GdprBanner } from "@beyonk/gdpr-cookie-consent-banner";
   const choices = {
     necessary: {
       label: "Necessary cookies",
@@ -84,12 +84,13 @@
     "*": HomePage,
   };
 
-  $: loggedIn = false;
+  let loggedIn = false;
   let me: Writable<user> = writable(new user({}));
   setContext("me", me);
 
   onAuthStateChanged(auth, async (u) => {
-    if (u) {
+    console.log("authStateChanged", u);
+    if (u.hasOwnProperty("uid")) {
       loggedIn = true;
       // @ts-ignore
       $me = await user.me();
