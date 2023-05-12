@@ -209,6 +209,15 @@ export default class season {
       }),
     ],
     [
+      "postascension",
+      new season({
+        name: "postascension",
+        churchPos: 92,
+        maxProper: 9,
+        useWeekdays: true,
+      }),
+    ],
+    [
       "pentecosteve",
       new season({
         name: "pentecosteve",
