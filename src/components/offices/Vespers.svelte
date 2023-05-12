@@ -74,18 +74,15 @@
 <Location name="OSL" />
 
 <h4>The Lord’s Prayer</h4>
-<Location name="GENERAL-LORDS" /><br />
+<Location name="GENERAL-LORDS" bold={true} /><br />
 <h4>Concluding Collect</h4>
 <Location name="VESPER-COLLECT3" maxAlt={3} />
 
 <h4>Hymn</h4>
 <Location name="VESPER-HYMN" maxAlt={3} />
 
-<h4>Commendation and Canticle of Simeon</h4>
-<Location name="SIMEON" maxAlt={3} /><br />
-
 <h3>Going Forth</h3>
-<Location name="VESPER-BENEDICTION" />
+<Location name="VESPER-BENEDICTION" maxAlt={3}/>
 <Location name="VESPER-DISMISSAL" />
 
 <style>
