@@ -82,7 +82,7 @@
 <Location name="VESPER-HYMN" maxAlt={3} />
 
 <h3>Going Forth</h3>
-<Location name="VESPER-BENEDICTION" maxAlt={3}/>
+<Location name="VESPER-BENEDICTION" maxAlt={3} />
 <Location name="VESPER-DISMISSAL" />
 
 <style>

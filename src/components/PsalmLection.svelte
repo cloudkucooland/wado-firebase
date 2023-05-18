@@ -42,12 +42,15 @@
     let q = query(collection(db, "lections", p.year, "l"), ...wheres);
 
     let res = await getDocsCacheFirst(q);
-    if (res.empty)
+    if (res.empty) {
+      toasts.error("Empty psalm lection, using default");
+      console.log("empty psalm lection");
       return new plClass({
         id: "Empty Result...",
         morningpsalm: "Psalm 1",
         eveningpsalm: "Psalm 150",
       });
+    }
 
     if (res.size != 1) {
       toasts.error("Multiple psalm lection matches");

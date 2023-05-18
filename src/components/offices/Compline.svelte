@@ -19,10 +19,7 @@
 
 <h4>Gloria and Psalter</h4>
 <Location name="COMPLINE-PSALTER-PREFIX" />
-SCB: THIS IS NEW
-<Location name="COMPLINE-PSALTER" />
-SCB: Ps 4, 134, 139:1-11 Remove this:
-<PsalmLection office="COMPLINE" />
+<Location name="COMPLINE-PSALTER" max={3} />
 <Location name="GENERAL-GLORIA" />
 <Silence />
 
@@ -54,7 +51,6 @@ SCB: Ps 4, 134, 139:1-11 Remove this:
 <h3>Canticle of Simeon <i>nunc dimittas</i></h3>
 <Location name="SIMEON" />
 <Location name="GENERAL-GLORIA" />
-scb: complineday
 <Location name="COMPLINE-DISMISSAL" />
 <Rubric>
   Members of the community continue in prayer,<br />and then depart in silence

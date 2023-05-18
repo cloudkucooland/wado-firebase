@@ -17,8 +17,7 @@
 <Location name="NONE-PRAYER" />
 
 <h3>Psalter</h3>
-<h4>SCB: Change this to Psalm 1</h4>
-<PsalmLection office="VESPERS" />
+<Location name="NONE-PSALTER" />
 <Location name="GENERAL-GLORIA" />
 
 <h3>The Little Chapter</h3>

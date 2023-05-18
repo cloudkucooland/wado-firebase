@@ -376,7 +376,7 @@ export default class proper {
       case "ascension":
         return "The Feast of the Ascension";
       case "postascension":
-        return "" +  this.proper + " days after Ascension";
+        return "" + this.proper + " days after Ascension";
       case "pentecosteve":
         return "Pentecost Eve";
       case "pentecost":

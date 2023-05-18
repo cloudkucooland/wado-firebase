@@ -3,9 +3,7 @@ import { type Analytics, getAnalytics, logEvent } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import {
-  clearIndexedDbPersistence,
-  enableIndexedDbPersistence,
-  getFirestore,
+  initializeFirestore,
   getDocsFromCache,
   getDocsFromServer,
   getDocFromCache,
@@ -14,6 +12,8 @@ import {
   DocumentReference,
   terminate,
   waitForPendingWrites,
+  persistentLocalCache,
+  persistentMultipleTabManager,
 } from "firebase/firestore";
 import { toasts } from "svelte-toasts";
 
@@ -30,21 +30,14 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 registerVersion("WADO", "2.0");
 export const auth = getAuth(app);
-export let db = getFirestore(app);
+export let db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
+});
 export const storage = getStorage();
 let analytics: Analytics;
 let _analyticsRunning: boolean = false;
-
-// make this callable from the browser's js console
-// @ts-ignore
-window.wado = {};
-// @ts-ignore
-window.wado.clearCache = async () => {
-  await waitForPendingWrites(db);
-  await terminate(db);
-  await clearIndexedDbPersistence(db);
-  db = getFirestore(app);
-};
 
 export function initAnalytics() {
   analytics = getAnalytics(app);
@@ -58,23 +51,6 @@ export function recordEvent(name: string, details?: object) {
 
 export function screenView(name: string) {
   recordEvent("screen_view", { firebase_screen: name });
-}
-
-export function enableOfflineDataMode() {
-  // toasts.info("Starting offline data mode", null, { uid: 21, duration: 5 });
-  enableIndexedDbPersistence(db).catch((err) => {
-    if (err.code == "failed-precondition") {
-      toasts.info("Offline data mode running in another tab/window", null, {
-        uid: 20,
-        duration: 5,
-      });
-    } else if (err.code == "unimplemented") {
-      toasts.error("Browser does not support offline data mode", null, {
-        uid: 20,
-        duration: 5,
-      });
-    }
-  });
 }
 
 export async function getDocsCacheFirst(q: Query) {

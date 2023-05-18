@@ -15,12 +15,7 @@
     DropdownMenu,
     DropdownItem,
   } from "sveltestrap";
-  import {
-    recordEvent,
-    auth,
-    enableOfflineDataMode,
-    initAnalytics,
-  } from "./firebase";
+  import { recordEvent, auth, initAnalytics } from "./firebase";
   import {
     FacebookAuthProvider,
     GoogleAuthProvider,
@@ -157,8 +152,6 @@
       );
     }
   }
-
-  enableOfflineDataMode();
 
   if ("serviceWorker" in navigator) {
     let found = false;
