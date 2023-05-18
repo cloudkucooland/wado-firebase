@@ -57,13 +57,12 @@ export async function getDocsCacheFirst(q: Query) {
   try {
     const res = await getDocsFromCache(q);
     if (res.empty) {
-      // console.debug("result empty");
       throw new Error("query cache miss");
     }
     // console.debug("query cache hit");
     return res;
   } catch (err) {
-    // console.debug("query cache miss");
+    console.debug("query cache miss");
     const res = await getDocsFromServer(q);
     return res;
   }
@@ -75,7 +74,7 @@ export async function getDocCacheFirst(r: DocumentReference) {
     // console.debug("doc cache hit");
     return res;
   } catch (err) {
-    // console.debug("doc cache miss");
+    console.debug("doc cache miss");
     const res = await getDocFromServer(r);
     return res;
   }
