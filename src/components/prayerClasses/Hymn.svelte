@@ -32,7 +32,9 @@
 <div class="hymn">{@html h.body}</div>
 <div class="hymndata">
   {#if h.hymntune}
-    <span class="hymntune">{h.hymntune}</span>
+    <a href="https://hymnary.org/search?qu={h.hymntune}"
+      ><span class="hymntune">{h.hymntune}</span></a
+    >
   {/if}
   {#if h.hymnmeter}
     <span class="hymnmeter">{h.hymnmeter}</span>
