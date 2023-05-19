@@ -16,7 +16,6 @@
   import type proper from "../../types/model/proper";
   import { Spinner, Icon } from "sveltestrap";
 
-  import Heartwords from "./prayerClasses/Heartwords.svelte";
   import Hymn from "./prayerClasses/Hymn.svelte";
   import Prayer from "./prayerClasses/Prayer.svelte";
   import Psalm from "./prayerClasses/Psalm.svelte";
@@ -36,7 +35,6 @@
   export let bold: boolean = false;
 
   export const lookup = new Map([
-    ["heartwords", Heartwords],
     ["other", Prayer],
     ["hymn", Hymn],
     ["prayer", Prayer],

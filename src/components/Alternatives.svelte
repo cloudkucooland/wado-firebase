@@ -1,7 +1,6 @@
 <script lang="ts">
   import { TabContent, TabPane } from "sveltestrap";
 
-  import Heartwords from "./prayerClasses/Heartwords.svelte";
   import Hymn from "./prayerClasses/Hymn.svelte";
   import Prayer from "./prayerClasses/Prayer.svelte";
   import Psalm from "./prayerClasses/Psalm.svelte";
@@ -9,7 +8,6 @@
   import type { prayerFromFirestore } from "../model/types";
 
   export const lookup = new Map([
-    ["heartwords", Heartwords],
     ["other", Prayer],
     ["hymn", Hymn],
     ["prayer", Prayer],

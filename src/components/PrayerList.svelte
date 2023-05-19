@@ -47,14 +47,7 @@
   let modalId: string = "exnihilo";
   let me: Readable<User> = getContext("me");
 
-  const cs = new Array(
-    "prayer",
-    "hymn",
-    "psalm",
-    "antiphon",
-    "heartword",
-    "commemoration"
-  );
+  const cs = new Array("prayer", "hymn", "psalm", "antiphon", "commemoration");
 
   let deleteModalOpen = false;
   function toggleDeleteOpen(e: Event) {

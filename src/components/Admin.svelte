@@ -55,7 +55,6 @@
       <div>
         <em>Prayers have a "class" that determines how they are displayed.</em>
         A prayer with the class "hymn" will display with meter/tune information.
-        A "heartword" will be prefixed with "hear what the spirit is saying.
         <i
           >When adding new prayers, it is important to make sure you select the
           proper class.</i

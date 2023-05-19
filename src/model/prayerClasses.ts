@@ -1,7 +1,6 @@
 import prayer from "./prayer";
 import psalm from "./psalm";
 import hymn from "./hymn";
-import heartword from "./heartword";
 import antiphon from "./antiphon";
 import commemoration from "./commemoration";
 
@@ -23,7 +22,6 @@ export const classes: Map<string, prayerClass> = new Map([
   ["prayer", prayer],
   ["psalm", psalm],
   ["hymn", hymn],
-  ["heartword", heartword],
   ["antiphon", antiphon],
   ["commemoration", commemoration],
 ]);

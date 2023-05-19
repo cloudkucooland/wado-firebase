@@ -10,7 +10,9 @@
     "outDir": "types",
     "declarationMap": false,
     "target": "es2020",
-    "module": "esnext"
+    "module": "esnext",
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
 
   "include": ["src/**/*.ts", "src/**/*.svelte"],

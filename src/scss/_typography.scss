@@ -47,18 +47,6 @@ $-wado-margin-bottom: 0.25rem;
   padding-right: 1em;
 }
 
-.heartword {
-  @include typography;
-  padding-left: 1em;
-  text-indent: -1em;
-}
-
-.heartword-credit {
-  @include typography(italic);
-  text-align: right;
-  padding-right: 1em;
-}
-
 .hymn {
   @include typography;
 }

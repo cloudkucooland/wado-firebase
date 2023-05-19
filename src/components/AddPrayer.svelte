@@ -6,7 +6,7 @@
   import { push, link } from "svelte-spa-router";
   import prayer from "../model/prayer";
 
-  async function addPrayer() {
+  async function addPrayer(): Promise<string> {
     const placeholder = new prayer({
       Name: "• New Prayer",
       Body: "Unset",
@@ -33,6 +33,7 @@
     } catch (err) {
       console.log(err);
       toasts.error(err.message);
+      return null;
     }
   }
 </script>
