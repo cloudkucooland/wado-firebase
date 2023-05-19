@@ -186,8 +186,10 @@ export default class season {
       new season({
         name: "greatfifty",
         churchPos: 80,
-        maxProper: 7,
+        maxProper: 6,
         useWeekdays: true,
+        maxWeekday: 2,
+        comment: "ends on Tuesday Wednesday, Ascension Eve",
       }),
     ],
     [
@@ -213,8 +215,11 @@ export default class season {
       new season({
         name: "postascension",
         churchPos: 92,
-        maxProper: 9,
+        maxProper: 7,
+        startWeekday: 5,
+        maxWeekday: 5,
         useWeekdays: true,
+        comment: "AKA 7th week of Easter, end of great 50",
       }),
     ],
     [

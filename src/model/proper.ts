@@ -341,11 +341,10 @@ export default class proper {
       case "ashwednesday":
         return "Ash Wednesday";
       case "lent":
-        let p = this.proper;
         let prep = "of";
         if (this.weekday == 0) prep = "in";
         return (
-          this.cardToOrd(p) +
+          this.cardToOrd(this.proper) +
           " " +
           this._weekdayDisplay() +
           " " +
@@ -376,7 +375,9 @@ export default class proper {
       case "ascension":
         return "The Feast of the Ascension";
       case "postascension":
-        return "" + this.proper + " days after Ascension";
+        let prefix = "";
+        if (this.proper > 6) prefix = "Second ";
+        return "" + prefix + this._weekdayDisplay() + " after Ascension";
       case "pentecosteve":
         return "Pentecost Eve";
       case "pentecost":
@@ -536,7 +537,7 @@ export default class proper {
           if (v.name == "afterepiphany" && i == 1) d = 1; // afterepiphany-1-sunday is baptismoflord
 
           while (d <= 6 + v.startWeekday) {
-            // for seasons that END on a day other than Sunday (Ordinary after Epiphany)
+            // for seasons that END on a day other than Sunday (Ordinary after Epiphany, after Ascension)
             if (v.maxWeekday != 0 && i >= v.maxProper && d > v.maxWeekday)
               break;
             obj.weekday = d % 7;
