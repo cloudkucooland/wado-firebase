@@ -60,13 +60,13 @@
       }
     }
     const d = new plClass(res.docs[0].data());
-    d.id = res.docs[0].id;
 
     if (office == "LAUDS" && d._morningpsalmref) {
       try {
         const ps = doc(db, "prayers", d._morningpsalmref);
         const res = await getDocCacheFirst(ps);
         d._resolved = res.data();
+        d.id = d._morningpsalmref;
       } catch (err) {
         console.log(err);
         toasts.error(err.message);
@@ -77,6 +77,7 @@
         const ps = doc(db, "prayers", d._eveningpsalmref);
         const res = await getDocCacheFirst(ps);
         d._resolved = res.data();
+        d.id = d._eveningpsalmref;
       } catch (err) {
         console.log(err);
         toasts.error(err.message);

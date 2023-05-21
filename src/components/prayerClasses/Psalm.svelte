@@ -38,7 +38,7 @@
   {#if $showEdit}<span class="edit">
       <button
         on:click={() => {
-          push("#/edit/" + id);
+          push("#/edit/" + p.id);
         }}
       >
         <Icon name="pencil" />

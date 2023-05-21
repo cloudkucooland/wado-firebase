@@ -169,11 +169,13 @@
   }
 
   async function loadPrayer(): Promise<void> {
-    const ref = doc(db, "prayers/" + id);
-
     try {
+      const ref = doc(db, "prayers/" + id);
       const toEdit = await getDoc(ref);
       const d = toEdit.data() as prayerFromFirestore;
+      if (!d) {
+        throw new Error("prayer not found: " + id);
+      }
 
       const c: prayerClass = getClass(d.Class);
       prayerData = new c(d);

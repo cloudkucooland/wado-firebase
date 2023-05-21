@@ -286,7 +286,6 @@ export default class association {
     "VESPER-CONFESSION",
     "VESPER-DISMISSAL",
     "VESPER-GLORIA",
-    "VESPER-HEARWORD",
     "VESPER-HYMN",
     "VESPER-PARDON",
     "VESPERS-LIGHT",
