@@ -35,6 +35,7 @@
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
   const properFromDate = proper.fromDate(params.officeDate);
+  console.debug(properFromDate);
   let forProper: Writable<proper> = writable(properFromDate);
   setContext("forProper", forProper);
 
@@ -48,16 +49,15 @@
 
   onMount((): void => {
     // set the URL so that "poking the ox" always takes you to "now"
-    // push("/office/" + officeName + "/" + params.officeDate);
     replace("/office/" + officeName + "/" + params.officeDate);
     screenView(officeName);
   });
 
   afterUpdate((): void => {
-    // figure out why this double-fires. Is it because of the onMount push?
     screenView(officeName);
   });
 
+  // handler for "high-score" tracking
   async function scrolling(): Promise<void> {
     if (scrolled) return; // remove the handler?
     if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
@@ -70,6 +70,7 @@
     }
   }
 
+  // quick-edit handlers
   let quickEditData: prayer;
   let quickEditOpen: boolean = false;
   let qe: Writable<unknown> = writable(async (data: prayer): Promise<void> => {
@@ -79,6 +80,7 @@
   });
   setContext("qe", qe);
 
+  // process quick-edit results
   async function qeconfirm(e: Event): Promise<void> {
     quickEditOpen = false;
     try {
