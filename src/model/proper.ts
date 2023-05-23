@@ -376,7 +376,7 @@ export default class proper {
         return "The Feast of the Ascension";
       case "postascension":
         let prefix = "";
-        if (this.proper > 6) prefix = "Second ";
+        if (this.proper > 7) prefix = "Second ";
         return "" + prefix + this._weekdayDisplay() + " after Ascension";
       case "pentecosteve":
         return "Pentecost Eve";
@@ -528,15 +528,20 @@ export default class proper {
 
         obj.proper = i;
 
-        if (v.useWeekdays) {
-          // Most seasons start on Monday, except for lent, which counts from Wednesdays
+        // postascension uses the day-after-ascension for the proper, not week
+        if (v.name == "postascension") {
+          obj.weekday = (i + v.startWeekday - 1) % 7;
+          const p = new proper(obj);
+          ll.set(p.propername, p);
+        } else if (v.useWeekdays) {
+          // Most seasons start on Monday, except for lent, which counts from Wednesdays and postascension which counts from Thursday
           let d: number = v.startWeekday;
 
           // specific exceptions
           if (v.name == "greatfifty" && i == 1) d = 1; // do not display Easter twice, otherwise greatfifty is normal
           if (v.name == "afterepiphany" && i == 1) d = 1; // afterepiphany-1-sunday is baptismoflord
 
-          while (d <= 6 + v.startWeekday) {
+          while (d < 7 + v.startWeekday) {
             // for seasons that END on a day other than Sunday (Ordinary after Epiphany, after Ascension)
             if (v.maxWeekday != 0 && i >= v.maxProper && d > v.maxWeekday)
               break;
@@ -546,6 +551,7 @@ export default class proper {
             d = d + 1;
           }
         } else {
+          // not useWeekdays
           const p = new proper(obj);
           ll.set(p.propername, p);
         }

@@ -215,7 +215,7 @@ export default class season {
       new season({
         name: "postascension",
         churchPos: 92,
-        maxProper: 7,
+        maxProper: 8,
         startWeekday: 5,
         maxWeekday: 5,
         useWeekdays: true,
