@@ -43,7 +43,11 @@ export function currentOffice() {
   if (hour >= 9 && hour < 12) return "Terce";
   if (hour >= 12 && hour < 15) return "Sext";
   if (hour >= 15 && hour < 17) return "None";
-  if (hour >= 17 && hour < 21) return "Vespers"; // if day is Saturday, do Vigil
+  if (hour >= 17 && hour < 21) {
+    if (d.getDay == 5) return "Vigil";
+    return "Vespers";
+  }
+
   return "Compline";
 }
 
