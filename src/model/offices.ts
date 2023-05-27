@@ -21,16 +21,6 @@ const officeLUT = new Map([
   ["TestOffice", TestOffice],
 ]);
 
-// leave the unfinished/test ones out - for building menus, etc
-export const offices = new Array(
-  "Lauds",
-  "Terce",
-  "Sext",
-  "None",
-  "Vespers",
-  "Compline"
-);
-
 export function getOffice(officeName: string) {
   return officeLUT.get(officeName);
 }
@@ -39,15 +29,18 @@ export function currentOffice() {
   const d = new Date();
   const hour = d.getHours();
 
+  if (hour < 5 && d.getDay() == 0) return "Vigil"; // or Matins
   if (hour >= 5 && hour < 9) return "Lauds";
   if (hour >= 9 && hour < 12) return "Terce";
   if (hour >= 12 && hour < 15) return "Sext";
   if (hour >= 15 && hour < 17) return "None";
   if (hour >= 17 && hour < 21) {
-    if (d.getDay == 5) return "Vigil";
+    if (d.getDay() == 6) return "Vigil";
     return "Vespers";
   }
 
+  if (hour >= 21 && d.getDay() == 6) return "Vigil";
+  // default
   return "Compline";
 }
 

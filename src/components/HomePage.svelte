@@ -17,7 +17,7 @@
   } from "sveltestrap";
   import proper from "../model/proper";
   import { auth, screenView, db, recordEvent } from "../firebase";
-  import { getOffice, offices, currentOffice } from "../model/offices";
+  import { getOffice, currentOffice } from "../model/offices";
   import { toasts } from "svelte-toasts";
   import { getContext, setContext, onMount, afterUpdate } from "svelte";
   import { push, replace } from "svelte-spa-router";
@@ -126,6 +126,13 @@
       toasts.error(err.message);
     }
   }
+
+  function offices(weekday: number): Array<string> {
+    if (weekday == 6) {
+      return new Array("Lauds", "Terce", "Sext", "None", "Vigil");
+    }
+    return new Array("Lauds", "Terce", "Sext", "None", "Vespers", "Compline");
+  }
 </script>
 
 <svelte:head>
@@ -144,7 +151,7 @@
           push("/office/" + officeName + "/" + params.officeDate);
         }}
       >
-        {#each offices as o}
+        {#each offices($forProper.weekday) as o}
           <TabPane tabId={o} tab={o} active={officeName == o} />
         {/each}
       </TabContent>
