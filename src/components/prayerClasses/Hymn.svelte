@@ -39,5 +39,8 @@
   {#if h.hymnmeter}
     <span class="hymnmeter">{h.hymnmeter}</span>
   {/if}
+  {#if h.author}
+    <div class="hymnmeter">{h.author}</div>
+  {/if}
 </div>
 <Media mediaUrl={h.media} />
