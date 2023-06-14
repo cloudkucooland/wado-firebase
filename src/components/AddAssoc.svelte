@@ -92,7 +92,7 @@
       {location}
     </Col>
     <Col sm="4">
-      <Button href="#/addPrayer" target="_new">Add Prayer</Button>
+      <Button href="#/addPrayer">Add Prayer</Button>
     </Col>
   </Row>
   <Row>
