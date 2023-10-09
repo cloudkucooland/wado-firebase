@@ -34,6 +34,7 @@
     now.getFullYear() + "-" + (now.getMonth() + 1) + "-" + now.getDate();
 
   export let params = { officeName: currentOffice(), officeDate: nowString };
+  console.debug(params.officeDate);
   const properFromDate = proper.fromDate(params.officeDate);
   console.debug(properFromDate);
   let forProper: Writable<proper> = writable(properFromDate);
