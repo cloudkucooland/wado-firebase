@@ -49,12 +49,15 @@ export default class proper {
   public static fromDate(simple: string): proper {
     try {
       const s = simple.split("-");
+      console.debug(s);
       const d = new Date(+s[0], +s[1] - 1, +s[2]); // month is base 0, not base 1
+      console.debug(d);
       const newProper = new proper({ caldate: +s[1] + "-" + +s[2] }); // stored in Firestore as m-d / mm-dd, base 1
       newProper.weekday = d.getDay();
 
       newProper._setFeasts(+s[0]);
       newProper._getSeason(d);
+      console.debug(newProper);
       return newProper;
     } catch (err) {
       console.log(err);
