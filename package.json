@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/cloudkucooland/wado-firebase#readme",
   "devDependencies": {
-    "@beyonk/gdpr-cookie-consent-banner": "^12.1.0",
+    "@beyonk/gdpr-cookie-consent-banner": "^10.2.1",
     "@rollup/plugin-replace": "^5.0.1",
     "@sveltejs/vite-plugin-svelte": "^2.2.0",
     "@tiptap/extension-typography": "^2.0.0-beta.209",
