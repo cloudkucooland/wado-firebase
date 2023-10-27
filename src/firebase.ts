@@ -30,7 +30,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 registerVersion("WADO", "2.0");
 export const auth = getAuth(app);
-export let db = initializeFirestore(app, { });
+export let db = initializeFirestore(app, {});
 export const storage = getStorage();
 let analytics: Analytics;
 let _analyticsRunning: boolean = false;

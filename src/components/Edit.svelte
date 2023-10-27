@@ -342,13 +342,28 @@
               <Row>
                 <Col>
                   <FormGroup>
-                    <Label for="commemorationcollect"
-                      >Commemoration Collect</Label
+                    <Label for="commemorationmorningcollect"
+                      >Commemoration Morning Collect</Label
                     >
                     <Input
-                      name="commemorationcollect"
-                      id="commemorationcollect"
-                      bind:value={prayerData.collect}
+                      name="commemorationmorningcollect"
+                      id="commemorationmorningcollect"
+                      bind:value={prayerData.morningcollect}
+                      disabled={!$me.isEditor}
+                    />
+                  </FormGroup>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                  <FormGroup>
+                    <Label for="commemorationeveningcollect"
+                      >Commemoration Evening Collect</Label
+                    >
+                    <Input
+                      name="commemorationeveningcollect"
+                      id="commemorationeveningcollect"
+                      bind:value={prayerData.eveningcollect}
                       disabled={!$me.isEditor}
                     />
                   </FormGroup>
