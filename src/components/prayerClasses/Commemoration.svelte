@@ -30,7 +30,7 @@
   </div>{/if}
 <h6>Commemoration Reading</h6>
 <div>{@html c.body}</div>
-{#if c.collect}<h6>Commemoration Collect</h6>
-  <div>{@html c.collect}</div>{/if}
+{#if c.eveningcollect}<h6>Commemoration Collect</h6>
+  <div>{@html c.eveningcollect}</div>{/if}
 {#if c.author}<div class="prayer-credit">{c.author}</div>{/if}
 <Media mediaUrl={c.media} />
