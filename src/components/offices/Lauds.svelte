@@ -43,6 +43,12 @@
 <h4><i>Prayers of Thanksgiving and Supplication</i></h4>
 <Location name="LAUDS-SUPPLICATION" maxAlt={5} /><br />
 <Rubric>Morning Collects (one or more of the following)</Rubric>
+<Location
+  name="VESPER-COMMEMORATION"
+  subunit="morningcollect"
+  max={3}
+  maxAlt={5}
+/>
 <Location name="LAUDS-COLLECT2" max={3} maxAlt={5} />
 <Location name="LAUDS-SEASONAL" max={3} maxAlt={5} />
 

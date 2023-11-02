@@ -10,27 +10,36 @@
 
   export let data: prayerFromFirestore;
   export let id: string;
+  export let subunit: string;
 
   const c = new commemoration(data);
   c.id = id;
   const qe: Readable<any> = getContext("qe");
+  console.debug(c);
 </script>
 
-{#if $showEdit}<div class="edit">
-    <button
-      on:click={() => {
-        push("#/edit/" + id);
-      }}
-    >
-      <Icon name="pencil" />
-    </button>
-    <button on:click={$qe(c)}>
-      <Icon name="pencil-square" />
-    </button>
-  </div>{/if}
-<h6>Commemoration Reading</h6>
-<div>{@html c.body}</div>
-{#if c.eveningcollect}<h6>Commemoration Collect</h6>
-  <div>{@html c.eveningcollect}</div>{/if}
-{#if c.author}<div class="prayer-credit">{c.author}</div>{/if}
-<Media mediaUrl={c.media} />
+{#if subunit == "morningcollect" && c.morningcollect}
+  {@html c.morninggcollect}
+  {#if c.author}<div class="prayer-credit">{c.author}</div>{/if}
+{/if}
+{#if subunit == "eveningcollect" && c.eveningcollect}
+  {@html c.eveningcollect}
+  {#if c.author}<div class="prayer-credit">{c.author}</div>{/if}
+{/if}
+{#if !subunit}
+  {#if $showEdit}<div class="edit">
+      <button
+        on:click={() => {
+          push("#/edit/" + id);
+        }}
+      >
+        <Icon name="pencil" />
+      </button>
+      <button on:click={$qe(c)}>
+        <Icon name="pencil-square" />
+      </button>
+    </div>{/if}
+  <h6>Reading for Commemoration</h6>
+  <div>{@html c.body}</div>
+  <Media mediaUrl={c.media} />
+{/if}

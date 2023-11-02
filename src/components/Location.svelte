@@ -33,6 +33,7 @@
   export let max: number = 1;
   export let maxAlt: number = 0;
   export let bold: boolean = false;
+  export let subunit: string;
 
   export const lookup = new Map([
     ["other", Prayer],
@@ -211,7 +212,13 @@
     <Alternatives {data} />
   {:else}
     {#each [...data] as [id, d]}
-      <svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} />
+      <svelte:component
+        this={lookup.get(d.Class)}
+        data={d}
+        {id}
+        {bold}
+        {subunit}
+      />
     {/each}
   {/if}
 {:catch error}

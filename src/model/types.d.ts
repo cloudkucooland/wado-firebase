@@ -14,7 +14,8 @@ export interface prayerFromFirestore {
   "Hymn Meter"?: string;
   Rubric?: string;
   Antiphon?: DocumentReference;
-  Collect?: string;
+  MorningCollect?: string;
+  EveningCollect?: string;
 }
 
 export interface associationFromFirestore {
