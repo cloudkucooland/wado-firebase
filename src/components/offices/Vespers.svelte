@@ -72,7 +72,7 @@
 <Location name="VESPER-COMMEMORATION" subunit="eveningcollect" maxAlt={5} />
 
 <h5>Intercession for the Order of Saint Luke</h5>
-<Location name="OSL" />
+<Location name="OSL" maxAlt={3} />
 
 <h4>The Lord’s Prayer</h4>
 <Location name="GENERAL-LORDS" bold={true} /><br />
