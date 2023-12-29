@@ -47,8 +47,9 @@
 <Location name="LAUDS-COLLECT2" max={3} maxAlt={5} />
 <Location name="LAUDS-SEASONAL" max={3} maxAlt={5} />
 
-<h4><i>Collect for the Order of Saint Luke</i></h4>
-<Location name="OSL" maxAlt={3} />
+<h4><i>Prayers for the Order of Saint Luke</i></h4>
+<Rubric>One or more of the following</Rubric>
+<Location name="OSL" max={3} />
 
 <h4><i>The Lord’s Prayer</i></h4>
 <Location name="GENERAL-LORDS" />
