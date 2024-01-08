@@ -19,7 +19,7 @@
 </script>
 
 {#if subunit == "morningcollect" && c.morningcollect}
-  {@html c.morninggcollect}
+  {@html c.morningcollect}
   {#if c.author}<div class="prayer-credit">{c.author}</div>{/if}
 {/if}
 {#if subunit == "eveningcollect" && c.eveningcollect}
