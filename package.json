@@ -9,7 +9,7 @@
     "dev": "vite",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "format": "prettier --write .",
-    "prod": "scp -r dist/* osl.indievisible.org:/www/osl/wado/"
+    "prod": "scp -4 -r dist/* osl.indievisible.org:/www/osl/wado/"
   },
   "repository": {
     "type": "git",
