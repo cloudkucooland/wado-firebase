@@ -116,7 +116,7 @@ func main() {
 			},
 			{
 				Name:    "listall",
-				Aliases: []string{"l"},
+				Aliases: []string{"L"},
 				Usage:   "list all users",
 				Action: func(cCtx *cli.Context) error {
                     listUsers(ctx, true);
