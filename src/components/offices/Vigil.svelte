@@ -16,7 +16,7 @@
 >
 
 <h3>Opening</h3>
-<h3>Enrance of the Light</h3>
+<h3>Entrance of the Light</h3>
 <Location name="VIGIL-OPENING" />
 
 <h3>Opening Sentences</h3>
