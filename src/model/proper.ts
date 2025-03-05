@@ -113,7 +113,7 @@ export default class proper {
       ["epiphany", new Date(year, 0, 6, 0, 0, 0)],
 
       /* almost everthing is relative to easter */
-      ["mardigras", this._addDays(easter, -45)],
+      ["mardigras", this._addDays(easter, -47)],
       ["ashwednesday", this._addDays(easter, -46)],
       ["palmsunday", this._addDays(easter, -7)],
       ["maundythursday", this._addDays(easter, -3)],
