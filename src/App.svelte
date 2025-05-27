@@ -19,7 +19,6 @@
   import { type Writable, writable } from "svelte/store";
   import user from "./model/user";
   import HomePage from "./components/HomePage.svelte";
-  import _Styles from "./Styles.svelte";
   import Settings from "./components/Settings.svelte";
   import Users from "./components/Users.svelte";
   import Search from "./components/Search.svelte";
@@ -29,7 +28,7 @@
   import LectionList from "./components/LectionList.svelte";
   import AddPrayer from "./components/AddPrayer.svelte";
   import "@beyonk/gdpr-cookie-consent-banner/banner.css";
-  import { Banner as GdprBanner } from "@beyonk/gdpr-cookie-consent-banner";
+  import GdprBanner from '@beyonk/gdpr-cookie-consent-banner'
   
   const choices = {
     necessary: {

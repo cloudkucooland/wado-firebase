@@ -51,7 +51,7 @@
                       showMedia.set(e.target.checked);
                     }}
                   />
-                  <span class="custom-control-label" />
+                  <span class="custom-control-label"></span>
                 </div>
               </Col>
             </Row>
@@ -75,7 +75,7 @@
                       showAlt.set(e.target.checked);
                     }}
                   />
-                  <span class="custom-control-label" />
+                  <span class="custom-control-label"></span>
                 </div>
               </Col>
             </Row>
@@ -99,7 +99,7 @@
                       showEdit.set(e.target.checked);
                     }}
                   />
-                  <span class="custom-control-label" />
+                  <span class="custom-control-label"></span>
                 </div>
               </Col>
             </Row>

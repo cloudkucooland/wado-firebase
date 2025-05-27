@@ -1,3 +1,37 @@
 import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "vite";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import replace from "@rollup/plugin-replace";
+import sveltePreprocess from "svelte-preprocess";
 
-export default defineConfig({ plugins: [tailwindcss()] });
+export default defineConfig({
+  base: "/wado/",
+  plugins: [
+    tailwindcss(),
+    svelte({
+      onwarn(warning, defaultHandler) {
+        // if (warning.code == "a11y-click-events-have-key-events") return;
+        // handle all other warnings normally
+        defaultHandler(warning);
+      },
+      preprocess: sveltePreprocess({
+        // scss: {},
+        typescript: {},
+      }),
+    }),
+    replace({
+      __buildDate__: () => JSON.stringify(new Date()),
+      preventAssignment: true,
+      "process.browser": true,
+    }),
+  ],
+  build: {
+    sourcemap: true,
+    reportCompressedSize: false,
+    chunkSizeWarningLimit: 2048,
+    rollupOptions: {
+      output: {},
+    },
+  },
+  rollupdedupe: ["svelte"],
+});
