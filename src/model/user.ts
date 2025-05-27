@@ -145,7 +145,7 @@ export default class user {
             consecutiveDays: newStreak,
             lastDay: d,
           },
-          { merge: true }
+          { merge: true },
         );
         if (!dd.longestStreak || newStreak > +dd.longestStreak)
           await setDoc(ref, { longestStreak: newStreak }, { merge: true });
@@ -181,7 +181,7 @@ export default class user {
     let q = query(
       collection(db, "user"),
       where("lastActivity", ">", recent.toJSON()),
-      orderBy("lastActivity", "desc")
+      orderBy("lastActivity", "desc"),
     );
 
     let res = await getDocs(q);

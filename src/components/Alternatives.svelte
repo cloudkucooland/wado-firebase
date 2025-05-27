@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { TabContent, TabPane } from "sveltestrap";
+  // import { TabContent, TabPane } from "sveltestrap";
 
   import Hymn from "./prayerClasses/Hymn.svelte";
   import Prayer from "./prayerClasses/Prayer.svelte";

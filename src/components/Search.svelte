@@ -1,12 +1,5 @@
 <script lang="ts">
-  import {
-    Input,
-    Container,
-    Row,
-    Col,
-    ListGroup,
-    ListGroupItem,
-  } from "sveltestrap";
+  // import { Input, Container, Row, Col, ListGroup, ListGroupItem, } from "sveltestrap";
   import { index } from "../meili";
   import { toasts } from "svelte-toasts";
   import { recordEvent } from "../firebase";

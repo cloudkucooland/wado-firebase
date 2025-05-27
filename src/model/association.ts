@@ -64,7 +64,7 @@ export default class association {
       console.debug(
         "invalid proper detected",
         this.Proper,
-        this._season.maxProper
+        this._season.maxProper,
       );
       this._dirty = true;
       this.Proper = this._season.maxProper;
@@ -299,6 +299,6 @@ export default class association {
     "VIGIL-SUPPLICATION",
     "VIGIL-LORDS",
     "VIGIL-COMMENDATION",
-    "VIGIL-DISMISSAL"
+    "VIGIL-DISMISSAL",
   );
 }

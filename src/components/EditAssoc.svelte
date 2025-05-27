@@ -5,7 +5,7 @@
   import association from "../model/association";
   import type { associationFromFirestore } from "../model/types";
   import season from "../model/season";
-  import { Container, Row, Col, Input } from "sveltestrap";
+  // import { Container, Row, Col, Input } from "sveltestrap";
 
   export let id: string;
   export let result: association;

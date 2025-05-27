@@ -3,15 +3,7 @@
   import { onMount, getContext } from "svelte";
   import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";
-
-  import {
-    Container,
-    Col,
-    Row,
-    Input,
-    ListGroup,
-    ListGroupItem,
-  } from "sveltestrap";
+  // import { Container, Col, Row, Input, ListGroup, ListGroupItem, } from "sveltestrap";
   let me: Readable<User> = getContext("me");
 
   // does bind not work?

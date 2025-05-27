@@ -7,14 +7,14 @@ export declare function recordEvent(name: string, details?: object): void;
 export declare function screenView(name: string): void;
 export declare function enableOfflineDataMode(): void;
 export declare function getDocsCacheFirst(
-  q: Query
+  q: Query,
 ): Promise<
   import("@firebase/firestore").QuerySnapshot<
     import("@firebase/firestore").DocumentData
   >
 >;
 export declare function getDocCacheFirst(
-  r: DocumentReference
+  r: DocumentReference,
 ): Promise<
   import("@firebase/firestore").DocumentSnapshot<
     import("@firebase/firestore").DocumentData

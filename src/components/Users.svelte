@@ -1,6 +1,6 @@
 <script>
   import user from "../model/user";
-  import { Col, Container, Row, Table } from "sveltestrap";
+  // import { Col, Container, Row, Table } from "sveltestrap";
 </script>
 
 <svelte:head>

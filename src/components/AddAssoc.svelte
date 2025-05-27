@@ -5,7 +5,7 @@
   import association from "../model/association";
   import type { associationFromFirestore } from "../model/types";
   import season from "../model/season";
-  import { Container, Row, Col, Input, Button } from "sveltestrap";
+  // import { Container, Row, Col, Input, Button } from "sveltestrap";
   import Select from "svelte-select";
   import { index } from "../meili";
   import { toasts } from "svelte-toasts";

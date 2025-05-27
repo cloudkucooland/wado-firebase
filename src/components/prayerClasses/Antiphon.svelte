@@ -3,7 +3,7 @@
   import Media from "../Media.svelte";
   import antiphon from "../../model/antiphon";
   import type { prayerFromFirestore } from "../../model/types";
-  import { Icon } from "sveltestrap";
+  // import { Icon } from "sveltestrap";
   import { push } from "svelte-spa-router";
   import type { Readable } from "svelte/store";
   import { getContext } from "svelte";

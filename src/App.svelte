@@ -1,184 +1,157 @@
 <script lang="ts">
+  import "./app.css";
   import Router from "svelte-spa-router";
-  // import { wrap } from "svelte-spa-router/wrap";
   import { toasts, ToastContainer, FlatToast } from "svelte-toasts";
-  import {
-    Collapse,
-    Navbar,
-    NavbarToggler,
-    Nav,
-    NavItem,
-    NavLink,
-    NavbarBrand,
-    Dropdown,
-    DropdownToggle,
-    DropdownMenu,
-    DropdownItem,
-  } from "sveltestrap";
+  
+  // import { Collapse, Navbar, NavbarToggler, Nav, NavItem, NavLink, NavbarBrand, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "sveltestrap"; 
+
   import { recordEvent, auth, initAnalytics } from "./firebase";
+  
   import {
     FacebookAuthProvider,
     GoogleAuthProvider,
     signInWithPopup,
     signOut,
-    onAuthStateChanged,
+    onAuthStateChanged
   } from "firebase/auth";
+  
   import { setContext } from "svelte";
   import { type Writable, writable } from "svelte/store";
   import user from "./model/user";
-
-  // public
   import HomePage from "./components/HomePage.svelte";
   import _Styles from "./Styles.svelte";
-
-  // for authenticated users
   import Settings from "./components/Settings.svelte";
   import Users from "./components/Users.svelte";
   import Search from "./components/Search.svelte";
-
-  // for editors
   import Edit from "./components/Edit.svelte";
   import EditLocation from "./components/EditLocation.svelte";
   import PrayerList from "./components/PrayerList.svelte";
   import LectionList from "./components/LectionList.svelte";
   import AddPrayer from "./components/AddPrayer.svelte";
-
-  import "@beyonk/gdpr-cookie-consent-banner/style.css";
+  import "@beyonk/gdpr-cookie-consent-banner/banner.css";
   import { Banner as GdprBanner } from "@beyonk/gdpr-cookie-consent-banner";
+  
   const choices = {
     necessary: {
       label: "Necessary cookies",
       description: "Used for cookie control. Can't be turned off.",
-      value: true,
+      value: true
     },
     tracking: false,
     analytics: {
       label: "Analytics cookies",
-      description:
-        "Used to control Google Analytics, a 3rd party tool offered by Google which provides metrics used to improve WADO.",
-      value: true,
+      description: "Used to control Google Analytics, a 3rd party tool offered by Google which provides metrics used to improve WADO.",
+      value: true
     },
-    marketing: false,
+    marketing: false
   };
+  
   const showEditIcon = false;
-
+  
   const routes = {
     "/": HomePage,
     "/office/:officeName/:officeDate": HomePage,
-
     "/settings": Settings,
     "/search": Search,
     "/users": Users,
-
     "/edit/:id": Edit,
-    // "/edit/:id": wrap({ asyncComponent: () => import('./components/Edit.svelte') }),
     "/editlocation/:id": EditLocation,
     "/prayers/:c": PrayerList,
     "/addPrayer": AddPrayer,
     "/lectionary/:y": LectionList,
-    "*": HomePage,
+    "*": HomePage
   };
-
+  
   let loggedIn = false;
   let me: Writable<user> = writable(new user({}));
+  
   setContext("me", me);
-
+  
   onAuthStateChanged(auth, async (u) => {
     console.log("authStateChanged", u);
+  
     if (u.hasOwnProperty("uid")) {
       loggedIn = true;
-      // @ts-ignore
       $me = await user.me();
-      // @ts-ignore
       await $me.logAction();
-      // @ts-ignore
       if ($me.isEditor) toasts.info("Editor permissions", u.displayName);
     } else {
       loggedIn = false;
     }
   });
-
+  
   async function doFBLogin(): Promise<void> {
     try {
       await signInWithPopup(auth, new FacebookAuthProvider());
       loggedIn = true;
       recordEvent("Facebook login");
-    } catch (err) {
+    } catch(err) {
       toasts.error(err.message);
       console.log(err);
     }
   }
-
+  
   async function doGLogin(): Promise<void> {
     try {
       await signInWithPopup(auth, new GoogleAuthProvider());
       loggedIn = true;
       recordEvent("Google login");
-    } catch (err) {
+    } catch(err) {
       toasts.error(err.message);
       console.log(err);
     }
   }
-
+  
   async function doLogout(): Promise<void> {
     try {
       await signOut(auth);
       loggedIn = false;
       recordEvent("log out");
       toasts.success("logged out");
-    } catch (err) {
+    } catch(err) {
       toasts.error(err.messasge);
       console.log(err);
     }
   }
-
+  
   function startNotification(): void {
-    // not on a platform that has the Notifications API
     if (typeof Notification === "undefined") return;
-    // permission neither granted nor denied
+  
     if (Notification.permission === "default") {
-      const tp = toasts.success(
-        "WADO Reminders",
-        "Click to allow WADO to send reminders to pray",
-        {
-          onClick: () => {
-            Promise.resolve(Notification.requestPermission()).then((p) => {
-              console.log("granted notification permission", p);
-            });
-            tp.remove();
-          },
-          duration: 0,
-        }
-      );
+      const tp = toasts.success("WADO Reminders", "Click to allow WADO to send reminders to pray", {
+        onClick: () => {
+          Promise.resolve(Notification.requestPermission()).then((p) => {
+            console.log("granted notification permission", p);
+          });
+  
+          tp.remove();
+        },
+        duration: 0
+      });
     }
   }
-
+  
   if ("serviceWorker" in navigator) {
     let found = false;
+  
     navigator.serviceWorker.getRegistrations().then((registrations) => {
       registrations.forEach((r) => {
-        if (
-          r.active.scriptURL ==
-            "https://saint-luke.net/wado/service-worker.js" &&
-          r.active.state == "activated"
-        ) {
+        if (r.active.scriptURL == "https://saint-luke.net/wado/service-worker.js" && r.active.state == "activated") {
           found = true;
           r.update();
         }
       });
     });
+  
     if (!found) {
       navigator.serviceWorker.register("service-worker.js");
     }
+  
     startNotification();
   }
 </script>
 
 <svelte:head>
-  <link
-    rel="stylesheet"
-    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
-  />
 </svelte:head>
 
 <header>

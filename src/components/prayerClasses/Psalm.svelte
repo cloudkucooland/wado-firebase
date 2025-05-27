@@ -5,7 +5,7 @@
   import type { prayerFromFirestore } from "../../model/types";
   import type { Readable } from "svelte/store";
   import { getContext } from "svelte";
-  import { Icon } from "sveltestrap";
+  // import { Icon } from "sveltestrap";
   import { push } from "svelte-spa-router";
   import { toasts } from "svelte-toasts";
   import Antiphon from "./Antiphon.svelte";

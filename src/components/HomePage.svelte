@@ -1,20 +1,5 @@
 <script lang="ts">
-  import {
-    Container,
-    Col,
-    Row,
-    Card,
-    CardHeader,
-    CardBody,
-    TabContent,
-    TabPane,
-    Input,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Button,
-  } from "sveltestrap";
+  // import { Container, Col, Row, Card, CardHeader, CardBody, TabContent, TabPane, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, } from "sveltestrap";
   import proper from "../model/proper";
   import { auth, screenView, db, recordEvent } from "../firebase";
   import { getOffice, currentOffice } from "../model/offices";

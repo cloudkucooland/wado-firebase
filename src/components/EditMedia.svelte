@@ -7,7 +7,7 @@
   } from "firebase/storage";
   import { doc, updateDoc, deleteField } from "firebase/firestore";
   import { storage, db } from "../firebase";
-  import { Input, Button, Row, Col } from "sveltestrap";
+  // import { Input, Button, Row, Col } from "sveltestrap";
   import { toasts } from "svelte-toasts";
   import type { Readable } from "svelte/store";
   import type User from "../../types/model/user";

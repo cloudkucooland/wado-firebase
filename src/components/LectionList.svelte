@@ -1,19 +1,5 @@
 <script lang="ts">
-  import {
-    Container,
-    Row,
-    Col,
-    ListGroup,
-    ListGroupItem,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Input,
-    Button,
-    TabContent,
-    TabPane,
-  } from "sveltestrap";
+  // import { Container, Row, Col, ListGroup, ListGroupItem, Modal, ModalHeader, ModalBody, ModalFooter, Input, Button, TabContent, TabPane, } from "sveltestrap";
   import {
     collection,
     query,

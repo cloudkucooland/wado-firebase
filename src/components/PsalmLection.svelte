@@ -14,7 +14,7 @@
   import { getContext } from "svelte";
   import type Proper from "../../types/model/proper";
   import type { Readable } from "svelte/store";
-  import { Spinner } from "sveltestrap";
+  // import { Spinner } from "sveltestrap";
 
   export let office: string;
   let proper: Readable<Proper> = getContext("forProper");

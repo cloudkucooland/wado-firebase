@@ -14,7 +14,7 @@
   import { link, push } from "svelte-spa-router";
   import type { Readable } from "svelte/store";
   import type proper from "../../types/model/proper";
-  import { Spinner, Icon } from "sveltestrap";
+  // import { Spinner, Icon } from "sveltestrap";
 
   import Hymn from "./prayerClasses/Hymn.svelte";
   import Prayer from "./prayerClasses/Prayer.svelte";

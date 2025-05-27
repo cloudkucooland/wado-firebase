@@ -1,23 +1,5 @@
 <script lang="ts">
-  import {
-    Container,
-    Row,
-    Col,
-    Card,
-    CardHeader,
-    CardBody,
-    CardFooter,
-    Table,
-    Button,
-    Modal,
-    ModalHeader,
-    ModalBody,
-    ModalFooter,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-  } from "sveltestrap";
+  // import { Container, Row, Col, Card, CardHeader, CardBody, CardFooter, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, } from "sveltestrap";
   import {
     collection,
     query,

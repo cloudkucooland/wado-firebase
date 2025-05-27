@@ -1,6 +1,6 @@
 <script lang="ts">
   import { db } from "../firebase";
-  import { Container, Input, Button, Row, Col } from "sveltestrap";
+  // import { Container, Input, Button, Row, Col } from "sveltestrap";
   import { toasts } from "svelte-toasts";
   import { getDoc, doc } from "firebase/firestore";
   import { onMount, afterUpdate } from "svelte";
