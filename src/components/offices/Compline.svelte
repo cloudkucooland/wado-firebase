@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Location from "../Location.svelte";
-  import Silence from "../Silence.svelte";
-  import Rubric from "../Rubric.svelte";
-  import PsalmLection from "../PsalmLection.svelte";
+	import Location from '../Location.svelte';
+	import Silence from '../Silence.svelte';
+	import Rubric from '../Rubric.svelte';
+	import PsalmLection from '../PsalmLection.svelte';
 </script>
 
 <Silence />
@@ -53,6 +53,5 @@
 <Location name="GENERAL-GLORIA" />
 <Location name="COMPLINE-DISMISSAL" />
 <Rubric>
-  Members of the community continue in prayer,<br />and then depart in silence
-  one by one.
+	Members of the community continue in prayer,<br />and then depart in silence one by one.
 </Rubric>

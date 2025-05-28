@@ -1,8 +1,8 @@
 <script lang="ts">
-  import Location from "../Location.svelte";
-  import Silence from "../Silence.svelte";
-  import Rubric from "../Rubric.svelte";
-  import PsalmLection from "../PsalmLection.svelte";
+	import Location from '../Location.svelte';
+	import Silence from '../Silence.svelte';
+	import Rubric from '../Rubric.svelte';
+	import PsalmLection from '../PsalmLection.svelte';
 </script>
 
 <h3>Commemoration test</h3>

@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Location from "../Location.svelte";
-  import Silence from "../Silence.svelte";
-  import Rubric from "../Rubric.svelte";
-  import Lection from "../Lection.svelte";
-  import PsalmLection from "../PsalmLection.svelte";
+	import Location from '../Location.svelte';
+	import Silence from '../Silence.svelte';
+	import Rubric from '../Rubric.svelte';
+	import Lection from '../Lection.svelte';
+	import PsalmLection from '../PsalmLection.svelte';
 </script>
 
 <h3>Opening</h3>
@@ -21,8 +21,7 @@
 
 <h4>Evening Prayer Canticle</h4>
 <Rubric>
-  (may be accompanied by the lighting of incense; always included in Festive
-  Vespers or Evensong)
+	(may be accompanied by the lighting of incense; always included in Festive Vespers or Evensong)
 </Rubric>
 <Location name="VESPER-CANTICLE" />
 
@@ -57,9 +56,7 @@
 <h3>Prayers</h3>
 
 <h4>Silent Prayer</h4>
-<Silence
-  >Pray for the life of the Church and the world and the concerns of the heart.</Silence
->
+<Silence>Pray for the life of the Church and the world and the concerns of the heart.</Silence>
 
 <h4>Prayer of Thanksgiving</h4>
 <Location name="VESPER-SUPPLICATION" maxAlt={3} />
@@ -88,7 +85,7 @@
 <Location name="VESPER-DISMISSAL" />
 
 <style>
-  h4 {
-    font-style: italic;
-  }
+	h4 {
+		font-style: italic;
+	}
 </style>

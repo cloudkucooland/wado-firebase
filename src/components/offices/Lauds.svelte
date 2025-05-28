@@ -1,9 +1,9 @@
 <script lang="ts">
-  import Location from "../Location.svelte";
-  import Silence from "../Silence.svelte";
-  import Rubric from "../Rubric.svelte";
-  import Lection from "../Lection.svelte";
-  import PsalmLection from "../PsalmLection.svelte";
+	import Location from '../Location.svelte';
+	import Silence from '../Silence.svelte';
+	import Rubric from '../Rubric.svelte';
+	import Lection from '../Lection.svelte';
+	import PsalmLection from '../PsalmLection.svelte';
 </script>
 
 <h3>Opening</h3>
@@ -36,9 +36,7 @@
 <h4><i>Reading for Meditation and Reflection</i></h4>
 
 <h3>Prayers</h3>
-<Rubric>
-  Give thanks and pray for the coming day and the needs of the world.
-</Rubric>
+<Rubric>Give thanks and pray for the coming day and the needs of the world.</Rubric>
 
 <h4><i>Prayers of Thanksgiving and Supplication</i></h4>
 <Location name="LAUDS-SUPPLICATION" maxAlt={5} /><br />

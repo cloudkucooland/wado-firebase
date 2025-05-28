@@ -1,7 +1,7 @@
 <script lang="ts">
-  import Location from "../Location.svelte";
-  import Silence from "../Silence.svelte";
-  import Rubric from "../Rubric.svelte";
+	import Location from '../Location.svelte';
+	import Silence from '../Silence.svelte';
+	import Rubric from '../Rubric.svelte';
 </script>
 
 <Rubric>At the hour when Jesus was placed on the cross, we pray.</Rubric>

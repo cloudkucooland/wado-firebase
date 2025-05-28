@@ -1,3 +1,20 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+
+@custom-variant dark (&:where(.dark, .dark *));
+@source "../node_modules/flowbite-svelte/dist";
+
+#app {
+	margin: 0 auto;
+	padding: 1rem;
+	text-align: center;
+}
+
+a:link {
+	color: blue;
+}
+
+a:visited {
+	color: purple;
+}
