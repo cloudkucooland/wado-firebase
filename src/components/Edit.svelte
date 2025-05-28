@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Container, Row, Col, Card, CardHeader, CardBody, FormGroup, Input, Label, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, } from "sveltestrap";
+	import { Card, Input, Label, Table, Button, Modal } from 'flowbite-svelte';
 	import {
 		collection,
 		query,
@@ -191,316 +191,263 @@
 	<title>Editing: {prayerData.name}</title>
 </svelte:head>
 
-<Container>
-	<Row>
-		<Col>
-			<Card class="mb-2">
-				{#if $me.isEditor}
-					<CardHeader>Editing: {prayerData.name}</CardHeader>
-				{:else}
-					<CardHeader>Displaying: {prayerData.name}</CardHeader>
-				{/if}
-				<CardBody>
-					<Container>
-						<Row>
-							<Col sm="12">
-								<FormGroup>
-									<Label for="name">Name</Label>
-									<Input
-										name="name"
-										id="name"
-										bind:value={prayerData.name}
-										disabled={!$me.isEditor}
-									/>
-								</FormGroup>
-							</Col>
-						</Row>
-						<Row>
-							<Col sm="12">
-								{#if $me.isEditor}
-									<Button
-										size="sm"
-										color="secondary"
-										on:click={() => {
-											$editor.chain().focus().toggleBold().run();
-										}}>Bold</Button
-									>
-									<Button
-										size="sm"
-										color="secondary"
-										on:click={() => {
-											$editor.chain().focus().toggleItalic().run();
-										}}>Italic</Button
-									>
-									<Button
-										size="sm"
-										color="secondary"
-										on:click={() => {
-											$editor.chain().focus().toggleUnderline().run();
-										}}>Underline</Button
-									>
-									<Button
-										size="sm"
-										color="secondary"
-										on:click={() => {
-											$editor.chain().focus().undo().run();
-										}}>Undo</Button
-									>
-									<Button
-										size="sm"
-										color="secondary"
-										on:click={() => {
-											$editor.chain().focus().redo().run();
-										}}>Redo</Button
-									>
-									<EditorContent editor={$editor} />
-									{#if $editor}<BubbleMenu editor={$editor} />{/if}
-								{:else}
-									<p>{@html prayerData.body}</p>
-								{/if}
-							</Col>
-						</Row>
-						{#if prayerData instanceof hymn}
-							<Row>
-								<Col sm="6">
-									<FormGroup>
-										<Label for="hymntune">Hymn Tune</Label>
-										<Input
-											name="hymntune"
-											id="hymntune"
-											bind:value={prayerData.hymntune}
-											disabled={!$me.isEditor}
-										/>
-									</FormGroup>
-								</Col>
-								<Col sm="6">
-									<FormGroup>
-										<Label for="hymnmeter">Meter</Label>
-										<Input
-											name="hymnmeter"
-											id="hymnmeter"
-											bind:value={prayerData.hymnmeter}
-											disabled={!$me.isEditor}
-										/>
-									</FormGroup>
-								</Col>
-							</Row>
-						{/if}
-						{#if prayerData instanceof psalm}
-							<Row>
-								<Col>
-									<FormGroup>
-										<Label for="psalmrubric">Psalm Rubric</Label>
-										<Input
-											name="psalmrubric"
-											id="psalmrubric"
-											bind:value={prayerData.rubric}
-											disabled={!$me.isEditor}
-										/>
-									</FormGroup>
-								</Col>
-							</Row>
-							<EditPsalmAntiphon bind:result={prayerData.antiphon} />
-						{/if}
-						{#if prayerData instanceof commemoration}
-							<Row>
-								<Col>
-									<FormGroup>
-										<Label for="commemorationmorningcollect">Commemoration Morning Collect</Label>
-										<Input
-											name="commemorationmorningcollect"
-											id="commemorationmorningcollect"
-											bind:value={prayerData.morningcollect}
-											disabled={!$me.isEditor}
-										/>
-									</FormGroup>
-								</Col>
-							</Row>
-							<Row>
-								<Col>
-									<FormGroup>
-										<Label for="commemorationeveningcollect">Commemoration Evening Collect</Label>
-										<Input
-											name="commemorationeveningcollect"
-											id="commemorationeveningcollect"
-											bind:value={prayerData.eveningcollect}
-											disabled={!$me.isEditor}
-										/>
-									</FormGroup>
-								</Col>
-							</Row>
-						{/if}
-						<Row>
-							<Col sm="3">
-								<FormGroup>
-									<Label for="class">Class</Label>
-									<Input
-										type="select"
-										name="class"
-										id="class"
-										bind:value={prayerData.class}
-										disabled={!$me.isEditor}
-									>
-										{#each Array.from(classes.keys()) as key}
-											<option value={key}>{key}</option>
-										{/each}
-									</Input>
-								</FormGroup>
-							</Col>
-							<Col sm="3">
-								<FormGroup>
-									<Label for="author">Author</Label>
-									<Input
-										name="author"
-										id="author"
-										bind:value={prayerData.author}
-										disabled={!$me.isEditor}
-									/>
-								</FormGroup>
-							</Col>
-							<Col sm="3">
-								<FormGroup>
-									<Label for="lastEditor">Last Editor</Label>
-									<Input
-										name="lastEditor"
-										disabled={true}
-										id="lastEditor"
-										bind:value={prayerData.lastEditor}
-									/>
-								</FormGroup>
-							</Col>
-							<Col sm="3">
-								<FormGroup>
-									<Label for="lastEdited" type="date">Last Edited</Label>
-									<Input
-										name="lastEdited"
-										disabled={true}
-										id="lastEdited"
-										bind:value={prayerData.lastEdited}
-									/>
-								</FormGroup>
-							</Col>
-						</Row>
-						<Row>
-							<Col sm="2">
-								<FormGroup>
-									<Label for="license">License</Label>
-									<Input
-										type="checkbox"
-										name="license"
-										id="license"
-										bind:checked={prayerData.license}
-										disabled={!$me.isEditor}
-									/>
-								</FormGroup>
-							</Col>
-							<Col sm="2">
-								<FormGroup>
-									<Label for="reviewed">Reviewed</Label>
-									<Input
-										type="checkbox"
-										name="reviewed"
-										id="reviewed"
-										bind:checked={prayerData.reviewed}
-										disabled={!$me.isEditor}
-									/>
-								</FormGroup>
-							</Col>
-							<Col sm="7">&nbsp;</Col>
-							<Col sm="1">
-								{#if $me.isEditor}
-									<Button size="sm" color="primary" on:click={saveChanges}>Save</Button>
-								{/if}
-							</Col>
-						</Row>
-					</Container>
-				</CardBody>
-			</Card>
-			<Card>
-				<CardHeader>Media</CardHeader>
-				<CardBody>
-					<Container>
-						<EditMedia {id} media={prayerData.media} />
-					</Container>
-				</CardBody>
-			</Card>
-			<Card>
-				<CardHeader>Associations</CardHeader>
-				<CardBody>
-					<Table>
-						<thead>
-							<tr>
-								<th>Location</th>
-								<th>Calendar Date</th>
-								<th>Season</th>
-								<th>Proper</th>
-								<th>Weekday</th>
-								<th>Lectionary Year</th>
-								<th>Weight</th>
-								<th>&nbsp;</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each associations as v}
-								<tr id={v.id} class={v.dirtyStyle}>
-									<td>
-										<a href="/editlocation/{v.Location}" use:link>{v.Location}</a>
-									</td>
-									<td>{v.CalendarDate}</td>
-									<td>{v.Season}</td>
-									<td>{v.ProperDisplay}</td>
-									<td>{v.WeekdayDisplay}</td>
-									<td>{v.Year}</td>
-									<td>{v.Weight}</td>
-									<td>
-										{#if $me.isEditor}
-											<Button size="sm" color="warning" on:click={toggleEditOpen} value={v.id}
-												>Edit</Button
-											>
-											<Button size="sm" color="danger" on:click={toggleDeleteOpen} value={v.id}
-												>delete</Button
-											>
-										{/if}
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</Table>
+<div class="w-full grid-flow-row-dense grid-cols-12">
+	<div>
+		<Card class="mb-2">
+			{#if $me.isEditor}
+				<h3>Editing: {prayerData.name}</h3>
+			{:else}
+				<h3>Displaying: {prayerData.name}</h3>
+			{/if}
+			<div class="w-full grid-flow-row-dense grid-cols-12">
+				<div class="col-span-12">
+					<Label for="name">Name</Label>
+					<Input name="name" id="name" bind:value={prayerData.name} disabled={!$me.isEditor} />
+				</div>
+				<div class="col-span-12">
 					{#if $me.isEditor}
-						<Button size="sm" color="success" on:click={toggleAddAssocOpen}>Add</Button>
+						<Button
+							size="sm"
+							color="secondary"
+							on:click={() => {
+								$editor.chain().focus().toggleBold().run();
+							}}>Bold</Button
+						>
+						<Button
+							size="sm"
+							color="secondary"
+							on:click={() => {
+								$editor.chain().focus().toggleItalic().run();
+							}}>Italic</Button
+						>
+						<Button
+							size="sm"
+							color="secondary"
+							on:click={() => {
+								$editor.chain().focus().toggleUnderline().run();
+							}}>Underline</Button
+						>
+						<Button
+							size="sm"
+							color="secondary"
+							on:click={() => {
+								$editor.chain().focus().undo().run();
+							}}>Undo</Button
+						>
+						<Button
+							size="sm"
+							color="secondary"
+							on:click={() => {
+								$editor.chain().focus().redo().run();
+							}}>Redo</Button
+						>
+						<EditorContent editor={$editor} />
+						{#if $editor}<BubbleMenu editor={$editor} />{/if}
+					{:else}
+						<p>{@html prayerData.body}</p>
 					{/if}
-				</CardBody>
-			</Card>
-		</Col>
-	</Row>
-</Container>
+				</div>
+				{#if prayerData instanceof hymn}
+					<div class="col-span-6">
+						<Label for="hymntune">Hymn Tune</Label>
+						<Input
+							name="hymntune"
+							id="hymntune"
+							bind:value={prayerData.hymntune}
+							disabled={!$me.isEditor}
+						/>
+					</div>
+					<div class="col-span-6">
+						<Label for="hymnmeter">Meter</Label>
+						<Input
+							name="hymnmeter"
+							id="hymnmeter"
+							bind:value={prayerData.hymnmeter}
+							disabled={!$me.isEditor}
+						/>
+					</div>
+				{/if}
+				{#if prayerData instanceof psalm}
+					<div>
+						<Label for="psalmrubric">Psalm Rubric</Label>
+						<Input
+							name="psalmrubric"
+							id="psalmrubric"
+							bind:value={prayerData.rubric}
+							disabled={!$me.isEditor}
+						/>
+					</div>
+					<EditPsalmAntiphon bind:result={prayerData.antiphon} />
+				{/if}
+				{#if prayerData instanceof commemoration}
+					<div>
+						<Label for="commemorationmorningcollect">Commemoration Morning Collect</Label>
+						<Input
+							name="commemorationmorningcollect"
+							id="commemorationmorningcollect"
+							bind:value={prayerData.morningcollect}
+							disabled={!$me.isEditor}
+						/>
+					</div>
+					<div>
+						<Label for="commemorationeveningcollect">Commemoration Evening Collect</Label>
+						<Input
+							name="commemorationeveningcollect"
+							id="commemorationeveningcollect"
+							bind:value={prayerData.eveningcollect}
+							disabled={!$me.isEditor}
+						/>
+					</div>
+				{/if}
+				<div class="col-span-3">
+					<Label for="class">Class</Label>
+					<Input
+						type="select"
+						name="class"
+						id="class"
+						bind:value={prayerData.class}
+						disabled={!$me.isEditor}
+					>
+						{#each Array.from(classes.keys()) as key}
+							<option value={key}>{key}</option>
+						{/each}
+					</Input>
+				</div>
+				<div class="col-span-3">
+					<Label for="author">Author</Label>
+					<Input
+						name="author"
+						id="author"
+						bind:value={prayerData.author}
+						disabled={!$me.isEditor}
+					/>
+					<div class="col-span-3">
+						<Label for="lastEditor">Last Editor</Label>
+						<Input
+							name="lastEditor"
+							disabled={true}
+							id="lastEditor"
+							bind:value={prayerData.lastEditor}
+						/>
+					</div>
+					<div class="col-span-3">
+						<Label for="lastEdited" type="date">Last Edited</Label>
+						<Input
+							name="lastEdited"
+							disabled={true}
+							id="lastEdited"
+							bind:value={prayerData.lastEdited}
+						/>
+					</div>
+					<div class="col-span-2">
+						<Label for="license">License</Label>
+						<Input
+							type="checkbox"
+							name="license"
+							id="license"
+							bind:checked={prayerData.license}
+							disabled={!$me.isEditor}
+						/>
+					</div>
+					<div class="col-span-2">
+						<Label for="reviewed">Reviewed</Label>
+						<Input
+							type="checkbox"
+							name="reviewed"
+							id="reviewed"
+							bind:checked={prayerData.reviewed}
+							disabled={!$me.isEditor}
+						/>
+					</div>
+					<div class="col-span-7">&nbsp;</div>
+					<div class="col-span-1">
+						{#if $me.isEditor}
+							<Button size="sm" color="primary" on:click={saveChanges}>Save</Button>
+						{/if}
+					</div>
+				</div>
+			</div>
+		</Card>
+		<Card>
+			<h3>Media</h3>
+			<div>
+				<EditMedia {id} media={prayerData.media} />
+			</div>
+		</Card>
+		<Card>
+			<h3>Associations</h3>
+			<Table>
+				<thead>
+					<tr>
+						<th>Location</th>
+						<th>Calendar Date</th>
+						<th>Season</th>
+						<th>Proper</th>
+						<th>Weekday</th>
+						<th>Lectionary Year</th>
+						<th>Weight</th>
+						<th>&nbsp;</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each associations as v}
+						<tr id={v.id} class={v.dirtyStyle}>
+							<td>
+								<a href="/editlocation/{v.Location}" use:link>{v.Location}</a>
+							</td>
+							<td>{v.CalendarDate}</td>
+							<td>{v.Season}</td>
+							<td>{v.ProperDisplay}</td>
+							<td>{v.WeekdayDisplay}</td>
+							<td>{v.Year}</td>
+							<td>{v.Weight}</td>
+							<td>
+								{#if $me.isEditor}
+									<Button size="sm" color="warning" on:click={toggleEditOpen} value={v.id}
+										>Edit</Button
+									>
+									<Button size="sm" color="danger" on:click={toggleDeleteOpen} value={v.id}
+										>delete</Button
+									>
+								{/if}
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</Table>
+			{#if $me.isEditor}
+				<Button size="sm" color="success" on:click={toggleAddAssocOpen}>Add</Button>
+			{/if}
+		</Card>
+	</div>
+</div>
 <Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
-	<ModalHeader>Delete Association</ModalHeader>
-	<ModalBody>Confirm Delete</ModalBody>
-	<ModalFooter>
+	<h3>Delete Association</h3>
+	<div>Confirm Delete</div>
+	<div>
 		<Button color="primary" size="sm" on:click={toggleDeleteOpen}>Cancel</Button>
 		<Button color="warning" size="sm" on:click={confirmDelete} value={modalId}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>
 <Modal id="editModal" isOpen={editModalOpen} size="xl">
-	<ModalHeader>Edit Association</ModalHeader>
-	<ModalBody>
+	<h3>Edit Association</h3>
+	<div>
 		<EditAssoc id={modalId} bind:result={assocEditResult} />
-	</ModalBody>
-	<ModalFooter>
+	</div>
+	<div>
 		<Button color="secondary" size="sm" on:click={toggleEditOpen}>Cancel</Button>
 		<Button color="success" size="sm" on:click={confirmEdit} value={modalId}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>
 <Modal id="addAssocModal" isOpen={addAssocModalOpen} size="xl">
-	<ModalHeader>Add Association</ModalHeader>
-	<ModalBody>
+	<h3>Add Association</h3>
+	<div>
 		<EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />
-	</ModalBody>
-	<ModalFooter>
+	</div>
+	<div>
 		<Button color="secondary" size="sm" on:click={toggleAddAssocOpen}>Cancel</Button>
 		<Button color="success" size="sm" on:click={confirmAddAssoc} value={modalId}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>
 
 <style>

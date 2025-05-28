@@ -16,6 +16,7 @@
 		Dropdown,
 		DropdownItem
 	} from 'flowbite-svelte';
+	import { ChevronDownOutline } from 'flowbite-svelte-icons';
 
 	import { recordEvent, auth, initAnalytics } from './firebase';
 
@@ -177,7 +178,7 @@
 		<NavUl>
 			{#if loggedIn}
 				<NavLi class="cursor-pointer">
-					Tools <ChevronDownOutline class="text-primary-800 ms-2 inline h-6 w-6" />
+					Tools <ChevronDownOutline />
 				</NavLi>
 				<Dropdown>
 					<DropdownItem href="#/search">Search</DropdownItem>

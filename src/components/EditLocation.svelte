@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Container, Row, Col, Card, CardHeader, CardBody, CardFooter, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Form, FormGroup, Label, Input, } from "sveltestrap";
+	import { Card, Table, Button, Modal, Label, Input } from 'flowbite-svelte';
 	import {
 		collection,
 		query,
@@ -187,109 +187,101 @@
 	<title>Edit Location: {id}</title>
 </svelte:head>
 
-<Container>
-	<Row>
-		<Col>
-			<Form>
-				<FormGroup>
-					<Label for="locations">Location</Label>
-					<Input
-						type="select"
-						name="locations"
-						on:change={(e) => {
-							// @ts-ignore
-							id = e.target.value;
-							push('/editlocation/' + id);
-							loadLocation(id);
-						}}
-					>
-						<option>Any</option>
-						{#each association.locations as L}
-							<option>{L}</option>
-						{/each}
-					</Input>
-				</FormGroup>
-			</Form>
-		</Col>
-	</Row>
-	<Row>
-		<Col>
-			<Card>
-				<CardHeader>Associations for {id}</CardHeader>
-				<CardBody>
-					<Table>
-						<thead>
-							<tr>
-								<th>Prayer</th>
-								<th>Calendar Date</th>
-								<th>Season</th>
-								<th>Proper</th>
-								<th>Weekday</th>
-								<th>Lectionary Year</th>
-								<th>Weight</th>
-								<th>&nbsp;</th>
-								<th>&nbsp;</th>
+<div class="w-full grid-flow-row-dense grid-cols-1">
+	<div>
+		<Label for="locations">Location</Label>
+		<Input
+			type="select"
+			name="locations"
+			on:change={(e) => {
+				// @ts-ignore
+				id = e.target.value;
+				push('/editlocation/' + id);
+				loadLocation(id);
+			}}
+		>
+			<option>Any</option>
+			{#each association.locations as L}
+				<option>{L}</option>
+			{/each}
+		</Input>
+	</div>
+	<div>
+		<Card>
+			<h3>Associations for {id}</h3>
+			<div>
+				<Table>
+					<thead>
+						<tr>
+							<th>Prayer</th>
+							<th>Calendar Date</th>
+							<th>Season</th>
+							<th>Proper</th>
+							<th>Weekday</th>
+							<th>Lectionary Year</th>
+							<th>Weight</th>
+							<th>&nbsp;</th>
+							<th>&nbsp;</th>
+						</tr>
+					</thead>
+					<tbody>
+						{#each [...associations] as [k, v]}
+							<tr id={k} class={v.dirtyStyle}>
+								<td>
+									<a href="#/edit/{v.Reference.id}">
+										{v._PrayerName}
+									</a>
+								</td>
+								<td>{v.CalendarDate}</td>
+								<td>{v.Season}</td>
+								<td>{v.ProperDisplay}</td>
+								<td>{v.WeekdayDisplay}</td>
+								<td>{v.Year}</td>
+								<td>{v.Weight}</td>
+								<td>
+									<Button on:click={toggleEditOpen} value={k} color="warning">Edit</Button>
+								</td>
+								<td>
+									<Button on:click={toggleDeleteOpen} value={k} color="warning">Delete</Button>
+								</td>
 							</tr>
-						</thead>
-						<tbody>
-							{#each [...associations] as [k, v]}
-								<tr id={k} class={v.dirtyStyle}>
-									<td>
-										<a href="#/edit/{v.Reference.id}">
-											{v._PrayerName}
-										</a>
-									</td>
-									<td>{v.CalendarDate}</td>
-									<td>{v.Season}</td>
-									<td>{v.ProperDisplay}</td>
-									<td>{v.WeekdayDisplay}</td>
-									<td>{v.Year}</td>
-									<td>{v.Weight}</td>
-									<td>
-										<Button on:click={toggleEditOpen} value={k} color="warning">Edit</Button>
-									</td>
-									<td>
-										<Button on:click={toggleDeleteOpen} value={k} color="warning">Delete</Button>
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</Table>
-				</CardBody>
-				<CardFooter>
-					<Button size="sm" color="success" on:click={toggleAddAssocOpen}>Add</Button>
-				</CardFooter>
-			</Card>
-		</Col>
-	</Row>
-</Container>
+						{/each}
+					</tbody>
+				</Table>
+			</div>
+			<div>
+				<Button size="sm" color="success" on:click={toggleAddAssocOpen}>Add</Button>
+			</div>
+		</Card>
+	</div>
+</div>
 <Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
-	<ModalHeader>Delete Association</ModalHeader>
-	<ModalBody>Confirm Delete</ModalBody>
-	<ModalFooter>
+	<h3>Delete Association</h3>
+	<div>Confirm Delete</div>
+	<div>
 		<Button color="primary" size="sm" on:click={toggleDeleteOpen}>Cancel</Button>
 		<Button color="warning" size="sm" on:click={confirmDelete} value={modalId}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>
 <Modal id="editModal" isOpen={editModalOpen} size="xl">
-	<ModalHeader>Edit Association</ModalHeader>
-	<ModalBody>
+	<h3>Edit Association</h3>
+	<div>
 		<EditAssoc id={modalId} bind:result={assocEditResult} />
-	</ModalBody>
-	<ModalFooter>
+	</div>
+	<div>
 		<Button color="secondary" size="sm" on:click={toggleEditOpen}>Cancel</Button>
 		<Button color="success" size="sm" on:click={confirmEdit} value={modalId}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>
 <Modal id="addAssoc" isOpen={addModalAssocOpen} size="xl">
-	<ModalHeader>Add Association</ModalHeader>
-	<ModalBody>
+	<h3>Add Association</h3>
+	<div>
 		<AddAssoc bind:result={assocAddResult} location={id} />
-	</ModalBody>
-	<ModalFooter>
+	</div>
+	<div>
 		<Button color="secondary" size="sm" on:click={toggleAddAssocOpen}>Cancel</Button>
 		<Button color="success" size="sm" on:click={confirmAddAssoc} value={modalId}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>
 
 <style>

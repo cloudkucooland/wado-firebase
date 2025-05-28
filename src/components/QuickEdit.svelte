@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy, afterUpdate } from 'svelte';
 	import type prayer from '../../types/model/prayer';
-	// import { Container, Row, Col, Input, Button } from "sveltestrap";
+	import { Input, Button } from 'flowbite-svelte';
 	import { toasts } from 'svelte-toasts';
 	import { createEditor, Editor, EditorContent, BubbleMenu } from 'svelte-tiptap';
 	import StarterKit from '@tiptap/starter-kit';
@@ -34,46 +34,44 @@
 	});
 </script>
 
-<Container fluid>
-	<Row>
-		<Col sm="12">
-			<Button
-				size="sm"
-				color="secondary"
-				on:click={() => {
-					$editor.chain().focus().toggleBold().run();
-				}}>Bold</Button
-			>
-			<Button
-				size="sm"
-				color="secondary"
-				on:click={() => {
-					$editor.chain().focus().toggleItalic().run();
-				}}>Italic</Button
-			>
-			<Button
-				size="sm"
-				color="secondary"
-				on:click={() => {
-					$editor.chain().focus().toggleUnderline().run();
-				}}>Underline</Button
-			>
-			<Button
-				size="sm"
-				color="secondary"
-				on:click={() => {
-					$editor.chain().focus().undo().run();
-				}}>Undo</Button
-			>
-			<Button
-				size="sm"
-				color="secondary"
-				on:click={() => {
-					$editor.chain().focus().redo().run();
-				}}>Redo</Button
-			>
-			<EditorContent editor={$editor} />
-			{#if $editor}<BubbleMenu editor={$editor} />{/if}
-		</Col>
-	</Row>
-</Container>
+<div class="w-full grid-flow-row-dense grid-cols-12">
+	<div class="col-span-12">
+		<Button
+			size="sm"
+			color="secondary"
+			on:click={() => {
+				$editor.chain().focus().toggleBold().run();
+			}}>Bold</Button
+		>
+		<Button
+			size="sm"
+			color="secondary"
+			on:click={() => {
+				$editor.chain().focus().toggleItalic().run();
+			}}>Italic</Button
+		>
+		<Button
+			size="sm"
+			color="secondary"
+			on:click={() => {
+				$editor.chain().focus().toggleUnderline().run();
+			}}>Underline</Button
+		>
+		<Button
+			size="sm"
+			color="secondary"
+			on:click={() => {
+				$editor.chain().focus().undo().run();
+			}}>Undo</Button
+		>
+		<Button
+			size="sm"
+			color="secondary"
+			on:click={() => {
+				$editor.chain().focus().redo().run();
+			}}>Redo</Button
+		>
+		<EditorContent editor={$editor} />
+		{#if $editor}<BubbleMenu editor={$editor} />{/if}
+	</div>
+</div>

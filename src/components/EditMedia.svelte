@@ -2,7 +2,7 @@
 	import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 	import { doc, updateDoc, deleteField } from 'firebase/firestore';
 	import { storage, db } from '../firebase';
-	// import { Input, Button, Row, Col } from "sveltestrap";
+	import { Input, Button } from 'flowbite-svelte';
 	import { toasts } from 'svelte-toasts';
 	import type { Readable } from 'svelte/store';
 	import type User from '../../types/model/user';
@@ -151,22 +151,22 @@
 	}
 </script>
 
-<Row>
-	<Col sm="4"
-		>&nbsp;
+<div class="grid grid-flow-row-dense grid-cols-4">
+	<div class="col-span-4">
+		&nbsp;
 		{#if media}
 			<audio controls><source src={media} /></audio>
 		{/if}
-	</Col>
+	</div>
 	{#if $me.isMediaManager}
-		<Col sm="4">
+		<div class="col-span-4">
 			<Input type="file" name="file" id="fileData" on:change={loadFile} />
-		</Col>
-		<Col sm="2">
+		</div>
+		<div class="col-span-2">
 			<Button disabled={true} color="primary" id="upload" on:click={doUpload}>Upload</Button>
-		</Col>
-		<Col sm="2">
+		</div>
+		<div class="col-span-2">
 			<Button disabled={!media} color="warning" id="remove" on:click={removeMedia}>Remove</Button>
-		</Col>
+		</div>
 	{/if}
-</Row>
+</div>

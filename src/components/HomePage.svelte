@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Container, Col, Row, Card, CardHeader, CardBody, TabContent, TabPane, Input, Modal, ModalHeader, ModalBody, ModalFooter, Button, } from "sveltestrap";
+	import { Card, Tabs, TabItem, Input, Modal, Button } from 'flowbite-svelte';
 	import proper from '../model/proper';
 	import { auth, screenView, db, recordEvent } from '../firebase';
 	import { getOffice, currentOffice } from '../model/offices';
@@ -118,55 +118,49 @@
 
 <svelte:window on:scroll|passive|stopPropagation={scrolling} />
 
-<Container class="cover-container mx-auto {$forProper.season}">
-	<Row>
-		<Col xs="10">
-			<TabContent
-				on:tab={(e) => {
-					if (officeName == e.detail) return;
-					officeName = e.detail.toString();
-					push('/office/' + officeName + '/' + params.officeDate);
-				}}
-			>
-				{#each offices($forProper.weekday) as o}
-					<TabPane tabId={o} tab={o} active={officeName == o} />
-				{/each}
-			</TabContent>
-		</Col>
-		<Col xs="2">
-			<Input
-				type="date"
-				on:change={(e) => {
-					// @ts-ignore
-					const t = e.target.value; // as HTMLInputElement;
-					if (params.officeDate == t) return;
-					$forProper = proper.fromDate(t);
-					push('/office/' + officeName + '/' + t);
-				}}
-				disabled={!$me.isEditor}
-			/>
-		</Col>
-	</Row>
-	<Container>
-		<Row>
-			<Col class="nopadding">
-				<Card>
-					<CardHeader>{officeName}: {$forProper.propername}</CardHeader>
-					<CardBody>
-						<svelte:component this={office} />
-					</CardBody>
-				</Card>
-			</Col>
-		</Row>
-	</Container>
-</Container>
+<div class="w-full {$forProper.season} grid-flow-row-dense grid-cols-12">
+	<div class="col-span-10">
+		<Tabs
+			on:tab={(e) => {
+				if (officeName == e.detail) return;
+				officeName = e.detail.toString();
+				push('/office/' + officeName + '/' + params.officeDate);
+			}}
+		>
+			{#each offices($forProper.weekday) as o}
+				<TabItem tabId={o} tab={o} active={officeName == o} />
+			{/each}
+		</Tabs>
+	</div>
+	<div class="col-span-2">
+		<Input
+			type="date"
+			on:change={(e) => {
+				// @ts-ignore
+				const t = e.target.value; // as HTMLInputElement;
+				if (params.officeDate == t) return;
+				$forProper = proper.fromDate(t);
+				push('/office/' + officeName + '/' + t);
+			}}
+			disabled={!$me.isEditor}
+		/>
+	</div>
+	<div class="col-span-12">
+		<Card>
+			<h3>{officeName}: {$forProper.propername}</h3>
+			<div>
+				<svelte:component this={office} />
+			</div>
+		</Card>
+	</div>
+</div>
 
 <Modal id="quickEditModal" isOpen={quickEditOpen} size="xl">
-	<ModalHeader>Quick Edit</ModalHeader>
-	<ModalBody>
+	<h3>Quick Edit</h3>
+	<div>
 		<QuickEdit bind:result={quickEditData} />
-	</ModalBody>
-	<ModalFooter>
+	</div>
+	<div>
 		<Button
 			color="secondary"
 			size="sm"
@@ -177,15 +171,15 @@
 			Cancel
 		</Button>
 		<Button color="success" size="sm" on:click={qeconfirm}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>
 
 <Modal id="quickAddAssoc" isOpen={quickAddAssocOpen} size="xl">
-	<ModalHeader>Quick Add Association</ModalHeader>
-	<ModalBody>
+	<h3>Quick Add Association</h3>
+	<div>
 		<AddAssoc bind:result={quickAddAssocData} bind:location={quickAddAssocLocation} />
-	</ModalBody>
-	<ModalFooter>
+	</div>
+	<div>
 		<Button
 			color="secondary"
 			size="sm"
@@ -196,5 +190,5 @@
 			Cancel
 		</Button>
 		<Button color="success" size="sm" on:click={qaaconfirm}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>

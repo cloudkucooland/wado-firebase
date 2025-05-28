@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Container, Row, Col, Card, CardHeader, CardBody, Table, Button, Modal, ModalHeader, ModalBody, ModalFooter, Nav, NavLink, } from "sveltestrap";
+	import { Card, Table, Button, Modal } from 'flowbite-svelte';
 	import {
 		collection,
 		query,
@@ -104,30 +104,30 @@
 	<title>WADO Prayer List: {prayerClass}</title>
 </svelte:head>
 
-<Container>
-	<Nav>
+<div class="w-full">
+	<div>
 		{#each cs as cx}
-			<NavLink
+			<a
 				href="#/prayers/{cx}/"
 				on:click={async () => {
 					prayers = await loadClass(cx);
-				}}>{cx}</NavLink
+				}}>{cx}</a
 			>
 		{/each}
-		<NavLink>
+		<div>
 			<Button
 				on:click={() => {
 					push('/addPrayer');
 				}}
 				color="success">Add Prayer</Button
 			>
-		</NavLink>
-	</Nav>
+		</div>
+	</div>
 	<Row>
 		<Col>
 			<Card>
-				<CardHeader>{prayerClass}</CardHeader>
-				<CardBody>
+				<h3>{prayerClass}</h3>
+				<div>
 					<Table>
 						<thead>
 							<tr>
@@ -156,16 +156,16 @@
 							{/each}
 						</tbody>
 					</Table>
-				</CardBody>
+				</div>
 			</Card>
 		</Col>
 	</Row>
-</Container>
+</div>
 <Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
-	<ModalHeader>Delete Prayer</ModalHeader>
-	<ModalBody>Confirm Delete</ModalBody>
-	<ModalFooter>
+	<h3>Delete Prayer</h3>
+	<div>Confirm Delete</div>
+	<div>
 		<Button color="primary" size="sm" on:click={toggleDeleteOpen}>Cancel</Button>
 		<Button color="warning" size="sm" on:click={confirmDelete} value={modalId}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>

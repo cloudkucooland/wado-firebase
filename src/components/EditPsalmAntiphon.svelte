@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { db } from '../firebase';
-	// import { Container, Input, Button, Row, Col } from "sveltestrap";
+	import { Input, Button } from 'flowbite-svelte';
 	import { toasts } from 'svelte-toasts';
 	import { getDoc, doc } from 'firebase/firestore';
 	import { onMount, afterUpdate } from 'svelte';
@@ -59,16 +59,16 @@
 	const groupBy = (item: any) => item.group;
 </script>
 
-<Row>
-	<Col sm="12">
+<div>
+	<div class="col-span-12">
 		{#if resolved}
 			Antiphon: <a href="#/edit/{result.id}" target="_new">{resolved.Name}</a>
 		{/if}
-	</Col>
-</Row>
-<Row>
-	<Col sm="2">Antiphon Search:</Col>
-	<Col sm="10">
+	</div>
+</div>
+<div>
+	<div class="col-span-2">Antiphon Search:</div>
+	<div class="col-span-10">
 		<Select
 			name="antiphon"
 			placeholder="search for antiphon"
@@ -76,5 +76,5 @@
 			on:change={doSelect}
 			{groupBy}
 		/>
-	</Col>
-</Row>
+	</div>
+</div>

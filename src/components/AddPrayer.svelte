@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Spinner } from "sveltestrap";
+	import { Spinner } from 'flowbite-svelte';
 	import { addDoc, getDocFromServer, collection } from 'firebase/firestore';
 	import { db, auth, recordEvent } from '../firebase';
 	import { toasts } from 'svelte-toasts';

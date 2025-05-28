@@ -7,7 +7,8 @@
 	import { link, push } from 'svelte-spa-router';
 	import type { Readable } from 'svelte/store';
 	import type proper from '../../types/model/proper';
-	// import { Spinner, Icon } from "sveltestrap";
+	import { Spinner } from 'flowbite-svelte';
+	import { CalendarEditSolid, CalendarPlusSolid } from 'flowbite-svelte-icons';
 
 	import Hymn from './prayerClasses/Hymn.svelte';
 	import Prayer from './prayerClasses/Prayer.svelte';
@@ -175,7 +176,7 @@
 </script>
 
 {#await loaddata($proper)}
-	<Spinner color="primary" />
+	<Spinner />
 {:then data}
 	{#if $showEdit}
 		<div class="edit">
@@ -185,14 +186,14 @@
 					push('#/editlocation/' + name);
 				}}
 			>
-				<Icon name="calendar-week" />
+				<CalendarEditSolid />
 			</button>
 			<button
 				on:click={() => {
 					$qaa(name);
 				}}
 			>
-				<Icon name="calendar-plus" />
+				<CalendarPlusSolid />
 			</button>
 		</div>
 	{/if}

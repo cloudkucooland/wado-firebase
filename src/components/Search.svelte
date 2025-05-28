@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Input, Container, Row, Col, ListGroup, ListGroupItem, } from "sveltestrap";
+	import { Input, Listgroup, ListgroupItem } from 'flowbite-svelte';
 	import { index } from '../meili';
 	import { toasts } from 'svelte-toasts';
 	import { recordEvent } from '../firebase';
@@ -55,29 +55,21 @@
 	<title>WADO Prayer Search</title>
 </svelte:head>
 
-<Container>
-	<Row class="justify-content-center">
-		<Col xs="12" lg="10" xl="8">
-			<h2 class="h3 page-title mb-4">Search</h2>
-			<Input on:change={doSearch} on:keypress={doSearchLetter} />
-			<div class="my-4">
-				<strong class="mb-0">Results</strong>
-				<ListGroup class="mb-5 shadow">
-					{#each result.hits as r}
-						<ListGroupItem>
-							<Row class="align-items-center">
-								<Col>
-									<strong class="mb-0">
-										<a href="#/edit/{r.fsid}">{r.Name}</a>
-										<span class="adonai">( {r.Class} )</span>
-									</strong>
-									<p class="mb-0">{@html r.Body}</p>
-								</Col>
-							</Row>
-						</ListGroupItem>
-					{/each}
-				</ListGroup>
-			</div>
-		</Col>
-	</Row>
-</Container>
+<div class="w-full">
+	<h3>Search</h3>
+	<Input on:change={doSearch} on:keypress={doSearchLetter} />
+	<div>
+		<strong>Results</strong>
+		<Listgroup class="mb-5 shadow">
+			{#each result.hits as r}
+				<ListgroupItem>
+					<strong>
+						<a href="#/edit/{r.fsid}">{r.Name}</a>
+						<span class="adonai">( {r.Class} )</span>
+					</strong>
+					<p>{@html r.Body}</p>
+				</ListgroupItem>
+			{/each}
+		</Listgroup>
+	</div>
+</div>

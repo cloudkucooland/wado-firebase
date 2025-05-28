@@ -3,7 +3,7 @@
 	import { onMount, getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import type User from '../../types/model/user';
-	// import { Container, Col, Row, Input, ListGroup, ListGroupItem, } from "sveltestrap";
+	import { Input, Listgroup, ListgroupItem } from 'flowbite-svelte';
 	let me: Readable<User> = getContext('me');
 
 	// does bind not work?
@@ -25,107 +25,69 @@
 	<title>WADO User Settings</title>
 </svelte:head>
 
-<Container>
-	<Row class="justify-content-center">
-		<Col xs="12" lg="10" xl="8" class="mx-auto">
-			<h2 class="h3 page-title mb-4">Settings</h2>
-			<div class="my-4">
-				<strong class="mb-0">Display</strong>
-				<ListGroup class="mb-5 shadow">
-					<ListGroupItem>
-						<Row class="align-items-center">
-							<Col>
-								<strong class="mb-0">Show Media</strong>
-								<p class="text-muted mb-0">
-									Show controls for playing media files (when available).
-								</p>
-							</Col>
-							<Col sm="auto">
-								<div class="custom-control custom-switch">
-									<Input
-										type="checkbox"
-										class="custom-control-input"
-										id="showMedia"
-										on:change={(e) => {
-											// @ts-ignore
-											showMedia.set(e.target.checked);
-										}}
-									/>
-									<span class="custom-control-label"></span>
-								</div>
-							</Col>
-						</Row>
-					</ListGroupItem>
-					<ListGroupItem>
-						<Row class="align-items-center">
-							<Col>
-								<strong class="mb-0">Show Alternatives</strong>
-								<p class="text-muted mb-0">Show additional prayer options (when available).</p>
-							</Col>
-							<Col sm="auto">
-								<div class="custom-control custom-switch">
-									<Input
-										type="checkbox"
-										class="custom-control-input"
-										id="showAlt"
-										on:change={(e) => {
-											// @ts-ignore
-											showAlt.set(e.target.checked);
-										}}
-									/>
-									<span class="custom-control-label"></span>
-								</div>
-							</Col>
-						</Row>
-					</ListGroupItem>
-					<ListGroupItem>
-						<Row class="align-items-center">
-							<Col>
-								<strong class="mb-0">Show Edit Links</strong>
-								<p class="text-muted mb-0">Show links to edit prayers & locations.</p>
-							</Col>
-							<Col sm="auto">
-								<div class="custom-control custom-switch">
-									<Input
-										type="checkbox"
-										class="custom-control-input"
-										id="showEdit"
-										on:change={(e) => {
-											// @ts-ignore
-											showEdit.set(e.target.checked);
-										}}
-									/>
-									<span class="custom-control-label"></span>
-								</div>
-							</Col>
-						</Row>
-					</ListGroupItem>
-				</ListGroup>
-				<strong class="mb-0">Profile</strong>
-				<ListGroup class="mb-5 shadow">
-					<ListGroupItem>
-						<Row class="align-items-center">
-							<Col>
-								<strong class="mb-0">Display Name</strong>
-								<p class="text-muted mb-0">How your name is presented to others.</p>
-							</Col>
-							<Col sm="auto">
-								<div class="custom-control">
-									<Input
-										class="custom-control-input"
-										id="displayName"
-										on:change={(e) => {
-											// @ts-ignore
-											$me.setDisplayName(e.target.value);
-										}}
-										value={$me.displayName}
-									/>
-								</div>
-							</Col>
-						</Row>
-					</ListGroupItem>
-				</ListGroup>
-			</div>
-		</Col>
-	</Row>
-</Container>
+<div class="w-full">
+	<h3>Settings</h3>
+	<div class="w-full grid-flow-row-dense grid-cols-3">
+		<strong>Display</strong>
+		<Listgroup>
+			<ListgroupItem>
+				<strong>Show Media</strong>
+				<p>Show controls for playing media files (when available).</p>
+				<div>
+					<Input
+						type="checkbox"
+						id="showMedia"
+						on:change={(e) => {
+							// @ts-ignore
+							showMedia.set(e.target.checked);
+						}}
+					/>
+				</div>
+			</ListgroupItem>
+			<ListgroupItem>
+				<strong>Show Alternatives</strong>
+				<p>Show additional prayer options (when available).</p>
+				<div>
+					<Input
+						type="checkbox"
+						on:change={(e) => {
+							// @ts-ignore
+							showAlt.set(e.target.checked);
+						}}
+					/>
+				</div>
+			</ListgroupItem>
+			<ListgroupItem>
+				<strong>Show Edit Links</strong>
+				<p>Show links to edit prayers & locations.</p>
+				<div>
+					<Input
+						type="checkbox"
+						id="showEdit"
+						on:change={(e) => {
+							// @ts-ignore
+							showEdit.set(e.target.checked);
+						}}
+					/>
+				</div>
+			</ListgroupItem>
+		</Listgroup>
+		<strong>Profile</strong>
+		<Listgroup>
+			<ListgroupItem>
+				<strong>Display Name</strong>
+				<p>How your name is presented to others.</p>
+				<div>
+					<Input
+						id="displayName"
+						on:change={(e) => {
+							// @ts-ignore
+							$me.setDisplayName(e.target.value);
+						}}
+						value={$me.displayName}
+					/>
+				</div>
+			</ListgroupItem>
+		</Listgroup>
+	</div>
+</div>

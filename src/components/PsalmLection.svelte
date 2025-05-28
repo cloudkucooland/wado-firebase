@@ -7,7 +7,7 @@
 	import { getContext } from 'svelte';
 	import type Proper from '../../types/model/proper';
 	import type { Readable } from 'svelte/store';
-	// import { Spinner } from "sveltestrap";
+	import { Spinner } from 'flowbite-svelte';
 
 	export let office: string;
 	let proper: Readable<Proper> = getContext('forProper');
@@ -89,7 +89,7 @@
 </script>
 
 {#await loaddata($proper)}
-	<Spinner color="primary" />
+	<Spinner />
 {:then data}
 	{#if data._resolved}
 		<Psalm data={data._resolved} id={data.id} />

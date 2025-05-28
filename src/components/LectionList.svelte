@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { Container, Row, Col, ListGroup, ListGroupItem, Modal, ModalHeader, ModalBody, ModalFooter, Input, Button, TabContent, TabPane, } from "sveltestrap";
+	import { Listgroup, ListgroupItem, Modal, Input, Button, Tabs, TabItem } from 'flowbite-svelte';
 	import {
 		collection,
 		query,
@@ -220,118 +220,110 @@
 	<title>WADO Lectionary Editor: Year {year}</title>
 </svelte:head>
 
-<Container>
-	<Row>
-		<Col class="mx-auto">
-			<h2>Lectionary Editor: Year {year}</h2>
-		</Col>
-	</Row>
+<div class="w-full grid-flow-row-dense grid-cols-12">
+	<div class="col-span-12">
+		<h2>Lectionary Editor: Year {year}</h2>
+	</div>
 
-	<Row>
-		<Col class="mx-auto">
-			<TabContent
-				on:tab={async (e) => {
-					if (e.detail == year) return;
-					lections = new Map();
-					year = e.detail;
-					document.location.assign('#/lectionary/' + year);
-					lections = await loadLections(year);
-				}}
-			>
-				{#each ['A', 'B', 'C'] as y}
-					<TabPane tabId={y} tab="Year {y}" active={year == y} />
-				{/each}
-			</TabContent>
-		</Col>
-	</Row>
+	<div class="col-span-12">
+		<Tabs
+			on:tab={async (e) => {
+				if (e.detail == year) return;
+				lections = new Map();
+				year = e.detail;
+				document.location.assign('#/lectionary/' + year);
+				lections = await loadLections(year);
+			}}
+		>
+			{#each ['A', 'B', 'C'] as y}
+				<TabItem tabId={y} tab="Year {y}" active={year == y} />
+			{/each}
+		</Tabs>
+	</div>
 
-	<Row>
-		<Col class="mx-auto">
-			<div class="my-4">
-				<ListGroup class="mb-5 shadow">
-					{#each [...lections] as [k, v]}
-						<ListGroupItem>
-							<Row class="align-items-center">
-								<Col xs="12" class="mx-auto">
-									{#if $me.isEditor}
-										<Button color="success" on:click={toggleLectionModalOpen} value={k} size="sm"
-											>{k}</Button
-										>
-									{:else}
-										<strong class="mb-0">{k}</strong>
-									{/if}
-								</Col>
-							</Row>
-							<Row class="align-items-center">
-								<Col xs="2"><strong>Morning Psalm:</strong></Col>
-								{#if v[1]._morningpsalmref}
-									<Col xs="2"
-										><em class="text-success"
-											><a
-												href="/edit/{v[1]._morningpsalmref}"
-												target="_blank"
-												use:link
-												rel="noopener noreferrer">{v[1].morningpsalm}</a
-											></em
-										></Col
-									>
-								{:else}
-									<Col xs="2">{v[1].morningpsalm}</Col>
-								{/if}
-								<Col xs="1"><strong>Morning:</strong></Col>
-								{#if v[1]._morning}
-									<Col xs="2"><em class="text-success">{v[1].morning}</em></Col>
-								{:else}
-									<Col xs="2">{v[1].morning}</Col>
-								{/if}
-								<Col xs="2"><strong>Morning Title:</strong></Col>
-								<Col xs="3">{v[1].morningtitle}</Col>
-							</Row>
-							<Row class="align-items-center">
-								<Col xs="2"><strong>Evening Psalm:</strong></Col>
-								{#if v[1]._eveningpsalmref}
-									<Col xs="2"
-										><em class="text-success"
-											><a
-												href="/edit/{v[1]._eveningpsalmref}"
-												use:link
-												target="_blank"
-												rel="noopener noreferrer">{v[1].eveningpsalm}</a
-											></em
-										></Col
-									>
-								{:else}
-									<Col xs="2">{v[1].eveningpsalm}</Col>
-								{/if}
-								<Col xs="1"><strong>Evening:</strong></Col>
-								{#if v[1]._evening}
-									<Col xs="2"><em class="text-success">{v[1].evening}</em></Col>
-								{:else}
-									<Col xs="2">{v[1].evening}</Col>
-								{/if}
-								<Col xs="2"><strong>Evening Title:</strong></Col>
-								<Col xs="3">{v[1].eveningtitle}</Col>
-							</Row>
-						</ListGroupItem>
-					{/each}
-				</ListGroup>
-			</div>
-		</Col>
-	</Row>
-</Container>
+	<div class="col-span-12">
+		<Listgroup class="mb-5 shadow">
+			{#each [...lections] as [k, v]}
+				<ListgroupItem>
+					<Row class="align-items-center">
+						<Col xs="12" class="mx-auto">
+							{#if $me.isEditor}
+								<Button color="success" on:click={toggleLectionModalOpen} value={k} size="sm"
+									>{k}</Button
+								>
+							{:else}
+								<strong class="mb-0">{k}</strong>
+							{/if}
+						</Col>
+					</Row>
+					<Row class="align-items-center">
+						<Col xs="2"><strong>Morning Psalm:</strong></Col>
+						{#if v[1]._morningpsalmref}
+							<Col xs="2"
+								><em class="text-success"
+									><a
+										href="/edit/{v[1]._morningpsalmref}"
+										target="_blank"
+										use:link
+										rel="noopener noreferrer">{v[1].morningpsalm}</a
+									></em
+								></Col
+							>
+						{:else}
+							<Col xs="2">{v[1].morningpsalm}</Col>
+						{/if}
+						<Col xs="1"><strong>Morning:</strong></Col>
+						{#if v[1]._morning}
+							<Col xs="2"><em class="text-success">{v[1].morning}</em></Col>
+						{:else}
+							<Col xs="2">{v[1].morning}</Col>
+						{/if}
+						<Col xs="2"><strong>Morning Title:</strong></Col>
+						<Col xs="3">{v[1].morningtitle}</Col>
+					</Row>
+					<Row class="align-items-center">
+						<Col xs="2"><strong>Evening Psalm:</strong></Col>
+						{#if v[1]._eveningpsalmref}
+							<Col xs="2"
+								><em class="text-success"
+									><a
+										href="/edit/{v[1]._eveningpsalmref}"
+										use:link
+										target="_blank"
+										rel="noopener noreferrer">{v[1].eveningpsalm}</a
+									></em
+								></Col
+							>
+						{:else}
+							<Col xs="2">{v[1].eveningpsalm}</Col>
+						{/if}
+						<Col xs="1"><strong>Evening:</strong></Col>
+						{#if v[1]._evening}
+							<Col xs="2"><em class="text-success">{v[1].evening}</em></Col>
+						{:else}
+							<Col xs="2">{v[1].evening}</Col>
+						{/if}
+						<Col xs="2"><strong>Evening Title:</strong></Col>
+						<Col xs="3">{v[1].eveningtitle}</Col>
+					</Row>
+				</ListgroupItem>
+			{/each}
+		</Listgroup>
+	</div>
+</div>
 
 <Modal id="lectionModal" isOpen={lectionModalOpen} size="xl">
-	<ModalHeader>Edit Lection: {modalData.key}</ModalHeader>
-	<ModalBody>
+	<h3>Edit Lection: {modalData.key}</h3>
+	<div>
 		M Psalm: <Input bind:value={modalData.morningpsalm} />
 		M: <Input bind:value={modalData.morning} />
 		M Title: <Input bind:value={modalData.morningtitle} />
 		E Psalm: <Input bind:value={modalData.eveningpsalm} />
 		E: <Input bind:value={modalData.evening} />
 		E Title: <Input bind:value={modalData.eveningtitle} />
-	</ModalBody>
-	<ModalFooter>
+	</div>
+	<div>
 		<Button color="secondary" size="sm" on:click={toggleLectionModalOpen}>Cancel</Button>
 		<Button color="success" size="sm" on:click={confirmLectionModal}>Confirm</Button>
-	</ModalFooter>
+	</div>
 </Modal>

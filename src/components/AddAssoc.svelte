@@ -5,7 +5,7 @@
 	import association from '../model/association';
 	import type { associationFromFirestore } from '../model/types';
 	import season from '../model/season';
-	// import { Container, Row, Col, Input, Button } from "sveltestrap";
+	import { Input, Button } from 'flowbite-svelte';
 	import Select from 'svelte-select';
 	import { index } from '../meili';
 	import { toasts } from 'svelte-toasts';
@@ -75,96 +75,89 @@
 	const groupBy = (item: any) => item.group;
 </script>
 
-<Container fluid>
-	<Row>
-		<Col sm="2">Location</Col>
-		<Col sm="6">
-			{location}
-		</Col>
-		<Col sm="4">
-			<Button href="#/addPrayer">Add Prayer</Button>
-		</Col>
-	</Row>
-	<Row>
-		<Col sm="2">Prayer</Col>
-		<Col sm="10">
-			<Select
-				name="prayer"
-				placeholder="search for prayer"
-				{loadOptions}
-				on:change={doSelect}
-				{groupBy}
-			/>
-		</Col>
-	</Row>
-	<Row>
-		<Col sm="3">Season</Col>
-		<Col sm="2">{properName} <span class="small">(-1 for "Any")</span></Col>
-		<Col sm="3">Weekday</Col>
-		<Col sm="2">Year</Col>
-		<Col sm="2">Weight</Col>
-	</Row>
-	<Row>
-		<Col sm="3">
-			<Input type="select" bind:value={a.Season} disabled={calDateSet}>
-				<option
-					value="Any"
-					on:change={() => {
-						a.Proper = -1;
-						a.Weekday = -1;
-					}}>Any</option
-				>
-				{#each Array.from(season.LUT.keys()) as s}
-					<option value={s}>{s}</option>
-				{/each}
-			</Input>
-		</Col>
-		<Col sm="2">
-			<Input
-				bind:value={a.Proper}
-				type="number"
-				max={selectedSeason.maxProper}
-				min={-1}
-				disabled={calDateSet || selectedSeason.maxProper == 0}
-			/>
-		</Col>
-		<Col sm="3">
-			<Input
-				type="select"
-				bind:value={a.Weekday}
-				disabled={calDateSet || !selectedSeason.useWeekdays}
+<div class="grid w-full grid-flow-row-dense grid-cols-12">
+	<div class="colspan-2">Location</div>
+	<div class="col-span-6">
+		{location}
+	</div>
+	<div class="col-span-4">
+		<Button href="#/addPrayer">Add Prayer</Button>
+	</div>
+
+	<div class="col-span-2">Prayer</div>
+	<div class="col-span-10">
+		<Select
+			name="prayer"
+			placeholder="search for prayer"
+			{loadOptions}
+			on:change={doSelect}
+			{groupBy}
+		/>
+	</div>
+
+	<div class="col-span-3">Season</div>
+	<div class="col-span-2">{properName} <span class="small">(-1 for "Any")</span></div>
+	<div class="col-span-3">Weekday</div>
+	<div class="col-span-2">Year</div>
+	<div class="col-span-2">Weight</div>
+
+	<div class="col-span-3">
+		<Input type="select" bind:value={a.Season} disabled={calDateSet}>
+			<option
+				value="Any"
+				on:change={() => {
+					a.Proper = -1;
+					a.Weekday = -1;
+				}}>Any</option
 			>
-				<option value={-1}>Any</option>
-				<option value={0}>Sunday</option>
-				<option value={1}>Monday</option>
-				<option value={2}>Tuesday</option>
-				<option value={3}>Wednesday</option>
-				<option value={4}>Thursday</option>
-				<option value={5}>Friday</option>
-				<option value={6}>Saturday</option>
-			</Input>
-		</Col>
-		<Col sm="2">
-			<Input type="select" bind:value={a.Year} disabled={calDateSet}>
-				<option value="Any">Any</option>
-				<option value="A">A</option>
-				<option value="B">B</option>
-				<option value="C">C</option>
-			</Input>
-		</Col>
-		<Col sm="2">
-			<Input bind:value={a.Weight} type="number" min={0} max={99} disabled={calDateSet} />
-		</Col>
-	</Row>
-	<Row>
-		<Col sm="2">&nbsp;</Col>
-		<Col sm="8">(fixed-dates are very rare; "Any" to use season-relative dates)</Col>
-		<Col sm="2">&nbsp;</Col>
-	</Row>
-	<Row>
-		<Col sm="2">Fixed Date</Col>
-		<Col sm="10">
-			<Input bind:value={a.CalendarDate} placeholder="mm-dd" />
-		</Col>
-	</Row>
-</Container>
+			{#each Array.from(season.LUT.keys()) as s}
+				<option value={s}>{s}</option>
+			{/each}
+		</Input>
+	</div>
+	<div class="col-span-2">
+		<Input
+			bind:value={a.Proper}
+			type="number"
+			max={selectedSeason.maxProper}
+			min={-1}
+			disabled={calDateSet || selectedSeason.maxProper == 0}
+		/>
+	</div>
+	<div class="col-span-3">
+		<Input
+			type="select"
+			bind:value={a.Weekday}
+			disabled={calDateSet || !selectedSeason.useWeekdays}
+		>
+			<option value={-1}>Any</option>
+			<option value={0}>Sunday</option>
+			<option value={1}>Monday</option>
+			<option value={2}>Tuesday</option>
+			<option value={3}>Wednesday</option>
+			<option value={4}>Thursday</option>
+			<option value={5}>Friday</option>
+			<option value={6}>Saturday</option>
+		</Input>
+	</div>
+	<div class="col-span-2">
+		<Input type="select" bind:value={a.Year} disabled={calDateSet}>
+			<option value="Any">Any</option>
+			<option value="A">A</option>
+			<option value="B">B</option>
+			<option value="C">C</option>
+		</Input>
+	</div>
+	<div class="col-span-2">
+		<Input bind:value={a.Weight} type="number" min={0} max={99} disabled={calDateSet} />
+	</div>
+
+	<div class="col-span-2">&nbsp;</div>
+	<div class="col-span-8">(fixed-dates are very rare; "Any" to use season-relative dates)</div>
+	<div class="col-span-2">&nbsp;</div>
+
+	<div class="col-span-2">Fixed Date</div>
+	<div class="col-span-10">
+		<Input bind:value={a.CalendarDate} placeholder="mm-dd" />
+	</div>
+</div>

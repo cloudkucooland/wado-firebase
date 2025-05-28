@@ -1,5 +1,5 @@
 <script lang="ts">
-	// import { TabContent, TabPane } from "sveltestrap";
+	import { Tabs, TabItem } from 'flowbite-svelte';
 
 	import Hymn from './prayerClasses/Hymn.svelte';
 	import Prayer from './prayerClasses/Prayer.svelte';
@@ -40,10 +40,10 @@
 	}
 </script>
 
-<TabContent>
+<Tabs>
 	{#each [...data] as [id, d]}
-		<TabPane tabId={id} tab={shortname(d.Name)} active={isActive()}>
+		<TabItem tabId={id} tab={shortname(d.Name)} active={isActive()}>
 			<svelte:component this={lookup.get(d.Class)} data={d} {id} />
-		</TabPane>
+		</TabItem>
 	{/each}
-</TabContent>
+</Tabs>

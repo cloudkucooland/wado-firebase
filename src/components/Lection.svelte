@@ -6,7 +6,7 @@
 	import type Proper from '../../types/model/proper';
 	import type { Readable } from 'svelte/store';
 	import lection from '../model/lection';
-	// import { Spinner } from "sveltestrap";
+	import { Spinner } from 'flowbite-svelte';
 
 	export let office: string;
 	let proper: Readable<Proper> = getContext('forProper');
