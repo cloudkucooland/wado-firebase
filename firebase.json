@@ -1,25 +1,25 @@
 {
-  "hosting": {
-    "predeploy": ["npm run build"],
-    "public": "dist",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "redirects": [
-      {
-        "source": "/wado/assets/:f*",
-        "destination": "/assets/:f",
-        "type": 301
-      },
-      {
-        "source": "/wado/:f*",
-        "destination": "/:f",
-        "type": 301
-      }
-    ],
-    "rewrites": [
-      {
-        "source": "*",
-        "destination": "/index.html"
-      }
-    ]
-  }
+	"hosting": {
+		"predeploy": ["npm run build"],
+		"public": "dist",
+		"ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+		"redirects": [
+			{
+				"source": "/wado/assets/:f*",
+				"destination": "/assets/:f",
+				"type": 301
+			},
+			{
+				"source": "/wado/:f*",
+				"destination": "/:f",
+				"type": 301
+			}
+		],
+		"rewrites": [
+			{
+				"source": "*",
+				"destination": "/index.html"
+			}
+		]
+	}
 }
