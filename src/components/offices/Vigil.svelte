@@ -2,6 +2,8 @@
 	import Location from '../Location.svelte';
 	import Silence from '../Silence.svelte';
 	import Rubric from '../Rubric.svelte';
+	import Heading from '../Heading.svelte';
+	import Subeading from '../Subheading.svelte';
 </script>
 
 <h2>Vigil</h2>
@@ -14,14 +16,14 @@
 	and ends in silence.</Rubric
 >
 
-<h3>Opening</h3>
-<h3>Entrance of the Light</h3>
+<Heading>Opening</Heading>
+<Heading>Entrance of the Light</Heading>
 <Location name="VIGIL-OPENING" />
 
-<h3>Opening Sentences</h3>
+<Heading>Opening Sentences</Heading>
 <Location name="VIGIL-CANTICLE" />
 
-<h3>Prayer</h3>
+<Heading>Prayer</Heading>
 <Location name="GENERAL-WITHYOU" />
 
 <Location name="VIGIL-COLLECT" />
@@ -32,20 +34,20 @@
 
 <Location name="VIGIL-TEDEUM" />
 
-<h4>Prayers</h4>
+<Subheading>Prayers</Subheading>
 <Rubric>Prayers of Supplicaion and Intercession [is this going to be populated: scb?]</Rubric>
 <Location name="GENERAL-WITHYOU" />
 
 <Location name="VIGIL-SUPPLICATION" />
 
-<h3>The Lord's Prayer</h3>
+<Heading>The Lord's Prayer</Heading>
 <Location name="VIGIL-LORDS" max={2} />
 
 <Location name="VIGIL-COMMENDATION" />
 
 <Location name="SIMEON" />
 
-<h3>Concluding Prayer</h3>
+<Heading>Concluding Prayer</Heading>
 <Location name="VIGIL-DISMISSAL" max={3} />
 
 <Rubric

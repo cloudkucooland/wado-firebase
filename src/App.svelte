@@ -169,13 +169,14 @@
 
 <svelte:head></svelte:head>
 
-<header>
-	<Navbar>
+<header class="p-0">
+	<!-- spacing on this is weird -->
+	<Navbar class="p-0 sm:px-0">
 		<NavBrand href="/wado/#/"
 			><img src="ox.svg" height="64" width="64" alt="current office" /></NavBrand
 		>
 		<NavHamburger />
-		<NavUl>
+		<NavUl class="p-0 sm:px-0">
 			{#if loggedIn}
 				<NavLi class="cursor-pointer">
 					Tools <ChevronDownOutline />
@@ -189,17 +190,17 @@
 					<DropdownItem href="#/users">Recent Users</DropdownItem>
 				</Dropdown>
 				<NavLi href="#/settings" class="cursor-pointer">Settings</NavLi>
-				<NavLi href="#" on:click={doLogout} class="cursor-pointer">Log Out</NavLi>
+				<NavLi href="#" onclick={doLogout} class="cursor-pointer">Log Out</NavLi>
 			{:else}
 				<NavLi class="cursor-pointer">
 					Login <ChevronDownOutline class="text-primary-800 ms-2 inline h-6 w-6" />
 				</NavLi>
 				<Dropdown>
-					<DropdownItem on:click={doGLogin}>Google Login</DropdownItem>
-					<DropdownItem on:click={doFBLogin}>Facebook Login</DropdownItem>
+					<DropdownItem onclick={doGLogin}>Google Login</DropdownItem>
+					<DropdownItem onclick={doFBLogin}>Facebook Login</DropdownItem>
 				</Dropdown>
 			{/if}
-			<NavLi href="https://saint-luke.net/">OSL</NavLi>
+			<NavLi href="https://saint-luke.net/">The Order of Saint Luke ®</NavLi>
 		</NavUl>
 	</Navbar>
 </header>
@@ -210,23 +211,23 @@
 	<Router {routes} />
 </main>
 
-<Footer class="start-0 bottom-0 border-t py-2.5 sm:px-4">
-	<p class="small text-end">
-		This site uses cookies for authentication and analytics. <a href="/wado-privacy" target="new"
-			>Privacy Policy</a
-		>
-	</p>
-	<FooterCopyright href="https://saint-luke.net/" by="The Order of St. Luke ®" year={2025} />
-	<p class="small text-end">Build date: __buildDate__</p>
-	<p class="small text-end">
-		<a href="https://www.facebook.com/groups/3354160484857281"> WADO user group </a>&nbsp; | &nbsp;
-		<a href="https://github.com/cloudkucooland/wado-firebase"> GitHub </a>
-	</p>
+<Footer>
+	<div>
+		<FooterCopyright href="https://saint-luke.net/" by="The Order of St. Luke ®" year={2025} />
+		This site uses cookies for authentication and analytics.<br />
+	</div>
+	<div>
+		<a href="/wado-privacy" target="new">Privacy Policy</a> |
+		<a href="https://www.facebook.com/groups/3354160484857281">WADO user group</a> |
+		<a href="https://github.com/cloudkucooland/wado-firebase">GitHub</a> <br />
+		Build date: __buildDate__
+	</div>
 </Footer>
+
 <GdprBanner
 	description="WADO uses cookies for authentication and analytics"
 	cookieName="wadogdpr"
 	{choices}
-	on:analytics={initAnalytics}
+	onanalytics={initAnalytics}
 	{showEditIcon}
 />

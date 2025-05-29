@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Card, Tabs, TabItem, Input, Modal, Button } from 'flowbite-svelte';
+	import { Heading, Tabs, TabItem, Input, Modal, Button } from 'flowbite-svelte';
 	import proper from '../model/proper';
 	import { auth, screenView, db, recordEvent } from '../firebase';
 	import { getOffice, currentOffice } from '../model/offices';
@@ -37,6 +37,11 @@
 		replace('/office/' + officeName + '/' + params.officeDate);
 		screenView(officeName);
 	});
+
+	function tabSwitch(o: string): void {
+		push('/office/' + o + '/' + params.officeDate);
+		return;
+	}
 
 	afterUpdate((): void => {
 		screenView(officeName);
@@ -116,79 +121,66 @@
 	<title>WADO: {officeName}: {$forProper.propername}</title>
 </svelte:head>
 
-<svelte:window on:scroll|passive|stopPropagation={scrolling} />
+<svelte:window onscroll|passive|stopPropagation={scrolling} />
 
-<div class="w-full {$forProper.season} grid-flow-row-dense grid-cols-12">
-	<div class="col-span-10">
-		<Tabs
-			on:tab={(e) => {
-				if (officeName == e.detail) return;
-				officeName = e.detail.toString();
-				push('/office/' + officeName + '/' + params.officeDate);
-			}}
-		>
+<div class={$forProper.season}>
+	<div class="flex">
+		<Tabs class="flex-auto">
 			{#each offices($forProper.weekday) as o}
-				<TabItem tabId={o} tab={o} active={officeName == o} />
+				<TabItem title={o} open={officeName == o} onclick={() => tabSwitch(o)} />
 			{/each}
 		</Tabs>
-	</div>
-	<div class="col-span-2">
 		<Input
+			class="flex-auto"
 			type="date"
-			on:change={(e) => {
+			onchange={(e: Event) => {
 				// @ts-ignore
 				const t = e.target.value; // as HTMLInputElement;
 				if (params.officeDate == t) return;
 				$forProper = proper.fromDate(t);
 				push('/office/' + officeName + '/' + t);
 			}}
-			disabled={!$me.isEditor}
 		/>
 	</div>
-	<div class="col-span-12">
-		<Card>
-			<h3>{officeName}: {$forProper.propername}</h3>
-			<div>
-				<svelte:component this={office} />
-			</div>
-		</Card>
+
+	<div class="max-w-200">
+		<Heading tag="h3" class="mb-4 text-center">{officeName}: {$forProper.propername}</Heading>
+		<div class="main">
+			<svelte:component this={office} />
+		</div>
 	</div>
 </div>
 
-<Modal id="quickEditModal" isOpen={quickEditOpen} size="xl">
-	<h3>Quick Edit</h3>
+<Modal id="quickEditModal" isOpen={quickEditOpen}>
+	<Heading tag="h3">Quick Edit</Heading>
 	<div>
 		<QuickEdit bind:result={quickEditData} />
 	</div>
 	<div>
 		<Button
-			color="secondary"
-			size="sm"
-			on:click={() => {
+			onclick={() => {
 				quickEditOpen = false;
 			}}
 		>
 			Cancel
 		</Button>
-		<Button color="success" size="sm" on:click={qeconfirm}>Confirm</Button>
+		<Button onclick={qeconfirm}>Confirm</Button>
 	</div>
 </Modal>
 
-<Modal id="quickAddAssoc" isOpen={quickAddAssocOpen} size="xl">
-	<h3>Quick Add Association</h3>
+<Modal id="quickAddAssoc" isOpen={quickAddAssocOpen}>
+	<Heading tag="h3">Quick Add Association</Heading>
 	<div>
 		<AddAssoc bind:result={quickAddAssocData} bind:location={quickAddAssocLocation} />
 	</div>
 	<div>
 		<Button
-			color="secondary"
-			size="sm"
-			on:click={() => {
+			onclick={() => {
 				quickAddAssocOpen = false;
 			}}
 		>
 			Cancel
 		</Button>
-		<Button color="success" size="sm" on:click={qaaconfirm}>Confirm</Button>
+		<Button onclick={qaaconfirm}>Confirm</Button>
 	</div>
 </Modal>

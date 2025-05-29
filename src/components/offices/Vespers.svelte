@@ -4,67 +4,69 @@
 	import Rubric from '../Rubric.svelte';
 	import Lection from '../Lection.svelte';
 	import PsalmLection from '../PsalmLection.svelte';
+	import Heading from '../Heading.svelte';
+	import Subheading from '../Subheading.svelte';
 </script>
 
-<h3>Opening</h3>
-<h4>Entrance of the Light</h4>
+<Heading>Opening</Heading>
+<Subheading>Entrance of the Light</Subheading>
 <Location name="VESPERS-LIGHT" maxAlt={3} />
 
-<h4>Hymn of Light (The Phos Hilaron)</h4>
+<Subheading>Hymn of Light (The Phos Hilaron)</Subheading>
 <Location name="PHOS-HILARON" maxAlt={3} />
 
-<h4>+ Thanksgiving for Light</h4>
+<Subheading>+ Thanksgiving for Light</Subheading>
 <Rubric>(Always included in Festive Vespers or Evensong)</Rubric>
 <Location name="GENERAL-WITHYOU" />
 <Location name="VESPER-COLLECT1" maxAlt={3} />
 <Rubric>The community is seated.</Rubric>
 
-<h4>Evening Prayer Canticle</h4>
+<Subheading>Evening Prayer Canticle</Subheading>
 <Rubric>
 	(may be accompanied by the lighting of incense; always included in Festive Vespers or Evensong)
 </Rubric>
 <Location name="VESPER-CANTICLE" />
 
-<h4>Prayer of awareness</h4>
+<Subheading>Prayer of awareness</Subheading>
 <Location name="VESPER-CONFESSION" maxAlt={3} />
 <Silence>silent recollection and examination of conscience</Silence>
 
-<h4>Words of Assurance:</h4>
+<Subheading>Words of Assurance:</Subheading>
 <Location name="VESPER-PARDON" />
 
-<h3>Psalter</h3>
+<Heading>Psalter</Heading>
 <PsalmLection office="VESPERS" />
 <Location name="VESPER-GLORIA" />
 <Silence />
 
-<h3>Word</h3>
-<h4>Scripture</h4>
+<Heading>Word</Heading>
+<Subheading>Scripture</Subheading>
 <Lection office="VESPERS" />
 <Location name="GENERAL-RESPONSE-SCRIPTURE" />
 
-<h4>Silence for Reflection</h4>
+<Subheading>Silence for Reflection</Subheading>
 
-<h4>Canticle of Mary (The Magnificat; Luke 1:39-56)</h4>
+<Subheading>Canticle of Mary (The Magnificat; Luke 1:39-56)</Subheading>
 <Location name="MAGNIFICAT" />
 
 <Rubric>(unison)</Rubric>
 
 <Location name="VESPER-GLORIA" />
-<h4>A Reading for Meditation and Reflection</h4>
+<Subheading>A Reading for Meditation and Reflection</Subheading>
 <Location name="VESPER-COMMEMORATION" />
 
-<h3>Prayers</h3>
+<Heading>Prayers</Heading>
 
-<h4>Silent Prayer</h4>
+<Subheading>Silent Prayer</Subheading>
 <Silence>Pray for the life of the Church and the world and the concerns of the heart.</Silence>
 
-<h4>Prayer of Thanksgiving</h4>
+<Subheading>Prayer of Thanksgiving</Subheading>
 <Location name="VESPER-SUPPLICATION" maxAlt={3} />
-<h4>Evening Collects</h4>
+<Subheading>Evening Collects</Subheading>
 <Rubric>One and usually more of the following collects.</Rubric>
 <Location name="VESPER-COLLECT2" max={10} />
 
-<h4>Prayers of Special Intention</h4>
+<Subheading>Prayers of Special Intention</Subheading>
 <Rubric>Proper collects for holy days and major feasts</Rubric>
 <Location name="VESPER-COMMEMORATION" subunit="eveningcollect" maxAlt={5} />
 
@@ -72,20 +74,14 @@
 <Rubric>One or more of the following</Rubric>
 <Location name="OSL" max={3} />
 
-<h4>The Lord’s Prayer</h4>
+<Subheading>The Lord’s Prayer</Subheading>
 <Location name="GENERAL-LORDS" bold={true} /><br />
-<h4>Concluding Collect</h4>
+<Subheading>Concluding Collect</Subheading>
 <Location name="VESPER-COLLECT3" maxAlt={3} />
 
-<h4>Hymn</h4>
+<Subheading>Hymn</Subheading>
 <Location name="VESPER-HYMN" maxAlt={3} />
 
-<h3>Going Forth</h3>
+<Heading>Going Forth</Heading>
 <Location name="VESPER-BENEDICTION" maxAlt={3} />
 <Location name="VESPER-DISMISSAL" />
-
-<style>
-	h4 {
-		font-style: italic;
-	}
-</style>
