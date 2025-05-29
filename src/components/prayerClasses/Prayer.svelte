@@ -24,13 +24,13 @@
 
 {#if $showEdit}<div class="edit">
 		<button
-			on:click={() => {
+			onclick={() => {
 				push('#/edit/' + id);
 			}}
 		>
 			<Icon name="pencil" />
 		</button>
-		<button on:click={$qe(p)}>
+		<button onclick={$qe(p)}>
 			<Icon name="pencil-square" />
 		</button>
 	</div>{/if}
