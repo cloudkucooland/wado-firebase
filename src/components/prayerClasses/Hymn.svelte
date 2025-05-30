@@ -5,7 +5,7 @@
 	import type { prayerFromFirestore } from '../../model/types';
 	import type { Readable } from 'svelte/store';
 	import { getContext } from 'svelte';
-	// import { Icon } from "sveltestrap";
+	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
 
 	export let data: prayerFromFirestore;
@@ -22,10 +22,10 @@
 				push('#/edit/' + id);
 			}}
 		>
-			<Icon name="pencil" />
+			<EditSolid />
 		</button>
 		<button on:click={$qe(h)}>
-			<Icon name="pencil-square" />
+			<CloudMeatballSolid />
 		</button>
 	</div>{/if}
 <h5>{h.name}</h5>

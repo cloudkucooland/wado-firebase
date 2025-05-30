@@ -5,7 +5,7 @@ import replace from '@rollup/plugin-replace';
 import sveltePreprocess from 'svelte-preprocess';
 
 export default defineConfig({
-	base: '/wado/',
+	base: '/wado-dev/',
 	plugins: [
 		tailwindcss(),
 		svelte({

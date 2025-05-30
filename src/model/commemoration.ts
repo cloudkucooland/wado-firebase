@@ -11,7 +11,6 @@ export default class commemoration extends prayer {
 		if (obj.Class) this.class = obj.Class;
 		if (obj.MorningCollect) this.morningcollect = obj.MorningCollect;
 		if (obj.EveningCollect) this.eveningcollect = obj.EveningCollect;
-		console.log(obj, this);
 	}
 
 	public toFirebase(): any {

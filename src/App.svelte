@@ -169,13 +169,15 @@
 
 <svelte:head></svelte:head>
 
-<header class="p-0">
-	<!-- spacing on this is weird -->
-	<Navbar class="p-0 sm:px-0">
-		<NavBrand href="/wado/#/"
-			><img src="ox.svg" height="64" width="64" alt="current office" /></NavBrand
-		>
-		<NavHamburger />
+<header class="w-full p-0">
+	<Navbar class="bg-primary-50 dark:bg-primary-700 p-0 sm:px-0">
+		<NavBrand href="/wado-dev/#/" class="p-0">
+			<img src="ox.svg" height="72" width="72" alt="current office" class="me-3" />
+			<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
+				>Web-Amplified Daily Office</span
+			>
+		</NavBrand>
+		<NavHamburger class="p-0 sm:px-0" />
 		<NavUl class="p-0 sm:px-0">
 			{#if loggedIn}
 				<NavLi class="cursor-pointer">

@@ -3,7 +3,7 @@
 	import Media from '../Media.svelte';
 	import antiphon from '../../model/antiphon';
 	import type { prayerFromFirestore } from '../../model/types';
-	// import { Icon } from "sveltestrap";
+	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
 	import type { Readable } from 'svelte/store';
 	import { getContext } from 'svelte';
@@ -22,10 +22,10 @@
 				push('#/edit/' + id);
 			}}
 		>
-			<Icon name="pencil" />
+			<EditSolid />
 		</button>
 		<button on:click={$qe(ant)}>
-			<Icon name="pencil-square" />
+			<CloudMeatballSolid />
 		</button>
 	</div>{/if}
 <h6>Antiphon</h6>

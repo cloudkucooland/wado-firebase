@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Heading, Tabs, TabItem, Input, Modal, Button } from 'flowbite-svelte';
+	import { Heading, Tabs, TabItem, Input, Modal, Button, Datepicker } from 'flowbite-svelte';
 	import proper from '../model/proper';
 	import { auth, screenView, db, recordEvent } from '../firebase';
 	import { getOffice, currentOffice } from '../model/offices';
@@ -18,9 +18,9 @@
 	const nowString: string = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
 
 	export let params = { officeName: currentOffice(), officeDate: nowString };
-	console.debug(params.officeDate);
+	// console.debug(params.officeDate);
 	const properFromDate = proper.fromDate(params.officeDate);
-	console.debug(properFromDate);
+	// console.debug(properFromDate);
 	let forProper: Writable<proper> = writable(properFromDate);
 	setContext('forProper', forProper);
 
@@ -96,7 +96,7 @@
 	setContext('qaa', qaa);
 
 	async function qaaconfirm(e: Event): Promise<void> {
-		console.log(e, quickAddAssocData.toFirebase());
+		// console.log(e, quickAddAssocData.toFirebase());
 		quickAddAssocOpen = false;
 		try {
 			const added = await addDoc(collection(db, 'associations'), quickAddAssocData.toFirebase());
@@ -130,20 +130,18 @@
 				<TabItem title={o} open={officeName == o} onclick={() => tabSwitch(o)} />
 			{/each}
 		</Tabs>
-		<Input
-			class="flex-auto"
-			type="date"
-			onchange={(e: Event) => {
-				// @ts-ignore
-				const t = e.target.value; // as HTMLInputElement;
-				if (params.officeDate == t) return;
-				$forProper = proper.fromDate(t);
-				push('/office/' + officeName + '/' + t);
+		<Datepicker
+			class="max-w-30 flex-auto"
+			onselect={(d) => {
+				const subs = d.toISOString().split('T');
+				if (params.officeDate == subs[0]) return;
+				$forProper = proper.fromDate(subs[0]);
+				push('/office/' + officeName + '/' + subs[0]);
 			}}
 		/>
 	</div>
 
-	<div class="max-w-200">
+	<div class="mb-4 max-w-200">
 		<Heading tag="h3" class="mb-4 text-center">{officeName}: {$forProper.propername}</Heading>
 		<div class="main">
 			<svelte:component this={office} />

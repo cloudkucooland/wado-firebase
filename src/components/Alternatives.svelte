@@ -5,6 +5,7 @@
 	import Prayer from './prayerClasses/Prayer.svelte';
 	import Psalm from './prayerClasses/Psalm.svelte';
 	import Antiphon from './prayerClasses/Antiphon.svelte';
+	import Commemoration from './prayerClasses/Commemoration.svelte';
 	import type { prayerFromFirestore } from '../model/types';
 
 	export const lookup = new Map([
@@ -12,17 +13,17 @@
 		['hymn', Hymn],
 		['prayer', Prayer],
 		['psalm', Psalm],
-		['antiphon', Antiphon]
+		['antiphon', Antiphon],
+		['commemoration', Commemoration]
 	]);
 
 	export let data: Map<string, prayerFromFirestore>;
 
-	// this needs to be redone properly
+	// the first tab is active
 	let isA: number = 0;
 	function isActive() {
-		isA = isA + 1;
-		if (isA == 1) return true;
-		return false;
+		isA++;
+		return isA == 1;
 	}
 
 	function shortname(name: string) {
@@ -42,7 +43,7 @@
 
 <Tabs>
 	{#each [...data] as [id, d]}
-		<TabItem tabId={id} tab={shortname(d.Name)} active={isActive()}>
+		<TabItem title={shortname(d.Name)} open={isActive()}>
 			<svelte:component this={lookup.get(d.Class)} data={d} {id} />
 		</TabItem>
 	{/each}

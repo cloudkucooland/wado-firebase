@@ -3,7 +3,7 @@
 	import { onMount, getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import type User from '../../types/model/user';
-	import { Input, Listgroup, ListgroupItem } from 'flowbite-svelte';
+	import { Heading, Input, Listgroup, ListgroupItem } from 'flowbite-svelte';
 	let me: Readable<User> = getContext('me');
 
 	// does bind not work?
@@ -25,69 +25,72 @@
 	<title>WADO User Settings</title>
 </svelte:head>
 
-<div class="w-full">
-	<h3>Settings</h3>
-	<div class="w-full grid-flow-row-dense grid-cols-3">
-		<strong>Display</strong>
-		<Listgroup>
-			<ListgroupItem>
-				<strong>Show Media</strong>
-				<p>Show controls for playing media files (when available).</p>
-				<div>
-					<Input
-						type="checkbox"
-						id="showMedia"
-						on:change={(e) => {
-							// @ts-ignore
-							showMedia.set(e.target.checked);
-						}}
-					/>
-				</div>
-			</ListgroupItem>
-			<ListgroupItem>
-				<strong>Show Alternatives</strong>
-				<p>Show additional prayer options (when available).</p>
-				<div>
-					<Input
-						type="checkbox"
-						on:change={(e) => {
-							// @ts-ignore
-							showAlt.set(e.target.checked);
-						}}
-					/>
-				</div>
-			</ListgroupItem>
-			<ListgroupItem>
-				<strong>Show Edit Links</strong>
-				<p>Show links to edit prayers & locations.</p>
-				<div>
-					<Input
-						type="checkbox"
-						id="showEdit"
-						on:change={(e) => {
-							// @ts-ignore
-							showEdit.set(e.target.checked);
-						}}
-					/>
-				</div>
-			</ListgroupItem>
-		</Listgroup>
-		<strong>Profile</strong>
-		<Listgroup>
-			<ListgroupItem>
-				<strong>Display Name</strong>
-				<p>How your name is presented to others.</p>
-				<div>
-					<Input
-						id="displayName"
-						on:change={(e) => {
-							// @ts-ignore
-							$me.setDisplayName(e.target.value);
-						}}
-						value={$me.displayName}
-					/>
-				</div>
-			</ListgroupItem>
-		</Listgroup>
-	</div>
+<div class="grid w-full">
+	<Heading tag="h2">Settings</Heading>
+	<Heading tag="h3">Display</Heading>
+	<Listgroup class="w-full">
+		<ListgroupItem>
+			<div class="w-full">
+				<strong>Show Media</strong> Show controls for playing media files (when available).
+			</div>
+			<div>
+				<Input
+					type="checkbox"
+					id="showMedia"
+					onchange={(e) => {
+						// @ts-ignore
+						showMedia.set(e.target.checked);
+					}}
+				/>
+			</div>
+		</ListgroupItem>
+		<ListgroupItem>
+			<div class="w-full">
+				<strong>Show Alternatives</strong> Show additional prayer options (when available).
+			</div>
+			<div>
+				<Input
+					type="checkbox"
+					id="showAlt"
+					onchange={(e) => {
+						// @ts-ignore
+						showAlt.set(e.target.checked);
+					}}
+				/>
+			</div>
+		</ListgroupItem>
+		<ListgroupItem>
+			<div class="w-full">
+				<strong>Show Edit Links</strong> Show links to edit prayers & locations.
+			</div>
+			<div>
+				<Input
+					type="checkbox"
+					id="showEdit"
+					onchange={(e) => {
+						// @ts-ignore
+						showEdit.set(e.target.checked);
+					}}
+				/>
+			</div>
+		</ListgroupItem>
+	</Listgroup>
+	<Heading tag="h3">Profile</Heading>
+	<Listgroup class="w-full">
+		<ListgroupItem>
+			<div class="w-full">
+				<strong>Display Name</strong> How your name is presented to others.
+			</div>
+			<div>
+				<Input
+					id="displayName"
+					onchange={(e) => {
+						// @ts-ignore
+						$me.setDisplayName(e.target.value);
+					}}
+					value={$me.displayName}
+				/>
+			</div>
+		</ListgroupItem>
+	</Listgroup>
 </div>

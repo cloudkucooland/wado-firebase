@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Input, Listgroup, ListgroupItem } from 'flowbite-svelte';
+	import { Input } from 'flowbite-svelte';
 	import { index } from '../meili';
 	import { toasts } from 'svelte-toasts';
 	import { recordEvent } from '../firebase';
@@ -55,21 +55,20 @@
 	<title>WADO Prayer Search</title>
 </svelte:head>
 
-<div class="w-full">
+<div class="w-max-200">
 	<h3>Search</h3>
-	<Input on:change={doSearch} on:keypress={doSearchLetter} />
-	<div>
-		<strong>Results</strong>
-		<Listgroup class="mb-5 shadow">
-			{#each result.hits as r}
-				<ListgroupItem>
+	<Input onchange={doSearch} onkeypress={doSearchLetter} />
+	<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+		{#each result.hits as r}
+			<div class="">
+				<div>
 					<strong>
 						<a href="#/edit/{r.fsid}">{r.Name}</a>
 						<span class="adonai">( {r.Class} )</span>
 					</strong>
-					<p>{@html r.Body}</p>
-				</ListgroupItem>
-			{/each}
-		</Listgroup>
+				</div>
+				<div>{@html r.Body}</div>
+			</div>
+		{/each}
 	</div>
 </div>

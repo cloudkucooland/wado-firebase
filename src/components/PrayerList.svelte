@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { Card, Table, Button, Modal } from 'flowbite-svelte';
+	import {
+		Card,
+		Table,
+		TableHead,
+		TableHeadCell,
+		TableBody,
+		TableBodyRow,
+		TableBodyCell,
+		Button,
+		Modal
+	} from 'flowbite-svelte';
 	import {
 		collection,
 		query,
@@ -109,63 +119,47 @@
 		{#each cs as cx}
 			<a
 				href="#/prayers/{cx}/"
-				on:click={async () => {
+				onclick={async () => {
 					prayers = await loadClass(cx);
 				}}>{cx}</a
-			>
+			> &nbsp;
 		{/each}
-		<div>
-			<Button
-				on:click={() => {
-					push('/addPrayer');
-				}}
-				color="success">Add Prayer</Button
-			>
-		</div>
 	</div>
-	<Row>
-		<Col>
-			<Card>
-				<h3>{prayerClass}</h3>
-				<div>
-					<Table>
-						<thead>
-							<tr>
-								<th>Prayer</th>
-								<th>Licensed</th>
-								<th>Reviewed</th>
-								<th>&nbsp;</th>
-							</tr>
-						</thead>
-						<tbody>
-							{#each [...prayers] as [k, v]}
-								<tr id={k}>
-									<td>
-										<a href="#/edit/{k}" target="_blank" rel="noopener noreferrer">
-											{v.name}
-										</a>
-									</td>
-									<td>{v.license}</td>
-									<td>{v.reviewed}</td>
-									<td>
-										{#if $me.isEditor}
-											<Button on:click={toggleDeleteOpen} value={k} color="warning">Delete</Button>
-										{/if}
-									</td>
-								</tr>
-							{/each}
-						</tbody>
-					</Table>
-				</div>
-			</Card>
-		</Col>
-	</Row>
+	<h3>{prayerClass}</h3>
+	<div>
+		<Table>
+			<TableHead>
+				<TableHeadCell>Prayer</TableHeadCell>
+				<TableHeadCell>Licensed</TableHeadCell>
+				<TableHeadCell>Reviewed</TableHeadCell>
+				<TableHeadCell>&nbsp;</TableHeadCell>
+			</TableHead>
+			<TableBody>
+				{#each [...prayers] as [k, v]}
+					<TableBodyRow id={k}>
+						<TableBodyCell>
+							<a href="#/edit/{k}" target="_blank" rel="noopener noreferrer">
+								{v.name}
+							</a>
+						</TableBodyCell>
+						<TableBodyCell>{v.license}</TableBodyCell>
+						<TableBodyCell>{v.reviewed}</TableBodyCell>
+						<TableBodyCell>
+							{#if $me.isEditor}
+								<Button onclick={toggleDeleteOpen} value={k} color="warning">Delete</Button>
+							{/if}
+						</TableBodyCell>
+					</TableBodyRow>
+				{/each}
+			</TableBody>
+		</Table>
+	</div>
 </div>
 <Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
 	<h3>Delete Prayer</h3>
 	<div>Confirm Delete</div>
 	<div>
-		<Button color="primary" size="sm" on:click={toggleDeleteOpen}>Cancel</Button>
-		<Button color="warning" size="sm" on:click={confirmDelete} value={modalId}>Confirm</Button>
+		<Button color="primary" size="sm" onclick={toggleDeleteOpen}>Cancel</Button>
+		<Button color="warning" size="sm" onclick={confirmDelete} value={modalId}>Confirm</Button>
 	</div>
 </Modal>
