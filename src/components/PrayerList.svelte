@@ -8,7 +8,8 @@
 		TableBodyRow,
 		TableBodyCell,
 		Button,
-		Modal
+		Modal,
+		Heading
 	} from 'flowbite-svelte';
 	import {
 		collection,
@@ -44,7 +45,7 @@
 
 	const cs = new Array('prayer', 'hymn', 'psalm', 'antiphon', 'commemoration');
 
-	let deleteModalOpen = false;
+	$: deleteModalOpen = false;
 	function toggleDeleteOpen(e: Event) {
 		screenView('toggleDeleteOpen');
 		deleteModalOpen = !deleteModalOpen;
@@ -146,7 +147,7 @@
 						<TableBodyCell>{v.reviewed}</TableBodyCell>
 						<TableBodyCell>
 							{#if $me.isEditor}
-								<Button onclick={toggleDeleteOpen} value={k} color="warning">Delete</Button>
+								<Button onclick={toggleDeleteOpen} value={k} color="red">Delete</Button>
 							{/if}
 						</TableBodyCell>
 					</TableBodyRow>
@@ -155,11 +156,11 @@
 		</Table>
 	</div>
 </div>
-<Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
-	<h3>Delete Prayer</h3>
+<Modal id="deleteModal" bind:open={deleteModalOpen}>
+	<Heading tag="h3">Delete Prayer</Heading>
 	<div>Confirm Delete</div>
 	<div>
-		<Button color="primary" size="sm" onclick={toggleDeleteOpen}>Cancel</Button>
-		<Button color="warning" size="sm" onclick={confirmDelete} value={modalId}>Confirm</Button>
+		<Button color="red" onclick={toggleDeleteOpen}>Cancel</Button>
+		<Button color="red" onclick={confirmDelete} value={modalId}>Confirm</Button>
 	</div>
 </Modal>

@@ -14,6 +14,7 @@
 
 	const searchParams = {
 		attributesToRetrieve: ['fsid', 'Name', 'Body', 'Class'],
+		attributesToHighlight: ['Name'],
 		filter: [['Class = Prayer', 'Class = Hymn', 'Class = Antiphon']]
 	};
 

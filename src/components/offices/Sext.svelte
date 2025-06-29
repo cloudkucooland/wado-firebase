@@ -3,7 +3,6 @@
 	import Silence from '../Silence.svelte';
 	import Rubric from '../Rubric.svelte';
 	import Heading from '../Heading.svelte';
-	import Subheading from '../Subheading.svelte';
 </script>
 
 <Rubric>At the hour when Jesus was placed on the cross, we pray.</Rubric>

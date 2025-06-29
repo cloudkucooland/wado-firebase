@@ -98,7 +98,7 @@ export default class user {
 
 		this.lastActivity = new Date();
 		try {
-			await setDoc(ref, this.toJSON()), { merge: true };
+			(await setDoc(ref, this.toJSON()), { merge: true });
 		} catch (err) {
 			console.log(err);
 		}

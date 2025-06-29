@@ -3,7 +3,7 @@
 	import { onMount, getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import type User from '../../types/model/user';
-	import { Heading, Input, Listgroup, ListgroupItem } from 'flowbite-svelte';
+	import { Heading, Input, Checkbox, Listgroup, ListgroupItem } from 'flowbite-svelte';
 	let me: Readable<User> = getContext('me');
 
 	// does bind not work?
@@ -34,8 +34,7 @@
 				<strong>Show Media</strong> Show controls for playing media files (when available).
 			</div>
 			<div>
-				<Input
-					type="checkbox"
+				<Checkbox
 					id="showMedia"
 					onchange={(e) => {
 						// @ts-ignore
@@ -49,8 +48,7 @@
 				<strong>Show Alternatives</strong> Show additional prayer options (when available).
 			</div>
 			<div>
-				<Input
-					type="checkbox"
+				<Checkbox
 					id="showAlt"
 					onchange={(e) => {
 						// @ts-ignore
@@ -64,8 +62,7 @@
 				<strong>Show Edit Links</strong> Show links to edit prayers & locations.
 			</div>
 			<div>
-				<Input
-					type="checkbox"
+				<Checkbox
 					id="showEdit"
 					onchange={(e) => {
 						// @ts-ignore

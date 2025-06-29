@@ -3,7 +3,6 @@
 	import Silence from '../Silence.svelte';
 	import Rubric from '../Rubric.svelte';
 	import Heading from '../Heading.svelte';
-	import Subheading from '../Subheading.svelte';
 </script>
 
 <Rubric>Get around to filling this in</Rubric>

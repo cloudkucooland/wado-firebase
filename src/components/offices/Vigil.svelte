@@ -3,7 +3,7 @@
 	import Silence from '../Silence.svelte';
 	import Rubric from '../Rubric.svelte';
 	import Heading from '../Heading.svelte';
-	import Subeading from '../Subheading.svelte';
+	import Subheading from '../Subheading.svelte';
 </script>
 
 <h2>Vigil</h2>

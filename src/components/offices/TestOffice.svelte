@@ -4,7 +4,6 @@
 	import Rubric from '../Rubric.svelte';
 	import PsalmLection from '../PsalmLection.svelte';
 	import Heading from '../Heading.svelte';
-	import Subheading from '../Subheading.svelte';
 </script>
 
 <Heading>Commemoration test</Heading>

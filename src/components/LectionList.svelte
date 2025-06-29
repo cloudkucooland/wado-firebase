@@ -1,5 +1,15 @@
 <script lang="ts">
-	import { Listgroup, ListgroupItem, Modal, Input, Button, Tabs, TabItem } from 'flowbite-svelte';
+	import {
+		Table,
+		TableBody,
+		TableBodyRow,
+		TableBodyCell,
+		Input,
+		Button,
+		Tabs,
+		TabItem,
+		Modal
+	} from 'flowbite-svelte';
 	import {
 		collection,
 		query,
@@ -221,7 +231,7 @@
 </svelte:head>
 
 <div class="w-full grid-flow-row-dense grid-cols-12">
-	<div class="col-span-12">
+	<div class="w-full items-center">
 		<h2>Lectionary Editor: Year {year}</h2>
 	</div>
 
@@ -236,80 +246,84 @@
 			}}
 		>
 			{#each ['A', 'B', 'C'] as y}
-				<TabItem tabId={y} tab="Year {y}" active={year == y} />
+				<TabItem title="Year {y}" tabId={y} active={year == y} />
 			{/each}
 		</Tabs>
 	</div>
 
-	<div class="col-span-12">
-		<Listgroup class="mb-5 shadow">
+	<Table class="w-full">
+		<TableBody>
 			{#each [...lections] as [k, v]}
-				<ListgroupItem>
-					<Row class="align-items-center">
-						<Col xs="12" class="mx-auto">
-							{#if $me.isEditor}
-								<Button color="success" on:click={toggleLectionModalOpen} value={k} size="sm"
-									>{k}</Button
-								>
-							{:else}
-								<strong class="mb-0">{k}</strong>
-							{/if}
-						</Col>
-					</Row>
-					<Row class="align-items-center">
-						<Col xs="2"><strong>Morning Psalm:</strong></Col>
+				<TableBodyRow>
+					<TableBodyCell>
+						{#if $me.isEditor}
+							<Button color="red" onclick={toggleLectionModalOpen} value={k}>{k}</Button>
+						{:else}
+							<strong class="mb-0">{k}</strong>
+						{/if}
+					</TableBodyCell>
+				</TableBodyRow>
+				<TableBodyRow>
+					<TableBodyCell>
+						<strong>Morning Psalm:</strong>
 						{#if v[1]._morningpsalmref}
-							<Col xs="2"
-								><em class="text-success"
-									><a
-										href="/edit/{v[1]._morningpsalmref}"
-										target="_blank"
-										use:link
-										rel="noopener noreferrer">{v[1].morningpsalm}</a
-									></em
-								></Col
+							<em
+								><a
+									href="/edit/{v[1]._morningpsalmref}"
+									target="_blank"
+									use:link
+									rel="noopener noreferrer">{v[1].morningpsalm}</a
+								></em
 							>
 						{:else}
-							<Col xs="2">{v[1].morningpsalm}</Col>
+							{v[1].morningpsalm}
 						{/if}
-						<Col xs="1"><strong>Morning:</strong></Col>
+					</TableBodyCell>
+					<TableBodyCell>
+						<strong>Morning:</strong>
 						{#if v[1]._morning}
-							<Col xs="2"><em class="text-success">{v[1].morning}</em></Col>
+							<em>{v[1].morning}</em>
 						{:else}
-							<Col xs="2">{v[1].morning}</Col>
+							{v[1].morning}
 						{/if}
-						<Col xs="2"><strong>Morning Title:</strong></Col>
-						<Col xs="3">{v[1].morningtitle}</Col>
-					</Row>
-					<Row class="align-items-center">
-						<Col xs="2"><strong>Evening Psalm:</strong></Col>
+					</TableBodyCell>
+					<TableBodyCell>
+						<strong>Morning Title:</strong>
+						{v[1].morningtitle}
+					</TableBodyCell>
+				</TableBodyRow>
+				<TableBodyRow>
+					<TableBodyCell>
+						<strong>Evening Psalm:</strong>
 						{#if v[1]._eveningpsalmref}
-							<Col xs="2"
-								><em class="text-success"
-									><a
-										href="/edit/{v[1]._eveningpsalmref}"
-										use:link
-										target="_blank"
-										rel="noopener noreferrer">{v[1].eveningpsalm}</a
-									></em
-								></Col
+							<em
+								><a
+									href="/edit/{v[1]._eveningpsalmref}"
+									use:link
+									target="_blank"
+									rel="noopener noreferrer">{v[1].eveningpsalm}</a
+								></em
 							>
 						{:else}
-							<Col xs="2">{v[1].eveningpsalm}</Col>
+							{v[1].eveningpsalm}
 						{/if}
-						<Col xs="1"><strong>Evening:</strong></Col>
+					</TableBodyCell>
+					<TableBodyCell>
+						<strong>Evening:</strong>
 						{#if v[1]._evening}
-							<Col xs="2"><em class="text-success">{v[1].evening}</em></Col>
+							<em>{v[1].evening}</em>
 						{:else}
-							<Col xs="2">{v[1].evening}</Col>
+							{v[1].evening}
 						{/if}
-						<Col xs="2"><strong>Evening Title:</strong></Col>
-						<Col xs="3">{v[1].eveningtitle}</Col>
-					</Row>
-				</ListgroupItem>
+					</TableBodyCell>
+					<TableBodyCell>
+						<strong>Evening Title:</strong>
+						{v[1].eveningtitle}
+					</TableBodyCell>
+				</TableBodyRow>
 			{/each}
-		</Listgroup>
-	</div>
+		</TableBody>
+	</Table>
 </div>
 
 <Modal id="lectionModal" isOpen={lectionModalOpen} size="xl">

@@ -5,12 +5,12 @@
 		"ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
 		"redirects": [
 			{
-				"source": "/wado/assets/:f*",
+				"source": "/wado-dev/assets/:f*",
 				"destination": "/assets/:f",
 				"type": 301
 			},
 			{
-				"source": "/wado/:f*",
+				"source": "/wado-dev/:f*",
 				"destination": "/:f",
 				"type": 301
 			}
