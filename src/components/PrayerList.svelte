@@ -9,7 +9,7 @@
 		TableBodyCell,
 		Button,
 		Modal,
-		Heading
+		Heading as FBHeading
 	} from 'flowbite-svelte';
 	import {
 		collection,
@@ -157,7 +157,7 @@
 	</div>
 </div>
 <Modal id="deleteModal" bind:open={deleteModalOpen}>
-	<Heading tag="h3">Delete Prayer</Heading>
+	<FBHeading tag="h3">Delete Prayer</FBHeading>
 	<div>Confirm Delete</div>
 	<div>
 		<Button color="red" onclick={toggleDeleteOpen}>Cancel</Button>

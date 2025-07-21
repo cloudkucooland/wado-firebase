@@ -5,6 +5,7 @@
 	import type { prayerFromFirestore } from '../../model/types';
 	import type { Readable } from 'svelte/store';
 	import { getContext } from 'svelte';
+	import { Heading } from 'flowbite-svelte';
 	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
 	import { toasts } from 'svelte-toasts';
@@ -33,7 +34,7 @@
 	}
 </script>
 
-<h5>
+<Heading tag="h5">
 	{p.name}
 	{#if $showEdit}<span class="edit">
 			<button
@@ -47,7 +48,7 @@
 				<CloudMeatballSolid />
 			</button>
 		</span>{/if}
-</h5>
+</Heading>
 {#if p.rubric}
 	<div class="psalm-rubric">{p.rubric}</div>
 {/if}

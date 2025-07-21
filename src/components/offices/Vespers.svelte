@@ -6,6 +6,7 @@
 	import PsalmLection from '../PsalmLection.svelte';
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
+	import { Heading as FBHeading } from 'flowbite-svelte';
 </script>
 
 <Heading>Opening</Heading>
@@ -70,7 +71,7 @@
 <Rubric>Proper collects for holy days and major feasts</Rubric>
 <Location name="VESPER-COMMEMORATION" subunit="eveningcollect" maxAlt={5} />
 
-<h5>Prayers for the Order of Saint Luke</h5>
+<FBHeading tag="h5">Prayers for the Order of Saint Luke</FBHeading>
 <Rubric>One or more of the following</Rubric>
 <Location name="OSL" max={3} />
 

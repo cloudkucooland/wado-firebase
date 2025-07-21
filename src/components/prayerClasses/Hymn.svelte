@@ -7,6 +7,7 @@
 	import { getContext } from 'svelte';
 	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
+	import { Heading } from 'flowbite-svelte';
 
 	export let data: prayerFromFirestore;
 	export let id: string;
@@ -28,7 +29,7 @@
 			<CloudMeatballSolid />
 		</button>
 	</div>{/if}
-<h5>{h.name}</h5>
+<Heading tag="h5">{h.name}</Heading>
 <div class="hymn">{@html h.body}</div>
 <div class="hymndata">
 	{#if h.hymntune}

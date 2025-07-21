@@ -5,6 +5,7 @@
 	import type { prayerFromFirestore } from '../../model/types';
 	import type { Readable } from 'svelte/store';
 	import { getContext } from 'svelte';
+	import { Heading } from 'flowbite-svelte';
 	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
 
@@ -38,7 +39,7 @@
 				<CloudMeatballSolid />
 			</button>
 		</div>{/if}
-	<h6>Reading for Commemoration</h6>
+	<Heading tag="h6">Reading for Commemoration</Heading>
 	<div>{@html c.body}</div>
 	<Media mediaUrl={c.media} />
 {/if}

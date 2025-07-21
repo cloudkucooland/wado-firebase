@@ -4,9 +4,10 @@
 	import Rubric from '../Rubric.svelte';
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
+	import { Heading as FBHeading } from 'flowbite-svelte';
 </script>
 
-<h2>Vigil</h2>
+<FBHeading tag="h2">Vigil</FBHeading>
 <Rubric
 	>On Saturday evenings, a resurrection vigil replaces vespers and compline, reminding us that the
 	first day of every week is a “little Easter.” These vigils are times of watching and waiting,

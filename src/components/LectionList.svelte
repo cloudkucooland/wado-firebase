@@ -8,7 +8,8 @@
 		Button,
 		Tabs,
 		TabItem,
-		Modal
+		Modal,
+		Heading as FBHeading
 	} from 'flowbite-svelte';
 	import {
 		collection,
@@ -232,7 +233,7 @@
 
 <div class="w-full grid-flow-row-dense grid-cols-12">
 	<div class="w-full items-center">
-		<h2>Lectionary Editor: Year {year}</h2>
+		<FBHeading tag="h2">Lectionary Editor: Year {year}</FBHeading>
 	</div>
 
 	<div class="col-span-12">
@@ -327,7 +328,7 @@
 </div>
 
 <Modal id="lectionModal" isOpen={lectionModalOpen} size="xl">
-	<h3>Edit Lection: {modalData.key}</h3>
+	<FBHeading tag="h3">Edit Lection: {modalData.key}</FBHeading>
 	<div>
 		M Psalm: <Input bind:value={modalData.morningpsalm} />
 		M: <Input bind:value={modalData.morning} />

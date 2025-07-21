@@ -2,7 +2,7 @@
 	import {
 		Checkbox,
 		Input,
-		Heading,
+		Heading as FBHeading,
 		Label,
 		Table,
 		TableHead,
@@ -231,9 +231,9 @@
 
 <div class="w-full">
 	{#if $me.isEditor}
-		<Heading tag="h3">Editing: {prayerData.name}</Heading>
+		<FBHeading tag="h3">Editing: {prayerData.name}</FBHeading>
 	{:else}
-		<Heading tag="h3">Displaying: {prayerData.name}</Heading>
+		<FBHeading tag="h3">Displaying: {prayerData.name}</FBHeading>
 	{/if}
 	<div class="w-full grid-flow-row-dense grid-cols-12">
 		<div class="col-span-12">
@@ -389,13 +389,13 @@
 	</div>
 </div>
 <div>
-	<Heading tag="h3">Media</Heading>
+	<FBHeading tag="h3">Media</FBHeading>
 	<div>
 		<EditMedia {id} media={prayerData.media} />
 	</div>
 </div>
 <div>
-	<Heading tag="h3">Associations</Heading>
+	<FBHeading tag="h3">Associations</FBHeading>
 	<Table>
 		<TableHead>
 			<TableHeadCell>Location</TableHeadCell>
@@ -434,7 +434,7 @@
 	{/if}
 </div>
 <Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
-	<Heading tag="h3">Delete Association</Heading>
+	<FBHeading tag="h3">Delete Association</FBHeading>
 	<div>Confirm Delete</div>
 	<div>
 		<Button color="red" onclick={toggleDeleteOpen}>Cancel</Button>
@@ -442,7 +442,7 @@
 	</div>
 </Modal>
 <Modal id="editModal" isOpen={editModalOpen}>
-	<Heading tag="h3">Edit Association</Heading>
+	<FBHeading tag="h3">Edit Association</FBHeading>
 	<div>
 		<EditAssoc id={modalId} bind:result={assocEditResult} />
 	</div>
@@ -452,7 +452,7 @@
 	</div>
 </Modal>
 <Modal id="addAssocModal" isOpen={addAssocModalOpen}>
-	<Heading tag="h3">Add Association</Heading>
+	<FBHeading tag="h3">Add Association</FBHeading>
 	<div>
 		<EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />
 	</div>

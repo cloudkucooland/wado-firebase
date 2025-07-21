@@ -1,5 +1,13 @@
 <script lang="ts">
-	import { Heading, Tabs, TabItem, Input, Modal, Button, Datepicker } from 'flowbite-svelte';
+	import {
+		Heading as FBHeading,
+		Tabs,
+		TabItem,
+		Input,
+		Modal,
+		Button,
+		Datepicker
+	} from 'flowbite-svelte';
 	import proper from '../model/proper';
 	import { auth, screenView, db, recordEvent } from '../firebase';
 	import { getOffice, currentOffice } from '../model/offices';
@@ -142,7 +150,7 @@
 	</div>
 
 	<div class="mb-4 max-w-200">
-		<Heading tag="h3" class="mb-4 text-center">{officeName}: {$forProper.propername}</Heading>
+		<FBHeading tag="h3" class="mb-4 text-center">{officeName}: {$forProper.propername}</FBHeading>
 		<div class="main">
 			<svelte:component this={office} />
 		</div>
@@ -150,7 +158,7 @@
 </div>
 
 <Modal id="quickEditModal" isOpen={quickEditOpen}>
-	<Heading tag="h3">Quick Edit</Heading>
+	<FBHeading tag="h3">Quick Edit</FBHeading>
 	<div>
 		<QuickEdit bind:result={quickEditData} />
 	</div>
@@ -167,7 +175,7 @@
 </Modal>
 
 <Modal id="quickAddAssoc" isOpen={quickAddAssocOpen}>
-	<Heading tag="h3">Quick Add Association</Heading>
+	<FBHeading tag="h3">Quick Add Association</FBHeading>
 	<div>
 		<AddAssoc bind:result={quickAddAssocData} bind:location={quickAddAssocLocation} />
 	</div>

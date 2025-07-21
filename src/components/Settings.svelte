@@ -3,7 +3,7 @@
 	import { onMount, getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
 	import type User from '../../types/model/user';
-	import { Heading, Input, Checkbox, Listgroup, ListgroupItem } from 'flowbite-svelte';
+	import { Heading as FBHeading, Input, Checkbox, Listgroup, ListgroupItem } from 'flowbite-svelte';
 	let me: Readable<User> = getContext('me');
 
 	// does bind not work?
@@ -26,8 +26,8 @@
 </svelte:head>
 
 <div class="grid w-full">
-	<Heading tag="h2">Settings</Heading>
-	<Heading tag="h3">Display</Heading>
+	<FBHeading tag="h2">Settings</FBHeading>
+	<FBHeading tag="h3">Display</FBHeading>
 	<Listgroup class="w-full">
 		<ListgroupItem>
 			<div class="w-full">
@@ -72,7 +72,7 @@
 			</div>
 		</ListgroupItem>
 	</Listgroup>
-	<Heading tag="h3">Profile</Heading>
+	<FBHeading tag="h3">Profile</FBHeading>
 	<Listgroup class="w-full">
 		<ListgroupItem>
 			<div class="w-full">
