@@ -39,8 +39,10 @@
 
 	import { Editor } from '@tiptap/core';
 	import StarterKit from '@tiptap/starter-kit';
-	import Underline from '@tiptap/extension-underline';
+	// import Underline from '@tiptap/extension-underline';
 	import Typography from '@tiptap/extension-typography';
+	import InvisibleCharacters from '@tiptap/extension-invisible-characters';
+
 	// these are in StarterKit
 	// import HardBreak from '@tiptap/extension-hard-break';
 	// import Document from '@tiptap/extension-document';
@@ -206,7 +208,7 @@
 		editor = new Editor({
 			element: element,
 			content: prayerData.body,
-			extensions: [StarterKit, Underline, Typography],
+			extensions: [StarterKit, Typography, InvisibleCharacters],
 			parseOptions: {
 				preserveWhitespace: 'full'
 			},
