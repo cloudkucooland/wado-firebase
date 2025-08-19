@@ -234,19 +234,19 @@ func updateMeiliSearch(ctx context.Context, hardreset bool) {
 		panic(err)
 	}
 
-	c := meilisearch.NewClient(meilisearch.ClientConfig{
-		Host:   "https://saint-luke.net:7700",
-		APIKey: key,
-	})
+	c := meilisearch.New(
+		"https://saint-luke.net:7700",
+		meilisearch.WithAPIKey(key),
+	)
 	if hardreset {
 		c.DeleteIndex("prayers")
 	}
 
 	index := c.Index("prayers")
-	_, err = index.UpdateFilterableAttributes(&[]string{"Class", "License", "Reviewed"})
+	/* _, err = index.UpdateFilterableAttributes(&[]string{"Class", "License", "Reviewed"})
 	if err != nil {
 		panic(err)
-	}
+	} */
 
 	var documents []map[string]interface{}
 
@@ -265,7 +265,8 @@ func updateMeiliSearch(ctx context.Context, hardreset bool) {
 		documents = append(documents, mm)
 	}
 
-	_, err = index.AddDocumentsInBatches(documents, 50, "fsid")
+	fsid := "fsid"
+	_, err = index.AddDocumentsInBatches(documents, 50, &fsid)
 	if err != nil {
 		panic(err)
 	}
