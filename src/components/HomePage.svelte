@@ -72,9 +72,14 @@
 	let quickEditData: prayer;
 	let quickEditOpen: boolean = false;
 	let qe: Writable<unknown> = writable(async (data: prayer): Promise<void> => {
-		quickEditOpen = true;
-		screenView('quickEdit');
-		quickEditData = data;
+		try {
+			quickEditOpen = true;
+			screenView('quickEdit');
+			quickEditData = data;
+		} catch (err) {
+			console.log(err);
+			toasts.err(err.message);
+		}
 	});
 	setContext('qe', qe);
 
@@ -97,9 +102,14 @@
 	let quickAddAssocLocation: string = '';
 	let quickAddAssocOpen: boolean = false;
 	let qaa: Writable<unknown> = writable(async (location: string): Promise<void> => {
-		quickAddAssocLocation = location;
-		quickAddAssocOpen = true;
-		screenView('quickAddAssoc');
+		try {
+			quickAddAssocLocation = location;
+			quickAddAssocOpen = true;
+			screenView('quickAddAssoc');
+		} catch (err) {
+			console.log(err);
+			toasts.error(err.message);
+		}
 	});
 	setContext('qaa', qaa);
 
@@ -157,36 +167,39 @@
 	</div>
 </div>
 
-<Modal id="quickEditModal" isOpen={quickEditOpen}>
+<Modal id="quickEditModal" form bind:open={quickEditOpen}>
 	<FBHeading tag="h3">Quick Edit</FBHeading>
 	<div>
 		<QuickEdit bind:result={quickEditData} />
 	</div>
 	<div>
 		<Button
+			color="red"
+			}
 			onclick={() => {
 				quickEditOpen = false;
 			}}
 		>
 			Cancel
 		</Button>
-		<Button onclick={qeconfirm}>Confirm</Button>
+		<Button color="red" onclick={qeconfirm}>Confirm</Button>
 	</div>
 </Modal>
 
-<Modal id="quickAddAssoc" isOpen={quickAddAssocOpen}>
+<Modal id="quickAddAssoc" form bind:open={quickAddAssocOpen}>
 	<FBHeading tag="h3">Quick Add Association</FBHeading>
 	<div>
 		<AddAssoc bind:result={quickAddAssocData} bind:location={quickAddAssocLocation} />
 	</div>
 	<div>
 		<Button
+			color="red"
 			onclick={() => {
 				quickAddAssocOpen = false;
 			}}
 		>
 			Cancel
 		</Button>
-		<Button onclick={qaaconfirm}>Confirm</Button>
+		<Button color="red" onclick={qaaconfirm}>Confirm</Button>
 	</div>
 </Modal>
