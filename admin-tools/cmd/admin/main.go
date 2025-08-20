@@ -206,6 +206,7 @@ func listUsers(ctx context.Context, all bool) {
 
 // if there are a lot, run it multiple times. 500 is a limit of firestore
 func revokeReviewed(ctx context.Context) {
+	// 2025-08 batch is deprecated, For bulk read and write operations, use `BulkWriter`
 	batch := fsclient.Batch()
 
 	iter := fsclient.Collection("prayers").Where("Reviewed", "==", true).Limit(500).Documents(ctx)
