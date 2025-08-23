@@ -13,6 +13,7 @@ export default class prayer {
 	private _id: string;
 
 	public constructor(obj: prayerFromFirestore) {
+		this._id = '';
 		this.name = '• New Prayer';
 		if (obj.Name) this.name = obj.Name;
 		this.body = ' -- nothing -- ';

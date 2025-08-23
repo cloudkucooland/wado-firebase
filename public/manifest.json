@@ -5,11 +5,11 @@
 	"theme_color": "#da0403",
 	"background_color": "#ffffff",
 	"display": "browser",
-	"scope": "/wado-dev/",
-	"start_url": "https://saint-luke.net/wado-dev/",
+	"scope": "/wado/",
+	"start_url": "https://saint-luke.net/wado/",
 	"icons": [
 		{
-			"src": "/wado-dev/ox-red-152x152.png",
+			"src": "/wado/ox-red-152x152.png",
 			"type": "image/png",
 			"sizes": "152x152"
 		}
