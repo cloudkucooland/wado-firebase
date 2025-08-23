@@ -1,20 +1,20 @@
 {
-  "extends": "@tsconfig/svelte/tsconfig.json",
-  "compilerOptions": {
-    "isolatedModules": true,
-    "types": ["vite/client"],
-    "declaration": true,
-    "allowJs": false,
-    "checkJs": false,
-    "emitDeclarationOnly": true,
-    "outDir": "types",
-    "declarationMap": false,
-    "target": "es2020",
-    "module": "esnext",
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  },
+	"extends": "@tsconfig/svelte/tsconfig.json",
+	"compilerOptions": {
+		"isolatedModules": true,
+		"types": ["vite/client"],
+		"declaration": true,
+		"allowJs": false,
+		"checkJs": false,
+		"emitDeclarationOnly": true,
+		"outDir": "types",
+		"declarationMap": false,
+		"target": "es2020",
+		"module": "esnext",
+		"noImplicitReturns": true,
+		"noFallthroughCasesInSwitch": true
+	},
 
-  "include": ["src/**/*.ts", "src/**/*.svelte"],
-  "exclude": ["node_modules/*", "public/*", "dist/*"]
+	"include": ["src/**/*.ts", "src/**/*.svelte"],
+	"exclude": ["node_modules/*", "public/*", "dist/*"]
 }

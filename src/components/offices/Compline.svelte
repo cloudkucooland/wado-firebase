@@ -1,58 +1,59 @@
 <script lang="ts">
-  import Location from "../Location.svelte";
-  import Silence from "../Silence.svelte";
-  import Rubric from "../Rubric.svelte";
-  import PsalmLection from "../PsalmLection.svelte";
+	import Location from '../Location.svelte';
+	import Silence from '../Silence.svelte';
+	import Rubric from '../Rubric.svelte';
+	import PsalmLection from '../PsalmLection.svelte';
+	import Heading from '../Heading.svelte';
+	import Subheading from '../Subheading.svelte';
 </script>
 
 <Silence />
-<h3>Call to Prayer</h3>
+<Heading>Call to Prayer</Heading>
 <Location name="COMPLINE-OPENING" />
 
-<h4>Night Hymn</h4>
+<Subheading>Night Hymn</Subheading>
 <Location name="COMPLINE-OPENING-HYMN" />
 
-<h4>Confession and Assurance</h4>
+<Subheading>Confession and Assurance</Subheading>
 <Location name="COMPILNE-CONFESSION" /><!-- known typo -->
 <Silence>a time of silence</Silence>
 <Location name="FORGIVEN" />
 
-<h4>Gloria and Psalter</h4>
+<Subheading>Gloria and Psalter</Subheading>
 <Location name="COMPLINE-PSALTER-PREFIX" />
 <Location name="COMPLINE-PSALTER" max={3} />
 <Location name="GENERAL-GLORIA" />
 <Silence />
 
-<h3>The Little Chapter</h3>
+<Heading>The Little Chapter</Heading>
 <Location name="COMPLINE-CHAPTER" />
 <Location name="GENERAL-RESPONSE-SCRIPTURE" />
 <Silence>Silence for Reflection</Silence>
 
-<h3>Prayers</h3>
+<Heading>Prayers</Heading>
 <Location name="GENERAL-WITHYOU" />
 
-<h4>The Kyrie</h4>
+<Subheading>The Kyrie</Subheading>
 <Location name="KYRIE" />
 <Silence>Silent Prayer</Silence>
 
-<h4>Night Prayers</h4>
+<Subheading>Night Prayers</Subheading>
 <Rubric>(selected from among the following)</Rubric>
 <Location name="COMPLINE-PRAYER" max={10} />
 
-<h3>Concluding Prayer</h3>
+<Heading>Concluding Prayer</Heading>
 <Location name="COMPLINE-CONCLUDING" />
 
-<h3>Hymn</h3>
+<Heading>Hymn</Heading>
 <Location name="COMPLINE-HYMN" />
 
-<h3>Commendation</h3>
+<Heading>Commendation</Heading>
 <Location name="COMMENDATION" />
 
-<h3>Canticle of Simeon <i>nunc dimittas</i></h3>
+<Heading>Canticle of Simeon <i>nunc dimittas</i></Heading>
 <Location name="SIMEON" />
 <Location name="GENERAL-GLORIA" />
 <Location name="COMPLINE-DISMISSAL" />
 <Rubric>
-  Members of the community continue in prayer,<br />and then depart in silence
-  one by one.
+	Members of the community continue in prayer,<br />and then depart in silence one by one.
 </Rubric>

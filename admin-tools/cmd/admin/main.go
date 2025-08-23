@@ -206,6 +206,7 @@ func listUsers(ctx context.Context, all bool) {
 
 // if there are a lot, run it multiple times. 500 is a limit of firestore
 func revokeReviewed(ctx context.Context) {
+	// 2025-08 batch is deprecated, For bulk read and write operations, use `BulkWriter`
 	batch := fsclient.Batch()
 
 	iter := fsclient.Collection("prayers").Where("Reviewed", "==", true).Limit(500).Documents(ctx)
@@ -234,19 +235,19 @@ func updateMeiliSearch(ctx context.Context, hardreset bool) {
 		panic(err)
 	}
 
-	c := meilisearch.NewClient(meilisearch.ClientConfig{
-		Host:   "https://saint-luke.net:7700",
-		APIKey: key,
-	})
+	c := meilisearch.New(
+		"https://saint-luke.net:7700",
+		meilisearch.WithAPIKey(key),
+	)
 	if hardreset {
 		c.DeleteIndex("prayers")
 	}
 
 	index := c.Index("prayers")
-	_, err = index.UpdateFilterableAttributes(&[]string{"Class", "License", "Reviewed"})
+	/* _, err = index.UpdateFilterableAttributes(&[]string{"Class", "License", "Reviewed"})
 	if err != nil {
 		panic(err)
-	}
+	} */
 
 	var documents []map[string]interface{}
 
@@ -265,7 +266,8 @@ func updateMeiliSearch(ctx context.Context, hardreset bool) {
 		documents = append(documents, mm)
 	}
 
-	_, err = index.AddDocumentsInBatches(documents, 50, "fsid")
+	fsid := "fsid"
+	_, err = index.AddDocumentsInBatches(documents, 50, &fsid)
 	if err != nil {
 		panic(err)
 	}
