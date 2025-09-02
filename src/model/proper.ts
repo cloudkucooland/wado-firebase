@@ -128,7 +128,7 @@ export default class proper {
 			['proper0', new Date(year, 4, 17, 0, 0, 0)],
 
 			// break between afterpentecost and beforeadvent
-			['sept4', new Date(year, 8, 1, 0, 0, 0)],
+			['sept4', new Date(year, 8, 4, 0, 0, 0)],
 
 			// First Sunday after Jan 6 */
 			['baptismoflord', baptismoflord],
@@ -265,7 +265,7 @@ export default class proper {
 		} else if (t >= f('sept4') && t < f('christking')) {
 			this.season = 'beforeadvent';
 			const pd = this.getDayOfYear(forday) - (this._fdoy('sept4') + 1);
-			this.proper = Math.floor(pd / 7);
+			this.proper = Math.floor(pd / 7) + 1;
 		} else if (t >= f('christking') && t < f('christking') + nextday) {
 			this.season = 'christking';
 			this.proper = 0;
