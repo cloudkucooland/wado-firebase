@@ -6,7 +6,7 @@
 	import type Proper from '../../types/model/proper';
 	import type { Readable } from 'svelte/store';
 	import lection from '../model/lection';
-	import { Spinner } from 'flowbite-svelte';
+	import { Heading as FBHeading, Spinner } from 'flowbite-svelte';
 
 	export let office: string;
 	let proper: Readable<Proper> = getContext('forProper');
@@ -37,7 +37,7 @@
 	<Spinner />
 {:then data}
 	{#if office == 'LAUDS'}
-		{#if data.morningtitle}<h5>{data.morning}: {data.morningtitle}</h5>{/if}
+		{#if data.morningtitle}<FBHeading tag="h5">{data.morning}: {data.morningtitle}</FBHeading>{/if}
 		{#if data._morning}
 			<p>{@html data._morning}</p>
 		{:else}
