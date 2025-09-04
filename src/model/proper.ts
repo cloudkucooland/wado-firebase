@@ -266,6 +266,7 @@ export default class proper {
 			this.season = 'beforeadvent';
 			const pd = this.getDayOfYear(forday) - (this._fdoy('sept4') + 1);
 			this.proper = Math.floor(pd / 7) + 1;
+			if (this.proper <= 0) this.proper = 1; // XXX on sept 4... this is a hack, find the right solution
 		} else if (t >= f('christking') && t < f('christking') + nextday) {
 			this.season = 'christking';
 			this.proper = 0;
