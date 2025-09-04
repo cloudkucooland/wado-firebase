@@ -40,6 +40,14 @@
 	// for streak tracking
 	let scrolled: boolean = false; // not yet scrolled to end
 
+	$: qeModalOpen = false;
+	function toggleQeOpen(e: Event) {
+		screenView('toggleQeOpen');
+		qeModalOpen = !qeModalOpen;
+		const t = e.target as HTMLInputElement;
+		if (qeModalOpen) modalId = t.value;
+	}
+
 	onMount((): void => {
 		// set the URL so that "poking the ox" always takes you to "now"
 		replace('/office/' + officeName + '/' + params.officeDate);

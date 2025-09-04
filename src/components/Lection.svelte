@@ -48,7 +48,7 @@
 			</p>
 		{/if}
 	{:else}
-		{#if data.eveningtitle}<h5>{data.evening}: {data.eveningtitle}</h5>{/if}
+		{#if data.eveningtitle}<FBHeading tag="h5">{data.evening}: {data.eveningtitle}</FBHeading>{/if}
 		{#if data._evening}
 			<p>{@html data._evening}</p>
 		{:else}

@@ -198,7 +198,7 @@
 		</div>
 	{/if}
 	{#if maxAlt > 0 && $showAlt && data.size > 1}
-		<Alternatives {data} />
+		<Alternatives {data} {subunit} />
 	{:else}
 		{#each [...data] as [id, d]}
 			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} />
