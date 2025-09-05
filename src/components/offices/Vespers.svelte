@@ -36,8 +36,7 @@
 <Location name="VESPER-PARDON" />
 
 <Heading>Psalter</Heading>
-<PsalmLection office="VESPERS" />
-<Location name="VESPER-GLORIA" />
+<PsalmLection office="VESPERS" gloria={true} />
 <Silence />
 
 <Heading>Word</Heading>

@@ -2,7 +2,6 @@
 	import Location from '../Location.svelte';
 	import Silence from '../Silence.svelte';
 	import Rubric from '../Rubric.svelte';
-	import PsalmLection from '../PsalmLection.svelte';
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
 </script>

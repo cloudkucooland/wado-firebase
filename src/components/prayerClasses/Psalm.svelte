@@ -10,10 +10,12 @@
 	import { push } from 'svelte-spa-router';
 	import { toasts } from 'svelte-toasts';
 	import Antiphon from './Antiphon.svelte';
+	import Location from '../Location.svelte';
 	import { getDoc } from 'firebase/firestore';
 
 	export let data: prayerFromFirestore;
 	export let id: string;
+	export let gloria: boolean;
 
 	const p = new psalm(data);
 	p.id = id;
@@ -53,13 +55,16 @@
 	<div class="psalm-rubric">{p.rubric}</div>
 {/if}
 {#if antiphon}
-	<Antiphon data={antiphon} id={antID} />
+	<div><Antiphon data={antiphon} id={antID} /></div>
 {/if}
 <div class="psalm">{@html p.body}</div>
 {#if p.author}
 	<div class="psalm-credit">{p.author}</div>
 {/if}
 <Media mediaUrl={p.media} />
+{#if gloria}
+	<Location name="GENERAL-GLORIA" />
+{/if}
 {#if antiphon}
 	<Antiphon data={antiphon} id={antID} />
 {/if}

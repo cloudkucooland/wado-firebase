@@ -20,7 +20,7 @@
 <Location name="LAUDS-COLLECT1" max={5} maxAlt={5} />
 
 <Heading>Psalter</Heading>
-<PsalmLection office="LAUDS" />
+<PsalmLection office="LAUDS" gloria={false} />
 <Silence />
 
 <Heading>Word</Heading>

@@ -10,6 +10,7 @@
 	import { Spinner } from 'flowbite-svelte';
 
 	export let office: string;
+	export let gloria: boolean;
 	let proper: Readable<Proper> = getContext('forProper');
 
 	class plClass {
@@ -92,7 +93,7 @@
 	<Spinner />
 {:then data}
 	{#if data._resolved}
-		<Psalm data={data._resolved} id={data.id} />
+		<Psalm data={data._resolved} id={data.id} {gloria} />
 	{:else if office == 'LAUDS'}
 		<a href="https://www.biblegateway.com/passage/?search={data.morningpsalm}&version=NRSVUE"
 			>{data.morningpsalm}</a
