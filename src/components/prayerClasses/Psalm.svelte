@@ -56,6 +56,7 @@
 {/if}
 {#if antiphon}
 	<div><Antiphon data={antiphon} id={antID} /></div>
+	<br />
 {/if}
 <div class="psalm">{@html p.body}</div>
 {#if p.author}
