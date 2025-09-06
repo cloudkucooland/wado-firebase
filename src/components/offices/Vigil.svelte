@@ -1,13 +1,13 @@
 <script lang="ts">
 	import Location from '../Location.svelte';
+	import Lection from '../Lection.svelte';
+	import PsalmLection from '../PsalmLection.svelte';
 	import Silence from '../Silence.svelte';
 	import Rubric from '../Rubric.svelte';
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
-	import { Heading as FBHeading } from 'flowbite-svelte';
 </script>
 
-<FBHeading tag="h2">Vigil</FBHeading>
 <Rubric
 	>On Saturday evenings, a resurrection vigil replaces vespers and compline, reminding us that the
 	first day of every week is a “little Easter.” These vigils are times of watching and waiting,
@@ -35,8 +35,19 @@
 
 <Location name="VIGIL-TEDEUM" />
 
+<Heading>Psalter</Heading>
+<PsalmLection office="VESPERS" gloria={true} />
+<Silence />
+
+<Heading>Word</Heading>
+<Subheading>Scripture</Subheading>
+<Lection office="VESPERS" />
+<Location name="GENERAL-RESPONSE-SCRIPTURE" />
+
+<Subheading>Silence for Reflection</Subheading>
+
 <Subheading>Prayers</Subheading>
-<Rubric>Prayers of Supplicaion and Intercession [is this going to be populated: scb?]</Rubric>
+<Rubric>Prayers of Supplicaion and Intercession</Rubric>
 <Location name="GENERAL-WITHYOU" />
 
 <Location name="VIGIL-SUPPLICATION" />
@@ -46,6 +57,7 @@
 
 <Location name="VIGIL-COMMENDATION" />
 
+<Subheading>Canticle of Simeon</Subheading>
 <Location name="SIMEON" />
 
 <Heading>Concluding Prayer</Heading>
