@@ -25,6 +25,7 @@
 	export let maxAlt: number = 0;
 	export let bold: boolean = false;
 	export let subunit: string;
+	export let gloria: boolean = false; // passthrough for psalms
 
 	export const lookup = new Map([
 		['other', Prayer],
@@ -198,10 +199,10 @@
 		</div>
 	{/if}
 	{#if maxAlt > 0 && $showAlt && data.size > 1}
-		<Alternatives {data} {bold} {subunit} />
+		<Alternatives {data} {bold} {subunit} {gloria} />
 	{:else}
 		{#each [...data] as [id, d]}
-			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} />
+			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} {gloria} />
 		{/each}
 	{/if}
 {:catch error}

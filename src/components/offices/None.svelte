@@ -17,8 +17,7 @@
 <Location name="NONE-PRAYER" />
 
 <Heading>Psalter</Heading>
-<Location name="NONE-PSALTER" maxAlt={3} />
-<Location name="GENERAL-GLORIA" />
+<Location name="NONE-PSALTER" maxAlt={3} gloria={true} />
 
 <Heading>The Little Chapter</Heading>
 <Location name="NONE-CHAPTER" />

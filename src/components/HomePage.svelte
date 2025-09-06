@@ -157,7 +157,7 @@
 			{/each}
 		</Tabs>
 		<Datepicker
-			class="max-w-30 flex-auto"
+			class="flex-auto"
 			onselect={(d) => {
 				const subs = d.toISOString().split('T');
 				if (params.officeDate == subs[0]) return;
@@ -167,8 +167,8 @@
 		/>
 	</div>
 
-	<div class="mb-4 max-w-200">
-		<FBHeading tag="h3" class="mb-4 text-center">{officeName}: {$forProper.propername}</FBHeading>
+	<div class="max-w-200">
+		<FBHeading tag="h3" class="text-center">{officeName}: {$forProper.propername}</FBHeading>
 		<div class="main">
 			<svelte:component this={office} />
 		</div>

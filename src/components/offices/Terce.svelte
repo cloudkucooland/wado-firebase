@@ -18,8 +18,7 @@
 
 <Heading>Psalter</Heading>
 <Rubric>(commonly sung to psalm tone three or said in unison)</Rubric>
-<Location name="TERCE-PSALTER" />
-<Location name="GENERAL-GLORIA" />
+<Location name="TERCE-PSALTER" gloria={true} />
 
 <Heading>The Little Chapter</Heading>
 <Location name="TERCE-CHAPTER" />
