@@ -244,10 +244,11 @@ func updateMeiliSearch(ctx context.Context, hardreset bool) {
 	}
 
 	index := c.Index("prayers")
-	/* _, err = index.UpdateFilterableAttributes(&[]string{"Class", "License", "Reviewed"})
+	attr := []interface{}{"Class", "License", "Reviewed"}
+	_, err = index.UpdateFilterableAttributes(&attr)
 	if err != nil {
 		panic(err)
-	} */
+	}
 
 	var documents []map[string]interface{}
 
