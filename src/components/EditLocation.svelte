@@ -47,7 +47,7 @@
 	});
 	locationlist.push({ name: 'Any', value: 'Any' });
 
-	let deleteModalOpen: boolean = false;
+	$: deleteModalOpen = false;
 	function toggleDeleteOpen(e: Event): void {
 		screenView('edit: toggleDeleteOpen');
 		deleteModalOpen = !deleteModalOpen;
@@ -67,6 +67,8 @@
 			console.log(err);
 			toasts.error(err.message);
 		}
+
+		// refresh screen
 		const newAssn: Map<string, association> = new Map();
 		for (const [k, a] of associations) {
 			if (k != t.value) newAssn.set(k, a);
@@ -75,7 +77,7 @@
 		toasts.success('Association deleted', t.value);
 	}
 
-	let editModalOpen = false;
+	$: editModalOpen = false;
 	function toggleEditOpen(e: Event): void {
 		screenView('toggleEditOpen');
 		editModalOpen = !editModalOpen;
@@ -114,7 +116,7 @@
 		}
 	}
 
-	let addModalAssocOpen = false;
+	$: addModalAssocOpen = false;
 	function toggleAddAssocOpen(e: Event): void {
 		screenView('toggleAddAssocOpen');
 		addModalAssocOpen = !addModalAssocOpen;
@@ -261,7 +263,7 @@
 		</div>
 	</div>
 </div>
-<Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
+<Modal id="deleteModal" bind:open={deleteModalOpen} backdrop="static">
 	<h3>Delete Association</h3>
 	<div>Confirm Delete</div>
 	<div>
@@ -269,7 +271,7 @@
 		<Button color="red" onclick={confirmDelete} value={modalId}>Confirm</Button>
 	</div>
 </Modal>
-<Modal id="editModal" isOpen={editModalOpen} size="xl">
+<Modal id="editModal" bind:open={editModalOpen} size="xl">
 	<h3>Edit Association</h3>
 	<div>
 		<EditAssoc id={modalId} bind:result={assocEditResult} />
@@ -279,7 +281,7 @@
 		<Button color="red" onclick={confirmEdit} value={modalId}>Confirm</Button>
 	</div>
 </Modal>
-<Modal id="addAssoc" isOpen={addModalAssocOpen} size="xl">
+<Modal id="addAssoc" bind:open={addModalAssocOpen} size="xl">
 	<h3>Add Association</h3>
 	<div>
 		<AddAssoc bind:result={assocAddResult} location={id} />

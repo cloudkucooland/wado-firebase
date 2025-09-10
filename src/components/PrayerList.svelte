@@ -11,8 +11,8 @@
 		Modal,
 		Heading as FBHeading
 	} from 'flowbite-svelte';
-	import { collection, query, where, doc, deleteDoc, orderBy } from 'firebase/firestore';
-	import { db, recordEvent, screenView, getDocsCacheFirst } from '../firebase';
+	import { collection, query, where, doc, deleteDoc, orderBy, getDocs } from 'firebase/firestore';
+	import { db, recordEvent, screenView } from '../firebase';
 	import prayer from '../model/prayer';
 	import { onMount, getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
@@ -32,14 +32,14 @@
 	const cs = new Array('prayer', 'hymn', 'psalm', 'antiphon', 'commemoration');
 
 	$: deleteModalOpen = false;
-	function toggleDeleteOpen(e: Event) {
+	function toggleDeleteOpen(e: Event): void {
 		screenView('toggleDeleteOpen');
 		deleteModalOpen = !deleteModalOpen;
 		const t = e.target as HTMLInputElement;
 		if (deleteModalOpen) modalId = t.value;
 	}
 
-	async function confirmDelete(e: Event) {
+	async function confirmDelete(e: Event): Promise<void> {
 		const t = e.target as HTMLInputElement;
 		recordEvent('delete_prayer', { id: t.value });
 		deleteModalOpen = !deleteModalOpen;
@@ -51,7 +51,7 @@
 				collection(db, 'associations'),
 				where('Reference', '==', doc(db, 'prayers', t.value))
 			);
-			const res = await getDocsCacheFirst(q);
+			const res = await getDocs(q);
 			for (const asn of res.docs) {
 				await deleteDoc(doc(db, 'associations', asn.id));
 			}
@@ -61,6 +61,8 @@
 			console.log(err);
 			toasts.error(err.message);
 		}
+
+		// refresh screen
 		const newPrayers: Map<string, prayer> = new Map();
 		for (const [k, p] of prayers) {
 			if (k != t.value) {
@@ -78,7 +80,7 @@
 		const m = new Map();
 		try {
 			const q = query(collection(db, 'prayers'), where('Class', '==', pc), orderBy('Name'));
-			const res = await getDocsCacheFirst(q);
+			const res = await getDocs(q);
 			for (const a of res.docs) {
 				const ta = a.data() as prayerFromFirestore;
 				const p = new prayer(ta);
