@@ -33,8 +33,6 @@
 
 <Location name="VIGIL-BLESSING" />
 
-<Location name="VIGIL-TEDEUM" />
-
 <Heading>Psalter</Heading>
 <PsalmLection office="VESPERS" gloria={true} />
 <Silence />
@@ -43,6 +41,8 @@
 <Subheading>Scripture</Subheading>
 <Lection office="VESPERS" />
 <Location name="GENERAL-RESPONSE-SCRIPTURE" />
+<br />
+<Location name="VIGIL-TEDEUM" />
 
 <Subheading>Silence for Reflection</Subheading>
 
