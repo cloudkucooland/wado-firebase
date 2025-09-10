@@ -10,12 +10,12 @@ import {
 	getDocFromServer,
 	Query,
 	DocumentReference,
-	terminate,
-	waitForPendingWrites,
+	// terminate,
+	// waitForPendingWrites,
 	persistentLocalCache,
 	persistentMultipleTabManager
 } from 'firebase/firestore';
-import { toasts } from 'svelte-toasts';
+// import { toasts } from 'svelte-toasts';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyAtVBGVEjDM50VXljFFV-g_xltotL878b8',
@@ -40,7 +40,12 @@ setConsent({
 const app = initializeApp(firebaseConfig);
 registerVersion('WADO', '2.1');
 export const auth = getAuth(app);
-export let db = initializeFirestore(app, {});
+export let db = initializeFirestore(app, {
+	localCache: persistentLocalCache({
+		useFetchStreams: true,
+		tabManager: persistentMultipleTabManager()
+	})
+});
 export const storage = getStorage();
 let analytics: Analytics;
 let _analyticsRunning: boolean = false;
@@ -79,7 +84,7 @@ export async function getDocsCacheFirst(q: Query) {
 		if (res.empty) {
 			throw new Error('query cache miss');
 		}
-		// console.debug("query cache hit");
+		console.debug('query cache hit');
 		return res;
 	} catch (err) {
 		console.debug('query cache miss');
@@ -91,7 +96,7 @@ export async function getDocsCacheFirst(q: Query) {
 export async function getDocCacheFirst(r: DocumentReference) {
 	try {
 		const res = await getDocFromCache(r);
-		// console.debug("doc cache hit");
+		console.debug('doc cache hit');
 		return res;
 	} catch (err) {
 		console.debug('doc cache miss');

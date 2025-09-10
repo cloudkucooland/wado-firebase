@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { collection, query, where, getDocs } from 'firebase/firestore';
+	import { collection, query, where } from 'firebase/firestore';
 	import { db, getDocsCacheFirst } from '../firebase';
 	import season from '../model/season';
 	import { getContext } from 'svelte';
@@ -22,8 +22,7 @@
 
 		let q = query(collection(db, 'lections', p.year, 'l'), ...wheres);
 
-		// let res = await getDocsCacheFirst(q);
-		let res = await getDocs(q);
+		let res = await getDocsCacheFirst(q);
 		if (res.empty)
 			return {
 				_morning: 'No passage set for today, consult the lectionary',

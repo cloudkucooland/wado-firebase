@@ -11,22 +11,8 @@
 		Modal,
 		Heading as FBHeading
 	} from 'flowbite-svelte';
-	import {
-		collection,
-		query,
-		where,
-		doc,
-		getDocs,
-		deleteDoc,
-		orderBy
-		// getCountFromServer,
-	} from 'firebase/firestore';
-	import {
-		db,
-		recordEvent,
-		screenView
-		// getDocsCacheFirst,
-	} from '../firebase';
+	import { collection, query, where, doc, deleteDoc, orderBy } from 'firebase/firestore';
+	import { db, recordEvent, screenView, getDocsCacheFirst } from '../firebase';
 	import prayer from '../model/prayer';
 	import { onMount, getContext } from 'svelte';
 	import type { Readable } from 'svelte/store';
@@ -65,7 +51,7 @@
 				collection(db, 'associations'),
 				where('Reference', '==', doc(db, 'prayers', t.value))
 			);
-			const res = await getDocs(q);
+			const res = await getDocsCacheFirst(q);
 			for (const asn of res.docs) {
 				await deleteDoc(doc(db, 'associations', asn.id));
 			}
@@ -92,7 +78,7 @@
 		const m = new Map();
 		try {
 			const q = query(collection(db, 'prayers'), where('Class', '==', pc), orderBy('Name'));
-			const res = await getDocs(q);
+			const res = await getDocsCacheFirst(q);
 			for (const a of res.docs) {
 				const ta = a.data() as prayerFromFirestore;
 				const p = new prayer(ta);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { collection, query, where, limit, orderBy, getDocs } from 'firebase/firestore';
+	import { collection, query, where, limit, orderBy } from 'firebase/firestore';
 	import { db, getDocCacheFirst, getDocsCacheFirst } from '../firebase';
 	import { showEdit, showAlt } from '../model/preferences';
 	import { getContext } from 'svelte';
@@ -51,7 +51,7 @@
 		// closure - needs m
 		const doQuery = async (q) => {
 			try {
-				const res = await getDocs(q);
+				const res = await getDocsCacheFirst(q);
 				for (const a of res.docs) {
 					const ad = a.data() as associationFromFirestore;
 					const d = await getDocCacheFirst(ad.Reference);
@@ -60,7 +60,7 @@
 				}
 			} catch (err) {
 				console.log(err);
-				// toasts.error(err.message);
+				toasts.error(err.message);
 			}
 		};
 

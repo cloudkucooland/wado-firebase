@@ -11,16 +11,7 @@
 		Modal,
 		Heading as FBHeading
 	} from 'flowbite-svelte';
-	import {
-		collection,
-		query,
-		where,
-		limit,
-		doc,
-		addDoc,
-		setDoc,
-		getDocs
-	} from 'firebase/firestore';
+	import { collection, query, where, limit, doc, addDoc, setDoc } from 'firebase/firestore';
 	import { db, recordEvent, screenView, getDocsCacheFirst } from '../firebase';
 	import proper from '../model/proper';
 	import { onMount, getContext } from 'svelte';
@@ -109,8 +100,7 @@
 					where('proper', '==', v.proper),
 					limit(1)
 				);
-				// const res = await getDocsCacheFirst(q);
-				const res = await getDocs(q);
+				const res = await getDocsCacheFirst(q);
 				for (const a of res.docs) {
 					const n = a.data();
 					const newLection: lection = new lection(n);

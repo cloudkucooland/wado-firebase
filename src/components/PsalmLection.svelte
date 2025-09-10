@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { collection, query, where, doc, getDoc, getDocs } from 'firebase/firestore';
+	import { collection, query, where, doc } from 'firebase/firestore';
 	import { db, getDocCacheFirst, getDocsCacheFirst } from '../firebase';
 	import season from '../model/season';
 	import Psalm from './prayerClasses/Psalm.svelte';
@@ -40,8 +40,7 @@
 
 		let q = query(collection(db, 'lections', p.year, 'l'), ...wheres);
 
-		// let res = await getDocsCacheFirst(q);
-		let res = await getDocs(q);
+		let res = await getDocsCacheFirst(q);
 		if (res.empty) {
 			toasts.error('Empty psalm lection, using default');
 			console.log('empty psalm lection');
@@ -64,8 +63,7 @@
 		if (office == 'LAUDS' && d._morningpsalmref) {
 			try {
 				const ps = doc(db, 'prayers', d._morningpsalmref);
-				// const res = await getDocCacheFirst(ps);
-				const res = await getDoc(ps);
+				const res = await getDocCacheFirst(ps);
 				d._resolved = res.data();
 				d.id = d._morningpsalmref;
 			} catch (err) {
@@ -76,8 +74,7 @@
 		if (office != 'LAUDS' && d._eveningpsalmref) {
 			try {
 				const ps = doc(db, 'prayers', d._eveningpsalmref);
-				// const res = await getDocCacheFirst(ps);
-				const res = await getDoc(ps);
+				const res = await getDocCacheFirst(ps);
 				d._resolved = res.data();
 				d.id = d._eveningpsalmref;
 			} catch (err) {
