@@ -29,6 +29,11 @@ export default class proper {
 			throw new Error('invalid season');
 		}
 		const s = season.LUT.get(this.season);
+		if (!s) {
+			// can't happen due to check above, just silence lint
+			console.error('invalid season', this.season);
+			throw new Error('invalid season');
+		}
 
 		if (this.proper > s.maxProper) {
 			console.error('invalid proper');
@@ -49,17 +54,14 @@ export default class proper {
 	public static fromDate(simple: string): proper {
 		try {
 			const s = simple.split('-');
-			// console.debug(s);
 			const d = new Date(+s[0], +s[1] - 1, +s[2]); // month is base 0, not base 1
-			// console.debug(d);
 			const newProper = new proper({ caldate: +s[1] + '-' + +s[2] }); // stored in Firestore as m-d / mm-dd, base 1
 			newProper.weekday = d.getDay();
 
 			newProper._setFeasts(+s[0]);
 			newProper._getSeason(d);
-			// console.debug(newProper);
 			return newProper;
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 		}
 		return new proper({});
