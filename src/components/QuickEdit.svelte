@@ -38,36 +38,36 @@
 	<div class="col-span-12">
 		<Button
 			size="sm"
-			color="secondary"
-			on:click={() => {
+			color="green"
+			onclick={() => {
 				$editor.chain().focus().toggleBold().run();
 			}}>Bold</Button
 		>
 		<Button
 			size="sm"
-			color="secondary"
-			on:click={() => {
+			color="green"
+			onclick={() => {
 				$editor.chain().focus().toggleItalic().run();
 			}}>Italic</Button
 		>
 		<Button
 			size="sm"
-			color="secondary"
-			on:click={() => {
+			color="green"
+			onclick={() => {
 				$editor.chain().focus().toggleUnderline().run();
 			}}>Underline</Button
 		>
 		<Button
 			size="sm"
-			color="secondary"
-			on:click={() => {
+			color="green"
+			onclick={() => {
 				$editor.chain().focus().undo().run();
 			}}>Undo</Button
 		>
 		<Button
 			size="sm"
-			color="secondary"
-			on:click={() => {
+			color="green"
+			onclick={() => {
 				$editor.chain().focus().redo().run();
 			}}>Redo</Button
 		>

@@ -129,7 +129,7 @@
 					});
 				}
 			);
-		} catch (error) {
+		} catch (error: Error) {
 			console.error(error);
 			progressBar.remove();
 			toasts.error(error.message, 'upload failed (try)', {
@@ -144,7 +144,7 @@
 			await deleteObject(ref(storage, 'media/' + id));
 			await updateDoc(doc(db, 'prayers', id), { Media: deleteField() });
 			media = null;
-		} catch (error) {
+		} catch (error: Error) {
 			console.log(error);
 			toasts.error(error.message, id, { uid: 72 });
 		}
@@ -163,10 +163,10 @@
 			<Input type="file" name="file" id="fileData" on:change={loadFile} />
 		</div>
 		<div class="col-span-2">
-			<Button disabled={true} color="primary" id="upload" on:click={doUpload}>Upload</Button>
+			<Button disabled={true} color="primary" id="upload" onclick={doUpload}>Upload</Button>
 		</div>
 		<div class="col-span-2">
-			<Button disabled={!media} color="warning" id="remove" on:click={removeMedia}>Remove</Button>
+			<Button disabled={!media} color="warning" id="remove" onclick={removeMedia}>Remove</Button>
 		</div>
 	{/if}
 </div>

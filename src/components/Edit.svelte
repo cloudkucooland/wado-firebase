@@ -92,7 +92,7 @@
 
 		try {
 			await deleteDoc(doc(db, 'associations', t.value));
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -127,9 +127,9 @@
 			newAssn.push(assocEditResult);
 			associations = newAssn;
 			toasts.success('Saved Association', t.value);
-		} catch (error) {
-			console.log(error);
-			toasts.error(error.message);
+		} catch (err: Error) {
+			console.log(err);
+			toasts.error(err.message);
 		}
 	}
 
@@ -154,7 +154,7 @@
 				new association(refetched.id, refetched.data() as associationFromFirestore)
 			];
 			recordEvent('add_assoc', { id: id, new: added.id });
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -181,7 +181,7 @@
 					new association(a.id, a.data() as associationFromFirestore)
 				];
 			}
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -196,7 +196,7 @@
 			prayerData.lastEdited = new Date().toISOString();
 			await setDoc(doc(db, 'prayers', id), prayerData.toFirebase());
 			toasts.success('Saved Prayer', id);
-		} catch (err) {
+		} catch (err: Error) {
 			console.error(err);
 			toasts.error(err.message);
 		}

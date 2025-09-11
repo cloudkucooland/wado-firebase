@@ -29,7 +29,7 @@
 				query: t.value,
 				results: result.estimatedTotalHits
 			});
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -45,7 +45,7 @@
 				query: t.value,
 				results: result.estimatedTotalHits
 			});
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}

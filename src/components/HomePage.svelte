@@ -84,7 +84,7 @@
 			quickEditOpen = true;
 			screenView('quickEdit');
 			quickEditData = data;
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.err(err.message);
 		}
@@ -100,7 +100,7 @@
 			await setDoc(doc(db, 'prayers', quickEditData.id), quickEditData.toFirebase());
 			toasts.success('Saved Prayer', quickEditData.id);
 			replace('/office/' + officeName + '/' + params.officeDate);
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -114,7 +114,7 @@
 			quickAddAssocLocation = location;
 			quickAddAssocOpen = true;
 			screenView('quickAddAssoc');
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -129,7 +129,7 @@
 			recordEvent('add_assoc', { new: added.id });
 			toasts.success('Added Association', added.id);
 			replace('/office/' + officeName + '/' + params.officeDate);
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}

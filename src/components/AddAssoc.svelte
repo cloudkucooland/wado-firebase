@@ -23,17 +23,25 @@
 	} as associationFromFirestore);
 	console.log('location', location, 'incoming', result, 'built', a);
 
-	let calDateSet: boolean = false;
-	let selectedSeason: season = season.LUT.get(a.Season);
-	let properName: string = 'Proper';
+	let calDateSet = false;
+	let selectedSeason = season.LUT.get(a.Season);
+	let properName = 'Proper';
 
 	onMount(async () => {
+		console.log('onMount a', a);
 		result = a;
 	});
 
 	afterUpdate(() => {
+		console.log('afterUpdate');
+
 		result = a;
 		selectedSeason = season.LUT.get(a.Season);
+		if (!selectedSeason) {
+			console.log('selectedSeason', selectedSeason);
+			return; // XXXX should not happen, debugging
+		}
+
 		if (result.CalendarDate !== 'Any') {
 			calDateSet = true;
 		} else {
@@ -42,8 +50,8 @@
 		properName = selectedSeason.properName ? selectedSeason.properName : 'Proper';
 	});
 
-	async function loadOptions(searchString: string) {
-		// console.log(searchString);
+	async function loadOptions(searchString: string): Promise<void> {
+		console.log(searchString);
 		const items = [];
 
 		try {
@@ -55,18 +63,18 @@
 			for (const r of searchresult.hits) {
 				items.push({ value: r.fsid, label: r.Name, group: r.Class });
 			}
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
 		return items;
 	}
 
-	function doSelect(e: any) {
+	function doSelect(e: any): void {
 		console.log(e.detail);
 		try {
 			a.Reference = doc(db, 'prayers', e.detail.value);
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -89,8 +97,8 @@
 		<Select
 			name="prayer"
 			placeholder="search for prayer"
-			{loadOptions}
-			on:change={doSelect}
+			oninput={loadOptions}
+			onchange={doSelect}
 			{groupBy}
 		/>
 	</div>
@@ -102,10 +110,10 @@
 	<div class="col-span-2">Weight</div>
 
 	<div class="col-span-3">
-		<Input type="select" bind:value={a.Season} disabled={calDateSet}>
+		<Select bind:value={a.Season} disabled={calDateSet}>
 			<option
 				value="Any"
-				on:change={() => {
+				onchange={() => {
 					a.Proper = -1;
 					a.Weekday = -1;
 				}}>Any</option
@@ -113,7 +121,7 @@
 			{#each Array.from(season.LUT.keys()) as s}
 				<option value={s}>{s}</option>
 			{/each}
-		</Input>
+		</Select>
 	</div>
 	<div class="col-span-2">
 		<Input

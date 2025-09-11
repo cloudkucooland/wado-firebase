@@ -183,14 +183,14 @@
 		<div class="edit">
 			{name}
 			<button
-				on:click={() => {
+				onclick={() => {
 					push('#/editlocation/' + name);
 				}}
 			>
 				<CalendarEditSolid />
 			</button>
 			<button
-				on:click={() => {
+				onclick={() => {
 					$qaa(name);
 				}}
 			>
@@ -205,6 +205,6 @@
 			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} {gloria} />
 		{/each}
 	{/if}
-{:catch error}
+{:catch error: Error}
 	<h5>Unable to load: {error.message}</h5>
 {/await}

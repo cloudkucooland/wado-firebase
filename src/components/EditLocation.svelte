@@ -63,7 +63,7 @@
 
 		try {
 			await deleteDoc(doc(db, 'associations', t.value));
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -110,7 +110,7 @@
 
 			associations = new Map([...newAssn].sort(association.sort));
 			toasts.success('Saved Association', t.value);
-		} catch (error) {
+		} catch (error: Error) {
 			console.log(error);
 			toasts.error(error.message);
 		}
@@ -133,7 +133,7 @@
 			console.debug(assocAddResult);
 			await addDoc(collection(db, 'associations'), assocAddResult.toFirebase());
 			loadLocation(id); // lazy but does the job -- redo if assocs get HUGE
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -147,7 +147,7 @@
 		try {
 			const q = query(collection(db, 'associations'), where('Location', '==', id));
 			res = await getDocs(q);
-		} catch (error) {
+		} catch (error: Error) {
 			console.log(error);
 			toasts.error(error.message);
 		}
@@ -161,7 +161,7 @@
 				toasts.info('Deleting Invalid Association', n.id);
 				try {
 					deleteDoc(doc(db, 'associations', n.id)); // no need to await here
-				} catch (err) {
+				} catch (err: Error) {
 					console.log(err);
 				}
 				continue;
@@ -173,7 +173,7 @@
 				toasts.info('Deleting Invalid Association', n.id);
 				try {
 					deleteDoc(doc(db, 'associations', n.id)); // no need to await here
-				} catch (err) {
+				} catch (err: Error) {
 					console.log(err);
 				}
 				continue;
@@ -185,7 +185,7 @@
 				// @ts-ignore
 				n._PrayerName = pp.name;
 				newAssn.set(a.id, n);
-			} catch (err) {
+			} catch (err: Error) {
 				console.log(err);
 				toasts.error(err.message);
 			}

@@ -107,9 +107,9 @@
 					newLection.path = a.ref.path; // kludge
 					out.set(k, [v, newLection]);
 				}
-			} catch (e) {
-				toasts.error(e.message);
-				console.log(e);
+			} catch (err: Error) {
+				toasts.error(err.message);
+				console.log(err);
 			}
 		}
 		progressBar.remove();
@@ -121,7 +121,7 @@
 		screenView('Lection List');
 	});
 
-	let lectionModalOpen = false;
+	$: lectionModalOpen = false;
 	async function toggleLectionModalOpen(e: Event): Promise<void> {
 		screenView('lectionModalOpen');
 		lectionModalOpen = !lectionModalOpen;
@@ -190,7 +190,7 @@
 				// @ts-ignore
 				data._eveningpsalmref = a.id;
 			}
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -210,10 +210,18 @@
 			lections.set(modalData.key, [_p, _l]);
 			toasts.success('lection saved');
 			lections = lections; // force svelte update
-		} catch (err) {
+		} catch (err: Error) {
 			console.log(err);
 			toasts.error(err.message);
 		}
+	}
+
+	async function tabSwitch(e: Event): Promise<void> {
+		if (e.detail == year) return;
+		lections = new Map();
+		year = e.detail;
+		document.location.assign('#/lectionary/' + year);
+		lections = await loadLections(year);
 	}
 </script>
 
@@ -227,17 +235,9 @@
 	</div>
 
 	<div class="col-span-12">
-		<Tabs
-			on:tab={async (e) => {
-				if (e.detail == year) return;
-				lections = new Map();
-				year = e.detail;
-				document.location.assign('#/lectionary/' + year);
-				lections = await loadLections(year);
-			}}
-		>
+		<Tabs>
 			{#each ['A', 'B', 'C'] as y}
-				<TabItem title="Year {y}" tabId={y} active={year == y} />
+				<TabItem title="Year {y}" open={year == y} onclick={(e) => tabSwitch(e)} />
 			{/each}
 		</Tabs>
 	</div>
@@ -317,7 +317,7 @@
 	</Table>
 </div>
 
-<Modal id="lectionModal" isOpen={lectionModalOpen} size="xl">
+<Modal id="lectionModal" bind:open={lectionModalOpen} size="xl">
 	<FBHeading tag="h3">Edit Lection: {modalData.key}</FBHeading>
 	<div>
 		M Psalm: <Input bind:value={modalData.morningpsalm} />
@@ -328,7 +328,7 @@
 		E Title: <Input bind:value={modalData.eveningtitle} />
 	</div>
 	<div>
-		<Button color="secondary" size="sm" on:click={toggleLectionModalOpen}>Cancel</Button>
-		<Button color="success" size="sm" on:click={confirmLectionModal}>Confirm</Button>
+		<Button color="red" size="sm" onclick={toggleLectionModalOpen}>Cancel</Button>
+		<Button color="green" size="sm" onclick={confirmLectionModal}>Confirm</Button>
 	</div>
 </Modal>
