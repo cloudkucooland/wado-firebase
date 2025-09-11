@@ -2,9 +2,6 @@
 	import './app.css';
 	import Router from 'svelte-spa-router';
 	import { toasts, ToastContainer, FlatToast } from 'svelte-toasts';
-
-	// import { Collapse, Navbar, NavbarToggler, Nav, NavItem, NavLink, NavbarBrand, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "sveltestrap";
-
 	import {
 		Footer,
 		FooterCopyright,
@@ -98,7 +95,7 @@
 			await signInWithPopup(auth, new FacebookAuthProvider());
 			loggedIn = true;
 			recordEvent('Facebook login');
-		} catch (err) {
+		} catch (err: Error) {
 			toasts.error(err.message);
 			console.log(err);
 		}
@@ -109,7 +106,7 @@
 			await signInWithPopup(auth, new GoogleAuthProvider());
 			loggedIn = true;
 			recordEvent('Google login');
-		} catch (err) {
+		} catch (err: Error) {
 			toasts.error(err.message);
 			console.log(err);
 		}
@@ -121,7 +118,7 @@
 			loggedIn = false;
 			recordEvent('log out');
 			toasts.success('logged out');
-		} catch (err) {
+		} catch (err: Error) {
 			toasts.error(err.messasge);
 			console.log(err);
 		}
