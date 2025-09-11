@@ -9,6 +9,7 @@
 	import type proper from '../../types/model/proper';
 	import { Spinner } from 'flowbite-svelte';
 	import { CalendarEditSolid, CalendarPlusSolid } from 'flowbite-svelte-icons';
+	import { toasts } from 'svelte-toasts';
 
 	import Hymn from './prayerClasses/Hymn.svelte';
 	import Prayer from './prayerClasses/Prayer.svelte';
@@ -24,7 +25,7 @@
 	export let max: number = 1;
 	export let maxAlt: number = 0;
 	export let bold: boolean = false;
-	export let subunit: string;
+	export let subunit: string | null = null;
 	export let gloria: boolean = false; // passthrough for psalms
 
 	export const lookup = new Map([

@@ -165,7 +165,7 @@
 			proper: modalData.proper,
 			weekday: modalData.weekday
 		};
-		console.debug('to bare object', data);
+		// console.debug('to bare object', data);
 
 		// try to link to the formatted psalms
 		try {
@@ -196,7 +196,7 @@
 		}
 
 		// send to firestore
-		console.debug('after refs', data);
+		// console.debug('after refs', data);
 		try {
 			if (modalData.path == '' || typeof modalData.path == 'undefined') {
 				const added = await addDoc(collection(db, 'lections', year, 'l'), data);
@@ -216,10 +216,10 @@
 		}
 	}
 
-	async function tabSwitch(e: Event): Promise<void> {
-		if (e.detail == year) return;
+	async function tabSwitch(y): Promise<void> {
+		if (y == year) return;
 		lections = new Map();
-		year = e.detail;
+		year = y;
 		document.location.assign('#/lectionary/' + year);
 		lections = await loadLections(year);
 	}
@@ -234,19 +234,16 @@
 		<FBHeading tag="h2">Lectionary Editor: Year {year}</FBHeading>
 	</div>
 
-	<div class="col-span-12">
-		<Tabs>
-			{#each ['A', 'B', 'C'] as y}
-				<TabItem title="Year {y}" open={year == y} onclick={(e) => tabSwitch(e)} />
-			{/each}
-		</Tabs>
-	</div>
-
+	<Tabs class="flex-auto">
+		{#each ['A', 'B', 'C'] as y}
+			<TabItem title="Year {y}" open={year == y} onclick={(e) => tabSwitch(y)} />
+		{/each}
+	</Tabs>
 	<Table class="w-full">
 		<TableBody>
 			{#each [...lections] as [k, v]}
 				<TableBodyRow>
-					<TableBodyCell>
+					<TableBodyCell colspan="3">
 						{#if $me.isEditor}
 							<Button color="red" onclick={toggleLectionModalOpen} value={k}>{k}</Button>
 						{:else}

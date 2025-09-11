@@ -9,7 +9,7 @@ export default class proper {
 
 	// type FeastMap = Record:<string, Date> // something for when I get bored
 
-	private _feasts: Map<string, Date>;
+	private _feasts: Map<string, Date> = new Map<string, Date>([]);
 
 	constructor(inObj: {
 		caldate?: string;
@@ -61,7 +61,7 @@ export default class proper {
 			newProper._setFeasts(+s[0]);
 			newProper._getSeason(d);
 			return newProper;
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 		}
 		return new proper({});

@@ -1,11 +1,10 @@
-import Lauds from '../components/offices/Lauds.svelte';
-export declare const offices: string[];
-export declare function getOffice(officeName: string): typeof Lauds;
+export declare function getOffice(officeName: string): import('svelte/legacy').LegacyComponentType;
 export declare function currentOffice():
 	| 'Lauds'
 	| 'Terce'
 	| 'Sext'
 	| 'None'
 	| 'Vespers'
-	| 'Compline';
-export declare function getCurrentOffice(): typeof Lauds;
+	| 'Compline'
+	| 'Vigil';
+export declare function getCurrentOffice(): import('svelte/legacy').LegacyComponentType;

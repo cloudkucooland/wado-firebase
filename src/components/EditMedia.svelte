@@ -21,6 +21,7 @@
 
 		const button = document.getElementById('upload') as HTMLInputElement;
 		button.disabled = false;
+		button.color = 'green';
 
 		reader.onload = () => {
 			if (reader.result === '') {
@@ -37,11 +38,13 @@
 			}
 
 			button.disabled = false;
+			button.color = 'green';
 			// toasts.success("ready to upload");
 		};
 		reader.onerror = (error) => {
 			console.log(error, file);
 			button.disabled = true;
+			button.color = 'yellow';
 			toasts.error('could not load file', file.name);
 		};
 
@@ -148,6 +151,9 @@
 			console.log(error);
 			toasts.error(error.message, id, { uid: 72 });
 		}
+		const button = document.getElementById('upload') as HTMLInputElement;
+		button.disabled = true;
+		button.color = 'yellow';
 	}
 </script>
 
@@ -160,13 +166,13 @@
 	</div>
 	{#if $me.isMediaManager}
 		<div class="col-span-4">
-			<Input type="file" name="file" id="fileData" on:change={loadFile} />
+			<Input type="file" name="file" id="fileData" onchange={loadFile} />
 		</div>
 		<div class="col-span-2">
-			<Button disabled={true} color="primary" id="upload" onclick={doUpload}>Upload</Button>
+			<Button disabled={true} color="yellow" id="upload" onclick={doUpload}>Upload</Button>
 		</div>
 		<div class="col-span-2">
-			<Button disabled={!media} color="warning" id="remove" onclick={removeMedia}>Remove</Button>
+			<Button disabled={!media} color="red" id="remove" onclick={removeMedia}>Remove</Button>
 		</div>
 	{/if}
 </div>

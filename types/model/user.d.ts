@@ -5,9 +5,9 @@ export default class user {
 	lastDay: string;
 	lastActivity: Date;
 	private _userID?;
-	private _isEditor;
-	private _isMediaManager;
-	private _loggedIn;
+	private _isEditor?;
+	private _isMediaManager?;
+	private _loggedIn?;
 	constructor(obj: any);
 	toString(): string;
 	toJSON(): this;

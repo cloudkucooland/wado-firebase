@@ -18,8 +18,8 @@
 	]);
 
 	export let data: Map<string, prayerFromFirestore>;
-	export let subunit: string;
-	export let bold: string;
+	export let subunit: string | null;
+	export let bold: boolean;
 
 	// the first tab is active
 	let isA: number = 0;
