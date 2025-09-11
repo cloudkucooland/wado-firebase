@@ -15,7 +15,6 @@ import {
 	persistentLocalCache,
 	persistentMultipleTabManager
 } from 'firebase/firestore';
-// import { toasts } from 'svelte-toasts';
 
 const firebaseConfig = {
 	apiKey: 'AIzaSyAtVBGVEjDM50VXljFFV-g_xltotL878b8',
@@ -84,10 +83,10 @@ export async function getDocsCacheFirst(q: Query) {
 		if (res.empty) {
 			throw new Error('query cache miss');
 		}
-		console.debug('query cache hit');
+		// console.debug('query cache hit');
 		return res;
 	} catch (err) {
-		console.debug('query cache miss');
+		// console.debug('query cache miss');
 		const res = await getDocsFromServer(q);
 		return res;
 	}
@@ -96,10 +95,10 @@ export async function getDocsCacheFirst(q: Query) {
 export async function getDocCacheFirst(r: DocumentReference) {
 	try {
 		const res = await getDocFromCache(r);
-		console.debug('doc cache hit');
+		// console.debug('doc cache hit');
 		return res;
 	} catch (err) {
-		console.debug('doc cache miss');
+		// console.debug('doc cache miss');
 		const res = await getDocFromServer(r);
 		return res;
 	}
