@@ -45,7 +45,7 @@
 		</ListgroupItem>
 		<ListgroupItem>
 			<div class="w-full">
-				<strong>Show Alternatives</strong> Show additional prayer options (when available).
+				<strong>Show Alternatives</strong> Show additional prayer options (when available). (press A in an office to toggle)
 			</div>
 			<div>
 				<Checkbox
@@ -59,7 +59,7 @@
 		</ListgroupItem>
 		<ListgroupItem>
 			<div class="w-full">
-				<strong>Show Edit Links</strong> Show links to edit prayers & locations.
+				<strong>Show Edit Links</strong> Show links to edit prayers & locations. (press L in an office to toggle)
 			</div>
 			<div>
 				<Checkbox

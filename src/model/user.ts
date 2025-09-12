@@ -122,7 +122,6 @@ export default class user {
 			}
 
 			const dd = loaded.data();
-			console.log(dd);
 			if (!dd.consecutiveDays || !dd.lastDay) {
 				await setDoc(ref, { consecutiveDays: 1, lastDay: d }, { merge: true });
 				return 'Starting first streak';

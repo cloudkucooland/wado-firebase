@@ -12,13 +12,14 @@
 	import { auth, screenView, db, recordEvent } from '../firebase';
 	import { getOffice, currentOffice } from '../model/offices';
 	import { toasts } from 'svelte-toasts';
-	import { getContext, setContext, onMount, afterUpdate } from 'svelte';
+	import { getContext, setContext, onMount, onDestroy, afterUpdate } from 'svelte';
 	import { push, replace } from 'svelte-spa-router';
 	import { type Writable, type Readable, writable } from 'svelte/store';
 	import type User from '../../types/model/user';
 	import type prayer from '../../types/model/prayer';
 	import association from '../model/association';
 	import { doc, setDoc, addDoc, collection } from 'firebase/firestore';
+	import { showEdit, showAlt } from '../model/preferences';
 
 	const now: Date = new Date();
 	const nowString: string = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
@@ -39,7 +40,23 @@
 		screenView(officeName);
 
 		window.addEventListener('scroll', scrolling, { passive: true });
+		window.addEventListener('keypress', keypress, { passive: true });
 	});
+
+	onDestroy((): void => {
+		window.removeEventListener('scroll', scrolling, { passive: true });
+		window.removeEventListener('keypress', keypress, { passive: true });
+	});
+
+	// keyboard shortcuts, A to show alt, L to show edit links
+	function keypress(e: Event): void {
+		if (e.code == 'KeyA') {
+			showAlt.set(!$showAlt);
+		}
+		if (e.code == 'KeyL') {
+			showEdit.set(!$showEdit);
+		}
+	}
 
 	function tabSwitch(o: string): void {
 		push('/office/' + o + '/' + params.officeDate);

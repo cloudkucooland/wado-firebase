@@ -78,8 +78,6 @@
 	setContext('me', me);
 
 	onAuthStateChanged(auth, async (u) => {
-		console.log('authStateChanged', u);
-
 		if (u.hasOwnProperty('uid')) {
 			loggedIn = true;
 			$me = await user.me();
