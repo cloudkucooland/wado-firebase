@@ -37,7 +37,12 @@
 	import EditAssoc from './EditAssoc.svelte';
 	import EditPsalmAntiphon from './EditPsalmAntiphon.svelte';
 
-	import { FormatButtonGroup, TextEditor, InvisibleButtonGroup, UndoRedoButtonGroup } from '@flowbite-svelte-plugins/texteditor';
+	import {
+		FormatButtonGroup,
+		TextEditor,
+		InvisibleButtonGroup,
+		UndoRedoButtonGroup
+	} from '@flowbite-svelte-plugins/texteditor';
 	import { Editor } from '@tiptap/core';
 
 	import association from '../model/association';
@@ -229,7 +234,16 @@
 					bind:content={prayerData.body}
 					contentprops={{ id: 'formats-ex' }}
 				>
-					<FormatButtonGroup editor={editorInstance} code={false} highlight={false} link={false} removeLink={false} strike={false} subscript={false} superscript={false} />
+					<FormatButtonGroup
+						editor={editorInstance}
+						code={false}
+						highlight={false}
+						link={false}
+						removeLink={false}
+						strike={false}
+						subscript={false}
+						superscript={false}
+					/>
 					<UndoRedoButtonGroup editor={editorInstance} />
 					<InvisibleButtonGroup editor={editorInstance} />
 				</TextEditor>
