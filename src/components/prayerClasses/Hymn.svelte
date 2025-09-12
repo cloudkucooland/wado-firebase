@@ -14,7 +14,6 @@
 
 	const h = new hymn(data);
 	h.id = id;
-	const qe: Readable<any> = getContext('qe');
 </script>
 
 {#if $showEdit}<div class="edit">
@@ -24,9 +23,6 @@
 			}}
 		>
 			<EditSolid />
-		</button>
-		<button on:click={$qe(h)}>
-			<CloudMeatballSolid />
 		</button>
 	</div>{/if}
 <Heading tag="h5">{h.name}</Heading>

@@ -12,7 +12,7 @@ export default class hymn extends prayer {
 		if (obj.Class) this.class = obj.Class;
 	}
 
-	public toFirebase() {
+	public toFirebase(): any {
 		return {
 			Name: this.name,
 			Body: this.body,

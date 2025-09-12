@@ -13,7 +13,7 @@ export default class psalm extends prayer {
 		if (obj.Antiphon) this.antiphon = obj.Antiphon;
 	}
 
-	public toFirebase() {
+	public toFirebase(): any {
 		const out: any = {
 			Name: this.name,
 			Body: this.body,

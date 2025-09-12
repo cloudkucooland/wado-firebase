@@ -19,7 +19,6 @@
 
 	const p = new psalm(data);
 	p.id = id;
-	const qe: Readable<any> = getContext('qe');
 	let antiphon: prayerFromFirestore;
 	let antID: string;
 
@@ -45,9 +44,6 @@
 				}}
 			>
 				<EditSolid />
-			</button>
-			<button on:click={$qe(p)}>
-				<CloudMeatballSolid />
 			</button>
 		</span>{/if}
 </Heading>

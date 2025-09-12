@@ -15,7 +15,6 @@
 
 	const c = new commemoration(data);
 	c.id = id;
-	const qe: Readable<any> = getContext('qe');
 </script>
 
 {#if subunit == 'morningcollect' && c.morningcollect}
@@ -34,9 +33,6 @@
 				}}
 			>
 				<EditSolid />
-			</button>
-			<button on:click={$qe(c)}>
-				<CloudMeatballSolid />
 			</button>
 		</div>{/if}
 	<Heading tag="h6">Reading for Commemoration</Heading>

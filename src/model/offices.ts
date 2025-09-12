@@ -21,11 +21,11 @@ const officeLUT = new Map([
 	['TestOffice', TestOffice]
 ]);
 
-export function getOffice(officeName: string) {
+export function getOffice(officeName: string): string {
 	return officeLUT.get(officeName);
 }
 
-export function currentOffice() {
+export function currentOffice(): string {
 	const d = new Date();
 	const hour = d.getHours();
 
@@ -44,6 +44,6 @@ export function currentOffice() {
 	return 'Compline';
 }
 
-export function getCurrentOffice() {
+export function getCurrentOffice(): office {
 	return officeLUT.get(currentOffice());
 }

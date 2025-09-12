@@ -77,7 +77,7 @@
 	const _a: Array<association> = new Array();
 	$: associations = _a;
 
-	let deleteModalOpen: boolean = false;
+	$: deleteModalOpen = false;
 	function toggleDeleteOpen(e: Event): void {
 		const t = e.target as HTMLInputElement;
 		screenView('toggleDeleteOpen');
@@ -104,7 +104,7 @@
 		toasts.success('Association deleted', t.value);
 	}
 
-	let editModalOpen: boolean = false;
+	$: editModalOpen = false;
 	async function toggleEditOpen(e: Event): Promise<void> {
 		const t = e.target as HTMLInputElement;
 		screenView('toggleEditOpen');
@@ -113,7 +113,7 @@
 		if (editModalOpen) modalId = t.value;
 	}
 
-	async function confirmEdit(e: Event) {
+	async function confirmEdit(e: Event): Promise<void> {
 		const t = e.target as HTMLInputElement;
 		recordEvent('edit_assoc', { id: id, assoc: t.value });
 		editModalOpen = !editModalOpen;
@@ -133,8 +133,9 @@
 		}
 	}
 
-	let addAssocModalOpen: boolean = false;
+	$: addAssocModalOpen = false;
 	async function toggleAddAssocOpen(e: Event): Promise<void> {
+		console.log(e);
 		const t = e.target as HTMLInputElement;
 		screenView('toggleAddAssocOpen');
 		addAssocModalOpen = !addAssocModalOpen;
@@ -181,7 +182,7 @@
 					new association(a.id, a.data() as associationFromFirestore)
 				];
 			}
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -435,7 +436,7 @@
 		<Button color="red" onclick={toggleAddAssocOpen}>Add</Button>
 	{/if}
 </div>
-<Modal id="deleteModal" isOpen={deleteModalOpen} backdrop="static">
+<Modal id="deleteModal" bind:open={deleteModalOpen} backdrop="static">
 	<FBHeading tag="h3">Delete Association</FBHeading>
 	<div>Confirm Delete</div>
 	<div>
@@ -443,7 +444,7 @@
 		<Button color="red" onclick={confirmDelete} value={modalId}>Confirm</Button>
 	</div>
 </Modal>
-<Modal id="editModal" isOpen={editModalOpen}>
+<Modal id="editModal" bind:open={editModalOpen}>
 	<FBHeading tag="h3">Edit Association</FBHeading>
 	<div>
 		<EditAssoc id={modalId} bind:result={assocEditResult} />
@@ -453,7 +454,7 @@
 		<Button color="red" onclick={confirmEdit} value={modalId}>Confirm</Button>
 	</div>
 </Modal>
-<Modal id="addAssocModal" isOpen={addAssocModalOpen}>
+<Modal id="addAssocModal" bind:open={addAssocModalOpen}>
 	<FBHeading tag="h3">Add Association</FBHeading>
 	<div>
 		<EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />

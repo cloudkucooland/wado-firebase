@@ -19,7 +19,6 @@
 
 	const p = new prayer(data);
 	p.id = id;
-	const qe: Readable<any> = getContext('qe');
 </script>
 
 {#if $showEdit}<div class="edit">
@@ -29,9 +28,6 @@
 			}}
 		>
 			<EditSolid />
-		</button>
-		<button onclick={$qe(p)}>
-			<CloudMeatballSolid />
 		</button>
 	</div>{/if}
 <div class={cssClass}>{@html p.body}</div>

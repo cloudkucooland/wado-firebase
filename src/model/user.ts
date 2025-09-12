@@ -33,11 +33,11 @@ export default class user {
 		this._loggedIn = false;
 	}
 
-	public toString() {
+	public toString(): string {
 		return this.displayName;
 	}
 
-	public toJSON() {
+	public toJSON(): any {
 		const o = { ...this };
 		if (o._userID) delete o._userID;
 		// @ts-ignore
@@ -49,7 +49,7 @@ export default class user {
 	}
 
 	// load from firestore
-	public static async me() {
+	public static async me(): Promise<user> {
 		if (!auth.currentUser) {
 			console.log("not logged in, returning empty 'me'");
 			return new user({ lastActivity: new Date('2023-01-01') });
@@ -67,7 +67,7 @@ export default class user {
 				u._loggedIn = true;
 				return u;
 			}
-		} catch (err) {
+		} catch (err: any) {
 			console.log(err);
 		}
 
@@ -79,33 +79,33 @@ export default class user {
 	}
 
 	// update firestore
-	public async setDisplayName(newname: string) {
+	public async setDisplayName(newname: string): Promise<void> {
 		if (!this._userID) return;
 		const ref = doc(db, 'user', this._userID);
 
 		this.displayName = newname;
 		try {
 			await setDoc(ref, this.toJSON(), { merge: true });
-		} catch (err) {
+		} catch (err: any) {
 			console.log(err);
 		}
 	}
 
 	// report that there has been activity
-	public async logAction() {
+	public async logAction(): Promise<void> {
 		if (!this._userID) return;
 		const ref = doc(db, 'user', this._userID);
 
 		this.lastActivity = new Date();
 		try {
 			(await setDoc(ref, this.toJSON()), { merge: true });
-		} catch (err) {
+		} catch (err: any) {
 			console.log(err);
 		}
 	}
 
 	// can probably be simplified since other things access the userdata on the server....
-	public async UpdateStreak() {
+	public async UpdateStreak(): Promise<string | boolean> {
 		if (!this._userID) return false;
 
 		const now = new Date();
@@ -122,6 +122,7 @@ export default class user {
 			}
 
 			const dd = loaded.data();
+			console.log(dd);
 			if (!dd.consecutiveDays || !dd.lastDay) {
 				await setDoc(ref, { consecutiveDays: 1, lastDay: d }, { merge: true });
 				return 'Starting first streak';
@@ -135,8 +136,8 @@ export default class user {
 			const lastDate = new Date(sd[0], sd[1] - 1, sd[2]);
 			// @ts-expect-error
 			const diff = today - lastDate;
-			if (diff <= 86400001) {
-				// 1 day + 1 msec
+			if (diff >= 43200000 && dif <= 129600000) {
+				// more than half a day, less than a day-and-a-half
 				const newStreak = dd.consecutiveDays + 1;
 				await setDoc(
 					ref,
@@ -154,25 +155,25 @@ export default class user {
 
 			await setDoc(ref, { consecutiveDays: 1, lastDay: d }, { merge: true });
 			return 'Starting new streak';
-		} catch (err) {
+		} catch (err: any) {
 			console.log(err);
 			return err.message;
 		}
 	}
 
-	get isEditor() {
+	get isEditor(): boolean {
 		return this._isEditor;
 	}
 
-	get isMediaManager() {
+	get isMediaManager(): boolean {
 		return this._isEditor || this._isMediaManager;
 	}
 
-	get loggedIn() {
+	get loggedIn(): boolean {
 		return this._loggedIn;
 	}
 
-	public static async getRecent() {
+	public static async getRecent(): Promise<array> {
 		const users = new Array();
 		const lastweek = new Date().getTime() - 604800000; // 1 week
 		const recent = new Date(lastweek);

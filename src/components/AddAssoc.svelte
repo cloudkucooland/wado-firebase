@@ -25,6 +25,7 @@
 
 	let calDateSet = false;
 	let selectedSeason = season.LUT.get(a.Season);
+	console.log(a.Season, selectedSeason);
 	let properName = 'Proper';
 
 	onMount(async () => {
@@ -84,7 +85,7 @@
 </script>
 
 <div class="grid w-full grid-flow-row-dense grid-cols-12">
-	<div class="colspan-2">Location</div>
+	<div class="col-span-2">Location</div>
 	<div class="col-span-6">
 		{location}
 	</div>
@@ -103,13 +104,8 @@
 		/>
 	</div>
 
-	<div class="col-span-3">Season</div>
-	<div class="col-span-2">{properName} <span class="small">(-1 for "Any")</span></div>
-	<div class="col-span-3">Weekday</div>
-	<div class="col-span-2">Year</div>
-	<div class="col-span-2">Weight</div>
-
-	<div class="col-span-3">
+	<div class="col-span-4">Season</div>
+	<div class="col-span-8">
 		<Select bind:value={a.Season} disabled={calDateSet}>
 			<option
 				value="Any"
@@ -123,7 +119,9 @@
 			{/each}
 		</Select>
 	</div>
-	<div class="col-span-2">
+
+	<div class="col-span-4">{properName} <span class="small">(-1 for "Any")</span></div>
+	<div class="col-span-8">
 		<Input
 			bind:value={a.Proper}
 			type="number"
@@ -132,12 +130,10 @@
 			disabled={calDateSet || selectedSeason.maxProper == 0}
 		/>
 	</div>
-	<div class="col-span-3">
-		<Input
-			type="select"
-			bind:value={a.Weekday}
-			disabled={calDateSet || !selectedSeason.useWeekdays}
-		>
+
+	<div class="col-span-4">Weekday</div>
+	<div class="col-span-8">
+		<Select bind:value={a.Weekday} disabled={calDateSet || !selectedSeason.useWeekdays}>
 			<option value={-1}>Any</option>
 			<option value={0}>Sunday</option>
 			<option value={1}>Monday</option>
@@ -146,17 +142,21 @@
 			<option value={4}>Thursday</option>
 			<option value={5}>Friday</option>
 			<option value={6}>Saturday</option>
-		</Input>
+		</Select>
 	</div>
-	<div class="col-span-2">
-		<Input type="select" bind:value={a.Year} disabled={calDateSet}>
+
+	<div class="col-span-4">Year</div>
+	<div class="col-span-8">
+		<Select bind:value={a.Year} disabled={calDateSet}>
 			<option value="Any">Any</option>
 			<option value="A">A</option>
 			<option value="B">B</option>
 			<option value="C">C</option>
-		</Input>
+		</Select>
 	</div>
-	<div class="col-span-2">
+
+	<div class="col-span-4">Weight</div>
+	<div class="col-span-8">
 		<Input bind:value={a.Weight} type="number" min={0} max={99} disabled={calDateSet} />
 	</div>
 
@@ -164,8 +164,8 @@
 	<div class="col-span-8">(fixed-dates are very rare; "Any" to use season-relative dates)</div>
 	<div class="col-span-2">&nbsp;</div>
 
-	<div class="col-span-2">Fixed Date</div>
-	<div class="col-span-10">
+	<div class="col-span-4">Fixed Date</div>
+	<div class="col-span-8">
 		<Input bind:value={a.CalendarDate} placeholder="mm-dd" />
 	</div>
 </div>

@@ -34,7 +34,7 @@ export default class prayer {
 		if (obj.Class) this.class = obj.Class;
 	}
 
-	public toFirebase() {
+	public toFirebase(): any {
 		return {
 			Name: this.name,
 			Body: this.body,
@@ -48,7 +48,7 @@ export default class prayer {
 		};
 	}
 
-	public get shortname() {
+	public get shortname(): string {
 		if (this.name.length < 30) return this.name;
 
 		const words: Array<string> = this.name.split(' ');

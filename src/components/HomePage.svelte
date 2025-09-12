@@ -15,8 +15,6 @@
 	import { getContext, setContext, onMount, afterUpdate } from 'svelte';
 	import { push, replace } from 'svelte-spa-router';
 	import { type Writable, type Readable, writable } from 'svelte/store';
-	import QuickEdit from './QuickEdit.svelte';
-	import AddAssoc from './AddAssoc.svelte';
 	import type User from '../../types/model/user';
 	import type prayer from '../../types/model/prayer';
 	import association from '../model/association';
@@ -26,9 +24,7 @@
 	const nowString: string = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
 
 	export let params = { officeName: currentOffice(), officeDate: nowString };
-	// console.debug(params.officeDate);
 	const properFromDate = proper.fromDate(params.officeDate);
-	// console.debug(properFromDate);
 	let forProper: Writable<proper> = writable(properFromDate);
 	setContext('forProper', forProper);
 
@@ -37,21 +33,12 @@
 
 	let me: Readable<User> = getContext('me');
 
-	// for streak tracking
-	let scrolled: boolean = false; // not yet scrolled to end
-
-	$: qeModalOpen = false;
-	function toggleQeOpen(e: Event) {
-		screenView('toggleQeOpen');
-		qeModalOpen = !qeModalOpen;
-		const t = e.target as HTMLInputElement;
-		if (qeModalOpen) modalId = t.value;
-	}
-
 	onMount((): void => {
 		// set the URL so that "poking the ox" always takes you to "now"
 		replace('/office/' + officeName + '/' + params.officeDate);
 		screenView(officeName);
+
+		window.addEventListener('scroll', scrolling, { passive: true });
 	});
 
 	function tabSwitch(o: string): void {
@@ -63,75 +50,15 @@
 		screenView(officeName);
 	});
 
-	// handler for "high-score" tracking
-	async function scrolling(): Promise<void> {
-		if (scrolled) return; // remove the handler?
+	async function scrolling(e: Event): Promise<void> {
+		e.stopPropagation();
 		if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
 			if (!auth.currentUser) return;
-			scrolled = true;
+			window.removeEventListener('scroll', scrolling, { passive: true });
 			if ($me.UpdateStreak) {
 				const res = await $me.UpdateStreak();
 				toasts.success('Daily Streak', res);
 			}
-		}
-	}
-
-	// quick-edit handlers
-	let quickEditData: prayer;
-	let quickEditOpen: boolean = false;
-	let qe: Writable<unknown> = writable(async (data: prayer): Promise<void> => {
-		try {
-			quickEditOpen = true;
-			screenView('quickEdit');
-			quickEditData = data;
-		} catch (err: Error) {
-			console.log(err);
-			toasts.err(err.message);
-		}
-	});
-	setContext('qe', qe);
-
-	// process quick-edit results
-	async function qeconfirm(e: Event): Promise<void> {
-		quickEditOpen = false;
-		try {
-			quickEditData.lastEditor = auth.currentUser.displayName;
-			quickEditData.lastEdited = new Date().toISOString();
-			await setDoc(doc(db, 'prayers', quickEditData.id), quickEditData.toFirebase());
-			toasts.success('Saved Prayer', quickEditData.id);
-			replace('/office/' + officeName + '/' + params.officeDate);
-		} catch (err: Error) {
-			console.log(err);
-			toasts.error(err.message);
-		}
-	}
-
-	let quickAddAssocData: association = association.fromProper($forProper);
-	let quickAddAssocLocation: string = '';
-	let quickAddAssocOpen: boolean = false;
-	let qaa: Writable<unknown> = writable(async (location: string): Promise<void> => {
-		try {
-			quickAddAssocLocation = location;
-			quickAddAssocOpen = true;
-			screenView('quickAddAssoc');
-		} catch (err: Error) {
-			console.log(err);
-			toasts.error(err.message);
-		}
-	});
-	setContext('qaa', qaa);
-
-	async function qaaconfirm(e: Event): Promise<void> {
-		// console.log(e, quickAddAssocData.toFirebase());
-		quickAddAssocOpen = false;
-		try {
-			const added = await addDoc(collection(db, 'associations'), quickAddAssocData.toFirebase());
-			recordEvent('add_assoc', { new: added.id });
-			toasts.success('Added Association', added.id);
-			replace('/office/' + officeName + '/' + params.officeDate);
-		} catch (err: Error) {
-			console.log(err);
-			toasts.error(err.message);
 		}
 	}
 
@@ -146,8 +73,6 @@
 <svelte:head>
 	<title>WADO: {officeName}: {$forProper.propername}</title>
 </svelte:head>
-
-<svelte:window onscroll|passive|stopPropagation={scrolling} />
 
 <div class={$forProper.season}>
 	<div class="flex">
@@ -174,40 +99,3 @@
 		</div>
 	</div>
 </div>
-
-<Modal id="quickEditModal" form bind:open={quickEditOpen}>
-	<FBHeading tag="h3">Quick Edit</FBHeading>
-	<div>
-		<QuickEdit bind:result={quickEditData} />
-	</div>
-	<div>
-		<Button
-			color="red"
-			}
-			onclick={() => {
-				quickEditOpen = false;
-			}}
-		>
-			Cancel
-		</Button>
-		<Button color="red" onclick={qeconfirm}>Confirm</Button>
-	</div>
-</Modal>
-
-<Modal id="quickAddAssoc" form bind:open={quickAddAssocOpen}>
-	<FBHeading tag="h3">Quick Add Association</FBHeading>
-	<div>
-		<AddAssoc bind:result={quickAddAssocData} bind:location={quickAddAssocLocation} />
-	</div>
-	<div>
-		<Button
-			color="red"
-			onclick={() => {
-				quickAddAssocOpen = false;
-			}}
-		>
-			Cancel
-		</Button>
-		<Button color="red" onclick={qaaconfirm}>Confirm</Button>
-	</div>
-</Modal>

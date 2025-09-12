@@ -18,8 +18,8 @@
 	import Commemoration from './prayerClasses/Commemoration.svelte';
 	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
 
-	let proper: Readable<proper> = getContext('forProper');
-	let qaa: Readable<any> = getContext('qaa');
+	// let proper: Readable<proper> = getContext('forProper');
+	$: proper = getContext('forProper');
 
 	export let name: string;
 	export let max: number = 1;
@@ -28,7 +28,7 @@
 	export let subunit: string | null = null;
 	export let gloria: boolean = false; // passthrough for psalms
 
-	export const lookup = new Map([
+	export const lookup: Map<string, any> = new Map([
 		['other', Prayer],
 		['hymn', Hymn],
 		['prayer', Prayer],
@@ -189,13 +189,6 @@
 				}}
 			>
 				<CalendarEditSolid />
-			</button>
-			<button
-				onclick={() => {
-					$qaa(name);
-				}}
-			>
-				<CalendarPlusSolid />
 			</button>
 		</div>
 	{/if}

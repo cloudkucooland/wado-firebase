@@ -137,12 +137,12 @@ export default class association {
 		return days.get(this.Weekday);
 	}
 
-	public get ProperDisplay() {
+	public get ProperDisplay(): proper {
 		if (this.Proper == -1) return 'Any';
 		return this.Proper;
 	}
 
-	public get ReferenceDisplay() {
+	public get ReferenceDisplay(): string {
 		return this.Reference.id;
 	}
 
@@ -193,11 +193,11 @@ export default class association {
 		return astr.localeCompare(bstr);
 	}
 
-	public get dirty() {
+	public get dirty(): boolean {
 		return this._dirty;
 	}
 
-	public get dirtyStyle() {
+	public get dirtyStyle(): boolean {
 		if (this._dirty) return 'dirty';
 		return 'clean';
 	}

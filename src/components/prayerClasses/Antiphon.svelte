@@ -11,7 +11,6 @@
 
 	export let data: prayerFromFirestore;
 	export let id: string;
-	const qe: Readable<any> = getContext('qe');
 
 	const ant = new antiphon(data);
 	ant.id = id;
@@ -24,9 +23,6 @@
 			}}
 		>
 			<EditSolid />
-		</button>
-		<button on:click={$qe(ant)}>
-			<CloudMeatballSolid />
 		</button>
 	</div>{/if}
 <Heading tag="h6">Antiphon</Heading>
