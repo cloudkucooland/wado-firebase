@@ -190,6 +190,7 @@
 					new association(a.id, a.data() as associationFromFirestore)
 				];
 			}
+			editorInstance.commands.setContent(prayerData.body);
 		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
@@ -231,7 +232,7 @@
 			{#if $me.isEditor}
 				<TextEditor
 					bind:editor={editorInstance}
-					bind:content={prayerData.body}
+					content={prayerData.body}
 					contentprops={{ id: 'formats-ex' }}
 				>
 					<FormatButtonGroup
