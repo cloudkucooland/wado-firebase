@@ -37,17 +37,8 @@
 	import EditAssoc from './EditAssoc.svelte';
 	import EditPsalmAntiphon from './EditPsalmAntiphon.svelte';
 
+	import { FormatButtonGroup, TextEditor, InvisibleButtonGroup, UndoRedoButtonGroup } from '@flowbite-svelte-plugins/texteditor';
 	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
-	// import Underline from '@tiptap/extension-underline';
-	import Typography from '@tiptap/extension-typography';
-	import InvisibleCharacters from '@tiptap/extension-invisible-characters';
-
-	// these are in StarterKit
-	// import HardBreak from '@tiptap/extension-hard-break';
-	// import Document from '@tiptap/extension-document';
-	// import Paragraph from '@tiptap/extension-paragraph';
-	// import Text from '@tiptap/extension-text';
 
 	import association from '../model/association';
 	import prayer from '../model/prayer';
@@ -57,27 +48,39 @@
 	import commemoration from '../model/commemoration';
 
 	let me: Readable<User> = getContext('me');
-	let editor;
-	let element;
+
+	let editorInstance = $state<Editor | null>(null);
+	let isEditable = $state<boolean>(true);
+
+	function handleEditableToggle(editable: boolean) {
+		isEditable = editable;
+		console.log('Editor is now:', editable ? 'editable' : 'read-only');
+	}
+
+	onMount(async () => {
+		screenView('Edit Prayer');
+		await loadPrayer();
+	});
+
 	const classItems = Array.from(classes.keys(), (i) => {
 		return { name: i, value: i };
 	});
 
 	// @ts-ignore
-	export let params = { id };
+	const { params } = $props();
 	const id: string = params.id ? params.id : 'exnihilo';
-	let modalId: string = '';
-	let assocEditResult: association;
-	let assocAddResult: association;
+	let modalId = $state<string | null>(null);
+	let assocEditResult = $state<assocation | null>(null);
+	let assocAddResult = $state<association | null>(null);
 	const _p: prayer | hymn | psalm | antiphon | commemoration = new prayer({
 		Name: 'Loading',
 		Body: 'Loading'
 	});
-	$: prayerData = _p;
+	let prayerData = $state<prayer>(_p);
 	const _a: Array<association> = new Array();
-	$: associations = _a;
+	let associations = $state<Array<association>>(_a);
 
-	$: deleteModalOpen = false;
+	let deleteModalOpen = $state<boolean>(false);
 	function toggleDeleteOpen(e: Event): void {
 		const t = e.target as HTMLInputElement;
 		screenView('toggleDeleteOpen');
@@ -104,7 +107,7 @@
 		toasts.success('Association deleted', t.value);
 	}
 
-	$: editModalOpen = false;
+	let editModalOpen = $state<boolean>(false);
 	async function toggleEditOpen(e: Event): Promise<void> {
 		const t = e.target as HTMLInputElement;
 		screenView('toggleEditOpen');
@@ -133,7 +136,7 @@
 		}
 	}
 
-	$: addAssocModalOpen = false;
+	let addAssocModalOpen = $state<boolean>(false);
 	async function toggleAddAssocOpen(e: Event): Promise<void> {
 		console.log(e);
 		const t = e.target as HTMLInputElement;
@@ -192,7 +195,7 @@
 		recordEvent('save_prayer', { id: id });
 
 		try {
-			prayerData.body = editor.getHTML();
+			prayerData.body = editorInstance.getHTML();
 			prayerData.lastEditor = auth.currentUser.displayName;
 			prayerData.lastEdited = new Date().toISOString();
 			await setDoc(doc(db, 'prayers', id), prayerData.toFirebase());
@@ -202,30 +205,6 @@
 			toasts.error(err.message);
 		}
 	}
-
-	onMount(async () => {
-		screenView('Edit Prayer');
-		await loadPrayer();
-		editor = new Editor({
-			element: element,
-			content: prayerData.body,
-			extensions: [StarterKit, Typography, InvisibleCharacters],
-			parseOptions: {
-				preserveWhitespace: 'full'
-			},
-			onTransaction: () => {
-				// force re-render so `editor.isActive` works as expected
-				editor = editor;
-				// console.log(editor);
-			}
-		});
-	});
-
-	onDestroy(() => {
-		if (editor) {
-			editor.destroy();
-		}
-	});
 </script>
 
 <svelte:head>
@@ -245,38 +224,15 @@
 		</div>
 		<div class="col-span-12">
 			{#if $me.isEditor}
-				<Button
-					color="red"
-					onclick={() => {
-						editor.chain().focus().toggleBold().run();
-					}}>Bold</Button
+				<TextEditor
+					bind:editor={editorInstance}
+					bind:content={prayerData.body}
+					contentprops={{ id: 'formats-ex' }}
 				>
-				<Button
-					color="red"
-					onclick={() => {
-						editor.chain().focus().toggleItalic().run();
-					}}>Italic</Button
-				>
-				<Button
-					color="red"
-					onclick={() => {
-						editor.chain().focus().toggleUnderline().run();
-					}}>Underline</Button
-				>
-				<Button
-					color="red"
-					onclick={() => {
-						editor.chain().focus().undo().run();
-					}}>Undo</Button
-				>
-				<Button
-					color="red"
-					onclick={() => {
-						editor.chain().focus().redo().run();
-					}}>Redo</Button
-				>
-				<div bind:this={element} class="border"></div>
-				<!-- {#if editor}<BubbleMenu editor={editor} />{/if} -->
+					<FormatButtonGroup editor={editorInstance} code={false} highlight={false} link={false} removeLink={false} strike={false} subscript={false} superscript={false} />
+					<UndoRedoButtonGroup editor={editorInstance} />
+					<InvisibleButtonGroup editor={editorInstance} />
+				</TextEditor>
 			{:else}
 				<p>{@html prayerData.body}</p>
 			{/if}
