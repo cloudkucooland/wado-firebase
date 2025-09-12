@@ -132,12 +132,12 @@
 			console.debug(t.value);
 			const [p, l] = lections.get(t.value);
 			modalData = new mdClass({
-				morning: l.morning,
-				evening: l.evening,
-				morningpsalm: l.morningpsalm,
-				eveningpsalm: l.eveningpsalm,
-				morningtitle: l.morningtitle,
-				eveningtitle: l.eveningtitle,
+				morning: l.morning.trim(),
+				evening: l.evening.trim(),
+				morningpsalm: l.morningpsalm.trim(),
+				eveningpsalm: l.eveningpsalm.trim(),
+				morningtitle: l.morningtitle.trim(),
+				eveningtitle: l.eveningtitle.trim(),
 				season: p.season,
 				proper: p.proper,
 				weekday: p.weekday,
@@ -145,7 +145,6 @@
 				key: t.value
 			});
 		}
-		console.debug(modalData);
 	}
 
 	async function confirmLectionModal(): Promise<void> {
@@ -155,24 +154,23 @@
 		// do not write the cached data back, refetch it
 		// firebase only accepts generic objects
 		const data: object = {
-			morning: modalData.morning,
-			morningpsalm: modalData.morningpsalm,
-			morningtitle: modalData.morningtitle,
-			evening: modalData.evening,
-			eveningpsalm: modalData.eveningpsalm,
-			eveningtitle: modalData.eveningtitle,
+			morning: modalData.morning.trim(),
+			morningpsalm: modalData.morningpsalm.trim(),
+			morningtitle: modalData.morningtitle.trim(),
+			evening: modalData.evening.trim(),
+			eveningpsalm: modalData.eveningpsalm.trim(),
+			eveningtitle: modalData.eveningtitle.trim(),
 			season: modalData.season,
 			proper: modalData.proper,
 			weekday: modalData.weekday
 		};
-		// console.debug('to bare object', data);
 
 		// try to link to the formatted psalms
 		try {
 			let q = query(
 				collection(db, 'prayers'),
 				where('Class', '==', 'psalm'),
-				where('Name', '==', modalData.morningpsalm)
+				where('Name', '==', modalData.morningpsalm.trim())
 			);
 			let res = await getDocsCacheFirst(q);
 			for (const a of res.docs) {
@@ -183,7 +181,7 @@
 			q = query(
 				collection(db, 'prayers'),
 				where('Class', '==', 'psalm'),
-				where('Name', '==', modalData.eveningpsalm)
+				where('Name', '==', modalData.eveningpsalm.trim())
 			);
 			res = await getDocsCacheFirst(q);
 			for (const a of res.docs) {
@@ -196,7 +194,6 @@
 		}
 
 		// send to firestore
-		// console.debug('after refs', data);
 		try {
 			if (modalData.path == '' || typeof modalData.path == 'undefined') {
 				const added = await addDoc(collection(db, 'lections', year, 'l'), data);
