@@ -18,8 +18,8 @@
 	import Commemoration from './prayerClasses/Commemoration.svelte';
 	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
 
-	// let proper: Readable<proper> = getContext('forProper');
-	$: proper = getContext('forProper');
+	// let forProper: Readable<proper> = getContext('forProper');
+	$: forProper = getContext('forProper');
 
 	export let name: string;
 	export let max: number = 1;
@@ -178,7 +178,7 @@
 	}
 </script>
 
-{#await loaddata($proper)}
+{#await loaddata($forProper)}
 	<Spinner />
 {:then data}
 	{#if $showEdit}
