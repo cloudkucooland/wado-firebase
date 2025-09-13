@@ -52,9 +52,15 @@
 	function keypress(e: Event): void {
 		if (e.code == 'KeyA') {
 			showAlt.set(!$showAlt);
+			let on = 'yes';
+			if ($showAlt == false) on = 'no';
+			toasts.success('Show Alternatives', on);
 		}
 		if (e.code == 'KeyL') {
 			showEdit.set(!$showEdit);
+			let on = 'yes';
+			if ($showEdit == false) on = 'no';
+			toasts.success('Show Edit Links', on);
 		}
 	}
 

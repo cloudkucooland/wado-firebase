@@ -41,7 +41,6 @@ registerVersion('WADO', '2.1');
 export const auth = getAuth(app);
 export let db = initializeFirestore(app, {
 	localCache: persistentLocalCache({
-		useFetchStreams: true,
 		tabManager: persistentMultipleTabManager()
 	})
 });

@@ -9,8 +9,10 @@
 	import { push } from 'svelte-spa-router';
 
 	export let data: prayerFromFirestore;
-	export let bold: boolean;
 	export let id: string;
+	export let bold: boolean;
+	export const subunit: string | null = null;
+	export const gloria: boolean = false;
 
 	let cssClass = 'prayer';
 	if (bold) {

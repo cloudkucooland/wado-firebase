@@ -20,6 +20,7 @@
 	export let data: Map<string, prayerFromFirestore>;
 	export let subunit: string | null;
 	export let bold: boolean;
+	export let gloria: boolean;
 
 	// the first tab is active
 	let isA: number = 0;
@@ -46,7 +47,7 @@
 <Tabs>
 	{#each [...data] as [id, d]}
 		<TabItem title={shortname(d.Name)} open={isActive()}>
-			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} />
+			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} {gloria} />
 		</TabItem>
 	{/each}
 </Tabs>

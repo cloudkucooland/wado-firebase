@@ -11,6 +11,9 @@
 
 	export let data: prayerFromFirestore;
 	export let id: string;
+	export const bold: boolean = false;
+	export const subunit: string | null = null;
+	export const gloria: boolean = false;
 
 	const h = new hymn(data);
 	h.id = id;

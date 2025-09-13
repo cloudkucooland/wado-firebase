@@ -16,6 +16,8 @@
 	export let data: prayerFromFirestore;
 	export let id: string;
 	export let gloria: boolean;
+	export const bold: boolean = false;
+	export const subunit: string | null = null;
 
 	const p = new psalm(data);
 	p.id = id;
@@ -28,7 +30,7 @@
 				antID = snap.id;
 				antiphon = snap.data() as prayerFromFirestore;
 			});
-		} catch (err) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}

@@ -3,12 +3,14 @@ import prayer from './prayer';
 import type { DocumentReference } from 'firebase/firestore';
 
 export default class commemoration extends prayer {
-	public morningcollect: string;
-	public eveningcollect: string;
+	public morningcollect: string | null;
+	public eveningcollect: string | null;
 
 	public constructor(obj: prayerFromFirestore) {
 		super(obj);
 		if (obj.Class) this.class = obj.Class;
+		this.morningcollect = null;
+		this.eveningcollect = null;
 		if (obj.MorningCollect) this.morningcollect = obj.MorningCollect;
 		if (obj.EveningCollect) this.eveningcollect = obj.EveningCollect;
 	}

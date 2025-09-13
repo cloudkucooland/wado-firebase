@@ -11,7 +11,9 @@
 
 	export let data: prayerFromFirestore;
 	export let id: string;
-	export let subunit: string;
+	export const bold: boolean = false;
+	export let subunit: string | null;
+	export const gloria: boolean = false;
 
 	const c = new commemoration(data);
 	c.id = id;

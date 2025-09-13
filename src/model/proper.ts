@@ -69,7 +69,7 @@ export default class proper {
 
 	// public toString(): string { return this.propername; }
 
-	private _weekdayDisplay(day?: number): string {
+	private _weekdayDisplay(day?: number): string | undefined {
 		if (!day) day = this.weekday;
 
 		const days = new Map([
@@ -180,6 +180,7 @@ export default class proper {
 
 	// day of year for a feast
 	private _fdoy(n: string): number {
+		// @ts-ignore
 		return this.getDayOfYear(this._feasts.get(n));
 	}
 
@@ -188,6 +189,7 @@ export default class proper {
 		const nextday = 86400000;
 		const f = (n: string): number => {
 			// shortcut for getting a feast's getTime()
+			// @ts-ignore
 			return this._feasts.get(n).getTime();
 		};
 		const t = forday.getTime();
@@ -455,6 +457,7 @@ export default class proper {
 		if (!lut.has(card)) {
 			return card + 'th';
 		}
+		// @ts-ignore
 		return lut.get(card);
 	}
 

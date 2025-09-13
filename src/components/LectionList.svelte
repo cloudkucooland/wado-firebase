@@ -240,7 +240,7 @@
 		<TableBody>
 			{#each [...lections] as [k, v]}
 				<TableBodyRow>
-					<TableBodyCell colspan="3">
+					<TableBodyCell colspan={3}>
 						{#if $me.isEditor}
 							<Button color="red" onclick={toggleLectionModalOpen} value={k}>{k}</Button>
 						{:else}

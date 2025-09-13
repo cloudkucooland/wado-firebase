@@ -19,6 +19,7 @@ export default class association {
 
 	constructor(id: string, d: associationFromFirestore) {
 		this.id = id;
+		this._dirty = false;
 
 		this.Location = d.Location ? d.Location : 'UNSET';
 		if (association.locations.indexOf(this.Location) == -1) {
@@ -52,6 +53,7 @@ export default class association {
 			this._dirty = true;
 			this.Season = 'Any';
 		}
+		// @ts-ignore
 		this._season = season.LUT.get(this.Season);
 
 		this.Proper = d.Proper ? d.Proper : -1; // Any;
@@ -110,7 +112,7 @@ export default class association {
 		// if (this._dirty) console.error(d, this);
 	}
 
-	public toFirebase() {
+	public toFirebase(): any {
 		return {
 			CalendarDate: this.CalendarDate,
 			Location: this.Location,
@@ -123,7 +125,7 @@ export default class association {
 		};
 	}
 
-	public get WeekdayDisplay() {
+	public get WeekdayDisplay(): string {
 		const days = new Map([
 			[-1, 'Any'],
 			[0, 'Sunday'],
@@ -134,10 +136,11 @@ export default class association {
 			[5, 'Friday'],
 			[6, 'Saturday']
 		]);
+		// @ts-ignore
 		return days.get(this.Weekday);
 	}
 
-	public get ProperDisplay(): proper {
+	public get ProperDisplay(): number | string {
 		if (this.Proper == -1) return 'Any';
 		return this.Proper;
 	}
@@ -171,6 +174,7 @@ export default class association {
 		// instead of doing each value by hand, just turn it into an easily sortable string and do that
 		// like, follow and subscribe for more kludgey life-hacks
 		const astr =
+			// @ts-ignore
 			String(season.LUT.get(A.Season).churchPos).padStart(3, '0') +
 			' ' +
 			anyLastNumber(A.Proper) +
@@ -181,6 +185,7 @@ export default class association {
 			' ' +
 			A.Weight;
 		const bstr =
+			// @ts-ignore
 			String(season.LUT.get(B.Season).churchPos).padStart(3, '0') +
 			' ' +
 			anyLastNumber(B.Proper) +
@@ -197,7 +202,7 @@ export default class association {
 		return this._dirty;
 	}
 
-	public get dirtyStyle(): boolean {
+	public get dirtyStyle(): string {
 		if (this._dirty) return 'dirty';
 		return 'clean';
 	}

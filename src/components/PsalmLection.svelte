@@ -22,7 +22,7 @@
 		_resolved?: any; // model/psalm
 
 		constructor(obj: any) {
-			if (obj.id) this.id = obj.id;
+			this.id = obj.id;
 			if (obj.morningpsalm) this.morningpsalm = obj.morningpsalm;
 			if (obj.eveningpsalm) this.eveningpsalm = obj.eveningpsalm;
 			if (obj._morningpsalmref) this._morningpsalmref = obj._morningpsalmref;

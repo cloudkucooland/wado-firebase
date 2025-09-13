@@ -50,6 +50,7 @@
 		const m: Map<string, prayerFromFirestore> = new Map();
 
 		// closure - needs m
+		// @ts-ignore
 		const doQuery = async (q) => {
 			try {
 				const res = await getDocsCacheFirst(q);
@@ -59,7 +60,7 @@
 					const dd = d.data() as prayerFromFirestore;
 					if (dd.License) m.set(d.id, dd);
 				}
-			} catch (err) {
+			} catch (err: any) {
 				console.log(err);
 				toasts.error(err.message);
 			}

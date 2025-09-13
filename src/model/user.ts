@@ -135,7 +135,7 @@ export default class user {
 			const lastDate = new Date(sd[0], sd[1] - 1, sd[2]);
 			// @ts-expect-error
 			const diff = today - lastDate;
-			if (diff >= 43200000 && dif <= 129600000) {
+			if (diff >= 43200000 && diff <= 129600000) {
 				// more than half a day, less than a day-and-a-half
 				const newStreak = dd.consecutiveDays + 1;
 				await setDoc(
