@@ -14,6 +14,8 @@
 
 <Heading>Prayer</Heading>
 <Location name="GENERAL-WITHYOU" />
+<br />
+
 <Location name="SEXT-PRAYER" />
 
 <Heading>Psalter</Heading>

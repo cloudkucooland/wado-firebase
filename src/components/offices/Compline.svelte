@@ -31,7 +31,7 @@
 
 <Heading>Prayers</Heading>
 <Location name="GENERAL-WITHYOU" />
-
+<br />
 <Subheading>The Kyrie</Subheading>
 <Location name="KYRIE" />
 <Silence>Silent Prayer</Silence>

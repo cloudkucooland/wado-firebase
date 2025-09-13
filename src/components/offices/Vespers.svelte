@@ -19,6 +19,8 @@
 <Subheading>+ Thanksgiving for Light</Subheading>
 <Rubric>(Always included in Festive Vespers or Evensong)</Rubric>
 <Location name="GENERAL-WITHYOU" />
+<br />
+
 <Location name="VESPER-COLLECT1" maxAlt={3} />
 <Rubric>The community is seated.</Rubric>
 

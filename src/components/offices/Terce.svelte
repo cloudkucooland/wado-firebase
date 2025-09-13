@@ -14,6 +14,8 @@
 
 <Heading>Prayer</Heading>
 <Location name="GENERAL-WITHYOU" />
+<br />
+
 <Location name="TERCE-PRAYER" max={5} />
 
 <Heading>Psalter</Heading>
