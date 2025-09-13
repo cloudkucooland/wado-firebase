@@ -5,7 +5,6 @@ const storedShowMedia: boolean = localStorage['showMedia'] === 'true' ? true : f
 export const showMedia = writable(storedShowMedia);
 showMedia.subscribe((value: boolean) => {
 	if (value !== true) value = false;
-	// console.debug("storing showMedia", value);
 	localStorage['showMedia'] = value ? 'true' : 'false';
 });
 
@@ -24,14 +23,3 @@ showAlt.subscribe((value: boolean) => {
 	if (value !== true) value = false;
 	localStorage['showAlt'] = value ? 'true' : 'false';
 });
-
-// enable offline mode
-/* 
-const storedOffline: boolean =
-  localStorage["Offline"] === "true" ? true : false;
-export const offline = writable(storedOffline);
-offline.subscribe((value: boolean) => {
-  if (value !== true) value = false;
-  localStorage["Offline"] = value ? "true" : "false";
-});
- */
