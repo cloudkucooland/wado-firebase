@@ -19,7 +19,7 @@ export default class season {
 		this.properName = obj.properName ? obj.properName : 'Proper';
 	}
 
-	public static LUT = new Map([
+	public static LUT = new Map<string, season>([
 		[
 			'advent',
 			new season({
