@@ -140,6 +140,7 @@
 	}
 
 	async function loadLocation(id: string): Promise<void> {
+		console.log('loadLocation', id);
 		const progressBar = toasts.success('Loading Data', id, { duration: 0 });
 		let res: unknown; // FIXME
 

@@ -143,7 +143,6 @@
 
 	let addAssocModalOpen = $state<boolean>(false);
 	async function toggleAddAssocOpen(e: Event): Promise<void> {
-		console.log(e);
 		const t = e.target as HTMLInputElement;
 		screenView('toggleAddAssocOpen');
 		addAssocModalOpen = !addAssocModalOpen;

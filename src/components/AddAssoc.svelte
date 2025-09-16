@@ -5,44 +5,34 @@
 	import association from '../model/association';
 	import type { associationFromFirestore } from '../model/types';
 	import season from '../model/season';
-	import { Input, Button } from 'flowbite-svelte';
+	import { Input, Button, Select as BasicSelect } from 'flowbite-svelte';
 	import Select from 'svelte-select';
 	import { index } from '../meili';
 	import { toasts } from 'svelte-toasts';
 
-	export let result: association;
-	export let location: string = '';
-	let a: association = new association('', {
+	export let result: association; // what is returned to the caller (EditLocation.svelte)
+	export let location: string; // = 'UNSET';
+	$: a = new association('', {
 		Location: location,
-		Season: result && result.Season ? result.Season : 'Any',
-		Proper: result && result.Proper ? +result.Proper : -1,
-		Weekday: result && result.Weekday ? +result.Weekday : -1,
-		Year: result && result.Year ? result.Year : 'Any',
-		Weight: result && result.Weight ? +result.Weight : 1,
-		Reference: result && result.Reference ? result.Reference : doc(db, 'ex', 'nihilo')
+		Season: 'Any',
+		Proper: -1,
+		Weekday: -1,
+		Year: 'Any',
+		Weight: 1,
+		Reference: doc(db, 'ex', 'nihilo')
 	} as associationFromFirestore);
-	console.log('location', location, 'incoming', result, 'built', a);
 
-	let calDateSet = false;
-	let selectedSeason = season.LUT.get(a.Season);
-	console.log(a.Season, selectedSeason);
-	let properName = 'Proper';
+	$: calDateSet = false;
+	$: selectedSeason = season.LUT.get('Any');
+	$: properName = 'Proper';
 
 	onMount(async () => {
-		console.log('onMount a', a);
 		result = a;
 	});
 
 	afterUpdate(() => {
-		console.log('afterUpdate');
-
 		result = a;
 		selectedSeason = season.LUT.get(a.Season);
-		if (!selectedSeason) {
-			console.log('selectedSeason', selectedSeason);
-			return; // XXXX should not happen, debugging
-		}
-
 		if (result.CalendarDate !== 'Any') {
 			calDateSet = true;
 		} else {
@@ -51,8 +41,7 @@
 		properName = selectedSeason.properName ? selectedSeason.properName : 'Proper';
 	});
 
-	async function loadOptions(searchString: string): Promise<void> {
-		console.log(searchString);
+	async function loadOptions(searchString: string): Promise<Array<Any>> {
 		const items = [];
 
 		try {
@@ -72,7 +61,6 @@
 	}
 
 	function doSelect(e: any): void {
-		console.log(e.detail);
 		try {
 			a.Reference = doc(db, 'prayers', e.detail.value);
 		} catch (err: Error) {
@@ -90,7 +78,7 @@
 		{location}
 	</div>
 	<div class="col-span-4">
-		<Button href="#/addPrayer">Add Prayer</Button>
+		<Button color="grey" href="#/addPrayer">Add Prayer</Button>
 	</div>
 
 	<div class="col-span-2">Prayer</div>
@@ -98,15 +86,15 @@
 		<Select
 			name="prayer"
 			placeholder="search for prayer"
-			oninput={loadOptions}
-			onchange={doSelect}
+			{loadOptions}
+			on:change={doSelect}
 			{groupBy}
 		/>
 	</div>
 
 	<div class="col-span-4">Season</div>
 	<div class="col-span-8">
-		<Select bind:value={a.Season} disabled={calDateSet}>
+		<BasicSelect bind:value={a.Season} disabled={calDateSet}>
 			<option
 				value="Any"
 				onchange={() => {
@@ -117,7 +105,7 @@
 			{#each Array.from(season.LUT.keys()) as s}
 				<option value={s}>{s}</option>
 			{/each}
-		</Select>
+		</BasicSelect>
 	</div>
 
 	<div class="col-span-4">{properName} <span class="small">(-1 for "Any")</span></div>
@@ -133,7 +121,7 @@
 
 	<div class="col-span-4">Weekday</div>
 	<div class="col-span-8">
-		<Select bind:value={a.Weekday} disabled={calDateSet || !selectedSeason.useWeekdays}>
+		<BasicSelect bind:value={a.Weekday} disabled={calDateSet || !selectedSeason.useWeekdays}>
 			<option value={-1}>Any</option>
 			<option value={0}>Sunday</option>
 			<option value={1}>Monday</option>
@@ -142,17 +130,17 @@
 			<option value={4}>Thursday</option>
 			<option value={5}>Friday</option>
 			<option value={6}>Saturday</option>
-		</Select>
+		</BasicSelect>
 	</div>
 
 	<div class="col-span-4">Year</div>
 	<div class="col-span-8">
-		<Select bind:value={a.Year} disabled={calDateSet}>
+		<BasicSelect bind:value={a.Year} disabled={calDateSet}>
 			<option value="Any">Any</option>
 			<option value="A">A</option>
 			<option value="B">B</option>
 			<option value="C">C</option>
-		</Select>
+		</BasicSelect>
 	</div>
 
 	<div class="col-span-4">Weight</div>
