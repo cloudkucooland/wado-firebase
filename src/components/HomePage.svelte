@@ -28,6 +28,7 @@
 	const properFromDate = proper.fromDate(params.officeDate);
 	let forProper: Writable<proper> = writable(properFromDate);
 	setContext('forProper', forProper);
+	setContext('officeDate', params.officeDate); // only used by OSLCommemorations
 
 	$: officeName = params.officeName;
 	$: office = getOffice(officeName);
