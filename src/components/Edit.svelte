@@ -26,7 +26,6 @@
 		deleteDoc
 	} from 'firebase/firestore';
 	import { db, auth, recordEvent, screenView } from '../firebase';
-	import { classes, getClass, type prayerClass } from '../model/prayerClasses';
 	import { toasts } from 'svelte-toasts';
 	import { link } from 'svelte-spa-router';
 	import { getContext, onMount, onDestroy } from 'svelte';
@@ -43,19 +42,28 @@
 		InvisibleButtonGroup,
 		UndoRedoButtonGroup
 	} from '@flowbite-svelte-plugins/texteditor';
-	// import { Editor } from '@tiptap/core';
+	// import type { Editor } from '@tiptap/core';
+	import type { Editor } from '@flowbite-svelte-plugins/texteditor/node_modules/@tiptap/core';
 
 	import association from '../model/association';
 	import prayer from '../model/prayer';
 	import hymn from '../model/hymn';
 	import psalm from '../model/psalm';
-	import type antiphon from '../model/antiphon';
+	import antiphon from '../model/antiphon';
 	import commemoration from '../model/commemoration';
 
 	let me: Readable<User> = getContext('me');
 
 	let editorInstance = $state<Editor | null>(null);
 	let isEditable = $state<boolean>(true);
+
+	const classes: Map<string, prayer> = new Map([
+		['antiphon', antiphon],
+		['commemoration', commemoration],
+		['hymn', hymn],
+		['prayer', prayer],
+		['psalm', psalm]
+	]);
 
 	function handleEditableToggle(editable: boolean) {
 		isEditable = editable;
@@ -177,7 +185,7 @@
 				throw new Error('prayer not found: ' + id);
 			}
 
-			const c: prayerClass = getClass(d.Class);
+			const c: prayer = getClass(d.Class);
 			prayerData = new c(d);
 
 			const q = query(collection(db, 'associations'), where('Reference', '==', ref));
@@ -209,6 +217,15 @@
 			console.error(err);
 			toasts.error(err.message);
 		}
+	}
+
+	// use getClass to actually do the lookup
+	function getClass(className: string): prayer {
+		if (!classes.has(className)) {
+			console.log('invalid class', className);
+			className = 'prayer';
+		}
+		return classes.get(className);
 	}
 </script>
 

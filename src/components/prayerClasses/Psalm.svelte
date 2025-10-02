@@ -15,7 +15,7 @@
 
 	export let data: prayerFromFirestore;
 	export let id: string;
-	export let gloria: boolean;
+	export let gloria: boolean = false;
 	export const bold: boolean = false;
 	export const subunit: string | null = null;
 

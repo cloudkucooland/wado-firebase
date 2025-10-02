@@ -10,12 +10,18 @@
 		const month = d[1];
 		const day = d[2];
 
+		// hurrah typescript...
+		const cred: RequestCredentials = 'include';
+		const mode: RequestMode = 'cors';
+		const redirect: RequestRedirect = 'manual';
+		const rp: ReferrerPolicy = 'origin';
+
 		const request = {
 			method: 'GET',
-			mode: 'cors',
-			credentials: 'include',
-			redirect: 'manual',
-			referrerPolicy: 'origin'
+			mode: mode,
+			credential: cred,
+			redirect: redirect,
+			referrerPolicy: rp
 		};
 
 		const response = await fetch(
