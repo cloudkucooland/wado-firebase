@@ -15,7 +15,7 @@
 			se.checked = $showEdit;
 			const sa = document.getElementById('showAlt') as HTMLInputElement;
 			sa.checked = $showAlt;
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 		}
 	});

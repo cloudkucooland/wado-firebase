@@ -17,6 +17,7 @@
 	import Antiphon from './prayerClasses/Antiphon.svelte';
 	import Commemoration from './prayerClasses/Commemoration.svelte';
 	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
+	import type { SvelteComponent } from 'svelte';
 
 	// let forProper: Readable<proper> = getContext('forProper');
 	$: forProper = getContext('forProper');
@@ -28,7 +29,7 @@
 	export let subunit: string | null = null;
 	export let gloria: boolean = false; // passthrough for psalms
 
-	export const lookup: Map<string, any> = new Map([
+	export const lookup: Map<string, SvelteComponent> = new Map([
 		['other', Prayer],
 		['hymn', Hymn],
 		['prayer', Prayer],

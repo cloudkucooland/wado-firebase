@@ -41,7 +41,7 @@
 		properName = selectedSeason.properName ? selectedSeason.properName : 'Proper';
 	});
 
-	async function loadOptions(searchString: string): Promise<Array<Any>> {
+	async function loadOptions(searchString: string): Promise<Array<any>> {
 		const items = [];
 
 		try {
@@ -53,7 +53,7 @@
 			for (const r of searchresult.hits) {
 				items.push({ value: r.fsid, label: r.Name, group: r.Class });
 			}
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -63,7 +63,7 @@
 	function doSelect(e: any): void {
 		try {
 			a.Reference = doc(db, 'prayers', e.detail.value);
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -78,7 +78,7 @@
 		{location}
 	</div>
 	<div class="col-span-4">
-		<Button color="grey" href="#/addPrayer">Add Prayer</Button>
+		<Button color="gray" href="#/addPrayer">Add Prayer</Button>
 	</div>
 
 	<div class="col-span-2">Prayer</div>

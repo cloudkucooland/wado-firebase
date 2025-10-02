@@ -132,7 +132,7 @@
 					});
 				}
 			);
-		} catch (error: Error) {
+		} catch (error: any) {
 			console.error(error);
 			progressBar.remove();
 			toasts.error(error.message, 'upload failed (try)', {
@@ -147,7 +147,7 @@
 			await deleteObject(ref(storage, 'media/' + id));
 			await updateDoc(doc(db, 'prayers', id), { Media: deleteField() });
 			media = null;
-		} catch (error: Error) {
+		} catch (error: any) {
 			console.log(error);
 			toasts.error(error.message, id, { uid: 72 });
 		}

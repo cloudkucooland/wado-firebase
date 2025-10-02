@@ -43,7 +43,7 @@
 		InvisibleButtonGroup,
 		UndoRedoButtonGroup
 	} from '@flowbite-svelte-plugins/texteditor';
-	import { Editor } from '@tiptap/core';
+	// import { Editor } from '@tiptap/core';
 
 	import association from '../model/association';
 	import prayer from '../model/prayer';
@@ -75,7 +75,7 @@
 	const { params } = $props();
 	const id: string = params.id ? params.id : 'exnihilo';
 	let modalId = $state<string | null>(null);
-	let assocEditResult = $state<assocation | null>(null);
+	let assocEditResult = $state<association | null>(null);
 	let assocAddResult = $state<association | null>(null);
 	const _p: prayer | hymn | psalm | antiphon | commemoration = new prayer({
 		Name: 'Loading',
@@ -100,7 +100,7 @@
 
 		try {
 			await deleteDoc(doc(db, 'associations', t.value));
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -135,7 +135,7 @@
 			newAssn.push(assocEditResult);
 			associations = newAssn;
 			toasts.success('Saved Association', t.value);
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -162,7 +162,7 @@
 				new association(refetched.id, refetched.data() as associationFromFirestore)
 			];
 			recordEvent('add_assoc', { id: id, new: added.id });
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -205,7 +205,7 @@
 			prayerData.lastEdited = new Date().toISOString();
 			await setDoc(doc(db, 'prayers', id), prayerData.toFirebase());
 			toasts.success('Saved Prayer', id);
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.error(err);
 			toasts.error(err.message);
 		}
@@ -406,7 +406,7 @@
 		<Button color="red" onclick={toggleAddAssocOpen}>Add</Button>
 	{/if}
 </div>
-<Modal id="deleteModal" bind:open={deleteModalOpen} backdrop="static">
+<Modal id="deleteModal" bind:open={deleteModalOpen}>
 	<FBHeading tag="h3">Delete Association</FBHeading>
 	<div>Confirm Delete</div>
 	<div>

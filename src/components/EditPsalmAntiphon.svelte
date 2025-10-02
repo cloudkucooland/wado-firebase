@@ -23,7 +23,7 @@
 			for (const r of searchresult.hits) {
 				items.push({ value: r.fsid, label: r.Name, group: r.Class });
 			}
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -38,7 +38,7 @@
 			console.log(snap);
 			resolved = snap.data();
 			console.debug(resolved);
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -49,7 +49,7 @@
 			try {
 				const snap = await getDoc(result);
 				resolved = snap.data();
-			} catch (err: Error) {
+			} catch (err: any) {
 				console.log(err);
 				toasts.error(err.message);
 			}

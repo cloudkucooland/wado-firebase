@@ -63,7 +63,7 @@
 
 		try {
 			await deleteDoc(doc(db, 'associations', t.value));
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -110,7 +110,7 @@
 
 			associations = new Map([...newAssn].sort(association.sort));
 			toasts.success('Saved Association', t.value);
-		} catch (error: Error) {
+		} catch (error: any) {
 			console.log(error);
 			toasts.error(error.message);
 		}
@@ -133,7 +133,7 @@
 			console.debug(assocAddResult);
 			await addDoc(collection(db, 'associations'), assocAddResult.toFirebase());
 			loadLocation(id); // lazy but does the job -- redo if assocs get HUGE
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -142,13 +142,13 @@
 	async function loadLocation(id: string): Promise<void> {
 		console.log('loadLocation', id);
 		const progressBar = toasts.success('Loading Data', id, { duration: 0 });
-		let res: unknown; // FIXME
+		let res: any; // FIXME
 
 		const newAssn: Map<string, association> = new Map();
 		try {
 			const q = query(collection(db, 'associations'), where('Location', '==', id));
 			res = await getDocs(q);
-		} catch (error: Error) {
+		} catch (error: any) {
 			console.log(error);
 			toasts.error(error.message);
 		}
@@ -162,7 +162,7 @@
 				toasts.info('Deleting Invalid Association', n.id);
 				try {
 					deleteDoc(doc(db, 'associations', n.id)); // no need to await here
-				} catch (err: Error) {
+				} catch (err: any) {
 					console.log(err);
 				}
 				continue;
@@ -174,7 +174,7 @@
 				toasts.info('Deleting Invalid Association', n.id);
 				try {
 					deleteDoc(doc(db, 'associations', n.id)); // no need to await here
-				} catch (err: Error) {
+				} catch (err: any) {
 					console.log(err);
 				}
 				continue;
@@ -186,7 +186,7 @@
 				// @ts-ignore
 				n._PrayerName = pp.name;
 				newAssn.set(a.id, n);
-			} catch (err: Error) {
+			} catch (err: any) {
 				console.log(err);
 				toasts.error(err.message);
 			}
@@ -264,7 +264,7 @@
 		</div>
 	</div>
 </div>
-<Modal id="deleteModal" bind:open={deleteModalOpen} backdrop="static">
+<Modal id="deleteModal" bind:open={deleteModalOpen}>
 	<h3>Delete Association</h3>
 	<div>Confirm Delete</div>
 	<div>

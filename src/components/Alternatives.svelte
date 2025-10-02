@@ -7,8 +7,9 @@
 	import Antiphon from './prayerClasses/Antiphon.svelte';
 	import Commemoration from './prayerClasses/Commemoration.svelte';
 	import type { prayerFromFirestore } from '../model/types';
+	import type { SvelteComponent } from 'svelte';
 
-	export const lookup = new Map([
+	export const lookup: Map<string, SvelteComponent> = new Map([
 		['other', Prayer],
 		['hymn', Hymn],
 		['prayer', Prayer],
@@ -42,12 +43,20 @@
 		}
 		return shortName;
 	}
+
+	function lookupGet(c: string): SvelteComponent {
+		if (!lookup.has(c)) {
+			console.log('invalid class', c);
+			c = 'prayer';
+		}
+		return lookup.get(c);
+	}
 </script>
 
 <Tabs>
 	{#each [...data] as [id, d]}
 		<TabItem title={shortname(d.Name)} open={isActive()}>
-			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} {gloria} />
+			<svelte:component this={lookupGet(d.Class)} data={d} {id} {bold} {subunit} {gloria} />
 		</TabItem>
 	{/each}
 </Tabs>

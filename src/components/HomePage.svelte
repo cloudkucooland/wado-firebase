@@ -100,13 +100,13 @@
 
 <div class={$forProper.season}>
 	<div class="flex">
-		<Tabs class="flex-auto">
+		<Tabs class="flex-1">
 			{#each offices($forProper.weekday) as o}
 				<TabItem title={o} open={officeName == o} onclick={() => tabSwitch(o)} />
 			{/each}
 		</Tabs>
 		<Datepicker
-			class="flex-auto"
+			class="flex-1"
 			onselect={(d) => {
 				const subs = d.toISOString().split('T');
 				if (params.officeDate == subs[0]) return;
@@ -114,6 +114,7 @@
 				push('/office/' + officeName + '/' + subs[0]);
 			}}
 		/>
+		<div class="flex-1">&nbsp;</div>
 	</div>
 
 	<div class="max-w-200">

@@ -66,7 +66,7 @@
 				const res = await getDocCacheFirst(ps);
 				d._resolved = res.data();
 				d.id = d._morningpsalmref;
-			} catch (err) {
+			} catch (err: any) {
 				console.log(err);
 				toasts.error(err.message);
 			}
@@ -77,7 +77,7 @@
 				const res = await getDocCacheFirst(ps);
 				d._resolved = res.data();
 				d.id = d._eveningpsalmref;
-			} catch (err) {
+			} catch (err: any) {
 				console.log(err);
 				toasts.error(err.message);
 			}

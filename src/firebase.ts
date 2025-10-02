@@ -36,10 +36,10 @@ setConsent({
 });
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+const fbapp = initializeApp(firebaseConfig);
 registerVersion('WADO', '2.1');
-export const auth = getAuth(app);
-export let db = initializeFirestore(app, {
+export const auth = getAuth(fbapp);
+export let db = initializeFirestore(fbapp, {
 	localCache: persistentLocalCache({
 		tabManager: persistentMultipleTabManager()
 	})
@@ -51,7 +51,7 @@ let _analyticsRunning: boolean = false;
 export function initAnalytics() {
 	if (_analyticsRunning) return;
 	try {
-		analytics = getAnalytics(app);
+		analytics = getAnalytics(fbapp);
 	} catch (err) {
 		console.log(err);
 	}
@@ -73,7 +73,10 @@ export function recordEvent(name: string, details?: object) {
 }
 
 export function screenView(name: string) {
-	recordEvent('screen_view', { firebase_screen: name });
+	recordEvent('screen_view', {
+		firebase_screen: name,
+		firebase_screen_class: 'WADO'
+	});
 }
 
 export async function getDocsCacheFirst(q: Query) {
@@ -94,10 +97,10 @@ export async function getDocsCacheFirst(q: Query) {
 export async function getDocCacheFirst(r: DocumentReference) {
 	try {
 		const res = await getDocFromCache(r);
-		// console.debug('doc cache hit');
+		console.debug('doc cache hit');
 		return res;
 	} catch (err) {
-		// console.debug('doc cache miss');
+		console.debug('doc cache miss');
 		const res = await getDocFromServer(r);
 		return res;
 	}

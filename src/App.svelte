@@ -93,7 +93,7 @@
 			await signInWithPopup(auth, new FacebookAuthProvider());
 			loggedIn = true;
 			recordEvent('Facebook login');
-		} catch (err: Error) {
+		} catch (err: any) {
 			toasts.error(err.message);
 			console.log(err);
 		}
@@ -104,7 +104,7 @@
 			await signInWithPopup(auth, new GoogleAuthProvider());
 			loggedIn = true;
 			recordEvent('Google login');
-		} catch (err: Error) {
+		} catch (err: any) {
 			toasts.error(err.message);
 			console.log(err);
 		}
@@ -116,7 +116,7 @@
 			loggedIn = false;
 			recordEvent('log out');
 			toasts.success('logged out');
-		} catch (err: Error) {
+		} catch (err: any) {
 			toasts.error(err.messasge);
 			console.log(err);
 		}
@@ -164,7 +164,7 @@
 
 <svelte:head></svelte:head>
 
-<header class="w-full p-0">
+<header class="w-full justify-start p-0">
 	<Navbar class="bg-primary-50 dark:bg-primary-700 p-0 sm:px-0">
 		<NavBrand href="/wado/#/" class="p-0">
 			<img src="ox.svg" height="72" width="72" alt="current office" class="me-3" />

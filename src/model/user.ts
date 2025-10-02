@@ -161,7 +161,7 @@ export default class user {
 	}
 
 	get isEditor(): boolean {
-		return this._isEditor;
+		return this._isEditor === true;
 	}
 
 	get isMediaManager(): boolean {
@@ -169,10 +169,10 @@ export default class user {
 	}
 
 	get loggedIn(): boolean {
-		return this._loggedIn;
+		return this._loggedIn === true;
 	}
 
-	public static async getRecent(): Promise<array> {
+	public static async getRecent(): Promise<Array<user>> {
 		const users = new Array();
 		const lastweek = new Date().getTime() - 604800000; // 1 week
 		const recent = new Date(lastweek);

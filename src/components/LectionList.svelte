@@ -107,7 +107,7 @@
 					newLection.path = a.ref.path; // kludge
 					out.set(k, [v, newLection]);
 				}
-			} catch (err: Error) {
+			} catch (err: any) {
 				toasts.error(err.message);
 				console.log(err);
 			}
@@ -188,7 +188,7 @@
 				// @ts-ignore
 				data._eveningpsalmref = a.id;
 			}
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
@@ -207,13 +207,13 @@
 			lections.set(modalData.key, [_p, _l]);
 			toasts.success('lection saved');
 			lections = lections; // force svelte update
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
 	}
 
-	async function tabSwitch(y): Promise<void> {
+	async function tabSwitch(y: string): Promise<void> {
 		if (y == year) return;
 		lections = new Map();
 		year = y;

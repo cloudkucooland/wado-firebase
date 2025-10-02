@@ -21,4 +21,4 @@
 <Location name="KYRIE" maxAlt={5} /> -->
 
 <Heading>Antiphon test</Heading>
-<PsalmLection office="COMPLINE" />
+<PsalmLection office="COMPLINE" gloria={true} />

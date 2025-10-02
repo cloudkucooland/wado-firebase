@@ -5,7 +5,7 @@
 
 	let officeDate: Readable<string> = getContext('officeDate');
 
-	async function loaddata(od): Promise<array> {
+	async function loaddata(od: string): Promise<Array<any>> {
 		const d = od.split('-');
 		const month = d[1];
 		const day = d[2];

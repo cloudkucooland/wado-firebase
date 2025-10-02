@@ -6,6 +6,7 @@
 	import PsalmLection from '../PsalmLection.svelte';
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
+	import OSLCommemorations from '../OSLCommemorations.svelte';
 	import { Heading as FBHeading } from 'flowbite-svelte';
 </script>
 
@@ -75,6 +76,7 @@
 <FBHeading tag="h5">Prayers for the Order of Saint Luke</FBHeading>
 <Rubric>One or more of the following</Rubric>
 <Location name="OSL" max={3} />
+<OSLCommemorations />
 
 <Subheading>The Lord’s Prayer</Subheading>
 <Location name="GENERAL-LORDS" bold={true} /><br />

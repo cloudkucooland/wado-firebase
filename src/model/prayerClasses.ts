@@ -1,8 +1,8 @@
-import prayer from './prayer';
-import psalm from './psalm';
-import hymn from './hymn';
 import antiphon from './antiphon';
 import commemoration from './commemoration';
+import hymn from './hymn';
+import prayer from './prayer';
+import psalm from './psalm';
 
 export interface prayerClass {
 	new (any): prayerClass;
@@ -19,11 +19,11 @@ export interface prayerClass {
 
 // keys used to generate menu in components/Edit.svelte -- must be exported
 export const classes: Map<string, prayerClass> = new Map([
-	['prayer', prayer],
-	['psalm', psalm],
-	['hymn', hymn],
 	['antiphon', antiphon],
-	['commemoration', commemoration]
+	['commemoration', commemoration],
+	['hymn', hymn],
+	['prayer', prayer],
+	['psalm', psalm]
 ]);
 
 // use getClass to actually do the lookup

@@ -57,7 +57,7 @@
 			}
 
 			await deleteDoc(toDelete);
-		} catch (err) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}

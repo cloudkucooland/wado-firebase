@@ -6,6 +6,7 @@
 	import Rubric from '../Rubric.svelte';
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
+	import OSLCommemorations from '../OSLCommemorations.svelte';
 </script>
 
 <Rubric
@@ -46,6 +47,8 @@
 <Location name="VIGIL-TEDEUM" />
 
 <Subheading>Silence for Reflection</Subheading>
+
+<OSLCommemorations />
 
 <Subheading>Prayers</Subheading>
 <Rubric>Prayers of Supplicaion and Intercession</Rubric>

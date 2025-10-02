@@ -27,7 +27,7 @@
 			recordEvent('add_prayer', { id: added.id, new: refetched.id });
 			push('/edit/' + added.id);
 			return added.id;
-		} catch (err: Error) {
+		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 			return null;

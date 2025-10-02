@@ -22,7 +22,9 @@ const officeLUT = new Map([
 ]);
 
 export function getOffice(officeName: string): string {
-	return officeLUT.get(officeName);
+	const o = officeLUT.get(officeName);
+	if (typeof o == 'undefined') return 'Compline';
+	return o;
 }
 
 export function currentOffice(): string {
@@ -45,5 +47,11 @@ export function currentOffice(): string {
 }
 
 export function getCurrentOffice(): office {
-	return officeLUT.get(currentOffice());
+	const o = officeLUT.get(currentOffice());
+	if (typeof o == 'undefined') return Compline;
+	return o;
+}
+
+export interface office {
+	new (any: any): office;
 }
