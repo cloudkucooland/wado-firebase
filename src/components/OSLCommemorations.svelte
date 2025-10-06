@@ -43,7 +43,7 @@
 	{#if data.length > 0}
 		<Subheading>OSL Commemorations for Today</Subheading>
 		{#each data as d}
-			<div>{d.OSLName}: {d.Locality}, {d.Country}</div>
+			<div>{d.OSLName}: {d.Locality}, {d.Country} - d. {d.Year}</div>
 		{/each}
 	{/if}
 {:catch error}
