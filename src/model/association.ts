@@ -16,6 +16,7 @@ export default class association {
 	public Reference: any;
 	private _dirty: boolean;
 	private _season: season;
+	public _PrayerName?: string | null;
 
 	constructor(id: string, d: associationFromFirestore) {
 		this.id = id;

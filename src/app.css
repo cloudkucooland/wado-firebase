@@ -1,8 +1,8 @@
 @import 'tailwindcss';
 
 @custom-variant dark (&:where(.dark, .dark *));
-@source "../node_modules/flowbite-svelte/dist";
-@source "../node_modules/flowbite-svelte-icons/dist";
+@source '../node_modules/flowbite-svelte/dist';
+@source '../node_modules/flowbite-svelte-icons/dist';
 
 $-wado-font-serif: Georgia, Times, 'Times New Roman', Merriweather, serif;
 $-wado-line-height: 1.25em;

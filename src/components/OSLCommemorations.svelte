@@ -3,7 +3,7 @@
 	import Subheading from './Subheading.svelte';
 	import { getContext } from 'svelte';
 
-	let officeDate: Readable<string> = getContext('officeDate');
+	let officeDate: string = getContext('officeDate');
 
 	async function loaddata(od: string): Promise<Array<any>> {
 		const d = od.split('-');

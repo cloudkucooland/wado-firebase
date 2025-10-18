@@ -1,14 +1,15 @@
 export default class lection {
-	morning?: string;
-	evening?: string;
-	morningpsalm?: string;
-	eveningpsalm?: string;
-	morningtitle?: string;
-	eveningtitle?: string;
-	_morning?: string;
-	_evening?: string;
-	_morningpsalmref?: string; // should be a firestore DocumentReference
-	_eveningpsalmref?: string; // should be a firestore DocumentReference
+	public morning?: string | null;
+	public evening?: string | null;
+	public morningpsalm?: string | null;
+	public eveningpsalm?: string | null;
+	public morningtitle?: string | null;
+	public eveningtitle?: string | null;
+	public _morning?: string | null;
+	public _evening?: string | null;
+	public _morningpsalmref?: string | null; // should be a firestore DocumentReference
+	public _eveningpsalmref?: string | null; // should be a firestore DocumentReference
+	public path?: string | null; // used in lection list, do not store
 
 	public constructor(obj: any) {
 		if (obj.morning) this.morning = obj.morning;

@@ -5,8 +5,7 @@
 	import { getContext } from 'svelte';
 	import Alternatives from './Alternatives.svelte';
 	import { link, push } from 'svelte-spa-router';
-	import type { Readable } from 'svelte/store';
-	import type proper from '../../types/model/proper';
+	import type Proper from '../../types/model/proper';
 	import { Spinner } from 'flowbite-svelte';
 	import { CalendarEditSolid, CalendarPlusSolid } from 'flowbite-svelte-icons';
 	import { toasts } from 'svelte-toasts';
@@ -18,9 +17,10 @@
 	import Commemoration from './prayerClasses/Commemoration.svelte';
 	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
 	import type { SvelteComponent } from 'svelte';
+	import type { Readable } from 'svelte/store';
 
-	// let forProper: Readable<proper> = getContext('forProper');
-	$: forProper = getContext('forProper');
+	// $: forProper = getContext('forProper');
+	let forProper: Readable<Proper> = getContext('forProper');
 
 	export let name: string;
 	export let max: number = 1;
@@ -47,7 +47,7 @@
 
 	// since firestore (currently) only supports one "in" or "inarray" operator, we can't flatten this out
 	// this works for now
-	async function loaddata(p: proper): Promise<Map<string, prayerFromFirestore>> {
+	async function loaddata(p: Proper): Promise<Map<string, prayerFromFirestore>> {
 		const m: Map<string, prayerFromFirestore> = new Map();
 
 		// closure - needs m

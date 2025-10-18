@@ -40,17 +40,18 @@
 		replace('/office/' + officeName + '/' + params.officeDate);
 		screenView(officeName);
 
-		window.addEventListener('scroll', scrolling, { passive: true });
-		window.addEventListener('keypress', keypress, { passive: true });
+		window.addEventListener('scroll', scrolling);
+		window.addEventListener('keypress', keypress);
 	});
 
 	onDestroy((): void => {
-		window.removeEventListener('scroll', scrolling, { passive: true });
-		window.removeEventListener('keypress', keypress, { passive: true });
+		window.removeEventListener('scroll', scrolling);
+		window.removeEventListener('keypress', keypress);
 	});
 
 	// keyboard shortcuts, A to show alt, L to show edit links
 	function keypress(e: Event): void {
+		// e: KeyboardEvent
 		if (e.code == 'KeyA') {
 			showAlt.set(!$showAlt);
 			let on = 'yes';
@@ -75,10 +76,9 @@
 	});
 
 	async function scrolling(e: Event): Promise<void> {
-		e.stopPropagation();
 		if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
 			if (!auth.currentUser) return;
-			window.removeEventListener('scroll', scrolling, { passive: true });
+			window.removeEventListener('scroll', scrolling);
 			if ($me.UpdateStreak) {
 				const res = await $me.UpdateStreak();
 				toasts.success('Daily Streak', res);

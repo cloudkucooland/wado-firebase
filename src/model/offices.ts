@@ -21,9 +21,9 @@ const officeLUT = new Map([
 	['TestOffice', TestOffice]
 ]);
 
-export function getOffice(officeName: string): string {
+export function getOffice(officeName: string): typeof office {
 	const o = officeLUT.get(officeName);
-	if (typeof o == 'undefined') return 'Compline';
+	if (typeof o == 'undefined') return Compline;
 	return o;
 }
 
@@ -46,7 +46,7 @@ export function currentOffice(): string {
 	return 'Compline';
 }
 
-export function getCurrentOffice(): office {
+export function getCurrentOffice(): typeof office {
 	const o = officeLUT.get(currentOffice());
 	if (typeof o == 'undefined') return Compline;
 	return o;

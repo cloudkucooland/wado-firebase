@@ -43,7 +43,7 @@
 		UndoRedoButtonGroup
 	} from '@flowbite-svelte-plugins/texteditor';
 	// import type { Editor } from '@tiptap/core';
-	import type { Editor } from '@flowbite-svelte-plugins/texteditor/node_modules/@tiptap/core';
+	// import type { Editor } from '@flowbite-svelte-plugins/texteditor/node_modules/@tiptap/core';
 
 	import association from '../model/association';
 	import prayer from '../model/prayer';
@@ -57,7 +57,7 @@
 	let editorInstance = $state<Editor | null>(null);
 	let isEditable = $state<boolean>(true);
 
-	const classes: Map<string, prayer> = new Map([
+	const classes: Map<string, typeof prayer> = new Map([
 		['antiphon', antiphon],
 		['commemoration', commemoration],
 		['hymn', hymn],
@@ -185,7 +185,7 @@
 				throw new Error('prayer not found: ' + id);
 			}
 
-			const c: prayer = getClass(d.Class);
+			const c: typeof prayer = getClass(d.Class);
 			prayerData = new c(d);
 
 			const q = query(collection(db, 'associations'), where('Reference', '==', ref));
@@ -220,7 +220,7 @@
 	}
 
 	// use getClass to actually do the lookup
-	function getClass(className: string): prayer {
+	function getClass(className: string): typeof prayer {
 		if (!classes.has(className)) {
 			console.log('invalid class', className);
 			className = 'prayer';
@@ -343,7 +343,7 @@
 				/>
 			</div>
 			<div class="col-span-3">
-				<Label for="lastEdited" type="date">Last Edited</Label>
+				<Label for="lastEdited">Last Edited</Label>
 				<Input
 					name="lastEdited"
 					disabled={true}

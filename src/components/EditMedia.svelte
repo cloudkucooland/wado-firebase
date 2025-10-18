@@ -16,10 +16,10 @@
 
 	function loadFile(e: Event) {
 		const t = e.target as HTMLInputElement;
-		file = t.files[0];
+		file = t.files[0] as File;
 		const reader = new FileReader();
 
-		const button = document.getElementById('upload') as HTMLInputElement;
+		const button = document.getElementById('upload') as HTMLAnchorElement;
 		button.disabled = false;
 		button.color = 'green';
 
@@ -151,7 +151,7 @@
 			console.log(error);
 			toasts.error(error.message, id, { uid: 72 });
 		}
-		const button = document.getElementById('upload') as HTMLInputElement;
+		const button = document.getElementById('upload') as HTMLAnchorElement;
 		button.disabled = true;
 		button.color = 'yellow';
 	}
