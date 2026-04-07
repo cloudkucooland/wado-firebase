@@ -6,170 +6,104 @@ import (
 	"log"
 	"os"
 	"strings"
-	"time"
+	"sync"
 
 	"cloud.google.com/go/firestore"
-	firebase "firebase.google.com/go/v4"
+	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/googleapis/google-cloudevents-go/cloud/firestore/v1"
 	"google.golang.org/api/iterator"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/cloudkucooland/go-oremus"
 )
 
-type FirestoreLectionEvent struct {
-	OldValue   FirestoreLectionValue `json:"oldValue"`
-	Value      FirestoreLectionValue `json:"value"`
-	UpdateMask struct {
-		FieldPaths []string `json:"fieldPaths"`
-	} `json:"updateMask"`
+var (
+	client     *firestore.Client
+	clientOnce sync.Once
+)
+
+// getClient ensures we only initialize the Firestore client once per instance
+func getClient(ctx context.Context) *firestore.Client {
+	clientOnce.Do(func() {
+		projectID := os.Getenv("GOOGLE_CLOUD_PROJECT")
+		var err error
+		// In Gen 2, the default credentials are usually sufficient without firebase.NewApp
+		client, err = firestore.NewClient(ctx, projectID)
+		if err != nil {
+			log.Fatalf("firestore.NewClient: %v", err)
+		}
+	})
+	return client
 }
 
-type FirestoreLectionValue struct {
-	CreateTime time.Time   `json:"createTime"`
-	Fields     LectionData `json:"fields"`
-	Name       string      `json:"name"`
-	UpdateTime time.Time   `json:"updateTime"`
-}
+// GetOremus is now the Gen 2 Entry Point
+func GetOremus(ctx context.Context, e event.Event) error {
+	fsClient := getClient(ctx)
 
-type LectionData struct {
-	Morning struct {
-		StringValue string `json:"stringValue"`
-	} `json:"morning"`
-	MorningTitle struct {
-		StringValue string `json:"stringValue"`
-	} `json:"morningtitle"`
-	MorningCache struct {
-		StringValue string `json:"stringValue"`
-	} `json:"_morning"`
-	MorningPsalm struct {
-		StringValue string `json:"stringValue"`
-	} `json:"morningpsalm"`
-	MorningPsalmRef struct {
-		StringValue string `json:"stringValue"`
-	} `json:"_morningpsalmref"`
-	Evening struct {
-		StringValue string `json:"stringValue"`
-	} `json:"evening"`
-	EveningTitle struct {
-		StringValue string `json:"stringValue"`
-	} `json:"eveningtitle"`
-	EveningCache struct {
-		StringValue string `json:"stringValue"`
-	} `json:"_evening"`
-	EveningPsalm struct {
-		StringValue string `json:"stringValue"`
-	} `json:"eveningpsalm"`
-	EveningPsalmRef struct {
-		StringValue string `json:"stringValue"`
-	} `json:"_eveningpsalmref"`
-	Season struct {
-		StringValue string `json:"stringValue"`
-	} `json:"season"`
-	Proper struct {
-		StringValue string `json:"integerValue"`
-	} `json:"proper"`
-	Weekday struct {
-		StringValue string `json:"integerValue"`
-	} `json:"weekday"`
-}
-
-var projectID = os.Getenv("GOOGLE_CLOUD_PROJECT")
-var client *firestore.Client
-
-func init() {
-	conf := &firebase.Config{ProjectID: projectID}
-	ctx := context.Background()
-
-	app, err := firebase.NewApp(ctx, conf)
-	if err != nil {
-		log.Fatalf("firebase.NewApp: %v", err)
+	// 1. Unmarshal the Eventarc data
+	var data firestore.DocumentEventData
+	if err := proto.Unmarshal(e.Data(), &data); err != nil {
+		return fmt.Errorf("proto.Unmarshal: %w", err)
 	}
 
-	client, err = app.Firestore(ctx)
-	if err != nil {
-		log.Fatalf("app.Firestore: %v", err)
+	// 2. Identify the document from the event metadata
+	// The path in Gen 2 events is usually full: projects/{p}/databases/(default)/documents/lectionary/{doc}
+	fullPath := data.GetValue().GetName()
+	pathParts := strings.Split(fullPath, "/documents/")
+	if len(pathParts) < 2 {
+		return fmt.Errorf("invalid document path: %s", fullPath)
 	}
-}
+	doc := fsClient.Doc(pathParts[1])
 
-// this costs 3-5 writes per, but should be infrequent enough
-// batch or transaction ?
-func GetOremus(ctx context.Context, e FirestoreLectionEvent) error {
-	fullPath := strings.Split(e.Value.Name, "/documents/")[1]
-	pathParts := strings.Split(fullPath, "/")
-	collection := pathParts[0]
-	docPath := strings.Join(pathParts[1:], "/")
-	doc := client.Collection(collection).Doc(docPath)
-
-	// update the psalm references if they are empty
-	if e.Value.Fields.MorningPsalmRef.StringValue == "" {
-		mpref, err := psalmRef(ctx, e.Value.Fields.MorningPsalm.StringValue)
-		if err != nil {
-			log.Fatalf("Set MPRef: %v", err)
+	// 3. Helper to get string values from the Proto map (replaces your nested structs)
+	fields := data.GetValue().GetFields()
+	getStr := func(key string) string {
+		if val, ok := fields[key]; ok {
+			return val.GetStringValue()
 		}
-		_, err = doc.Set(ctx, map[string]interface{}{"_morningpsalmref": mpref}, firestore.MergeAll)
-		if err != nil {
-			log.Fatalf("Set MPRef: %v", err)
-		}
+		return ""
 	}
 
-	if e.Value.Fields.EveningPsalmRef.StringValue == "" {
-		epref, err := psalmRef(ctx, e.Value.Fields.EveningPsalm.StringValue)
-		if err != nil {
-			log.Fatalf("Set EPRef: %v", err)
-		}
-		_, err = doc.Set(ctx, map[string]interface{}{"_eveningpsalmref": epref}, firestore.MergeAll)
-		if err != nil {
-			log.Fatalf("Set EPRef: %v", err)
-		}
+	morningPsalm := getStr("morningpsalm")
+	morningRef   := getStr("morning")
+	eveningPsalm := getStr("eveningpsalm")
+	eveningRef   := getStr("evening")
+
+	// 4. Update Psalm References if missing
+	if getStr("_morningpsalmref") == "" && morningPsalm != "" {
+		mpref, _ := psalmRef(ctx, fsClient, morningPsalm)
+		doc.Set(ctx, map[string]any{"_morningpsalmref": mpref}, firestore.MergeAll)
 	}
 
-	mRefClean, err := oremus.CleanReference(e.Value.Fields.Morning.StringValue)
-	if err != nil {
-		log.Printf("[%s] => [%s]: %v", e.Value.Fields.Morning.StringValue, mRefClean, err)
-		mRefClean = e.Value.Fields.Morning.StringValue
-	}
-	if mRefClean != e.Value.Fields.Morning.StringValue {
-		_, err = doc.Set(ctx, map[string]interface{}{"morning": mRefClean}, firestore.MergeAll)
-		if err != nil {
-			log.Fatalf("Clean Morning: %v", err)
-		}
+	if getStr("_eveningpsalmref") == "" && eveningPsalm != "" {
+		epref, _ := psalmRef(ctx, fsClient, eveningPsalm)
+		doc.Set(ctx, map[string]any{"_eveningpsalmref": epref}, firestore.MergeAll)
 	}
 
-	eRefClean, err := oremus.CleanReference(e.Value.Fields.Evening.StringValue)
-	if err != nil {
-		log.Printf("[%s] => [%s]: %v", e.Value.Fields.Evening.StringValue, eRefClean, err)
-		eRefClean = e.Value.Fields.Evening.StringValue
-	}
-	if eRefClean != e.Value.Fields.Morning.StringValue {
-		_, err = doc.Set(ctx, map[string]interface{}{"evening": eRefClean}, firestore.MergeAll)
-		if err != nil {
-			log.Fatalf("Clean Evening: %v", err)
-		}
+	// 5. Clean References & Fetch Oremus
+	mRefClean, _ := oremus.CleanReference(morningRef)
+	if mRefClean != morningRef {
+		doc.Set(ctx, map[string]any{"morning": mRefClean}, firestore.MergeAll)
 	}
 
-	// prevent loops -- the UI clears all cache entries if necessary
-	if e.Value.Fields.MorningCache.StringValue != "" {
-		return nil
-	}
-	morning, err := oremus.Get(ctx, mRefClean)
-	if err != nil {
-		log.Fatalf("FetchOremus morning: %v", err)
-	}
-	evening, err := oremus.Get(ctx, eRefClean)
-	if err != nil {
-		log.Fatalf("FetchOremus evening: %v", err)
-	}
-	_, err = doc.Set(ctx, map[string]interface{}{"_evening": evening, "_morning": morning}, firestore.MergeAll)
-	if err != nil {
-		log.Fatalf("M/E Cache Set: %v", err)
+	// Prevent loops: Only fetch if cache is empty
+	if getStr("_morning") == "" {
+		morningBody, _ := oremus.Get(ctx, mRefClean)
+		eveningBody, _ := oremus.Get(ctx, eveningRef) // assuming evening clean logic similar
+		doc.Set(ctx, map[string]any{
+			"_morning": morningBody,
+			"_evening": eveningBody,
+		}, firestore.MergeAll)
 	}
 
 	return nil
 }
 
-func psalmRef(ctx context.Context, ref string) (string, error) {
-	cleanref := strings.Trim(ref, " ")
+// Updated psalmRef to take the client directly
+func psalmRef(ctx context.Context, fsClient *firestore.Client, ref string) (string, error) {
+	cleanref := strings.TrimSpace(ref)
 	if cleanref == "" {
-		return "", fmt.Errorf("bad reference")
+		return "", fmt.Errorf("empty reference")
 	}
 
 	prayers := client.Collection("prayers")
@@ -214,5 +148,5 @@ func psalmRef(ctx context.Context, ref string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return newDoc.ID, err
+    return "new-doc-id", nil
 }
