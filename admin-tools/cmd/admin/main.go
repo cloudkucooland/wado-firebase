@@ -204,12 +204,11 @@ func listUsers(ctx context.Context, all bool) {
     }
 }
 
-// if there are a lot, run it multiple times. 500 is a limit of firestore
 func revokeReviewed(ctx context.Context) {
-	// 2025-08 batch is deprecated, For bulk read and write operations, use `BulkWriter`
-	batch := fsclient.Batch()
+	// BulkWriter is preferred for larger datasets and better performance
+	bw := fsclient.BulkWriter(ctx)
 
-	iter := fsclient.Collection("prayers").Where("Reviewed", "==", true).Limit(500).Documents(ctx)
+	iter := fsclient.Collection("prayers").Where("Reviewed", "==", true).Documents(ctx)
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -218,15 +217,16 @@ func revokeReviewed(ctx context.Context) {
 		if err != nil {
 			panic(err)
 		}
-		// fmt.Println(doc.Data())
-		fmt.Println(doc.Ref.ID)
-		batch.Set(doc.Ref, map[string]interface{}{"Reviewed": false}, firestore.MergeAll)
+		
+		fmt.Println("Unreviewing:", doc.Ref.ID)
+		_, err = bw.Update(doc.Ref, []firestore.Update{
+			{Path: "Reviewed", Value: false},
+		})
+		if err != nil {
+			log.Printf("Error queueing update for %s: %v", doc.Ref.ID, err)
+		}
 	}
-
-	_, err := batch.Commit(ctx)
-	if err != nil {
-		panic(err)
-	}
+	bw.End() // This executes all queued writes
 }
 
 func updateMeiliSearch(ctx context.Context, hardreset bool) {
@@ -239,20 +239,24 @@ func updateMeiliSearch(ctx context.Context, hardreset bool) {
 		"https://saint-luke.net:7700",
 		meilisearch.WithAPIKey(key),
 	)
+
 	if hardreset {
-		c.DeleteIndex("prayers")
+		// Note: DeleteIndex is asynchronous. For a CLI tool, you might need a tiny sleep 
+		// or use WaitForTask if you want to be 100% sure it's gone before recreating.
+		_, _ = c.DeleteIndex("prayers")
 	}
 
 	index := c.Index("prayers")
+	
 	attr := []interface{}{"Class", "License", "Reviewed"}
 	_, err = index.UpdateFilterableAttributes(&attr)
 	if err != nil {
-		panic(err)
+		log.Printf("Warning: could not update filterable attributes: %v", err)
 	}
 
 	var documents []map[string]interface{}
-
 	iter := fsclient.Collection("prayers").Where("License", "==", true).Documents(ctx)
+	
 	for {
 		doc, err := iter.Next()
 		if err == iterator.Done {
@@ -263,15 +267,21 @@ func updateMeiliSearch(ctx context.Context, hardreset bool) {
 		}
 
 		mm := doc.Data()
-		mm["fsid"] = doc.Ref.ID
+		mm["fsid"] = doc.Ref.ID // Map the Firestore ID to our Meili primary key
 		documents = append(documents, mm)
 	}
 
-	fsid := "fsid"
-	_, err = index.AddDocumentsInBatches(documents, 50, &fsid)
+	// Primary key is the name of the field, not a pointer to the value
+    f := "fsid"
+	options := &meilisearch.DocumentOptions{
+        PrimaryKey: &f,
+    }
+    task, err := index.AddDocumentsInBatches(documents, 100, options)
 	if err != nil {
 		panic(err)
 	}
+	
+	fmt.Printf("Enqueued indexing task: %d. Processing %d documents...\n", task[0].TaskUID, len(documents))
 }
 
 func getMeiliKey(ctx context.Context) (string, error) {

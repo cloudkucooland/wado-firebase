@@ -1,32 +1,24 @@
 #!/bin/bash
 
-# Configuration
 FUNCTION_NAME="get-oremus-trigger"
-REGION="us-central1"
-ENTRY_POINT="GetOremus" # Matches the function name in your Go code
+FUNCTION_REGION="us-central1" # Where the code runs
+TRIGGER_REGION="nam5"         # Where the Firestore database lives
+ENTRY_POINT="GetOremus"
 RUNTIME="go126"
-# Your Firestore document pattern
-# Note: Gen 2 uses {wildcard} syntax for Eventarc filters
-DOCUMENT_PATH="lectionary/{docId}" 
+SERVICE_ACCOUNT="firebase-adminsdk-sarte@osl-dailyoffice.iam.gserviceaccount.com"
 
 echo "🚀 Deploying Gen 2 Firestore Trigger: $FUNCTION_NAME..."
 
 gcloud functions deploy $FUNCTION_NAME \
   --gen2 \
   --runtime=$RUNTIME \
-  --region=$REGION \
+  --region=$FUNCTION_REGION \
+  --service-account=$SERVICE_ACCOUNT \
   --entry-point=$ENTRY_POINT \
   --source=. \
   --memory=256Mi \
-  --cpu=1 \
-  --min-instances=0 \
-  --max-instances=10 \
-  --concurrency=1 \
-  --trigger-location=$REGION \
-  --trigger-event-provider=firestore.googleapis.com \
-  --trigger-event-type=google.cloud.firestore.document.v1.written \
-  --trigger-event-filters=database="(default)" \
-  --trigger-event-filters-path-pattern=document="$DOCUMENT_PATH" \
+  --trigger-event-filters="type=google.cloud.firestore.document.v1.written" \
+  --trigger-event-filters="database=(default)" \
+  --trigger-event-filters-path-pattern="document=lectionary/{docId}" \
+  --trigger-location=$TRIGGER_REGION \
   --set-env-vars GOOGLE_CLOUD_PROJECT=$(gcloud config get-value project)
-
-echo "✅ Deployment complete."

@@ -5,6 +5,8 @@ import (
 	"errors"
 	"log"
 	"strings"
+    "os"
+    "os/signal"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go/v4"
@@ -19,7 +21,9 @@ import (
 var fsclient *firestore.Client
 
 func main() {
-	ctx := context.Background()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer stop()
+
 	config := &firebase.Config{ProjectID: "osl-dailyoffice"}
 	app, err := firebase.NewApp(ctx, config, option.WithCredentialsFile("keyfile.json"))
 	if err != nil {
@@ -31,11 +35,11 @@ func main() {
 		panic(err)
 	}
 
-	// years := []string{"A", "B", "C"}
-	// for _, v := range years {
-	// clearLectionsCache(ctx, y)
-	// fetchLections(ctx, y, false)
-	//}
+	years := []string{"A", "B", "C"}
+	for _, v := range years {
+	    clearLectionsCache(ctx, v)
+	    fetchLections(ctx, v, false)
+    }
 	validateReferences(ctx)
 }
 
@@ -45,6 +49,9 @@ func clearLectionsCache(ctx context.Context, year string) {
 
 	iter := fsclient.Collection("lections/" + year + "/l").Documents(ctx)
 	for {
+		if ctx.Err() != nil {
+			return
+		}
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
@@ -74,6 +81,9 @@ func fetchLections(ctx context.Context, year string, force bool) {
 
 	iter := fsclient.Collection("lections/" + year + "/l").Documents(ctx)
 	for {
+		if ctx.Err() != nil {
+			return
+		}
 		doc, err := iter.Next()
 		if err == iterator.Done {
 			break
@@ -127,7 +137,11 @@ func fetchLections(ctx context.Context, year string, force bool) {
 			}
 		}
 
-		batch.Set(doc.Ref, map[string]interface{}{"_evening": e, "_morning": m, "_morningpsalmref": mp, "_eveningpsalmref": ep}, firestore.MergeAll)
+		_, err = batch.Set(doc.Ref, map[string]interface{}{"_evening": e, "_morning": m, "_morningpsalmref": mp, "_eveningpsalmref": ep}, firestore.MergeAll)
+		if err != nil {
+			log.Println(err.Error())
+			continue
+		}
 	}
 	batch.End()
 }
@@ -194,67 +208,26 @@ func validateReferences(ctx context.Context) error {
 		return err
 	}
 
+	fields := []string{"morning", "morningpsalm", "evening", "eveningpsalm"}
 	for _, doc := range docs {
+		if ctx.Err() != nil {
+			return ctx.Err()
+		}
 		d := doc.Data()
-		writeback := false
 		towrite := make(map[string]interface{})
 
-		morning, ok := d["morning"]
-		if ok && morning != "" {
-			res, err := oremus.CleanReference(morning.(string))
-			if err != nil {
-				log.Printf("[%s]: %s", morning.(string), err.Error())
-				continue
-			}
-			if res != morning.(string) {
-				log.Printf("[%s] => [%s] did not round-trip cleanly", morning.(string), res)
-				towrite["morning"] = res
-				writeback = true
+		for _, field := range fields {
+			val, ok := d[field].(string)
+			if ok && val != "" {
+				res, err := oremus.CleanReference(val)
+				if err == nil && res != val {
+					log.Printf("[%s] => [%s] updating", val, res)
+					towrite[field] = res
+				}
 			}
 		}
 
-		morningpsalm, ok := d["morningpsalm"]
-		if ok && morningpsalm != "" {
-			res, err := oremus.CleanReference(morningpsalm.(string))
-			if err != nil {
-				log.Printf("[%s]: %s", morningpsalm.(string), err.Error())
-				continue
-			}
-			if res != morningpsalm.(string) {
-				log.Printf("[%s] => [%s] did not round-trip cleanly", morningpsalm.(string), res)
-				towrite["morningpsalm"] = res
-				writeback = true
-			}
-		}
-
-		evening, ok := d["evening"]
-		if ok && evening != "" {
-			res, err := oremus.CleanReference(evening.(string))
-			if err != nil {
-				log.Printf("[%s]: %s", evening.(string), err.Error())
-				continue
-			}
-			if res != evening.(string) {
-				log.Printf("[%s] => [%s] did not round-trip cleanly", evening.(string), res)
-				towrite["evening"] = res
-				writeback = true
-			}
-		}
-
-		eveningpsalm, ok := d["eveningpsalm"]
-		if ok && eveningpsalm != "" {
-			res, err := oremus.CleanReference(eveningpsalm.(string))
-			if err != nil {
-				log.Printf("[%s]: %s", eveningpsalm.(string), err.Error())
-				continue
-			}
-			if res != evening.(string) {
-				log.Printf("[%s] => [%s] did not round-trip cleanly", eveningpsalm.(string), res)
-				towrite["eveningpsalm"] = res
-				writeback = true
-			}
-		}
-		if writeback {
+		if len(towrite) > 0 {
 			doc.Ref.Set(ctx, towrite, firestore.MergeAll)
 		}
 	}

@@ -2,112 +2,108 @@ package prayer
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"strings"
-	"time"
+	"sync"
 
 	secretmanager "cloud.google.com/go/secretmanager/apiv1"
 	"cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
-
+	"github.com/cloudevents/sdk-go/v2/event"
+	"github.com/googleapis/google-cloudevents-go/cloud/firestoredata"
 	"github.com/meilisearch/meilisearch-go"
+	"google.golang.org/protobuf/proto"
 )
 
-type FirestorePrayerEvent struct {
-	OldValue   FirestorePrayerValue `json:"oldValue"`
-	Value      FirestorePrayerValue `json:"value"`
-	UpdateMask struct {
-		FieldPaths []string `json:"fieldPaths"`
-	} `json:"updateMask"`
+var (
+	meili     meilisearch.ServiceManager
+	meiliOnce sync.Once
+)
+
+// getMeiliClient handles the secret lookup and client init safely
+func getMeiliClient(ctx context.Context) meilisearch.ServiceManager {
+	meiliOnce.Do(func() {
+		meilihost := os.Getenv("MEILI_HOST")
+		if meilihost == "" {
+			meilihost = "https://saint-luke.net:7700"
+		}
+
+		secrets, err := secretmanager.NewClient(ctx)
+		if err != nil {
+			log.Fatalf("secretmanager.NewClient: %v", err)
+		}
+		defer secrets.Close()
+
+		accessRequest := &secretmanagerpb.AccessSecretVersionRequest{
+			Name: "projects/912288843295/secrets/meili/versions/latest",
+		}
+
+		result, err := secrets.AccessSecretVersion(ctx, accessRequest)
+		if err != nil {
+			log.Fatalf("secrets.AccessSecretVersion: %v", err)
+		}
+
+		meili = meilisearch.New(meilihost, meilisearch.WithAPIKey(string(result.Payload.Data)))
+    })
+	return meili
 }
 
-type FirestorePrayerValue struct {
-	CreateTime time.Time  `json:"createTime"`
-	Fields     PrayerData `json:"fields"`
-	Name       string     `json:"name"`
-	UpdateTime time.Time  `json:"updateTime"`
-}
+func UpdateMeiliSearch(ctx context.Context, e event.Event) error {
+	meiliClient := getMeiliClient(ctx)
 
-type PrayerData struct {
-	Body struct {
-		StringValue string `json:"stringValue"`
-	} `json:"Body"`
-	Name struct {
-		StringValue string `json:"stringValue"`
-	} `json:"Name"`
-	Reviewed struct {
-		StringValue string `json:"stringValue"`
-	} `json:"Reviewed"`
-	Class struct {
-		StringValue string `json:"stringValue"`
-	} `json:"Class"`
-	License struct {
-		StringValue string `json:"stringValue"`
-	} `json:"License"`
-	Author struct {
-		StringValue string `json:"stringValue"`
-	} `json:"Author"`
-	HymnTune struct {
-		StringValue string `json:"stringValue"`
-	} `json:"Hymn Tune"`
-}
-
-var meilihost = os.Getenv("MEILI_HOST")
-var meili *meilisearch.Client
-
-func init() {
-	ctx := context.Background()
-
-	if meilihost == "" {
-		meilihost = "https://saint-luke.net:7700"
+	var eventData firestoredata.DocumentEventData
+	if err := proto.Unmarshal(e.Data(), &eventData); err != nil {
+		return fmt.Errorf("proto.Unmarshal: %w", err)
 	}
 
-	secrets, err := secretmanager.NewClient(ctx)
-	if err != nil {
-		log.Fatalf("secretmanager.NewClient: %v", err)
+	// Determine ID from the resource name
+	// Format: projects/{project}/databases/{database}/documents/prayers/{id}
+	fullPath := eventData.GetValue().GetName()
+	if fullPath == "" {
+		// If Value is empty, the document was likely deleted
+		fullPath = eventData.GetOldValue().GetName()
 	}
-	defer secrets.Close()
-
-	accessRequest := &secretmanagerpb.AccessSecretVersionRequest{
-		Name: "projects/912288843295/secrets/meili/versions/latest",
-	}
-
-	result, err := secrets.AccessSecretVersion(ctx, accessRequest)
-	if err != nil {
-		log.Fatalf("secrets.AccessSecretVersion: %v", err)
-	}
-
-	meili = meilisearch.NewClient(meilisearch.ClientConfig{
-		Host:   meilihost,
-		APIKey: string(result.Payload.Data),
-	})
-}
-
-func UpdateMeiliSearch(ctx context.Context, e FirestorePrayerEvent) error {
-	chunks := strings.Split(e.Value.Name, "/")
+	chunks := strings.Split(fullPath, "/")
 	id := chunks[len(chunks)-1]
 
-	index := meili.Index("prayers")
+	index := meiliClient.Index("prayers")
 
-	// No body value, the prayer has been deleted
-	if e.Value.Fields.Body.StringValue == "" {
-		log.Printf("removing %s from meili index", id)
-		_, err := index.DeleteDocument(id)
+	// Check if document was deleted (Value is nil in the proto if deleted)
+	if eventData.GetValue() == nil || eventData.GetValue().GetFields() == nil {
+		log.Printf("Removing %s from meili index", id)
+		_, err := index.DeleteDocument(id,nil)
 		return err
 	}
 
-	documents := make([]map[string]interface{}, 0)
-	documents = append(documents, map[string]interface{}{
-		"fsid":      id,
-		"Author":    e.Value.Fields.Author.StringValue,
-		"Body":      e.Value.Fields.Body.StringValue,
-		"Name":      e.Value.Fields.Name.StringValue,
-		"Class":     e.Value.Fields.Class.StringValue,
-		"Reviewed":  e.Value.Fields.Reviewed.StringValue == "true",
-		"License":   e.Value.Fields.License.StringValue == "true",
-		"Hymn Tune": e.Value.Fields.HymnTune.StringValue,
-	})
+	fields := eventData.GetValue().GetFields()
+	getStr := func(key string) string {
+		if val, ok := fields[key]; ok {
+			return val.GetStringValue()
+		}
+		return ""
+	}
 
-	_, err := index.UpdateDocuments(documents, "fsid")
-	return err
+	// Prep documents for Meili
+	// Note: MeiliSearch documents usually work best with lower_case or camelCase keys
+	documents := []map[string]interface{}{
+		{
+			"fsid":      id,
+			"Author":    getStr("Author"),
+			"Body":      getStr("Body"),
+			"Name":      getStr("Name"),
+			"Class":     getStr("Class"),
+			"Reviewed":  getStr("Reviewed") == "true",
+			"License":   getStr("License") == "true",
+			"Hymn Tune": getStr("Hymn Tune"),
+		},
+	}
+
+	_, err := index.UpdateDocuments(documents, nil)
+	if err != nil {
+		return fmt.Errorf("meilisearch.UpdateDocuments: %w", err)
+	}
+
+	log.Printf("Successfully updated %s in MeiliSearch", id)
+	return nil
 }
