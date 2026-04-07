@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { showEdit } from '../../model/preferences';
+	import { prefs } from '../../model/preferences.svelte';
 	import Media from '../Media.svelte';
 	import commemoration from '../../model/commemoration';
 	import type { prayerFromFirestore } from '../../model/types';
-	import type { Readable } from 'svelte/store';
-	import { getContext } from 'svelte';
 	import { Heading } from 'flowbite-svelte';
 	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
@@ -28,7 +26,7 @@
 	{#if c.author}<div class="prayer-credit">{c.author}</div>{/if}
 {/if}
 {#if !subunit}
-	{#if $showEdit}<div class="edit">
+	{#if prefs.showEdit}<div class="edit">
 			<button
 				on:click={() => {
 					push('#/edit/' + id);

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import {
-		Card,
 		Table,
 		TableHead,
 		TableHeadCell,
@@ -14,141 +13,135 @@
 	import { collection, query, where, doc, deleteDoc, orderBy, getDocs } from 'firebase/firestore';
 	import { db, recordEvent, screenView } from '../firebase';
 	import prayer from '../model/prayer';
-	import { onMount, getContext } from 'svelte';
-	import type { Readable } from 'svelte/store';
-	import type User from '../../types/model/user';
+	import { getContext } from 'svelte';
 	import { toasts } from 'svelte-toasts';
-	import { push } from 'svelte-spa-router';
 	import type { prayerFromFirestore } from '../model/types';
+	import type { user } from '../model/user';
 
-	// @ts-ignore
-	export let params = { c };
-	$: prayerClass = params.c ? params.c : 'prayer';
-	const _pp: Map<string, prayer> = new Map();
-	$: prayers = _pp;
-	let modalId: string = 'exnihilo';
-	let me: Readable<User> = getContext('me');
+	// 1. Svelte 5 Props
+	let { params = { c: 'prayer' } } = $props();
 
-	const cs = new Array('prayer', 'hymn', 'psalm', 'antiphon', 'commemoration');
+	// 2. Reactive State for the list
+	let prayers = $state(new Map<string, prayer>());
+	let deleteModalOpen = $state(false);
+	let modalId = $state('exnihilo');
 
-	$: deleteModalOpen = false;
-	function toggleDeleteOpen(e: Event): void {
-		screenView('toggleDeleteOpen');
-		deleteModalOpen = !deleteModalOpen;
-		const t = e.target as HTMLInputElement;
-		if (deleteModalOpen) modalId = t.value;
-	}
+	const userContext = getContext<{ details: user }>('me');
+	const prayerClasses = ['prayer', 'hymn', 'psalm', 'antiphon', 'commemoration'];
 
-	async function confirmDelete(e: Event): Promise<void> {
-		const t = e.target as HTMLInputElement;
-		recordEvent('delete_prayer', { id: t.value });
-		deleteModalOpen = !deleteModalOpen;
+	// 3. Derived value for the current class
+	let prayerClass = $derived(params.c || 'prayer');
 
-		try {
-			const toDelete = doc(db, 'prayers', t.value);
-
-			const q = query(
-				collection(db, 'associations'),
-				where('Reference', '==', doc(db, 'prayers', t.value))
-			);
-			const res = await getDocs(q);
-			for (const asn of res.docs) {
-				await deleteDoc(doc(db, 'associations', asn.id));
-			}
-
-			await deleteDoc(toDelete);
-		} catch (err: any) {
-			console.log(err);
-			toasts.error(err.message);
-		}
-
-		// refresh screen
-		const newPrayers: Map<string, prayer> = new Map();
-		for (const [k, p] of prayers) {
-			if (k != t.value) {
-				newPrayers.set(k, p);
-			}
-		}
-		prayers = newPrayers;
-		toasts.success('Prayer deleted', t.value);
-	}
-
-	// https://github.com/firebase/snippets-web/blob/36740fb2c39383621c0c0a948236e9eab8a71516/snippets/firestore-next/test-firestore/paginate.js#L8-L23
 	async function loadClass(pc: string) {
 		const progressBar = toasts.success('Loading Data', pc, { duration: 0 });
-
 		const m = new Map();
 		try {
 			const q = query(collection(db, 'prayers'), where('Class', '==', pc), orderBy('Name'));
 			const res = await getDocs(q);
 			for (const a of res.docs) {
 				const ta = a.data() as prayerFromFirestore;
-				const p = new prayer(ta);
-				m.set(a.id, p);
+				m.set(a.id, new prayer(ta));
 			}
-		} catch (e) {
-			console.log(e);
+			prayers = m; // Assign to the $state variable
+		} catch (e: any) {
+			toasts.error(e.message);
+		} finally {
+			progressBar.remove();
 		}
-		progressBar.remove();
-		return m;
 	}
 
-	onMount(async () => {
-		prayers = await loadClass(prayerClass);
-		screenView('Prayer List');
+	// 4. Use an effect to load data when the URL param changes
+	$effect(() => {
+		loadClass(prayerClass);
+		screenView(`Prayer List: ${prayerClass}`);
 	});
+
+	function openDeleteModal(id: string) {
+		modalId = id;
+		deleteModalOpen = true;
+	}
+
+	async function confirmDelete(): Promise<void> {
+		const targetId = modalId;
+		recordEvent('delete_prayer', { id: targetId });
+		deleteModalOpen = false;
+
+		try {
+			// Delete associations first
+			const q = query(
+				collection(db, 'associations'),
+				where('Reference', '==', doc(db, 'prayers', targetId))
+			);
+			const res = await getDocs(q);
+			const batchDeletes = res.docs.map((asn) => deleteDoc(doc(db, 'associations', asn.id)));
+			await Promise.all(batchDeletes);
+
+			// Delete the prayer
+			await deleteDoc(doc(db, 'prayers', targetId));
+
+			// 5. Update state: Just delete from the map!
+			// Svelte 5 proxies make this reactive.
+			prayers.delete(targetId);
+
+			toasts.success('Prayer deleted', targetId);
+		} catch (err: any) {
+			toasts.error(err.message);
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>WADO Prayer List: {prayerClass}</title>
 </svelte:head>
 
-<div class="w-full">
-	<div>
-		{#each cs as cx}
+<div class="w-full p-4">
+	<div class="mb-4 flex gap-4">
+		{#each prayerClasses as cx}
 			<a
 				href="#/prayers/{cx}/"
-				onclick={async () => {
-					prayers = await loadClass(cx);
-				}}>{cx}</a
-			> &nbsp;
+				class="capitalize hover:underline {prayerClass === cx ? 'font-bold text-blue-600' : ''}"
+			>
+				{cx}
+			</a>
 		{/each}
 	</div>
-	<h3>{prayerClass}</h3>
-	<div>
-		<Table>
-			<TableHead>
-				<TableHeadCell>Prayer</TableHeadCell>
-				<TableHeadCell>Licensed</TableHeadCell>
-				<TableHeadCell>Reviewed</TableHeadCell>
-				<TableHeadCell>&nbsp;</TableHeadCell>
-			</TableHead>
-			<TableBody>
-				{#each [...prayers] as [k, v]}
-					<TableBodyRow id={k}>
-						<TableBodyCell>
-							<a href="#/edit/{k}" target="_blank" rel="noopener noreferrer">
-								{v.name}
-							</a>
-						</TableBodyCell>
-						<TableBodyCell>{v.license}</TableBodyCell>
-						<TableBodyCell>{v.reviewed}</TableBodyCell>
-						<TableBodyCell>
-							{#if $me.isEditor}
-								<Button onclick={toggleDeleteOpen} value={k} color="red">Delete</Button>
-							{/if}
-						</TableBodyCell>
-					</TableBodyRow>
-				{/each}
-			</TableBody>
-		</Table>
-	</div>
+
+	<FBHeading tag="h3" class="mb-4 capitalize">{prayerClass}s</FBHeading>
+
+	<Table hoverable={true}>
+		<TableHead>
+			<TableHeadCell>Prayer</TableHeadCell>
+			<TableHeadCell>Licensed</TableHeadCell>
+			<TableHeadCell>Reviewed</TableHeadCell>
+			<TableHeadCell>Actions</TableHeadCell>
+		</TableHead>
+		<TableBody>
+			{#each [...prayers] as [id, p]}
+				<TableBodyRow>
+					<TableBodyCell>
+						<a href="#/edit/{id}" class="text-blue-500 hover:underline">
+							{p.name}
+						</a>
+					</TableBodyCell>
+					<TableBodyCell>{p.license ? '✅' : '❌'}</TableBodyCell>
+					<TableBodyCell>{p.reviewed ? '✅' : '⏳'}</TableBodyCell>
+					<TableBodyCell>
+						{#if userContext.details.isEditor}
+							<Button onclick={() => openDeleteModal(id)} color="red" size="xs">Delete</Button>
+						{/if}
+					</TableBodyCell>
+				</TableBodyRow>
+			{/each}
+		</TableBody>
+	</Table>
 </div>
-<Modal id="deleteModal" bind:open={deleteModalOpen}>
-	<FBHeading tag="h3">Delete Prayer</FBHeading>
-	<div>Confirm Delete</div>
-	<div>
-		<Button color="red" onclick={toggleDeleteOpen}>Cancel</Button>
-		<Button color="red" onclick={confirmDelete} value={modalId}>Confirm</Button>
+
+<Modal title="Confirm Deletion" bind:open={deleteModalOpen} size="xs" autoclose>
+	<div class="text-center">
+		<p class="mb-5 text-lg font-normal text-gray-500">
+			Are you sure you want to delete this prayer and all its associations?
+		</p>
+		<Button color="red" class="me-2" onclick={confirmDelete}>Yes, I'm sure</Button>
+		<Button color="alternative">No, cancel</Button>
 	</div>
 </Modal>

@@ -38,10 +38,9 @@
 		</div>
 		<div>
 			<em>Association are evaluated in most-to-least precise order.</em> Seasons, Proper, Weekday, Lectionary
-			Year. The more items that are set, the mpre precise it is. "Lent, 1, Wednesday, A" would match
-			ONLY on Wednesdays during year A during the first week of Lent. but "Leent, Any, Any, Any" would
-			match any day in Lent. The Location Edit screen should give a good indication of the evaluation
-			order.
+			Year. The more items that are set, the more precise it is. "Lent, 1, Wednesday, A" would match ONLY
+			on Wednesdays during year A during the first week of Lent. but "Leent, Any, Any, Any" would match
+			any day in Lent. The Location Edit screen should give a good indication of the evaluation order.
 		</div>
 		<div>
 			<em>Prayers have a "class" that determines how they are displayed.</em>

@@ -14,84 +14,72 @@
 	import { collection, query, where, limit, doc, addDoc, setDoc } from 'firebase/firestore';
 	import { db, recordEvent, screenView, getDocsCacheFirst } from '../firebase';
 	import proper from '../model/proper';
-	import { onMount, getContext } from 'svelte';
+	import { getContext } from 'svelte';
 	import { toasts } from 'svelte-toasts';
 	import { link } from 'svelte-spa-router';
 	import lection from '../model/lection';
-	import type { Readable } from 'svelte/store';
-	import type User from '../../types/model/user';
+	import type { user } from '../model/user';
 
-	// @ts-ignore
-	export let params = { y };
-	$: year = params.y ? params.y : 'A';
-	const _ll: Map<string, [proper, lection]> = new Map();
-	$: lections = _ll;
-	let me: Readable<User> = getContext('me');
+	// 1. Props & Context
+	let { params = { y: 'A' } } = $props();
+	const userContext = getContext<{ details: user }>('me');
+	const me = $derived(userContext.details);
 
+	// 2. Reactive State
+	let year = $derived(params.y || 'A');
+	let lections = $state(new Map<string, [proper, lection]>());
+	let lectionModalOpen = $state(false);
+
+	// Modal Data Helper Class (Internal)
 	class mdClass {
-		morning?: string;
-		evening?: string;
-		morningtitle?: string;
-		eveningtitle?: string;
-		morningpsalm?: string;
-		eveningpsalm?: string;
-		season?: string;
-		proper?: number;
-		weekday?: number;
-		key?: string;
-		path?: string;
-		_morningpsalmref?: string;
-		_eveningpsalmref?: string;
+		morning = $state('');
+		evening = $state('');
+		morningtitle = $state('');
+		eveningtitle = $state('');
+		morningpsalm = $state('');
+		eveningpsalm = $state('');
+		season = $state('');
+		proper = $state(0);
+		weekday = $state(0);
+		key = $state('');
+		path = $state('');
+		_morningpsalmref = $state('');
+		_eveningpsalmref = $state('');
 
 		constructor(obj: any) {
-			if (obj.morning) this.morning = obj.morning;
-			if (obj.evening) this.evening = obj.evening;
-			if (obj.morningtitle) this.morningtitle = obj.morningtitle;
-			if (obj.eveningtitle) this.eveningtitle = obj.eveningtitle;
-			if (obj.morningpsalm) this.morningpsalm = obj.morningpsalm;
-			if (obj.eveningpsalm) this.eveningpsalm = obj.eveningpsalm;
-			if (obj.season) this.season = obj.season;
-			if (typeof obj.proper == 'number') {
-				this.proper = obj.proper;
-			} else {
-				console.debug('forcing proper');
-				obj.proper = 0;
-			}
-			if (typeof obj.weekday == 'number') {
-				this.weekday = obj.weekday;
-			} else {
-				console.debug('forcing weekday');
-				obj.weekday = 0;
-			}
-			if (obj.key) this.key = obj.key;
-			if (obj.path) this.path = obj.path;
-			if (obj._morningpsalmref) this._morningpsalmref = obj._morningpsalmref;
-			if (obj._eveningpsalmref) this._eveningpsalmref = obj._eveningpsalmref;
+			this.morning = obj.morning || '';
+			this.evening = obj.evening || '';
+			this.morningtitle = obj.morningtitle || '';
+			this.eveningtitle = obj.eveningtitle || '';
+			this.morningpsalm = obj.morningpsalm || '';
+			this.eveningpsalm = obj.eveningpsalm || '';
+			this.season = obj.season || '';
+			this.proper = typeof obj.proper === 'number' ? obj.proper : 0;
+			this.weekday = typeof obj.weekday === 'number' ? obj.weekday : 0;
+			this.key = obj.key || '';
+			this.path = obj.path || '';
+			this._morningpsalmref = obj._morningpsalmref || '';
+			this._eveningpsalmref = obj._eveningpsalmref || '';
 		}
 	}
-	const _md: mdClass = new mdClass({});
-	$: modalData = _md;
 
-	async function loadLections(y: string): Promise<Map<string, [proper, lection]>> {
-		let progressBarString = 'starting';
-		const progressBar = toasts.success('Loading Data', progressBarString, {
-			duration: 0
-		});
+	let modalData = $state(new mdClass({}));
+
+	// 3. Data Loading
+	async function loadLections(y: string) {
+		const progressBar = toasts.success('Loading Data', 'initializing', { duration: 0 });
 
 		const ay: Map<string, proper> = proper.AllYear(y);
-		const out: Map<string, [proper, lection]> = new Map();
-		const empty: lection = new lection({});
+		const out = new Map<string, [proper, lection]>();
+		const emptyLection = new lection({});
+
+		// Pre-populate with placeholders
+		for (const [k, v] of ay) {
+			out.set(k, [v, emptyLection]);
+		}
 
 		let i = 0;
 		for (const [k, v] of ay) {
-			out.set(k, [v, empty]);
-			progressBarString = i.toString();
-			progressBar.update({
-				title: 'Loading data',
-				description: progressBarString
-			});
-			i = i + 1;
-
 			try {
 				const q = query(
 					collection(db, 'lections', y, 'l'),
@@ -101,59 +89,62 @@
 					limit(1)
 				);
 				const res = await getDocsCacheFirst(q);
-				for (const a of res.docs) {
-					const n = a.data();
-					const newLection: lection = new lection(n);
-					newLection.path = a.ref.path; // kludge
+
+				if (!res.empty) {
+					const n = res.docs[0].data();
+					const newLection = new lection(n);
+					newLection.path = res.docs[0].ref.path;
 					out.set(k, [v, newLection]);
 				}
+
+				if (i % 20 === 0) {
+					progressBar.update({ description: `Processed ${i} days...` });
+				}
+				i++;
 			} catch (err: any) {
-				toasts.error(err.message);
-				console.log(err);
+				console.error(err);
 			}
 		}
+
+		lections = out; // Final state update
 		progressBar.remove();
-		return out;
 	}
 
-	onMount(async () => {
-		lections = await loadLections(year);
-		screenView('Lection List');
+	// 4. Effects: Load data when year changes
+	$effect(() => {
+		loadLections(year);
+		screenView(`Lection List: Year ${year}`);
 	});
 
-	$: lectionModalOpen = false;
-	async function toggleLectionModalOpen(e: Event): Promise<void> {
-		screenView('lectionModalOpen');
+	async function toggleLectionModalOpen(key?: string) {
 		lectionModalOpen = !lectionModalOpen;
 
-		// discard the caches, do not copy them here
-		if (lectionModalOpen) {
-			const t = e.target as HTMLInputElement;
-			console.debug(t.value);
-			const [p, l] = lections.get(t.value);
-			modalData = new mdClass({
-				morning: l.morning.trim(),
-				evening: l.evening.trim(),
-				morningpsalm: l.morningpsalm.trim(),
-				eveningpsalm: l.eveningpsalm.trim(),
-				morningtitle: l.morningtitle.trim(),
-				eveningtitle: l.eveningtitle.trim(),
-				season: p.season,
-				proper: p.proper,
-				weekday: p.weekday,
-				path: l.path, // kludge
-				key: t.value
-			});
+		if (lectionModalOpen && key) {
+			const entry = lections.get(key);
+			if (entry) {
+				const [p, l] = entry;
+				modalData = new mdClass({
+					morning: l.morning.trim(),
+					evening: l.evening.trim(),
+					morningpsalm: l.morningpsalm.trim(),
+					eveningpsalm: l.eveningpsalm.trim(),
+					morningtitle: l.morningtitle.trim(),
+					eveningtitle: l.eveningtitle.trim(),
+					season: p.season,
+					proper: p.proper,
+					weekday: p.weekday,
+					path: l.path,
+					key
+				});
+			}
 		}
 	}
 
-	async function confirmLectionModal(): Promise<void> {
+	async function confirmLectionModal() {
 		recordEvent('edit_lection', { key: modalData.key });
-		lectionModalOpen = !lectionModalOpen;
+		lectionModalOpen = false;
 
-		// do not write the cached data back, refetch it
-		// firebase only accepts generic objects
-		const data: object = {
+		const data: any = {
 			morning: modalData.morning.trim(),
 			morningpsalm: modalData.morningpsalm.trim(),
 			morningtitle: modalData.morningtitle.trim(),
@@ -165,60 +156,43 @@
 			weekday: modalData.weekday
 		};
 
-		// try to link to the formatted psalms
+		// Link psalms
 		try {
-			let q = query(
-				collection(db, 'prayers'),
-				where('Class', '==', 'psalm'),
-				where('Name', '==', modalData.morningpsalm.trim())
-			);
-			let res = await getDocsCacheFirst(q);
-			for (const a of res.docs) {
-				// @ts-ignore
-				data._morningpsalmref = a.id;
-			}
+			const fetchRef = async (name: string) => {
+				const q = query(
+					collection(db, 'prayers'),
+					where('Class', '==', 'psalm'),
+					where('Name', '==', name)
+				);
+				const res = await getDocsCacheFirst(q);
+				return res.empty ? null : res.docs[0].id;
+			};
 
-			q = query(
-				collection(db, 'prayers'),
-				where('Class', '==', 'psalm'),
-				where('Name', '==', modalData.eveningpsalm.trim())
-			);
-			res = await getDocsCacheFirst(q);
-			for (const a of res.docs) {
-				// @ts-ignore
-				data._eveningpsalmref = a.id;
-			}
+			data._morningpsalmref = await fetchRef(modalData.morningpsalm.trim());
+			data._eveningpsalmref = await fetchRef(modalData.eveningpsalm.trim());
 		} catch (err: any) {
-			console.log(err);
 			toasts.error(err.message);
 		}
 
-		// send to firestore
+		// Save to Firestore
 		try {
-			if (modalData.path == '' || typeof modalData.path == 'undefined') {
+			if (!modalData.path) {
 				const added = await addDoc(collection(db, 'lections', year, 'l'), data);
 				modalData.path = added.path;
 			} else {
 				await setDoc(doc(db, modalData.path), data);
 			}
-			const _p: proper = new proper(modalData);
-			const _l: lection = new lection(modalData);
-			console.debug(_p, _l);
-			lections.set(modalData.key, [_p, _l]);
-			toasts.success('lection saved');
-			lections = lections; // force svelte update
+
+			// Reactive update of the Map
+			const updatedProper = new proper(modalData);
+			const updatedLection = new lection(modalData);
+			updatedLection.path = modalData.path;
+
+			lections.set(modalData.key, [updatedProper, updatedLection]);
+			toasts.success('Lection saved');
 		} catch (err: any) {
-			console.log(err);
 			toasts.error(err.message);
 		}
-	}
-
-	async function tabSwitch(y: string): Promise<void> {
-		if (y == year) return;
-		lections = new Map();
-		year = y;
-		document.location.assign('#/lectionary/' + year);
-		lections = await loadLections(year);
 	}
 </script>
 
@@ -226,84 +200,77 @@
 	<title>WADO Lectionary Editor: Year {year}</title>
 </svelte:head>
 
-<div class="w-full grid-flow-row-dense grid-cols-12">
-	<div class="w-full items-center">
-		<FBHeading tag="h2">Lectionary Editor: Year {year}</FBHeading>
+<div class="w-full space-y-4 p-4">
+	<FBHeading tag="h2">Lectionary Editor: Year {year}</FBHeading>
+
+	<div class="flex border-b border-gray-200 dark:border-gray-700">
+		{#each ['A', 'B', 'C'] as y}
+			<a
+				href="#/lectionary/{y}"
+				class="px-6 py-3 {year === y
+					? 'border-b-2 border-blue-600 text-blue-600'
+					: 'text-gray-500'}"
+			>
+				Year {y}
+			</a>
+		{/each}
 	</div>
 
-	<Tabs class="flex-auto">
-		{#each ['A', 'B', 'C'] as y}
-			<TabItem title="Year {y}" open={year == y} onclick={(e) => tabSwitch(y)} />
-		{/each}
-	</Tabs>
-	<Table class="w-full">
+	<Table hoverable={true}>
 		<TableBody>
 			{#each [...lections] as [k, v]}
-				<TableBodyRow>
+				<TableBodyRow class="bg-gray-100 font-bold dark:bg-gray-800">
 					<TableBodyCell colspan={3}>
-						{#if $me.isEditor}
-							<Button color="red" onclick={toggleLectionModalOpen} value={k}>{k}</Button>
-						{:else}
-							<strong class="mb-0">{k}</strong>
-						{/if}
+						<div class="flex items-center justify-between">
+							<span>{k}</span>
+							{#if me.isEditor}
+								<Button size="xs" color="blue" onclick={() => toggleLectionModalOpen(k)}
+									>Edit {k}</Button
+								>
+							{/if}
+						</div>
 					</TableBodyCell>
 				</TableBodyRow>
+
 				<TableBodyRow>
 					<TableBodyCell>
-						<strong>Morning Psalm:</strong>
+						<span class="block text-xs text-gray-400 uppercase">Morning Psalm</span>
 						{#if v[1]._morningpsalmref}
-							<em
-								><a
-									href="/edit/{v[1]._morningpsalmref}"
-									target="_blank"
-									use:link
-									rel="noopener noreferrer">{v[1].morningpsalm}</a
-								></em
+							<a href="#/edit/{v[1]._morningpsalmref}" class="text-blue-500 italic hover:underline"
+								>{v[1].morningpsalm}</a
 							>
 						{:else}
-							{v[1].morningpsalm}
+							{v[1].morningpsalm || '—'}
 						{/if}
 					</TableBodyCell>
 					<TableBodyCell>
-						<strong>Morning:</strong>
-						{#if v[1]._morning}
-							<em>{v[1].morning}</em>
-						{:else}
-							{v[1].morning}
-						{/if}
+						<span class="block text-xs text-gray-400 uppercase">Morning Lesson</span>
+						{v[1].morning || '—'}
 					</TableBodyCell>
 					<TableBodyCell>
-						<strong>Morning Title:</strong>
-						{v[1].morningtitle}
+						<span class="block text-xs text-gray-400 uppercase">Title</span>
+						{v[1].morningtitle || '—'}
 					</TableBodyCell>
 				</TableBodyRow>
+
 				<TableBodyRow>
 					<TableBodyCell>
-						<strong>Evening Psalm:</strong>
+						<span class="block text-xs text-gray-400 uppercase">Evening Psalm</span>
 						{#if v[1]._eveningpsalmref}
-							<em
-								><a
-									href="/edit/{v[1]._eveningpsalmref}"
-									use:link
-									target="_blank"
-									rel="noopener noreferrer">{v[1].eveningpsalm}</a
-								></em
+							<a href="#/edit/{v[1]._eveningpsalmref}" class="text-blue-500 italic hover:underline"
+								>{v[1].eveningpsalm}</a
 							>
 						{:else}
-							{v[1].eveningpsalm}
+							{v[1].eveningpsalm || '—'}
 						{/if}
 					</TableBodyCell>
 					<TableBodyCell>
-						<strong>Evening:</strong>
-						{#if v[1]._evening}
-							<em>{v[1].evening}</em>
-						{:else}
-							{v[1].evening}
-						{/if}
+						<span class="block text-xs text-gray-400 uppercase">Evening Lesson</span>
+						{v[1].evening || '—'}
 					</TableBodyCell>
 					<TableBodyCell>
-						<strong>Evening Title:</strong>
-						{v[1].eveningtitle}
+						<span class="block text-xs text-gray-400 uppercase">Title</span>
+						{v[1].eveningtitle || '—'}
 					</TableBodyCell>
 				</TableBodyRow>
 			{/each}
@@ -311,18 +278,29 @@
 	</Table>
 </div>
 
-<Modal id="lectionModal" bind:open={lectionModalOpen} size="xl">
-	<FBHeading tag="h3">Edit Lection: {modalData.key}</FBHeading>
-	<div>
-		M Psalm: <Input bind:value={modalData.morningpsalm} />
-		M: <Input bind:value={modalData.morning} />
-		M Title: <Input bind:value={modalData.morningtitle} />
-		E Psalm: <Input bind:value={modalData.eveningpsalm} />
-		E: <Input bind:value={modalData.evening} />
-		E Title: <Input bind:value={modalData.eveningtitle} />
+<Modal title="Edit Lection: {modalData.key}" bind:open={lectionModalOpen} size="xl">
+	<div class="grid grid-cols-2 gap-4">
+		<div class="space-y-2">
+			<FBHeading tag="h4">Morning</FBHeading>
+			<Label>Psalm</Label>
+			<Input bind:value={modalData.morningpsalm} />
+			<Label>Lesson</Label>
+			<Input bind:value={modalData.morning} />
+			<Label>Title</Label>
+			<Input bind:value={modalData.morningtitle} />
+		</div>
+		<div class="space-y-2">
+			<FBHeading tag="h4">Evening</FBHeading>
+			<Label>Psalm</Label>
+			<Input bind:value={modalData.eveningpsalm} />
+			<Label>Lesson</Label>
+			<Input bind:value={modalData.evening} />
+			<Label>Title</Label>
+			<Input bind:value={modalData.eveningtitle} />
+		</div>
 	</div>
-	<div>
-		<Button color="red" size="sm" onclick={toggleLectionModalOpen}>Cancel</Button>
-		<Button color="green" size="sm" onclick={confirmLectionModal}>Confirm</Button>
-	</div>
+	<svelte:fragment slot="footer">
+		<Button color="green" onclick={confirmLectionModal}>Save Changes</Button>
+		<Button color="alternative" onclick={() => (lectionModalOpen = false)}>Cancel</Button>
+	</svelte:fragment>
 </Modal>

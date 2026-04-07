@@ -1,5 +1,5 @@
 <script>
-	import user from '../model/user';
+	import user from '../model/user.svelte';
 	import {
 		Table,
 		TableBody,

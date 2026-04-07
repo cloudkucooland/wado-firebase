@@ -1,206 +1,179 @@
 <script lang="ts">
 	import { collection, query, where, limit, orderBy } from 'firebase/firestore';
 	import { db, getDocCacheFirst, getDocsCacheFirst } from '../firebase';
-	import { showEdit, showAlt } from '../model/preferences';
+	import { prefs } from '../model/preferences.svelte';
 	import { getContext } from 'svelte';
-	import Alternatives from './Alternatives.svelte';
-	import { link, push } from 'svelte-spa-router';
-	import type Proper from '../../types/model/proper';
+	import { push } from 'svelte-spa-router';
 	import { Spinner } from 'flowbite-svelte';
-	import { CalendarEditSolid, CalendarPlusSolid } from 'flowbite-svelte-icons';
+	import { CalendarEditSolid } from 'flowbite-svelte-icons';
 	import { toasts } from 'svelte-toasts';
 
+	import Alternatives from './Alternatives.svelte';
 	import Hymn from './prayerClasses/Hymn.svelte';
 	import Prayer from './prayerClasses/Prayer.svelte';
 	import Psalm from './prayerClasses/Psalm.svelte';
 	import Antiphon from './prayerClasses/Antiphon.svelte';
 	import Commemoration from './prayerClasses/Commemoration.svelte';
+	import type Proper from '../model/proper';
 	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
-	import type { SvelteComponent } from 'svelte';
-	import type { Readable } from 'svelte/store';
 
-	// $: forProper = getContext('forProper');
-	let forProper: Readable<Proper> = getContext('forProper');
+	let {
+		name,
+		max = 1,
+		maxAlt = 0,
+		bold = false,
+		subunit = null,
+		gloria = false
+	} = $props<{
+		name: string;
+		max?: number;
+		maxAlt?: number;
+		bold?: boolean;
+		subunit?: string | null;
+		gloria?: boolean;
+	}>();
 
-	export let name: string;
-	export let max: number = 1;
-	export let maxAlt: number = 0;
-	export let bold: boolean = false;
-	export let subunit: string | null = null;
-	export let gloria: boolean = false; // passthrough for psalms
+	const forProper = getContext<{ details: Proper }>('forProper');
 
-	export const lookup: Map<string, SvelteComponent> = new Map([
-		['other', Prayer],
-		['hymn', Hymn],
-		['prayer', Prayer],
-		['psalm', Psalm],
-		['antiphon', Antiphon],
-		['commemoration', Commemoration]
-	]);
+	const lookup: Record<string, any> = {
+		other: Prayer,
+		hymn: Hymn,
+		prayer: Prayer,
+		psalm: Psalm,
+		antiphon: Antiphon,
+		commemoration: Commemoration
+	};
 
-	if (typeof max !== 'number') max = +max;
-	let realMax = max;
-	if ($showAlt) {
-		if (typeof maxAlt !== 'number') maxAlt = +maxAlt;
-		realMax = maxAlt > max ? maxAlt : max;
-	}
+	let realMax = $derived.by(() => {
+		const baseMax = Number(max);
+		if (prefs.showAlt) {
+			const altMax = Number(maxAlt);
+			return altMax > baseMax ? altMax : baseMax;
+		}
+		return baseMax;
+	});
 
-	// since firestore (currently) only supports one "in" or "inarray" operator, we can't flatten this out
-	// this works for now
 	async function loaddata(p: Proper): Promise<Map<string, prayerFromFirestore>> {
 		const m: Map<string, prayerFromFirestore> = new Map();
+		const currentLimit = realMax;
 
-		// closure - needs m
-		// @ts-ignore
-		const doQuery = async (q) => {
+		const doQuery = async (q: any) => {
 			try {
 				const res = await getDocsCacheFirst(q);
 				for (const a of res.docs) {
+					if (m.size >= currentLimit) break;
 					const ad = a.data() as associationFromFirestore;
 					const d = await getDocCacheFirst(ad.Reference);
 					const dd = d.data() as prayerFromFirestore;
+					// Filter for licensed content
 					if (dd.License) m.set(d.id, dd);
 				}
 			} catch (err: any) {
-				console.log(err);
+				console.error(err);
 				toasts.error(err.message);
 			}
 		};
 
-		// just a wrapper to enforce types
-		type queryArgs = {
-			location: string;
-			season: string;
-			proper: number;
-			weekday: number;
-			year: string;
-		};
+		const makeQuery = (overrides: any) => {
+			const base = {
+				location: name,
+				calendarDate: 'Any',
+				season: 'Any',
+				proper: -1,
+				weekday: -1,
+				year: 'Any'
+			};
+			const qa = { ...base, ...overrides };
 
-		// just a wrapper to enforce types
-		const makeQuery = (qa: queryArgs) => {
 			return query(
 				collection(db, 'associations'),
 				where('Location', '==', qa.location),
-				where('CalendarDate', '==', 'Any'),
+				where('CalendarDate', '==', qa.calendarDate),
 				where('Season', '==', qa.season),
 				where('Proper', '==', qa.proper),
 				where('Weekday', '==', qa.weekday),
 				where('Year', '==', qa.year),
 				orderBy('Weight'),
-				limit(realMax - m.size)
+				limit(currentLimit - m.size)
 			);
 		};
 
-		// try with caldate
+		// 1. Exact Calendar Date (Feasts)
 		await doQuery(
 			query(
 				collection(db, 'associations'),
 				where('Location', '==', name),
 				where('CalendarDate', '==', p.caldate),
 				orderBy('Weight'),
-				limit(realMax)
+				limit(currentLimit)
 			)
 		);
-		if (m.size >= realMax) return m;
+		if (m.size >= currentLimit) return m;
 
-		// try with all the details
+		// 2. Specific Proper/Year
 		await doQuery(
-			makeQuery({
-				location: name,
-				season: p.season,
-				proper: p.proper,
-				weekday: p.weekday,
-				year: p.year
-			} as queryArgs)
+			makeQuery({ season: p.season, proper: p.proper, weekday: p.weekday, year: p.year })
 		);
-		if (m.size >= realMax) return m;
+		if (m.size >= currentLimit) return m;
 
-		// Any Year
-		await doQuery(
-			makeQuery({
-				location: name,
-				season: p.season,
-				proper: p.proper,
-				weekday: p.weekday,
-				year: 'Any'
-			} as queryArgs)
-		);
-		if (m.size >= realMax) return m;
+		// 3. Specific Proper, Any Year
+		await doQuery(makeQuery({ season: p.season, proper: p.proper, weekday: p.weekday }));
+		if (m.size >= currentLimit) return m;
 
-		// Any Year or Day
-		await doQuery(
-			makeQuery({
-				location: name,
-				season: p.season,
-				proper: p.proper,
-				weekday: -1,
-				year: 'Any'
-			} as queryArgs)
-		);
-		if (m.size >= realMax) return m;
+		// 4. Any Day of that Proper
+		await doQuery(makeQuery({ season: p.season, proper: p.proper }));
+		if (m.size >= currentLimit) return m;
 
-		// Season/Weekday
-		await doQuery(
-			makeQuery({
-				location: name,
-				season: p.season,
-				proper: -1,
-				weekday: p.weekday,
-				year: 'Any'
-			} as queryArgs)
-		);
-		if (m.size >= realMax) return m;
+		// 5. Any Proper of that Season/Weekday
+		await doQuery(makeQuery({ season: p.season, weekday: p.weekday }));
+		if (m.size >= currentLimit) return m;
 
-		// Season only
-		await doQuery(
-			makeQuery({
-				location: name,
-				season: p.season,
-				proper: -1,
-				weekday: -1,
-				year: 'Any'
-			} as queryArgs)
-		);
-		if (m.size >= realMax) return m;
+		// 6. Any Day of that Season
+		await doQuery(makeQuery({ season: p.season }));
+		if (m.size >= currentLimit) return m;
 
-		// Location, anys
-		await doQuery(
-			makeQuery({
-				location: name,
-				season: 'Any',
-				proper: -1,
-				weekday: -1,
-				year: 'Any'
-			} as queryArgs)
-		);
+		// 7.Location Default
+		await doQuery(makeQuery({}));
 
-		if (m.size == 0) console.debug('no results found for', name);
 		return m;
 	}
 </script>
 
-{#await loaddata($forProper)}
-	<Spinner />
+{#await loaddata(forProper.details)}
+	<div class="flex justify-center p-4">
+		<Spinner />
+	</div>
 {:then data}
-	{#if $showEdit}
-		<div class="edit">
-			{name}
+	{#if prefs.showEdit}
+		<div
+			class="mb-2 flex items-center gap-2 rounded bg-gray-100 p-1 text-xs text-gray-400 dark:bg-gray-800"
+		>
+			<span>Location: {name}</span>
 			<button
-				onclick={() => {
-					push('#/editlocation/' + name);
-				}}
+				onclick={() => push('#/editlocation/' + name)}
+				class="hover:text-blue-500"
+				title="Edit Location"
 			>
-				<CalendarEditSolid />
+				<CalendarEditSolid size="xs" />
 			</button>
 		</div>
 	{/if}
-	{#if maxAlt > 0 && $showAlt && data.size > 1}
+
+	{#if maxAlt > 0 && prefs.showAlt && data.size > 1}
 		<Alternatives {data} {bold} {subunit} {gloria} />
-	{:else}
+	{:else if data.size > 0}
 		{#each [...data] as [id, d]}
-			<svelte:component this={lookup.get(d.Class)} data={d} {id} {bold} {subunit} {gloria} />
+			{@const PrayerComp = lookup[d.Class?.toLowerCase() || 'prayer']}
+			{#if PrayerComp}
+				<PrayerComp data={d} {id} {bold} {subunit} {gloria} />
+			{/if}
 		{/each}
+	{:else if prefs.showAlt}
+		<p class="text-xs text-red-400 italic">No content found for {name}</p>
 	{/if}
-{:catch error: Error}
-	<h5>Unable to load: {error.message}</h5>
+{:catch error}
+	<div class="rounded border border-red-500 bg-red-50 p-2 text-red-700">
+		<p class="font-bold">Error loading {name}:</p>
+		<p class="text-sm">{error.message}</p>
+	</div>
 {/await}

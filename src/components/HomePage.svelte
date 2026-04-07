@@ -12,34 +12,42 @@
 	import { auth, screenView, db, recordEvent } from '../firebase';
 	import { getOffice, currentOffice } from '../model/offices';
 	import { toasts } from 'svelte-toasts';
-	import { getContext, setContext, onMount, onDestroy, afterUpdate } from 'svelte';
+	import { getContext, setContext, onMount, onDestroy } from 'svelte';
 	import { push, replace } from 'svelte-spa-router';
-	import { type Writable, type Readable, writable } from 'svelte/store';
 	import type User from '../../types/model/user';
 	import type prayer from '../../types/model/prayer';
 	import association from '../model/association';
 	import { doc, setDoc, addDoc, collection } from 'firebase/firestore';
-	import { showEdit, showAlt } from '../model/preferences';
+	import { prefs } from '../model/preferences.svelte';
 
 	const now: Date = new Date();
 	const nowString: string = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
 
-	export let params = { officeName: currentOffice(), officeDate: nowString };
-	const properFromDate = proper.fromDate(params.officeDate);
-	let forProper: Writable<proper> = writable(properFromDate);
-	setContext('forProper', forProper);
-	setContext('officeDate', params.officeDate); // only used by OSLCommemorations
+	let { params = { officeName: currentOffice(), officeDate: nowString } } = $props();
+	let forProper = $derived(proper.fromDate(params.officeDate));
+	setContext('forProper', {
+		get details() {
+			return forProper;
+		},
+		set details(v) {
+			forProper = v;
+		}
+	});
+	setContext('officeDate', {
+		get value() {
+			return params.officeDate;
+		}
+	});
 
-	$: officeName = params.officeName;
-	$: office = getOffice(officeName);
+	let officeName = $derived(params.officeName);
+	let office = $derived(getOffice(officeName));
+	let OfficeComp = $derived(office);
 
-	let me: Readable<User> = getContext('me');
+	const userContext = getContext<{ details: user }>('me');
 
 	onMount((): void => {
-		// set the URL so that "poking the ox" always takes you to "now"
 		replace('/office/' + officeName + '/' + params.officeDate);
 		screenView(officeName);
-
 		window.addEventListener('scroll', scrolling);
 		window.addEventListener('keypress', keypress);
 	});
@@ -50,19 +58,20 @@
 	});
 
 	// keyboard shortcuts, A to show alt, L to show edit links
-	function keypress(e: Event): void {
-		// e: KeyboardEvent
-		if (e.code == 'KeyA') {
-			showAlt.set(!$showAlt);
-			let on = 'yes';
-			if ($showAlt == false) on = 'no';
-			toasts.success('Show Alternatives', on);
+	function keypress(e: KeyboardEvent): void {
+		// Check for Alt toggle
+		if (e.code === 'KeyA') {
+			prefs.showAlt = !prefs.showAlt;
+			// The simple ternary makes the toast logic cleaner
+			const status = prefs.showAlt ? 'yes' : 'no';
+			toasts.success('Show Alternatives', status);
 		}
-		if (e.code == 'KeyL') {
-			showEdit.set(!$showEdit);
-			let on = 'yes';
-			if ($showEdit == false) on = 'no';
-			toasts.success('Show Edit Links', on);
+
+		// Check for Edit Links toggle
+		if (e.code === 'KeyL') {
+			prefs.showEdit = !prefs.showEdit;
+			const status = prefs.showEdit ? 'yes' : 'no';
+			toasts.success('Show Edit Links', status);
 		}
 	}
 
@@ -71,17 +80,18 @@
 		return;
 	}
 
-	afterUpdate((): void => {
+	$effect(() => {
+		// This runs whenever officeName changes
 		screenView(officeName);
 	});
 
 	async function scrolling(e: Event): Promise<void> {
 		if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
 			if (!auth.currentUser) return;
-			window.removeEventListener('scroll', scrolling);
-			if ($me.UpdateStreak) {
-				const res = await $me.UpdateStreak();
+			if (userContext.details.UpdateStreak) {
+				const res = await userContext.details.UpdateStreak();
 				toasts.success('Daily Streak', res);
+				window.removeEventListener('scroll', scrolling);
 			}
 		}
 	}
@@ -95,13 +105,13 @@
 </script>
 
 <svelte:head>
-	<title>WADO: {officeName}: {$forProper.propername}</title>
+	<title>WADO: {officeName}: {forProper.propername}</title>
 </svelte:head>
 
-<div class={$forProper.season}>
+<div class={forProper.season}>
 	<div class="flex">
 		<Tabs class="flex-1">
-			{#each offices($forProper.weekday) as o}
+			{#each offices(forProper.weekday) as o}
 				<TabItem title={o} open={officeName == o} onclick={() => tabSwitch(o)} />
 			{/each}
 		</Tabs>
@@ -110,7 +120,7 @@
 			onselect={(d) => {
 				const subs = d.toISOString().split('T');
 				if (params.officeDate == subs[0]) return;
-				$forProper = proper.fromDate(subs[0]);
+				forProper = proper.fromDate(subs[0]);
 				push('/office/' + officeName + '/' + subs[0]);
 			}}
 		/>
@@ -118,9 +128,9 @@
 	</div>
 
 	<div class="max-w-200">
-		<FBHeading tag="h3" class="text-center">{officeName}: {$forProper.propername}</FBHeading>
+		<FBHeading tag="h3" class="text-center">{officeName}: {forProper.propername}</FBHeading>
 		<div class="main">
-			<svelte:component this={office} />
+			<OfficeComp />
 		</div>
 	</div>
 </div>

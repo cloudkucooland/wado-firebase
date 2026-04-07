@@ -11,26 +11,38 @@ import {
 } from 'firebase/firestore';
 
 export default class user {
-	public displayName: string;
-	public longestStreak: string;
-	public consecutiveDays: string;
-	public lastDay: string;
-	public lastActivity: Date;
+	// Use $state for reactive fields
+	public displayName = $state('Anon');
+	public longestStreak = $state('0');
+	public consecutiveDays = $state('0');
+	public lastDay = $state('2020-01-01');
+	public lastActivity = $state(new Date());
+
 	private _userID?: string;
-	private _isEditor?: boolean;
-	private _isMediaManager?: boolean;
-	private _loggedIn?: boolean;
+	private _isEditor = $state(false);
+	private _isMediaManager = $state(false);
+	private _loggedIn = $state(false);
 
 	constructor(obj: any) {
-		this.displayName = obj.displayName ? obj.displayName : 'Anon';
-		this.longestStreak = obj.longestStreak ? obj.longestStreak : '0';
-		this.consecutiveDays = obj.consecutiveDays ? obj.consecutiveDays : '0';
-		this.lastDay = obj.lastDay ? obj.lastDay : '2020-01-01';
-		const la = obj.lastActivity ? obj.lastActivity : '2023-01-01';
+		this.displayName = obj.displayName ?? 'Anon';
+		this.longestStreak = obj.longestStreak ?? '0';
+		this.consecutiveDays = obj.consecutiveDays ?? '0';
+		this.lastDay = obj.lastDay ?? '2020-01-01';
+		const la = obj.lastActivity ?? '2023-01-01';
 		this.lastActivity = new Date(la);
-		this._isEditor = false;
-		this._isMediaManager = false;
-		this._loggedIn = false;
+	}
+
+	// Svelte 5 getters automatically become $derived when they access $state
+	get isEditor(): boolean {
+		return this._isEditor;
+	}
+
+	get isMediaManager(): boolean {
+		return this._isEditor || this._isMediaManager;
+	}
+
+	get loggedIn(): boolean {
+		return this._loggedIn;
 	}
 
 	public toString(): string {
@@ -72,7 +84,9 @@ export default class user {
 		}
 
 		// write something back, so future reads succeed
-		const u = new user({ lastActivity: new Date('2023-01-01') });
+		const u = new user(loaded.data());
+		u._isEditor = res.claims.role == 'Editor';
+		u._loggedIn = true;
 		u._userID = auth.currentUser.uid;
 		await setDoc(ref, u.toJSON(), { merge: true });
 		return u;
@@ -98,7 +112,7 @@ export default class user {
 
 		this.lastActivity = new Date();
 		try {
-			(await setDoc(ref, this.toJSON()), { merge: true });
+			await setDoc(ref, this.toJSON(), { merge: true });
 		} catch (err: any) {
 			console.log(err);
 		}
@@ -158,18 +172,6 @@ export default class user {
 			console.log(err);
 			return err.message;
 		}
-	}
-
-	get isEditor(): boolean {
-		return this._isEditor === true;
-	}
-
-	get isMediaManager(): boolean {
-		return this._isEditor || this._isMediaManager;
-	}
-
-	get loggedIn(): boolean {
-		return this._loggedIn === true;
 	}
 
 	public static async getRecent(): Promise<Array<user>> {

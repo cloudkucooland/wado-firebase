@@ -4,175 +4,157 @@
 	import { storage, db } from '../firebase';
 	import { Input, Button } from 'flowbite-svelte';
 	import { toasts } from 'svelte-toasts';
-	import type { Readable } from 'svelte/store';
-	import type User from '../../types/model/user';
 	import { getContext } from 'svelte';
+	import type { user } from '../model/user';
 
-	export let id: string;
-	export let media: string;
+	// 1. Svelte 5 Props (bindable media)
+	let { id, media = $bindable() } = $props<{ id: string; media: string | null }>();
 
-	let me: Readable<User> = getContext('me');
-	let file: Blob;
+	const userContext = getContext<{ details: user }>('me');
+
+	// 2. Reactive UI State - No more getElementById!
+	let file = $state<File | null>(null);
+	let uploadDisabled = $state(true);
+	let uploadColor = $state<'yellow' | 'green'>('yellow');
 
 	function loadFile(e: Event) {
 		const t = e.target as HTMLInputElement;
-		file = t.files[0] as File;
+		if (!t.files || t.files.length === 0) return;
+
+		const selectedFile = t.files[0];
+
+		// Reset state
+		uploadDisabled = true;
+		uploadColor = 'yellow';
+
+		// Quick type check
+		if (!selectedFile.type.startsWith('audio/')) {
+			toasts.error('Media must be an audio file');
+			return;
+		}
+
+		// Use FileReader to validate it's readable
 		const reader = new FileReader();
-
-		const button = document.getElementById('upload') as HTMLAnchorElement;
-		button.disabled = false;
-		button.color = 'green';
-
 		reader.onload = () => {
 			if (reader.result === '') {
-				button.disabled = true;
-				toasts.error('File empty or too large?');
+				toasts.error('File appears to be empty');
 				return;
 			}
-
-			// rules on cloud storage only allow audio, but catch here first if possible
-			if (!file.type.startsWith('audio/')) {
-				button.disabled = true;
-				toasts.error('media must be an audio file');
-				return;
-			}
-
-			button.disabled = false;
-			button.color = 'green';
-			// toasts.success("ready to upload");
-		};
-		reader.onerror = (error) => {
-			console.log(error, file);
-			button.disabled = true;
-			button.color = 'yellow';
-			toasts.error('could not load file', file.name);
+			// Success: Enable the button via state
+			file = selectedFile;
+			uploadDisabled = false;
+			uploadColor = 'green';
 		};
 
-		reader.readAsBinaryString(file);
+		reader.onerror = () => {
+			toasts.error('Could not load file', selectedFile.name);
+		};
+
+		reader.readAsArrayBuffer(selectedFile);
 	}
 
 	function doUpload() {
-		if (!file.type.includes('audio')) {
-			toasts.error('must be an audio file', file.type);
-			return;
-		}
+		if (!file) return;
 
 		if (file.size > 10485760) {
-			toasts.error('Too large: (10MB limit)', (file.size / 1048576).toString());
+			// 10MB
+			toasts.error('Too large: (10MB limit)', (file.size / 1048576).toFixed(2) + 'MB');
 			return;
 		}
 
-		let progressBarString: string = 'starting';
-		const progressBar = toasts.success('Uploading', progressBarString, {
-			duration: 0
-		});
-
-		const mediaRef = ref(storage, 'media/' + id);
+		const progressBar = toasts.success('Uploading', 'starting', { duration: 0 });
+		const mediaRef = ref(storage, `media/${id}`);
 		const metadata = { contentType: file.type };
 		let paused = false;
 
-		try {
-			const uploadTask = uploadBytesResumable(mediaRef, file, metadata);
-			progressBar.onClick = () => {
-				console.log('progressBar clicked');
-				if (paused) {
-					uploadTask.resume();
-				} else {
-					uploadTask.pause();
+		const uploadTask = uploadBytesResumable(mediaRef, file, metadata);
+
+		// Reactive Toast interactions
+		progressBar.onClick = () => {
+			paused ? uploadTask.resume() : uploadTask.pause();
+		};
+		progressBar.onRemove = () => uploadTask.cancel();
+
+		uploadTask.on(
+			'state_changed',
+			(snapshot) => {
+				const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+				switch (snapshot.state) {
+					case 'paused':
+						paused = true;
+						progressBar.update({ title: 'Paused', type: 'warning' });
+						break;
+					case 'running':
+						paused = false;
+						progressBar.update({
+							title: 'Uploading',
+							description: `${progress.toFixed(1)}% done`,
+							type: 'success'
+						});
+						break;
 				}
-			};
+			},
+			(error) => {
+				progressBar.remove();
+				toasts.error(error.message, 'Upload failed');
+			},
+			async () => {
+				progressBar.remove();
+				const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-			progressBar.onRemove = () => {
-				console.log('progressBar removed');
-				uploadTask.cancel();
-			};
+				// Update Local State and Firestore
+				media = downloadURL;
+				await updateDoc(doc(db, 'prayers', id), { Media: media });
+				toasts.success('File Uploaded');
 
-			// onClick handler to pause/resume
-
-			uploadTask.on(
-				'state_changed',
-				(snapshot) => {
-					switch (snapshot.state) {
-						case 'paused':
-							progressBar.update({ title: 'Paused' });
-							progressBar.type = 'warning';
-							console.debug('Upload is paused');
-							paused = true;
-							break;
-						case 'running':
-							if (snapshot.bytesTransferred > 0) {
-								let progressPercent = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-								progressBarString = progressPercent.toFixed(1) + '% done';
-							}
-							progressBar.update({
-								title: 'Uploading',
-								description: progressBarString
-							});
-							progressBar.type = 'success';
-							paused = false;
-							break;
-					}
-				},
-				(error) => {
-					console.error(error);
-					progressBar.remove();
-					toasts.error(error.message, 'upload failed (on)', {
-						uid: 70,
-						duration: 0
-					});
-				},
-				() => {
-					console.debug('successfully uploaded');
-					progressBar.remove();
-					getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-						media = downloadURL;
-						console.debug('File available at', media);
-						toasts.success('File Uploaded', { uid: 71 });
-						updateDoc(doc(db, 'prayers', id), { Media: media });
-					});
-				}
-			);
-		} catch (error: any) {
-			console.error(error);
-			progressBar.remove();
-			toasts.error(error.message, 'upload failed (try)', {
-				uid: 74,
-				duration: 0
-			});
-		}
+				// Reset upload button
+				uploadDisabled = true;
+				uploadColor = 'yellow';
+			}
+		);
 	}
 
 	async function removeMedia() {
 		try {
-			await deleteObject(ref(storage, 'media/' + id));
+			await deleteObject(ref(storage, `media/${id}`));
 			await updateDoc(doc(db, 'prayers', id), { Media: deleteField() });
-			media = null;
+			media = null; // $bindable prop makes this update the parent too
+			toasts.success('Media removed');
 		} catch (error: any) {
-			console.log(error);
-			toasts.error(error.message, id, { uid: 72 });
+			toasts.error(error.message);
 		}
-		const button = document.getElementById('upload') as HTMLAnchorElement;
-		button.disabled = true;
-		button.color = 'yellow';
 	}
 </script>
 
-<div class="grid grid-flow-row-dense grid-cols-4">
+<div class="grid grid-cols-4 gap-4 py-4">
 	<div class="col-span-4">
-		&nbsp;
 		{#if media}
-			<audio controls><source src={media} /></audio>
+			<audio controls class="w-full">
+				<source src={media} type="audio/mpeg" />
+				Your browser does not support the audio element.
+			</audio>
+		{:else}
+			<p class="text-center text-sm text-gray-500 italic">No audio attached to this prayer.</p>
 		{/if}
 	</div>
-	{#if $me.isMediaManager}
+
+	{#if userContext.details.isMediaManager}
 		<div class="col-span-4">
-			<Input type="file" name="file" id="fileData" onchange={loadFile} />
+			<label class="mb-2 block text-sm font-medium text-gray-900" for="fileData">Upload Audio</label
+			>
+			<Input type="file" id="fileData" onchange={loadFile} accept="audio/*" />
 		</div>
+
 		<div class="col-span-2">
-			<Button disabled={true} color="yellow" id="upload" onclick={doUpload}>Upload</Button>
+			<Button class="w-full" disabled={uploadDisabled} color={uploadColor} onclick={doUpload}>
+				Upload
+			</Button>
 		</div>
+
 		<div class="col-span-2">
-			<Button disabled={!media} color="red" id="remove" onclick={removeMedia}>Remove</Button>
+			<Button class="w-full" disabled={!media} color="red" onclick={removeMedia}>
+				Remove Existing
+			</Button>
 		</div>
 	{/if}
 </div>

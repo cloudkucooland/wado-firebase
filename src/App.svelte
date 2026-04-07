@@ -27,7 +27,7 @@
 
 	import { setContext } from 'svelte';
 	import { type Writable, writable } from 'svelte/store';
-	import user from './model/user';
+	import user from './model/user.svelte';
 	import HomePage from './components/HomePage.svelte';
 	import Settings from './components/Settings.svelte';
 	import Users from './components/Users.svelte';
@@ -72,19 +72,20 @@
 		'*': HomePage
 	};
 
-	let loggedIn = false;
-	let me: Writable<user> = writable(new user({}));
-
-	setContext('me', me);
+	let loggedIn = $state(false);
+	let me = $state(new user({}));
+	setContext('me', {
+		get details() {
+			return me;
+		}
+	});
 
 	onAuthStateChanged(auth, async (u) => {
-		if (u.hasOwnProperty('uid')) {
-			loggedIn = true;
-			$me = await user.me();
-			await $me.logAction();
-			if ($me.isEditor) toasts.info('Editor permissions', u.displayName);
+		if (u) {
+			me = await user.me();
+			await me.logAction();
 		} else {
-			loggedIn = false;
+			me = new user({});
 		}
 	});
 
@@ -144,10 +145,7 @@
 
 		navigator.serviceWorker.getRegistrations().then((registrations) => {
 			registrations.forEach((r) => {
-				if (
-					r.active.scriptURL == 'https://saint-luke.net/wado/service-worker.js' &&
-					r.active.state == 'activated'
-				) {
+				if (r.active.scriptURL.includes('service-worker.js') && r.active.state == 'activated') {
 					found = true;
 					r.update();
 				}
@@ -210,7 +208,11 @@
 
 <Footer>
 	<div>
-		<FooterCopyright href="https://saint-luke.net/" by="The Order of St. Luke ®" year={2025} />
+		<FooterCopyright
+			href="https://saint-luke.net/"
+			by="The Order of St. Luke ®"
+			year={new Date().getFullYear()}
+		/>
 		This site uses cookies for authentication and analytics.<br />
 	</div>
 	<div>

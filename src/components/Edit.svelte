@@ -28,10 +28,11 @@
 	import { db, auth, recordEvent, screenView } from '../firebase';
 	import { toasts } from 'svelte-toasts';
 	import { link } from 'svelte-spa-router';
-	import { getContext, onMount, onDestroy } from 'svelte';
-	import type { Readable } from 'svelte/store';
-	import type User from '../../types/model/user';
+	import { getContext, onMount } from 'svelte';
+
+	import type { user } from '../model/user';
 	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
+
 	import EditMedia from './EditMedia.svelte';
 	import EditAssoc from './EditAssoc.svelte';
 	import EditPsalmAntiphon from './EditPsalmAntiphon.svelte';
@@ -42,8 +43,7 @@
 		InvisibleButtonGroup,
 		UndoRedoButtonGroup
 	} from '@flowbite-svelte-plugins/texteditor';
-	// import type { Editor } from '@tiptap/core';
-	// import type { Editor } from '@flowbite-svelte-plugins/texteditor/node_modules/@tiptap/core';
+	import type { Editor } from '@tiptap/core';
 
 	import association from '../model/association';
 	import prayer from '../model/prayer';
@@ -52,12 +52,28 @@
 	import antiphon from '../model/antiphon';
 	import commemoration from '../model/commemoration';
 
-	let me: Readable<User> = getContext('me');
+	// 1. Context & Permissions
+	const userContext = getContext<{ details: user }>('me');
+	const me = $derived(userContext.details);
 
+	// 2. Props & Routing
+	let { params } = $props();
+	let id = $derived(params?.id ?? 'exnihilo');
+
+	// 3. Reactive State
 	let editorInstance = $state<Editor | null>(null);
-	let isEditable = $state<boolean>(true);
+	let prayerData = $state<prayer>(new prayer({ Name: 'Loading', Body: 'Loading' }));
+	let associations = $state<Array<association>>([]);
 
-	const classes: Map<string, typeof prayer> = new Map([
+	let modalId = $state<string | null>(null);
+	let deleteModalOpen = $state(false);
+	let editModalOpen = $state(false);
+	let addAssocModalOpen = $state(false);
+
+	let assocEditResult = $state<association | null>(null);
+	let assocAddResult = $state<association | null>(null);
+
+	const classes = new Map<string, typeof prayer>([
 		['antiphon', antiphon],
 		['commemoration', commemoration],
 		['hymn', hymn],
@@ -65,151 +81,56 @@
 		['psalm', psalm]
 	]);
 
-	function handleEditableToggle(editable: boolean) {
-		isEditable = editable;
-		console.log('Editor is now:', editable ? 'editable' : 'read-only');
-	}
+	const classItems = Array.from(classes.keys(), (i) => ({ name: i, value: i }));
 
-	onMount(async () => {
+	// 4. Lifecycle & Effects
+	onMount(() => {
 		screenView('Edit Prayer');
-		await loadPrayer();
 	});
 
-	const classItems = Array.from(classes.keys(), (i) => {
-		return { name: i, value: i };
+	$effect(() => {
+		// Re-load whenever the ID in the URL changes
+		loadPrayer(id);
 	});
 
-	// @ts-ignore
-	const { params } = $props();
-	const id: string = params.id ? params.id : 'exnihilo';
-	let modalId = $state<string | null>(null);
-	let assocEditResult = $state<association | null>(null);
-	let assocAddResult = $state<association | null>(null);
-	const _p: prayer | hymn | psalm | antiphon | commemoration = new prayer({
-		Name: 'Loading',
-		Body: 'Loading'
-	});
-	let prayerData = $state<prayer>(_p);
-	const _a: Array<association> = new Array();
-	let associations = $state<Array<association>>(_a);
-
-	let deleteModalOpen = $state<boolean>(false);
-	function toggleDeleteOpen(e: Event): void {
-		const t = e.target as HTMLInputElement;
-		screenView('toggleDeleteOpen');
-		deleteModalOpen = !deleteModalOpen;
-		if (deleteModalOpen) modalId = t.value;
-	}
-
-	async function confirmDelete(e: Event): Promise<void> {
-		const t = e.target as HTMLInputElement;
-		recordEvent('delete_assoc', { id: id, assoc: t.value });
-		deleteModalOpen = !deleteModalOpen;
-
+	// 5. Data Loading
+	async function loadPrayer(targetId: string): Promise<void> {
+		if (targetId === 'exnihilo') return;
 		try {
-			await deleteDoc(doc(db, 'associations', t.value));
-		} catch (err: any) {
-			console.log(err);
-			toasts.error(err.message);
-		}
-		const newAssn: Array<association> = new Array();
-		for (const a of associations) {
-			if (a.id != t.value) newAssn.push(a);
-		}
-		associations = newAssn;
-		toasts.success('Association deleted', t.value);
-	}
-
-	let editModalOpen = $state<boolean>(false);
-	async function toggleEditOpen(e: Event): Promise<void> {
-		const t = e.target as HTMLInputElement;
-		screenView('toggleEditOpen');
-		editModalOpen = !editModalOpen;
-
-		if (editModalOpen) modalId = t.value;
-	}
-
-	async function confirmEdit(e: Event): Promise<void> {
-		const t = e.target as HTMLInputElement;
-		recordEvent('edit_assoc', { id: id, assoc: t.value });
-		editModalOpen = !editModalOpen;
-
-		try {
-			await setDoc(doc(db, 'associations', t.value), assocEditResult.toFirebase());
-			const newAssn: Array<association> = new Array();
-			for (const a of associations) {
-				if (a.id != t.value) newAssn.push(a);
-			}
-			newAssn.push(assocEditResult);
-			associations = newAssn;
-			toasts.success('Saved Association', t.value);
-		} catch (err: any) {
-			console.log(err);
-			toasts.error(err.message);
-		}
-	}
-
-	let addAssocModalOpen = $state<boolean>(false);
-	async function toggleAddAssocOpen(e: Event): Promise<void> {
-		const t = e.target as HTMLInputElement;
-		screenView('toggleAddAssocOpen');
-		addAssocModalOpen = !addAssocModalOpen;
-
-		if (addAssocModalOpen) modalId = t.value;
-	}
-
-	async function confirmAddAssoc(): Promise<void> {
-		addAssocModalOpen = !addAssocModalOpen;
-
-		try {
-			const added = await addDoc(collection(db, 'associations'), assocAddResult.toFirebase());
-			const refetched = await getDoc(added);
-			// https://svelte.dev/tutorial/updating-arrays-and-objects
-			associations = [
-				...associations,
-				new association(refetched.id, refetched.data() as associationFromFirestore)
-			];
-			recordEvent('add_assoc', { id: id, new: added.id });
-		} catch (err: any) {
-			console.log(err);
-			toasts.error(err.message);
-		}
-	}
-
-	async function loadPrayer(): Promise<void> {
-		try {
-			const ref = doc(db, 'prayers/' + id);
+			const ref = doc(db, 'prayers/' + targetId);
 			const toEdit = await getDoc(ref);
 			const d = toEdit.data() as prayerFromFirestore;
-			if (!d) {
-				throw new Error('prayer not found: ' + id);
-			}
 
-			const c: typeof prayer = getClass(d.Class);
+			if (!d) throw new Error('Prayer not found: ' + targetId);
+
+			const c = getClass(d.Class);
 			prayerData = new c(d);
 
 			const q = query(collection(db, 'associations'), where('Reference', '==', ref));
 			const res = await getDocs(q);
-			for (const a of res.docs) {
-				// https://svelte.dev/tutorial/updating-arrays-and-objects
-				associations = [
-					...associations,
-					new association(a.id, a.data() as associationFromFirestore)
-				];
+
+			// Map results into our reactive state array
+			associations = res.docs.map(
+				(a) => new association(a.id, a.data() as associationFromFirestore)
+			);
+
+			if (editorInstance) {
+				editorInstance.commands.setContent(prayerData.body);
 			}
-			editorInstance.commands.setContent(prayerData.body);
 		} catch (err: any) {
-			console.log(err);
+			console.error(err);
 			toasts.error(err.message);
 		}
 	}
 
+	// 6. Persistence Logic
 	async function saveChanges(): Promise<void> {
-		recordEvent('save_prayer', { id: id });
+		if (!editorInstance) return;
+		recordEvent('save_prayer', { id });
 
 		try {
 			prayerData.body = editorInstance.getHTML();
-			prayerData.lastEditor = auth.currentUser.displayName;
+			prayerData.lastEditor = auth.currentUser?.displayName || 'Unknown';
 			prayerData.lastEdited = new Date().toISOString();
 			await setDoc(doc(db, 'prayers', id), prayerData.toFirebase());
 			toasts.success('Saved Prayer', id);
@@ -219,13 +140,70 @@
 		}
 	}
 
-	// use getClass to actually do the lookup
-	function getClass(className: string): typeof prayer {
-		if (!classes.has(className)) {
-			console.log('invalid class', className);
-			className = 'prayer';
+	// 7. Association Management
+	function toggleDeleteOpen(e: any): void {
+		modalId = e.target.value;
+		deleteModalOpen = !deleteModalOpen;
+	}
+
+	async function confirmDelete(): Promise<void> {
+		if (!modalId) return;
+		recordEvent('delete_assoc', { id, assoc: modalId });
+		deleteModalOpen = false;
+
+		try {
+			await deleteDoc(doc(db, 'associations', modalId));
+			associations = associations.filter((a) => a.id !== modalId);
+			toasts.success('Association deleted');
+		} catch (err: any) {
+			toasts.error(err.message);
 		}
-		return classes.get(className);
+	}
+
+	function toggleEditOpen(e: any): void {
+		modalId = e.target.value;
+		editModalOpen = !editModalOpen;
+	}
+
+	async function confirmEdit(): Promise<void> {
+		if (!modalId || !assocEditResult) return;
+		recordEvent('edit_assoc', { id, assoc: modalId });
+		editModalOpen = false;
+
+		try {
+			await setDoc(doc(db, 'associations', modalId), assocEditResult.toFirebase());
+			const index = associations.findIndex((a) => a.id === modalId);
+			if (index !== -1) associations[index] = assocEditResult;
+			toasts.success('Saved Association');
+		} catch (err: any) {
+			toasts.error(err.message);
+		}
+	}
+
+	function toggleAddAssocOpen(): void {
+		addAssocModalOpen = !addAssocModalOpen;
+	}
+
+	async function confirmAddAssoc(): Promise<void> {
+		if (!assocAddResult) return;
+		addAssocModalOpen = false;
+
+		try {
+			const added = await addDoc(collection(db, 'associations'), assocAddResult.toFirebase());
+			const refetched = await getDoc(added);
+			associations.push(
+				new association(refetched.id, refetched.data() as associationFromFirestore)
+			);
+			recordEvent('add_assoc', { id, new: added.id });
+			toasts.success('Added Association');
+		} catch (err: any) {
+			toasts.error(err.message);
+		}
+	}
+
+	function getClass(className: string): typeof prayer {
+		const name = className?.toLowerCase() || 'prayer';
+		return classes.get(name) || prayer;
 	}
 </script>
 
@@ -233,176 +211,139 @@
 	<title>Editing: {prayerData.name}</title>
 </svelte:head>
 
-<div class="w-full">
-	{#if $me.isEditor}
-		<FBHeading tag="h3">Editing: {prayerData.name}</FBHeading>
-	{:else}
-		<FBHeading tag="h3">Displaying: {prayerData.name}</FBHeading>
-	{/if}
-	<div class="w-full grid-flow-row-dense grid-cols-12">
+<div class="w-full space-y-6 p-4">
+	<div class="flex items-center justify-between">
+		<FBHeading tag="h3">{me.isEditor ? 'Editing' : 'Displaying'}: {prayerData.name}</FBHeading>
+		{#if me.isEditor}
+			<Button color="green" onclick={saveChanges}>Save Changes</Button>
+		{/if}
+	</div>
+
+	<div class="grid grid-cols-12 gap-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
 		<div class="col-span-12">
-			<Label for="name">Name</Label>
-			<Input name="name" id="name" bind:value={prayerData.name} disabled={!$me.isEditor} />
+			<Label for="name" class="mb-2">Name</Label>
+			<Input id="name" bind:value={prayerData.name} disabled={!me.isEditor} />
 		</div>
+
 		<div class="col-span-12">
-			{#if $me.isEditor}
-				<TextEditor
-					bind:editor={editorInstance}
-					content={prayerData.body}
-					contentprops={{ id: 'formats-ex' }}
-				>
-					<FormatButtonGroup
-						editor={editorInstance}
-						code={false}
-						highlight={false}
-						link={false}
-						removeLink={false}
-						strike={false}
-						subscript={false}
-						superscript={false}
-					/>
-					<UndoRedoButtonGroup editor={editorInstance} />
-					<InvisibleButtonGroup editor={editorInstance} />
-				</TextEditor>
+			<Label class="mb-2">Body Content</Label>
+			{#if me.isEditor}
+				<div class="rounded-lg border bg-white dark:bg-gray-800">
+					<TextEditor bind:editor={editorInstance} content={prayerData.body}>
+						<FormatButtonGroup editor={editorInstance} code={false} highlight={false} />
+						<UndoRedoButtonGroup editor={editorInstance} />
+						<InvisibleButtonGroup editor={editorInstance} />
+					</TextEditor>
+				</div>
 			{:else}
-				<p>{@html prayerData.body}</p>
+				<div class="prose max-w-none rounded-lg border bg-white p-4 dark:bg-gray-800">
+					{@html prayerData.body}
+				</div>
 			{/if}
 		</div>
+
 		{#if prayerData instanceof hymn}
 			<div class="col-span-6">
 				<Label for="hymntune">Hymn Tune</Label>
-				<Input
-					name="hymntune"
-					id="hymntune"
-					bind:value={prayerData.hymntune}
-					disabled={!$me.isEditor}
-				/>
+				<Input id="hymntune" bind:value={prayerData.hymntune} disabled={!me.isEditor} />
 			</div>
 			<div class="col-span-6">
 				<Label for="hymnmeter">Meter</Label>
-				<Input
-					name="hymnmeter"
-					id="hymnmeter"
-					bind:value={prayerData.hymnmeter}
-					disabled={!$me.isEditor}
-				/>
+				<Input id="hymnmeter" bind:value={prayerData.hymnmeter} disabled={!me.isEditor} />
 			</div>
 		{/if}
+
 		{#if prayerData instanceof psalm}
-			<div>
+			<div class="col-span-12">
 				<Label for="psalmrubric">Psalm Rubric</Label>
-				<Input
-					name="psalmrubric"
-					id="psalmrubric"
-					bind:value={prayerData.rubric}
-					disabled={!$me.isEditor}
-				/>
+				<Input id="psalmrubric" bind:value={prayerData.rubric} disabled={!me.isEditor} />
 			</div>
-			<EditPsalmAntiphon bind:result={prayerData.antiphon} />
+			<div class="col-span-12">
+				<EditPsalmAntiphon bind:result={prayerData.antiphon} />
+			</div>
 		{/if}
+
 		{#if prayerData instanceof commemoration}
-			<div>
-				<Label for="commemorationmorningcollect">Commemoration Morning Collect</Label>
+			<div class="col-span-6">
+				<Label for="commemorationmorningcollect">Morning Collect</Label>
 				<Input
-					name="commemorationmorningcollect"
 					id="commemorationmorningcollect"
 					bind:value={prayerData.morningcollect}
-					disabled={!$me.isEditor}
+					disabled={!me.isEditor}
 				/>
 			</div>
-			<div>
-				<Label for="commemorationeveningcollect">Commemoration Evening Collect</Label>
+			<div class="col-span-6">
+				<Label for="commemorationeveningcollect">Evening Collect</Label>
 				<Input
-					name="commemorationeveningcollect"
 					id="commemorationeveningcollect"
 					bind:value={prayerData.eveningcollect}
-					disabled={!$me.isEditor}
+					disabled={!me.isEditor}
 				/>
 			</div>
 		{/if}
-		<div class="col-span-3">
+
+		<div class="col-span-4">
 			<Label for="class">Class</Label>
-			<Select
-				name="class"
-				id="class"
-				bind:value={prayerData.class}
-				disabled={!$me.isEditor}
-				items={classItems}
-			/>
+			<Select id="class" items={classItems} bind:value={prayerData.class} disabled={!me.isEditor} />
 		</div>
-		<div class="col-span-3">
+		<div class="col-span-4">
 			<Label for="author">Author</Label>
-			<Input name="author" id="author" bind:value={prayerData.author} disabled={!$me.isEditor} />
-			<div class="col-span-3">
-				<Label for="lastEditor">Last Editor</Label>
-				<Input
-					name="lastEditor"
-					disabled={true}
-					id="lastEditor"
-					bind:value={prayerData.lastEditor}
-				/>
-			</div>
-			<div class="col-span-3">
-				<Label for="lastEdited">Last Edited</Label>
-				<Input
-					name="lastEdited"
-					disabled={true}
-					id="lastEdited"
-					bind:value={prayerData.lastEdited}
-				/>
-			</div>
-			<div class="col-span-2">
-				<Label for="license">License</Label>
-				<Checkbox
-					name="license"
-					id="license"
-					bind:checked={prayerData.license}
-					disabled={!$me.isEditor}
-				/>
-			</div>
-			<div class="col-span-2">
-				<Label for="reviewed">Reviewed</Label>
-				<Checkbox
-					name="reviewed"
-					id="reviewed"
-					bind:checked={prayerData.reviewed}
-					disabled={!$me.isEditor}
-				/>
-			</div>
-			<div class="col-span-7">&nbsp;</div>
-			<div class="col-span-1">
-				{#if $me.isEditor}
-					<Button color="red" onclick={saveChanges}>Save</Button>
-				{/if}
-			</div>
+			<Input id="author" bind:value={prayerData.author} disabled={!me.isEditor} />
+		</div>
+		<div class="col-span-2">
+			<Label for="license">Licensed</Label>
+			<Checkbox class="mt-2" bind:checked={prayerData.license} disabled={!me.isEditor} />
+		</div>
+		<div class="col-span-2">
+			<Label for="reviewed">Reviewed</Label>
+			<Checkbox class="mt-2" bind:checked={prayerData.reviewed} disabled={!me.isEditor} />
+		</div>
+
+		<div class="col-span-6">
+			<Label>Last Edited By</Label>
+			<Input value={prayerData.lastEditor} disabled />
+		</div>
+		<div class="col-span-6">
+			<Label>Last Edited Date</Label>
+			<Input value={prayerData.lastEdited} disabled />
 		</div>
 	</div>
-</div>
-<div>
-	<FBHeading tag="h3">Media</FBHeading>
-	<div>
-		<EditMedia {id} media={prayerData.media} />
+
+	<hr class="my-8" />
+
+	<FBHeading tag="h3" class="mb-4">Media</FBHeading>
+	<div class="rounded-lg bg-gray-50 p-4 dark:bg-gray-900">
+		<EditMedia {id} bind:media={prayerData.media} />
 	</div>
-</div>
-<div>
-	<FBHeading tag="h3">Associations</FBHeading>
-	<Table>
+
+	<hr class="my-8" />
+
+	<div class="mb-4 flex items-center justify-between">
+		<FBHeading tag="h3">Associations</FBHeading>
+		{#if me.isEditor}
+			<Button color="blue" size="sm" onclick={toggleAddAssocOpen}>Add Association</Button>
+		{/if}
+	</div>
+
+	<Table hoverable={true}>
 		<TableHead>
 			<TableHeadCell>Location</TableHeadCell>
-			<TableHeadCell>Calendar Date</TableHeadCell>
+			<TableHeadCell>Calendar</TableHeadCell>
 			<TableHeadCell>Season</TableHeadCell>
 			<TableHeadCell>Proper</TableHeadCell>
 			<TableHeadCell>Weekday</TableHeadCell>
-			<TableHeadCell>Lectionary Year</TableHeadCell>
+			<TableHeadCell>Year</TableHeadCell>
 			<TableHeadCell>Weight</TableHeadCell>
-			<TableHeadCell>&nbsp;</TableHeadCell>
+			<TableHeadCell>Actions</TableHeadCell>
 		</TableHead>
 		<TableBody>
 			{#each associations as v}
-				<TableBodyRow id={v.id}>
-					<TableBodyCell>
-						<a href="/editlocation/{v.Location}" use:link>{v.Location}</a>
-					</TableBodyCell>
+				<TableBodyRow>
+					<TableBodyCell
+						><a href="/#/editlocation/{v.Location}" class="text-blue-600 hover:underline"
+							>{v.Location}</a
+						></TableBodyCell
+					>
 					<TableBodyCell>{v.CalendarDate}</TableBodyCell>
 					<TableBodyCell>{v.Season}</TableBodyCell>
 					<TableBodyCell>{v.ProperDisplay}</TableBodyCell>
@@ -410,44 +351,44 @@
 					<TableBodyCell>{v.Year}</TableBodyCell>
 					<TableBodyCell>{v.Weight}</TableBodyCell>
 					<TableBodyCell>
-						{#if $me.isEditor}
-							<Button color="red" onclick={toggleEditOpen} value={v.id}>Edit</Button>
-							<Button color="red" onclick={toggleDeleteOpen} value={v.id}>delete</Button>
+						{#if me.isEditor}
+							<div class="flex gap-2">
+								<Button color="alternative" size="xs" onclick={toggleEditOpen} value={v.id}
+									>Edit</Button
+								>
+								<Button color="red" size="xs" onclick={toggleDeleteOpen} value={v.id}>Delete</Button
+								>
+							</div>
 						{/if}
 					</TableBodyCell>
 				</TableBodyRow>
 			{/each}
 		</TableBody>
 	</Table>
-	{#if $me.isEditor}
-		<Button color="red" onclick={toggleAddAssocOpen}>Add</Button>
-	{/if}
 </div>
-<Modal id="deleteModal" bind:open={deleteModalOpen}>
-	<FBHeading tag="h3">Delete Association</FBHeading>
-	<div>Confirm Delete</div>
-	<div>
-		<Button color="red" onclick={toggleDeleteOpen}>Cancel</Button>
-		<Button color="red" onclick={confirmDelete} value={modalId}>Confirm</Button>
+
+<Modal title="Delete Association" bind:open={deleteModalOpen} size="xs" autoclose>
+	<div class="text-center">
+		<p class="mb-5 text-lg font-normal text-gray-500">
+			Are you sure you want to delete this association?
+		</p>
+		<Button color="red" onclick={confirmDelete}>Confirm Delete</Button>
+		<Button color="alternative">Cancel</Button>
 	</div>
 </Modal>
-<Modal id="editModal" bind:open={editModalOpen}>
-	<FBHeading tag="h3">Edit Association</FBHeading>
-	<div>
-		<EditAssoc id={modalId} bind:result={assocEditResult} />
-	</div>
-	<div>
-		<Button color="red" onclick={toggleEditOpen}>Cancel</Button>
-		<Button color="red" onclick={confirmEdit} value={modalId}>Confirm</Button>
-	</div>
+
+<Modal title="Edit Association" bind:open={editModalOpen} size="md">
+	<EditAssoc id={modalId} bind:result={assocEditResult} />
+	<svelte:fragment slot="footer">
+		<Button color="green" onclick={confirmEdit}>Save</Button>
+		<Button color="alternative" onclick={() => (editModalOpen = false)}>Cancel</Button>
+	</svelte:fragment>
 </Modal>
-<Modal id="addAssocModal" bind:open={addAssocModalOpen}>
-	<FBHeading tag="h3">Add Association</FBHeading>
-	<div>
-		<EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />
-	</div>
-	<div>
-		<Button color="red" onclick={toggleAddAssocOpen}>Cancel</Button>
-		<Button color="red" onclick={confirmAddAssoc} value={modalId}>Confirm</Button>
-	</div>
+
+<Modal title="Add Association" bind:open={addAssocModalOpen} size="md">
+	<EditAssoc id={modalId} bind:result={assocAddResult} addToID={id} />
+	<svelte:fragment slot="footer">
+		<Button color="green" onclick={confirmAddAssoc}>Add</Button>
+		<Button color="alternative" onclick={() => (addAssocModalOpen = false)}>Cancel</Button>
+	</svelte:fragment>
 </Modal>

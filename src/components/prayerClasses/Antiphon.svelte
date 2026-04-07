@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { showEdit } from '../../model/preferences';
+	import { prefs } from '../../model/preferences.svelte';
 	import Media from '../Media.svelte';
 	import antiphon from '../../model/antiphon';
 	import type { prayerFromFirestore } from '../../model/types';
 	import { Heading } from 'flowbite-svelte';
 	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
-	import type { Readable } from 'svelte/store';
-	import { getContext } from 'svelte';
 
 	export let data: prayerFromFirestore;
 	export let id: string;
@@ -19,7 +17,7 @@
 	ant.id = id;
 </script>
 
-{#if $showEdit}<div class="edit">
+{#if prefs.showEdit}<div class="edit">
 		<button
 			on:click={() => {
 				push('#/edit/' + id);

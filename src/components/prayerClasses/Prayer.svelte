@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { showEdit } from '../../model/preferences';
+	import { prefs } from '../../model/preferences.svelte';
 	import Media from '../Media.svelte';
 	import prayer from '../../model/prayer';
 	import type { prayerFromFirestore } from '../../model/types';
-	import type { Readable } from 'svelte/store';
-	import { getContext } from 'svelte';
 	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
 
@@ -23,7 +21,7 @@
 	p.id = id;
 </script>
 
-{#if $showEdit}<div class="edit">
+{#if prefs.showEdit}<div class="edit">
 		<button
 			onclick={() => {
 				push('#/edit/' + id);
