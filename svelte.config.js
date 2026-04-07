@@ -1,7 +1,6 @@
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 
 export default {
-	// Consult https://svelte.dev/docs#compile-time-svelte-preprocess
-	// for more information about preprocessors
+	// Use vitePreprocess to handle TS and CSS within Svelte components
 	preprocess: vitePreprocess()
 };

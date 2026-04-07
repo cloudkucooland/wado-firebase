@@ -1,8 +1,6 @@
-import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import replace from '@rollup/plugin-replace';
-import sveltePreprocess from 'svelte-preprocess';
+import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
 	base: '/wado/',
@@ -10,21 +8,19 @@ export default defineConfig({
 		tailwindcss(),
 		svelte({
 			onwarn(warning, defaultHandler) {
-				// if (warning.code == "a11y-click-events-have-key-events") return;
-				// handle all other warnings normally
+				// Prevent a11y noise from cluttering logs if desired
+				if (warning.code === 'a11y-click-events-have-key-events') return;
 				defaultHandler(warning);
-			},
-			preprocess: sveltePreprocess({
-				// scss: {},
-				typescript: {}
-			})
-		}),
-		replace({
-			__buildDate__: () => JSON.stringify(new Date()),
-			preventAssignment: true,
-			'process.browser': true
+			}
+			// Note: We no longer need to pass 'preprocess' here; 
+			// it automatically picks up svelte.config.js
 		})
 	],
+	// Vite's native way to inject variables
+	define: {
+		__buildDate__: JSON.stringify(new Date().toISOString()),
+		'process.browser': true
+	},
 	build: {
 		sourcemap: true,
 		reportCompressedSize: false,
@@ -32,6 +28,7 @@ export default defineConfig({
 		rollupOptions: {
 			output: {
 				manualChunks: {
+					// Keeps the editor and heavy libs out of the initial load
 					tiptap: ['@flowbite-svelte-plugins/texteditor', '@tiptap/core'],
 					meili: ['meilisearch'],
 					icons: ['flowbite-svelte-icons']
@@ -39,14 +36,7 @@ export default defineConfig({
 			}
 		}
 	},
-	esbuild: { legalComments: 'none' },
-	rollupdedupe: ['svelte']
-});
-
-function manualChunks(id) {
-	if (id.includes('tiptap')) {
-		return 'tiptap';
+	esbuild: { 
+		legalComments: 'none' 
 	}
-
-	return null;
-}
+});
