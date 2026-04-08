@@ -3,7 +3,8 @@
 	import Subheading from './Subheading.svelte';
 	import { getContext } from 'svelte';
 
-	let officeDate: string = getContext('officeDate');
+	const dateContext = getContext<{ value: string }>('officeDate');
+	let currentOffsetDate = $derived(dateContext.value);
 
 	async function loaddata(od: string): Promise<Array<any>> {
 		const d = od.split('-');
