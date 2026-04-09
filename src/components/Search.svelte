@@ -3,7 +3,6 @@
 	import { index } from '../meili';
 	import { toasts } from 'svelte-toasts';
 	import { recordEvent } from '../firebase';
-	// import { link } from "svelte-spa-router"; // fails on subsequent queries?
 	import type { SearchResponse } from '../../node_modules/meilisearch/dist/types/types/types';
 
 	let result: SearchResponse = {

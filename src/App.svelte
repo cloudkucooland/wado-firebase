@@ -115,48 +115,29 @@
 			recordEvent('log out');
 			toasts.success('logged out');
 		} catch (err: any) {
-			toasts.error(err.messasge);
+			toasts.error(err.message);
 			console.log(err);
 		}
 	}
 
 	function startNotification(): void {
-		if (typeof Notification === 'undefined') return;
+		if (typeof Notification === 'undefined' || Notification.permission !== 'default') return;
 
-		if (Notification.permission === 'default') {
-			const tp = toasts.success('WADO Reminders', 'Click to allow WADO to send reminders to pray', {
-				onClick: () => {
-					Promise.resolve(Notification.requestPermission()).then((p) => {
-						console.log('granted notification permission', p);
-					});
-
-					tp.remove();
-				},
-				duration: 0
-			});
-		}
+		const tp = toasts.success('WADO Reminders', 'Click to allow WADO to send reminders to pray', {
+			onClick: async () => {
+				const permission = await Notification.requestPermission();
+				if (permission === 'granted') {
+					const reg = await navigator.serviceWorker.ready;
+					reg.active?.postMessage({ eventType: 'reset' });
+				}
+				tp.remove();
+			},
+			duration: 0
+		});
 	}
 
-	if ('serviceWorker' in navigator) {
-		if (Notification.permission === 'default') {
-			Notification.requestPermission();
-		}
-
-		let found = false;
-		navigator.serviceWorker.getRegistrations().then((registrations) => {
-			registrations.forEach((r) => {
-				if (r.active.scriptURL.includes('service-worker.js') && r.active.state == 'activated') {
-					found = true;
-					r.update();
-				}
-			});
-		});
-
-		if (!found) {
-			navigator.serviceWorker.register('service-worker.js');
-		}
-
-		startNotification();
+	if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+		navigator.serviceWorker.register('service-worker.js').then(() => startNotification());
 	}
 </script>
 
@@ -229,6 +210,6 @@
 	description="WADO uses cookies for authentication and analytics"
 	cookieName="wadogdpr"
 	{choices}
-	onanalytics={initAnalytics}
+	on:analytics={(e) => initAnalytics(e.detail)}
 	{showEditIcon}
 />
