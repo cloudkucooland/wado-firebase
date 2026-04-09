@@ -72,8 +72,8 @@
 		'*': HomePage
 	};
 
-	let loggedIn = $state(false);
 	let me = $state(new user({}));
+	let loggedIn = $derived(!!me.uid);
 	setContext('me', {
 		get details() {
 			return me;
@@ -92,7 +92,6 @@
 	async function doFBLogin(): Promise<void> {
 		try {
 			await signInWithPopup(auth, new FacebookAuthProvider());
-			loggedIn = true;
 			recordEvent('Facebook login');
 		} catch (err: any) {
 			toasts.error(err.message);
@@ -103,7 +102,6 @@
 	async function doGLogin(): Promise<void> {
 		try {
 			await signInWithPopup(auth, new GoogleAuthProvider());
-			loggedIn = true;
 			recordEvent('Google login');
 		} catch (err: any) {
 			toasts.error(err.message);
@@ -114,7 +112,6 @@
 	async function doLogout(): Promise<void> {
 		try {
 			await signOut(auth);
-			loggedIn = false;
 			recordEvent('log out');
 			toasts.success('logged out');
 		} catch (err: any) {
@@ -141,8 +138,11 @@
 	}
 
 	if ('serviceWorker' in navigator) {
-		let found = false;
+		if (Notification.permission === 'default') {
+			Notification.requestPermission();
+		}
 
+		let found = false;
 		navigator.serviceWorker.getRegistrations().then((registrations) => {
 			registrations.forEach((r) => {
 				if (r.active.scriptURL.includes('service-worker.js') && r.active.state == 'activated') {
@@ -163,7 +163,9 @@
 <svelte:head></svelte:head>
 
 <header class="w-full justify-start p-0">
-	<Navbar class="bg-primary-50 dark:bg-primary-700 p-0 sm:px-0">
+	<Navbar
+		class="bg-primary-50 dark:bg-primary-700 sticky top-0 bg-white/80 p-0 backdrop-blur-md sm:px-0"
+	>
 		<NavBrand href="/wado/#/" class="p-0">
 			<img src="ox.svg" height="72" width="72" alt="current office" class="me-3" />
 			<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
@@ -219,7 +221,7 @@
 		<a href="/wado-privacy" target="new">Privacy Policy</a> |
 		<a href="https://www.facebook.com/groups/3354160484857281">WADO user group</a> |
 		<a href="https://github.com/cloudkucooland/wado-firebase">GitHub</a> <br />
-		Build date: __buildDate__
+		Build date: {__buildDate__}
 	</div>
 </Footer>
 

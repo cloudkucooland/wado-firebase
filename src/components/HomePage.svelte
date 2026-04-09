@@ -89,6 +89,7 @@
 		if (window.innerHeight + window.scrollY >= document.body.scrollHeight) {
 			if (!auth.currentUser) return;
 			if (userContext.details.UpdateStreak) {
+				toasts.clearAll();
 				const res = await userContext.details.UpdateStreak();
 				toasts.success('Daily Streak', res);
 				window.removeEventListener('scroll', scrolling);

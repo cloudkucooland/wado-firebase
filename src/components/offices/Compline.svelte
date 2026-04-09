@@ -52,7 +52,7 @@
 <Heading>Canticle of Simeon <i>nunc dimittas</i></Heading>
 <Location name="SIMEON" />
 <Location name="GENERAL-GLORIA" />
-<Location name="COMPLINE-DISMISSAL" />
+<!-- <Location name="COMPLINE-DISMISSAL" /> -->
 <Rubric>
 	Members of the community continue in prayer,<br />and then depart in silence one by one.
 </Rubric>

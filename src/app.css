@@ -5,8 +5,8 @@
 @source '../node_modules/flowbite-svelte-icons/dist';
 
 @theme {
-	/* Define your 'monastic' variables here */
-	--font-wado-serif: Georgia, Times, 'Times New Roman', Merriweather, serif;
+	--font-wado-serif:
+		Charter, Bitter, 'EB Garamond', Georgia, Times, 'Times New Roman', Merriweather, serif;
 	--line-height-wado: 1.25em;
 	--margin-wado-bottom: 0.25rem;
 	--margin-wado-top: 0rem;
@@ -37,7 +37,6 @@ a:visited {
 	color: purple;
 }
 
-/* Apply your utility to all your liturgical classes */
 .silence,
 .rubric {
 	@apply typography my-4 text-center italic;

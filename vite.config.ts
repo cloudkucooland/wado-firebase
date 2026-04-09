@@ -18,12 +18,12 @@ export default defineConfig({
 		'process.browser': true
 	},
 	build: {
+		modulePreload: false,
 		sourcemap: true,
 		reportCompressedSize: false,
 		chunkSizeWarningLimit: 2048,
 		rollupOptions: {
 			output: {
-				// Vite 6 / Rolldown expects a function here when doing custom splitting
 				manualChunks(id) {
 					if (id.includes('@tiptap') || id.includes('texteditor')) {
 						return 'tiptap';

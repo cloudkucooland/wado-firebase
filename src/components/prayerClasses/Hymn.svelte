@@ -1,31 +1,45 @@
 <script lang="ts">
 	import { prefs } from '../../model/preferences.svelte';
+	import Heading from '../Heading.svelte';
 	import Media from '../Media.svelte';
-	import hymn from '../../model/hymn';
+	import hymn from '../../model/hymn'; // Assuming this class exists
 	import type { prayerFromFirestore } from '../../model/types';
-	import { EditSolid, CloudMeatballSolid } from 'flowbite-svelte-icons';
+	import { EditSolid } from 'flowbite-svelte-icons';
 	import { push } from 'svelte-spa-router';
-	import { Heading } from 'flowbite-svelte';
 
-	export let data: prayerFromFirestore;
-	export let id: string;
-	export const bold: boolean = false;
-	export const subunit: string | null = null;
-	export const gloria: boolean = false;
+	let {
+		data,
+		id,
+		bold = false,
+		subunit = null,
+		gloria = false
+	} = $props<{
+		data: prayerFromFirestore;
+		id: string;
+		bold?: boolean;
+		subunit?: string | null;
+		gloria?: boolean;
+	}>();
 
-	const h = new hymn(data);
-	h.id = id;
+	const h = $derived.by(() => {
+		const instance = new hymn(data);
+		instance.id = id;
+		return instance;
+	});
 </script>
 
-{#if prefs.showEdit}<div class="edit">
-		<button
-			on:click={() => {
-				push('#/edit/' + id);
-			}}
+{#if prefs.showEdit}
+	<div class="edit">
+		<div
+			class="mb-2 flex items-center gap-2 rounded bg-gray-100 p-1 text-xs text-gray-400 dark:bg-gray-800"
 		>
-			<EditSolid />
-		</button>
-	</div>{/if}
+			<button onclick={() => push('#/edit/' + id)} class="hover:text-blue-500" title="Edit Hymn">
+				<EditSolid size="xs" />
+			</button>
+		</div>
+	</div>
+{/if}
+
 <Heading tag="h5">{h.name}</Heading>
 <div class="hymn">{@html h.body}</div>
 <div class="hymndata">
@@ -37,8 +51,6 @@
 	{#if h.hymnmeter}
 		<span class="hymnmeter">{h.hymnmeter}</span>
 	{/if}
-	{#if h.author}
-		<div class="hymnmeter">{h.author}</div>
-	{/if}
+	{#if h.author}<div class="hymn-credit">{h.author}</div>{/if}
 </div>
 <Media mediaUrl={h.media} />

@@ -18,7 +18,7 @@ export default class user {
 	public lastDay = $state('2020-01-01');
 	public lastActivity = $state(new Date());
 
-	private _userID?: string;
+	private _userID = $state<string | undefined>(undefined);
 	private _isEditor = $state(false);
 	private _isMediaManager = $state(false);
 	private _loggedIn = $state(false);
@@ -32,7 +32,12 @@ export default class user {
 		this.lastActivity = new Date(la);
 	}
 
-	// Svelte 5 getters automatically become $derived when they access $state
+	public details = $state<any>(null);
+
+	get uid(): string | undefined {
+		return this._userID;
+	}
+
 	get isEditor(): boolean {
 		return this._isEditor;
 	}

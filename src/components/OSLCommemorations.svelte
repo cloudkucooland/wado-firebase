@@ -7,11 +7,10 @@
 	let currentOffsetDate = $derived(dateContext.value);
 
 	async function loaddata(od: string): Promise<Array<any>> {
-		const d = od.split('-');
+		const d = od.value.split('-');
 		const month = d[1];
 		const day = d[2];
 
-		// hurrah typescript...
 		const cred: RequestCredentials = 'include';
 		const mode: RequestMode = 'cors';
 		const redirect: RequestRedirect = 'manual';
@@ -38,7 +37,7 @@
 	}
 </script>
 
-{#await loaddata(officeDate)}
+{#await loaddata(dateContext)}
 	<Spinner />
 {:then data}
 	{#if data.length > 0}

@@ -1,5 +1,5 @@
 import { initializeApp, registerVersion } from 'firebase/app';
-import { type Analytics, getAnalytics, logEvent, setConsent } from 'firebase/analytics';
+import { getAnalytics, logEvent, setConsent, type Analytics } from 'firebase/analytics';
 import { getAuth } from 'firebase/auth';
 import { getStorage } from 'firebase/storage';
 import {
@@ -8,12 +8,10 @@ import {
 	getDocsFromServer,
 	getDocFromCache,
 	getDocFromServer,
-	Query,
-	DocumentReference,
-	// terminate,
-	// waitForPendingWrites,
 	persistentLocalCache,
-	persistentMultipleTabManager
+	persistentMultipleTabManager,
+	type Query,
+	type DocumentReference
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -25,50 +23,36 @@ const firebaseConfig = {
 	appId: '1:912288843295:web:2f760d10ee11a579e3372a'
 };
 
-setConsent({
-	ad_storage: 'denied',
-	ad_user_data: 'denied',
-	ad_personalization: 'denied',
-	analytics_storage: 'denied',
-	functionality_storage: 'denied',
-	personalization_storage: 'denied',
-	security_storage: 'denied'
-});
-
-// Initialize Firebase
 const fbapp = initializeApp(firebaseConfig);
 registerVersion('WADO', '2.1');
+
 export const auth = getAuth(fbapp);
-export let db = initializeFirestore(fbapp, {
+export const storage = getStorage(fbapp);
+export const db = initializeFirestore(fbapp, {
 	localCache: persistentLocalCache({
 		tabManager: persistentMultipleTabManager()
 	})
 });
-export const storage = getStorage();
-let analytics: Analytics;
-let _analyticsRunning: boolean = false;
+
+let analytics: Analytics | undefined;
 
 export function initAnalytics() {
-	if (_analyticsRunning) return;
+	if (analytics) return;
+
 	try {
 		analytics = getAnalytics(fbapp);
+		setConsent({
+			analytics_storage: 'granted',
+			ad_storage: 'denied', // Keep restricted unless needed
+			security_storage: 'granted'
+		});
 	} catch (err) {
-		console.log(err);
+		console.error('Analytics failed to init:', err);
 	}
-	_analyticsRunning = true;
-	setConsent({
-		ad_storage: 'granted',
-		ad_user_data: 'granted',
-		ad_personalization: 'granted',
-		analytics_storage: 'granted',
-		functionality_storage: 'granted',
-		personalization_storage: 'granted',
-		security_storage: 'granted'
-	});
 }
 
 export function recordEvent(name: string, details?: object) {
-	if (!_analyticsRunning || !name) return;
+	if (!analytics) return;
 	logEvent(analytics, name, details);
 }
 
@@ -81,27 +65,22 @@ export function screenView(name: string) {
 
 export async function getDocsCacheFirst(q: Query) {
 	try {
-		const res = await getDocsFromCache(q);
-		if (res.empty) {
-			throw new Error('query cache miss');
-		}
-		// console.debug('query cache hit');
-		return res;
+		const snapshot = await getDocsFromCache(q);
+		// If snapshot is empty, we likely haven't cached this query yet
+		if (snapshot.empty) return await getDocsFromServer(q);
+		return snapshot;
 	} catch (err) {
-		// console.debug('query cache miss');
-		const res = await getDocsFromServer(q);
-		return res;
+		return await getDocsFromServer(q);
 	}
 }
 
 export async function getDocCacheFirst(r: DocumentReference) {
 	try {
-		const res = await getDocFromCache(r);
-		console.debug('doc cache hit');
-		return res;
+		const doc = await getDocFromCache(r);
+		// getDocFromCache throws if the doc isn't there,
+		// so the catch block handles the server fetch.
+		return doc;
 	} catch (err) {
-		console.debug('doc cache miss');
-		const res = await getDocFromServer(r);
-		return res;
+		return await getDocFromServer(r);
 	}
 }
