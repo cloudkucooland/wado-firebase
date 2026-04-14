@@ -24,7 +24,7 @@ const firebaseConfig = {
 };
 
 const fbapp = initializeApp(firebaseConfig);
-registerVersion('WADO', '2.1');
+registerVersion('WADO', '2.5');
 
 export const auth = getAuth(fbapp);
 export const storage = getStorage(fbapp);
@@ -43,7 +43,7 @@ export function initAnalytics() {
 		analytics = getAnalytics(fbapp);
 		setConsent({
 			analytics_storage: 'granted',
-			ad_storage: 'denied', // Keep restricted unless needed
+			ad_storage: 'denied',
 			security_storage: 'granted'
 		});
 	} catch (err) {
@@ -66,7 +66,6 @@ export function screenView(name: string) {
 export async function getDocsCacheFirst(q: Query) {
 	try {
 		const snapshot = await getDocsFromCache(q);
-		// If snapshot is empty, we likely haven't cached this query yet
 		if (snapshot.empty) return await getDocsFromServer(q);
 		return snapshot;
 	} catch (err) {
@@ -77,8 +76,6 @@ export async function getDocsCacheFirst(q: Query) {
 export async function getDocCacheFirst(r: DocumentReference) {
 	try {
 		const doc = await getDocFromCache(r);
-		// getDocFromCache throws if the doc isn't there,
-		// so the catch block handles the server fetch.
 		return doc;
 	} catch (err) {
 		return await getDocFromServer(r);
