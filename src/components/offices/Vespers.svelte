@@ -7,6 +7,7 @@
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
 	import OSLCommemorations from '../OSLCommemorations.svelte';
+	import OSLPrayerRequests  from '../OSLPrayerRequests.svelte';
 	import { Heading as FBHeading } from 'flowbite-svelte';
 </script>
 
@@ -77,6 +78,8 @@
 <Rubric>One or more of the following</Rubric>
 <Location name="OSL" max={3} />
 <OSLCommemorations />
+<Rubric>Pray for the concerns of our community</Rubric>
+<OSLPrayerRequests />
 
 <Subheading>The Lord’s Prayer</Subheading>
 <Location name="GENERAL-LORDS" bold={true} /><br />

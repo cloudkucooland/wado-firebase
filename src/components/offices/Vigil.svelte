@@ -7,6 +7,7 @@
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
 	import OSLCommemorations from '../OSLCommemorations.svelte';
+	import OSLPrayerRequests from '../OSLPrayerRequests.svelte';
 </script>
 
 <Rubric
@@ -49,6 +50,7 @@
 <Subheading>Silence for Reflection</Subheading>
 
 <OSLCommemorations />
+<OSLPrayerRequests />
 
 <Subheading>Prayers</Subheading>
 <Rubric>Prayers of Supplicaion and Intercession</Rubric>
