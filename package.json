@@ -10,7 +10,7 @@
 		"lint": "eslint",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"format": "prettier --write .",
-		"prod": "scp -4 -r dist/* osl.indievisible.org:/www/osl/wado/"
+		"deploy": "firebase deploy --only hosting"
 	},
 	"repository": {
 		"type": "git",

@@ -19,6 +19,6 @@ gcloud functions deploy $FUNCTION_NAME \
   --memory=256Mi \
   --trigger-event-filters="type=google.cloud.firestore.document.v1.written" \
   --trigger-event-filters="database=(default)" \
-  --trigger-event-filters-path-pattern="document=lectionary/{docId}" \
+  --trigger-event-filters-path-pattern="document=prayers/{docId}" \
   --trigger-location=$TRIGGER_REGION \
   --set-env-vars GOOGLE_CLOUD_PROJECT=$(gcloud config get-value project)
