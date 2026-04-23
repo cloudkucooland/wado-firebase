@@ -3,7 +3,7 @@
 	import { Input, Button } from 'flowbite-svelte';
 	import { toasts } from 'svelte-toasts';
 	import { getDoc, doc } from 'firebase/firestore';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount } from 'svelte';
 	import Select from 'svelte-select';
 	import { index } from '../meili';
 	import type { DocumentReference, DocumentSnapshot, DocumentData } from 'firebase/firestore';

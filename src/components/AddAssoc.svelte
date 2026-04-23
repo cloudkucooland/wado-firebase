@@ -38,6 +38,10 @@
 		result = a;
 	});
 
+	$effect(() => {
+		a.Location = location;
+	});
+
 	// Reset logic for season change
 	$effect(() => {
 		if (a.Season === 'Any') {
