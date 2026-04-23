@@ -8,8 +8,8 @@
 	import { index } from '../meili';
 	import type { DocumentReference, DocumentSnapshot, DocumentData } from 'firebase/firestore';
 
-	export let result: DocumentReference;
-	let resolved: DocumentData;
+	let { result = $bindable() } = $props<{ result: DocumentReference }>();
+	let resolved = $state<DocumentData | undefined>();
 
 	async function loadOptions(searchString: string): Promise<Array<any>> {
 		const items: Array<any> = [];

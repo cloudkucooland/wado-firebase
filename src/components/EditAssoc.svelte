@@ -1,89 +1,120 @@
 <script lang="ts">
 	import { getDoc, doc } from 'firebase/firestore';
 	import { db } from '../firebase';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount } from 'svelte';
 	import association from '../model/association';
 	import type { associationFromFirestore } from '../model/types';
 	import season from '../model/season';
-	import { Input, Select } from 'flowbite-svelte';
+	import { Input, Select as FBSelect } from 'flowbite-svelte';
 
-	export let id: string;
-	export let result: association;
-	export let addToID: string = '';
+	let {
+		id,
+		result = $bindable(),
+		addToID = ''
+	} = $props<{
+		id: string;
+		result: association;
+		addToID?: string;
+	}>();
 
-	// change this to association.fromProper({});
-	const dummy = {
-		Location: 'UNSET',
-		Season: 'Any',
-		Proper: -1,
-		Weekday: -1,
-		Weight: 1,
-		Year: 'Any',
-		Reference: doc(db, 'ex', 'nihilo')
-	} as associationFromFirestore;
-	let a: association = new association('', dummy);
+	// Initialize state with a dummy/empty association
+	let a = $state(
+		new association('', {
+			Location: 'UNSET',
+			Season: 'Any',
+			Proper: -1,
+			Weekday: -1,
+			Weight: 1,
+			Year: 'Any',
+			Reference: doc(db, 'ex', 'nihilo')
+		} as associationFromFirestore)
+	);
 
-	let calDateSet: boolean = false;
-	let selectedSeason: season = season.LUT.get(a.Season);
-	let properName: string = 'Proper';
+	// Derived values
+	let selectedSeason = $derived(season.LUT.get(a.Season) || season.LUT.get('Any')!);
+	let calDateSet = $derived(a.CalendarDate !== 'Any');
+	let properName = $derived(selectedSeason.properName || 'Proper');
+
+	// Keep result in sync with state
+	$effect(() => {
+		result = a;
+	});
+
+	// Reset logic for season change
+	$effect(() => {
+		if (a.Season === 'Any') {
+			a.Proper = -1;
+			a.Weekday = -1;
+		}
+	});
 
 	onMount(async () => {
 		if (addToID != '') {
 			// use the dummy data if adding
-			dummy.Reference = doc(db, 'prayers', addToID);
+			const dummy: associationFromFirestore = {
+				Location: 'UNSET',
+				Season: 'Any',
+				Proper: -1,
+				Weekday: -1,
+				Weight: 1,
+				Year: 'Any',
+				Reference: doc(db, 'prayers', addToID)
+			};
 			a = new association('', dummy);
-			result = a;
 			return;
 		}
 
-		// get the current one, from firestore
-		const d = await getDoc(doc(db, 'associations', id));
-		a = new association(d.id, d.data() as associationFromFirestore);
-		selectedSeason = season.LUT.get(a.Season);
-		result = a;
-		if (result.CalendarDate !== 'Any') {
-			calDateSet = true;
-		} else {
-			calDateSet = false;
+		// get the current one from firestore
+		try {
+			const d = await getDoc(doc(db, 'associations', id));
+			if (d.exists()) {
+				a = new association(d.id, d.data() as associationFromFirestore);
+			}
+		} catch (err) {
+			console.error('Error loading association:', err);
 		}
-		properName = selectedSeason.properName ? selectedSeason.properName : 'Proper';
 	});
 
-	afterUpdate(() => {
-		result = a;
-		selectedSeason = season.LUT.get(a.Season);
-		if (result.CalendarDate !== 'Any') {
-			calDateSet = true;
-		} else {
-			calDateSet = false;
-		}
-		properName = selectedSeason.properName ? selectedSeason.properName : 'Proper';
-	});
+	const locationItems = association.locations.map((l) => ({ name: l, value: l }));
+	const seasonItems = [
+		{ name: 'Any', value: 'Any' },
+		...Array.from(season.LUT.keys())
+			.filter((s) => s !== 'Any')
+			.map((s) => ({ name: s, value: s }))
+	];
+	const weekdayItems = [
+		{ name: 'Any', value: -1 },
+		{ name: 'Sunday', value: 0 },
+		{ name: 'Monday', value: 1 },
+		{ name: 'Tuesday', value: 2 },
+		{ name: 'Wednesday', value: 3 },
+		{ name: 'Thursday', value: 4 },
+		{ name: 'Friday', value: 5 },
+		{ name: 'Saturday', value: 6 }
+	];
+	const yearItems = [
+		{ name: 'Any', value: 'Any' },
+		{ name: 'A', value: 'A' },
+		{ name: 'B', value: 'B' },
+		{ name: 'C', value: 'C' }
+	];
 </script>
 
-<div class="w-full grid-flow-row-dense grid-cols-12">
-	<div class="col-span-4">Location</div>
-	<div class="col-span-8">
-		<Select bind:value={a.Location}>
-			{#each association.locations as l}
-				<option value={l}>{l}</option>
-			{/each}
-		</Select>
+<div class="grid w-full grid-flow-row-dense grid-cols-12 gap-4">
+	<div class="col-span-12">
+		<label class="mb-2 block text-sm font-medium" for="location">Location</label>
+		<FBSelect id="location" items={locationItems} bind:value={a.Location} />
 	</div>
 
-	<div class="col-span-4">Season</div>
-	<div class="col-span-8">
-		<Select bind:value={a.Season} disabled={calDateSet}>
-			<option value="Any">Any</option>
-			{#each Array.from(season.LUT.keys()) as s}
-				<option value={s}>{s}</option>
-			{/each}
-		</Select>
+	<div class="col-span-6">
+		<label class="mb-2 block text-sm font-medium" for="season">Season</label>
+		<FBSelect id="season" items={seasonItems} bind:value={a.Season} disabled={calDateSet} />
 	</div>
 
-	<div class="col-span-4">{properName} <span class="small">(-1 for "Any")</span></div>
-	<div class="col-span-8">
+	<div class="col-span-6">
+		<label class="mb-2 block text-sm font-medium" for="proper">{properName}</label>
 		<Input
+			id="proper"
 			bind:value={a.Proper}
 			type="number"
 			max={selectedSeason.maxProper}
@@ -92,41 +123,35 @@
 		/>
 	</div>
 
-	<div class="col-span-4">Weekday</div>
-	<div class="col-span-8">
-		<Select bind:value={a.Weekday} disabled={calDateSet || !selectedSeason.useWeekdays}>
-			<option value={-1}>Any</option>
-			<option value={0}>Sunday</option>
-			<option value={1}>Monday</option>
-			<option value={2}>Tuesday</option>
-			<option value={3}>Wednesday</option>
-			<option value={4}>Thursday</option>
-			<option value={5}>Friday</option>
-			<option value={6}>Saturday</option>
-		</Select>
+	<div class="col-span-4">
+		<label class="mb-2 block text-sm font-medium" for="weekday">Weekday</label>
+		<FBSelect
+			id="weekday"
+			items={weekdayItems}
+			bind:value={a.Weekday}
+			disabled={calDateSet || !selectedSeason.useWeekdays}
+		/>
 	</div>
 
-	<div class="col-span-4">Year</div>
-	<div class="col-span-8">
-		<Select bind:value={a.Year} disabled={calDateSet}>
-			<option value="Any">Any</option>
-			<option value="A">A</option>
-			<option value="B">B</option>
-			<option value="C">C</option>
-		</Select>
+	<div class="col-span-4">
+		<label class="mb-2 block text-sm font-medium" for="year">Year</label>
+		<FBSelect id="year" items={yearItems} bind:value={a.Year} disabled={calDateSet} />
 	</div>
 
-	<div class="col-span-4">Weight</div>
-	<div class="col-span-8">
-		<Input bind:value={a.Weight} type="number" min={0} max={99} disabled={calDateSet} />
+	<div class="col-span-4">
+		<label class="mb-2 block text-sm font-medium" for="weight">Weight</label>
+		<Input id="weight" bind:value={a.Weight} type="number" min={0} max={99} disabled={calDateSet} />
 	</div>
 
-	<div class="col-span-2">&nbsp;</div>
-	<div class="col-span-8">(fixed-dates are very rare; "Any" to use season-relative dates)</div>
-	<div class="col-span-2">&nbsp;</div>
+	<div class="col-span-12">
+		<hr class="my-2" />
+		<p class="text-xs text-gray-500 italic">
+			Fixed dates are rare. Use "Any" above to rely on season-relative logic.
+		</p>
+	</div>
 
-	<div class="col-span-4">Fixed Date</div>
-	<div class="col-span-8">
-		<Input bind:value={a.CalendarDate} placeholder="mm-dd" />
+	<div class="col-span-12">
+		<label class="mb-2 block text-sm font-medium" for="fixed-date">Fixed Date (mm-dd)</label>
+		<Input id="fixed-date" bind:value={a.CalendarDate} placeholder="mm-dd" />
 	</div>
 </div>

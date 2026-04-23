@@ -28,9 +28,6 @@
 	setContext('forProper', {
 		get details() {
 			return forProper;
-		},
-		set details(v) {
-			forProper = v;
 		}
 	});
 	setContext('officeDate', {
@@ -121,7 +118,6 @@
 			onselect={(d) => {
 				const subs = d.toISOString().split('T');
 				if (params.officeDate == subs[0]) return;
-				forProper = proper.fromDate(subs[0]);
 				push('/office/' + officeName + '/' + subs[0]);
 			}}
 		/>

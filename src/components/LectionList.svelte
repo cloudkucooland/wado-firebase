@@ -301,7 +301,7 @@
 		</div>
 	</div>
 	<svelte:fragment slot="footer">
-	</svelte:fragment>
 		<Button color="green" onclick={confirmLectionModal}>Save Changes</Button>
 		<Button color="alternative" onclick={() => (lectionModalOpen = false)}>Cancel</Button>
+	</svelte:fragment>
 </Modal>

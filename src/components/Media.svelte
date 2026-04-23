@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { prefs } from '../model/preferences.svelte';
-	export let mediaUrl: string;
+	let { mediaUrl } = $props<{ mediaUrl: string }>();
 </script>
 
 {#if prefs.showMedia == true && mediaUrl != ''}

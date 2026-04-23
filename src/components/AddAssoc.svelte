@@ -1,44 +1,49 @@
 <script lang="ts">
 	import { doc } from 'firebase/firestore';
 	import { db } from '../firebase';
-	import { onMount, afterUpdate } from 'svelte';
+	import { onMount } from 'svelte';
 	import association from '../model/association';
 	import type { associationFromFirestore } from '../model/types';
 	import season from '../model/season';
-	import { Input, Button, Select as BasicSelect } from 'flowbite-svelte';
+	import { Input, Button, Select as FBSelect } from 'flowbite-svelte';
 	import Select from 'svelte-select';
 	import { index } from '../meili';
 	import { toasts } from 'svelte-toasts';
 
-	export let result: association; // what is returned to the caller (EditLocation.svelte)
-	export let location: string; // = 'UNSET';
-	$: a = new association('', {
-		Location: location,
-		Season: 'Any',
-		Proper: -1,
-		Weekday: -1,
-		Year: 'Any',
-		Weight: 1,
-		Reference: doc(db, 'ex', 'nihilo')
-	} as associationFromFirestore);
+	let { result = $bindable(), location = 'UNSET' } = $props<{
+		result: association;
+		location?: string;
+	}>();
 
-	$: calDateSet = false;
-	$: selectedSeason = season.LUT.get('Any');
-	$: properName = 'Proper';
+	// Initialize state
+	let a = $state(
+		new association('', {
+			Location: location,
+			Season: 'Any',
+			Proper: -1,
+			Weekday: -1,
+			Year: 'Any',
+			Weight: 1,
+			Reference: doc(db, 'ex', 'nihilo')
+		} as associationFromFirestore)
+	);
 
-	onMount(async () => {
+	// Derived values
+	let selectedSeason = $derived(season.LUT.get(a.Season) || season.LUT.get('Any')!);
+	let calDateSet = $derived(a.CalendarDate !== 'Any');
+	let properName = $derived(selectedSeason.properName || 'Proper');
+
+	// Keep result in sync with state
+	$effect(() => {
 		result = a;
 	});
 
-	afterUpdate(() => {
-		result = a;
-		selectedSeason = season.LUT.get(a.Season);
-		if (result.CalendarDate !== 'Any') {
-			calDateSet = true;
-		} else {
-			calDateSet = false;
+	// Reset logic for season change
+	$effect(() => {
+		if (a.Season === 'Any') {
+			a.Proper = -1;
+			a.Weekday = -1;
 		}
-		properName = selectedSeason.properName ? selectedSeason.properName : 'Proper';
 	});
 
 	async function loadOptions(searchString: string): Promise<Array<any>> {
@@ -70,20 +75,46 @@
 	}
 
 	const groupBy = (item: any) => item.group;
+
+	const seasonItems = [
+		{ name: 'Any', value: 'Any' },
+		...Array.from(season.LUT.keys())
+			.filter((s) => s !== 'Any')
+			.map((s) => ({ name: s, value: s }))
+	];
+
+	const weekdayItems = [
+		{ name: 'Any', value: -1 },
+		{ name: 'Sunday', value: 0 },
+		{ name: 'Monday', value: 1 },
+		{ name: 'Tuesday', value: 2 },
+		{ name: 'Wednesday', value: 3 },
+		{ name: 'Thursday', value: 4 },
+		{ name: 'Friday', value: 5 },
+		{ name: 'Saturday', value: 6 }
+	];
+
+	const yearItems = [
+		{ name: 'Any', value: 'Any' },
+		{ name: 'A', value: 'A' },
+		{ name: 'B', value: 'B' },
+		{ name: 'C', value: 'C' }
+	];
 </script>
 
-<div class="grid w-full grid-flow-row-dense grid-cols-12">
-	<div class="col-span-2">Location</div>
-	<div class="col-span-6">
+<div class="grid w-full grid-flow-row-dense grid-cols-12 gap-4">
+	<div class="col-span-4 flex items-center">Location</div>
+	<div class="col-span-4 flex items-center font-bold">
 		{location}
 	</div>
 	<div class="col-span-4">
-		<Button color="gray" href="#/addPrayer">Add Prayer</Button>
+		<Button color="gray" size="xs" href="#/addPrayer">Add Prayer</Button>
 	</div>
 
-	<div class="col-span-2">Prayer</div>
-	<div class="col-span-10">
+	<div class="col-span-12">
+		<label class="mb-2 block text-sm font-medium" for="prayer-select">Prayer</label>
 		<Select
+			id="prayer-select"
 			name="prayer"
 			placeholder="search for prayer"
 			{loadOptions}
@@ -92,25 +123,15 @@
 		/>
 	</div>
 
-	<div class="col-span-4">Season</div>
-	<div class="col-span-8">
-		<BasicSelect bind:value={a.Season} disabled={calDateSet}>
-			<option
-				value="Any"
-				onchange={() => {
-					a.Proper = -1;
-					a.Weekday = -1;
-				}}>Any</option
-			>
-			{#each Array.from(season.LUT.keys()) as s}
-				<option value={s}>{s}</option>
-			{/each}
-		</BasicSelect>
+	<div class="col-span-6">
+		<label class="mb-2 block text-sm font-medium" for="season">Season</label>
+		<FBSelect id="season" items={seasonItems} bind:value={a.Season} disabled={calDateSet} />
 	</div>
 
-	<div class="col-span-4">{properName} <span class="small">(-1 for "Any")</span></div>
-	<div class="col-span-8">
+	<div class="col-span-6">
+		<label class="mb-2 block text-sm font-medium" for="proper">{properName}</label>
 		<Input
+			id="proper"
 			bind:value={a.Proper}
 			type="number"
 			max={selectedSeason.maxProper}
@@ -119,41 +140,35 @@
 		/>
 	</div>
 
-	<div class="col-span-4">Weekday</div>
-	<div class="col-span-8">
-		<BasicSelect bind:value={a.Weekday} disabled={calDateSet || !selectedSeason.useWeekdays}>
-			<option value={-1}>Any</option>
-			<option value={0}>Sunday</option>
-			<option value={1}>Monday</option>
-			<option value={2}>Tuesday</option>
-			<option value={3}>Wednesday</option>
-			<option value={4}>Thursday</option>
-			<option value={5}>Friday</option>
-			<option value={6}>Saturday</option>
-		</BasicSelect>
+	<div class="col-span-4">
+		<label class="mb-2 block text-sm font-medium" for="weekday">Weekday</label>
+		<FBSelect
+			id="weekday"
+			items={weekdayItems}
+			bind:value={a.Weekday}
+			disabled={calDateSet || !selectedSeason.useWeekdays}
+		/>
 	</div>
 
-	<div class="col-span-4">Year</div>
-	<div class="col-span-8">
-		<BasicSelect bind:value={a.Year} disabled={calDateSet}>
-			<option value="Any">Any</option>
-			<option value="A">A</option>
-			<option value="B">B</option>
-			<option value="C">C</option>
-		</BasicSelect>
+	<div class="col-span-4">
+		<label class="mb-2 block text-sm font-medium" for="year">Year</label>
+		<FBSelect id="year" items={yearItems} bind:value={a.Year} disabled={calDateSet} />
 	</div>
 
-	<div class="col-span-4">Weight</div>
-	<div class="col-span-8">
-		<Input bind:value={a.Weight} type="number" min={0} max={99} disabled={calDateSet} />
+	<div class="col-span-4">
+		<label class="mb-2 block text-sm font-medium" for="weight">Weight</label>
+		<Input id="weight" bind:value={a.Weight} type="number" min={0} max={99} disabled={calDateSet} />
 	</div>
 
-	<div class="col-span-2">&nbsp;</div>
-	<div class="col-span-8">(fixed-dates are very rare; "Any" to use season-relative dates)</div>
-	<div class="col-span-2">&nbsp;</div>
+	<div class="col-span-12">
+		<hr class="my-2" />
+		<p class="text-xs text-gray-500 italic">
+			Fixed dates are rare. Use "Any" above to rely on season-relative logic.
+		</p>
+	</div>
 
-	<div class="col-span-4">Fixed Date</div>
-	<div class="col-span-8">
-		<Input bind:value={a.CalendarDate} placeholder="mm-dd" />
+	<div class="col-span-12">
+		<label class="mb-2 block text-sm font-medium" for="fixed-date">Fixed Date (mm-dd)</label>
+		<Input id="fixed-date" bind:value={a.CalendarDate} placeholder="mm-dd" />
 	</div>
 </div>

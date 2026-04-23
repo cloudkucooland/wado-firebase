@@ -33,21 +33,23 @@
 	import AddAssoc from './AddAssoc.svelte';
 	import type { prayerFromFirestore } from '../model/types';
 
-	// @ts-ignore
-	export let params = { id };
-	$: id = params.id ? params.id : 'Any';
-	const _a: Map<string, association> = new Map();
-	$: associations = _a;
-	let modalId: string = 'exnihilo';
-	let assocEditResult: association;
-	let assocAddResult: association;
+	let { params } = $props<{ params: { id?: string } }>();
+	
+	let id = $derived(params.id || 'Any');
+	let associations = $state(new Map<string, association>());
+	let modalId = $state('exnihilo');
+	let assocEditResult = $state<association | null>(null);
+	let assocAddResult = $state<association | null>(null);
+
+	let deleteModalOpen = $state(false);
+	let editModalOpen = $state(false);
+	let addModalAssocOpen = $state(false);
 
 	const locationlist = Array.from(association.locations, (i) => {
 		return { name: i, value: i };
 	});
 	locationlist.push({ name: 'Any', value: 'Any' });
 
-	$: deleteModalOpen = false;
 	function toggleDeleteOpen(e: Event): void {
 		screenView('edit: toggleDeleteOpen');
 		deleteModalOpen = !deleteModalOpen;
@@ -57,27 +59,21 @@
 
 	async function confirmDelete(e: Event): Promise<void> {
 		const t = e.target as HTMLInputElement;
-		recordEvent('delete_assoc', { id: id, assoc: t.value });
-		console.debug('deleting association', t.value);
-		deleteModalOpen = !deleteModalOpen;
+		const targetModalId = t.value || modalId;
+		recordEvent('delete_assoc', { id: id, assoc: targetModalId });
+		console.debug('deleting association', targetModalId);
+		deleteModalOpen = false;
 
 		try {
-			await deleteDoc(doc(db, 'associations', t.value));
+			await deleteDoc(doc(db, 'associations', targetModalId));
+			associations.delete(targetModalId);
+			toasts.success('Association deleted', targetModalId);
 		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
-
-		// refresh screen
-		const newAssn: Map<string, association> = new Map();
-		for (const [k, a] of associations) {
-			if (k != t.value) newAssn.set(k, a);
-		}
-		associations = newAssn;
-		toasts.success('Association deleted', t.value);
 	}
 
-	$: editModalOpen = false;
 	function toggleEditOpen(e: Event): void {
 		screenView('toggleEditOpen');
 		editModalOpen = !editModalOpen;
@@ -89,34 +85,34 @@
 
 	async function confirmEdit(e: Event): Promise<void> {
 		const t = e.target as HTMLInputElement;
-		recordEvent('edit_assoc', { id: id, assoc: t.value });
-		editModalOpen = !editModalOpen;
+		const targetModalId = t.value || modalId;
+		if (!assocEditResult) return;
+
+		recordEvent('edit_assoc', { id: id, assoc: targetModalId });
+		editModalOpen = false;
 
 		console.log('edit result', assocEditResult);
 		try {
-			await setDoc(doc(db, 'associations', t.value), assocEditResult.toFirebase());
-
-			const newAssn: Map<string, association> = new Map();
-			for (const [k, v] of associations) {
-				if (k != t.value) newAssn.set(k, v);
-			}
+			await setDoc(doc(db, 'associations', targetModalId), assocEditResult.toFirebase());
 
 			const rp = await getDocCacheFirst(assocEditResult.Reference);
 			const tp = rp.data() as prayerFromFirestore;
 			const pp = new prayer(tp);
 			// @ts-ignore
 			assocEditResult._PrayerName = pp.name;
-			newAssn.set(t.value, assocEditResult);
-
-			associations = new Map([...newAssn].sort(association.sort));
-			toasts.success('Saved Association', t.value);
+			
+			associations.set(targetModalId, assocEditResult);
+			// Sort the map (Svelte 5 Map reactivity works)
+			const sorted = new Map([...associations].sort(association.sort));
+			associations = sorted;
+			
+			toasts.success('Saved Association', targetModalId);
 		} catch (error: any) {
 			console.log(error);
 			toasts.error(error.message);
 		}
 	}
 
-	$: addModalAssocOpen = false;
 	function toggleAddAssocOpen(e: Event): void {
 		screenView('toggleAddAssocOpen');
 		addModalAssocOpen = !addModalAssocOpen;
@@ -127,79 +123,75 @@
 	}
 
 	async function confirmAddAssoc(): Promise<void> {
-		addModalAssocOpen = !addModalAssocOpen;
+		if (!assocAddResult) return;
+		addModalAssocOpen = false;
 
 		try {
 			console.debug(assocAddResult);
 			await addDoc(collection(db, 'associations'), assocAddResult.toFirebase());
-			loadLocation(id); // lazy but does the job -- redo if assocs get HUGE
+			await loadLocation(id);
 		} catch (err: any) {
 			console.log(err);
 			toasts.error(err.message);
 		}
 	}
 
-	async function loadLocation(id: string): Promise<void> {
-		console.log('loadLocation', id);
-		const progressBar = toasts.success('Loading Data', id, { duration: 0 });
-		let res: any; // FIXME
-
-		const newAssn: Map<string, association> = new Map();
+	async function loadLocation(targetId: string): Promise<void> {
+		console.log('loadLocation', targetId);
+		const progressBar = toasts.success('Loading Data', targetId, { duration: 0 });
+		
+		const newAssn = new Map<string, association>();
 		try {
-			const q = query(collection(db, 'associations'), where('Location', '==', id));
-			res = await getDocs(q);
+			const q = query(collection(db, 'associations'), where('Location', '==', targetId));
+			const res = await getDocs(q);
+
+			for (const a of res.docs) {
+				const n = new association(a.id, a.data() as any);
+
+				if (!n.Reference || n.Reference === 'FIXME' || n.Reference.path === 'ex/nihilo') {
+					console.error('bad reference, deleting association', a, n);
+					toasts.info('Deleting Invalid Association', n.id);
+					deleteDoc(doc(db, 'associations', n.id));
+					continue;
+				}
+
+				const rp = await getDoc(n.Reference);
+				if (!rp || !rp.exists()) {
+					console.error('bad reference, deleting association', a, n, rp);
+					toasts.info('Deleting Invalid Association', n.id);
+					deleteDoc(doc(db, 'associations', n.id));
+					continue;
+				}
+
+				try {
+					const tp = rp.data() as prayerFromFirestore;
+					const pp = new prayer(tp);
+					// @ts-ignore
+					n._PrayerName = pp.name;
+					newAssn.set(a.id, n);
+				} catch (err: any) {
+					console.error(err);
+				}
+			}
+
+			// Sort and update state
+			associations = new Map([...newAssn].sort(association.sort));
 		} catch (error: any) {
 			console.log(error);
 			toasts.error(error.message);
+		} finally {
+			progressBar.remove();
 		}
-
-		for (const a of res.docs) {
-			const n: association = new association(a.id, a.data());
-
-			if (!n.Reference || n.Reference == 'FIXME' || n.Reference.path == 'ex/nihilo') {
-				// "FIXME" is an err in conversion, "ex/nihilo" is an error in the new add logic
-				console.error('bad reference, deleting association', a, n);
-				toasts.info('Deleting Invalid Association', n.id);
-				try {
-					deleteDoc(doc(db, 'associations', n.id)); // no need to await here
-				} catch (err: any) {
-					console.log(err);
-				}
-				continue;
-			}
-
-			const rp = await getDoc(n.Reference);
-			if (!rp || !rp.exists()) {
-				console.error('bad reference, deleting association', a, n, rp);
-				toasts.info('Deleting Invalid Association', n.id);
-				try {
-					deleteDoc(doc(db, 'associations', n.id)); // no need to await here
-				} catch (err: any) {
-					console.log(err);
-				}
-				continue;
-			}
-
-			try {
-				const tp = rp.data() as prayerFromFirestore;
-				const pp: prayer = new prayer(tp);
-				// @ts-ignore
-				n._PrayerName = pp.name;
-				newAssn.set(a.id, n);
-			} catch (err: any) {
-				console.log(err);
-				toasts.error(err.message);
-			}
-		}
-
-		// now that the full list is built, sort it
-		associations = new Map([...newAssn].sort(association.sort));
-		progressBar.remove();
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		screenView('EditLocation');
-		await loadLocation(id);
+	});
+
+	$effect(() => {
+		if (id) {
+			loadLocation(id);
+		}
 	});
 </script>
 
@@ -213,17 +205,16 @@
 		<Select
 			name="locations"
 			items={locationlist}
+			value={id}
 			onchange={(e) => {
-				// @ts-ignore
-				id = e.target.value;
-				push('/editlocation/' + id);
-				loadLocation(id);
+				const val = (e.target as HTMLSelectElement).value;
+				push('/editlocation/' + val);
 			}}
 		/>
 	</div>
 	<div>
 		<h3>Associations for {id}</h3>
-		<Table>
+		<Table hoverable={true}>
 			<TableHead>
 				<TableHeadCell>Prayer</TableHeadCell>
 				<TableHeadCell>Calendar Date</TableHeadCell>
@@ -264,31 +255,38 @@
 		</div>
 	</div>
 </div>
-<Modal id="deleteModal" bind:open={deleteModalOpen}>
-	<h3>Delete Association</h3>
-	<div>Confirm Delete</div>
-	<div>
-		<Button color="red" onclick={toggleDeleteOpen}>Cancel</Button>
-		<Button color="red" onclick={confirmDelete} value={modalId}>Confirm</Button>
+<Modal id="deleteModal" bind:open={deleteModalOpen} size="xs" autoclose>
+	<div class="text-center">
+		<p class="mb-5 text-lg font-normal text-gray-500">
+			Are you sure you want to delete this association?
+		</p>
+		<Button color="red" onclick={confirmDelete} value={modalId}>Confirm Delete</Button>
+		<Button color="alternative">Cancel</Button>
 	</div>
 </Modal>
+
 <Modal id="editModal" bind:open={editModalOpen} size="xl">
-	<h3>Edit Association</h3>
+	<svelte:fragment slot="header">Edit Association</svelte:fragment>
 	<div>
-		<EditAssoc id={modalId} bind:result={assocEditResult} />
+		{#if editModalOpen}
+			<EditAssoc id={modalId} bind:result={assocEditResult} />
+		{/if}
 	</div>
-	<div>
-		<Button color="red" onclick={toggleEditOpen}>Cancel</Button>
-		<Button color="red" onclick={confirmEdit} value={modalId}>Confirm</Button>
-	</div>
+	<svelte:fragment slot="footer">
+		<Button color="green" onclick={confirmEdit} value={modalId}>Save Changes</Button>
+		<Button color="alternative" onclick={() => (editModalOpen = false)}>Cancel</Button>
+	</svelte:fragment>
 </Modal>
+
 <Modal id="addAssoc" bind:open={addModalAssocOpen} size="xl">
-	<h3>Add Association</h3>
+	<svelte:fragment slot="header">Add Association</svelte:fragment>
 	<div>
-		<AddAssoc bind:result={assocAddResult} location={id} />
+		{#if addModalAssocOpen}
+			<AddAssoc bind:result={assocAddResult} location={id} />
+		{/if}
 	</div>
-	<div>
-		<Button color="red" onclick={toggleAddAssocOpen}>Cancel</Button>
-		<Button color="red" onclick={confirmAddAssoc} value={modalId}>Confirm</Button>
-	</div>
+	<svelte:fragment slot="footer">
+		<Button color="green" onclick={confirmAddAssoc}>Add Association</Button>
+		<Button color="alternative" onclick={() => (addModalAssocOpen = false)}>Cancel</Button>
+	</svelte:fragment>
 </Modal>

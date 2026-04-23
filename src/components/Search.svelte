@@ -5,11 +5,11 @@
 	import { recordEvent } from '../firebase';
 	import type { SearchResponse } from '../../node_modules/meilisearch/dist/types/types/types';
 
-	let result: SearchResponse = {
+	let result = $state<SearchResponse>({
 		hits: new Array(),
 		processingTimeMs: 0,
 		query: ''
-	};
+	});
 
 	const searchParams = {
 		attributesToRetrieve: ['fsid', 'Name', 'Body', 'Class'],
