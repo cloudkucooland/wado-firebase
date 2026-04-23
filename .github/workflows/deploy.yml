@@ -1,0 +1,71 @@
+name: Deploy WADO
+
+on:
+  push:
+    branches: [ main, gemini-refactor ] # Adjust to your main branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build Frontend
+        run: npm run build
+
+      - name: Auth with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Setup GCloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_OSL_DAILYOFFICE }}
+          channelId: live
+          projectId: osl-dailyoffice
+
+      - name: Deploy Lectionary Function (Gen 2)
+        run: |
+          gcloud functions deploy get-oremus-trigger \
+            --gen2 \
+            --runtime=go121 \
+            --region=us-central1 \
+            --service-account=firebase-adminsdk-sarte@osl-dailyoffice.iam.gserviceaccount.com \
+            --entry-point=GetOremus \
+            --source=./cloud-functions/lectionary \
+            --memory=256Mi \
+            --trigger-event-filters="type=google.cloud.firestore.document.v1.written" \
+            --trigger-event-filters="database=(default)" \
+            --trigger-event-filters-path-pattern="document=lectionary/{docId}" \
+            --trigger-location=nam5 \
+            --set-env-vars GOOGLE_CLOUD_PROJECT=osl-dailyoffice
+
+      - name: Deploy Prayer/Meili Function (Gen 2)
+        run: |
+          gcloud functions deploy get-prayer-meili-trigger \
+            --gen2 \
+            --runtime=go121 \
+            --region=us-central1 \
+            --service-account=firebase-adminsdk-sarte@osl-dailyoffice.iam.gserviceaccount.com \
+            --entry-point=UpdateMeiliSearch \
+            --source=./cloud-functions/prayer \
+            --memory=256Mi \
+            --trigger-event-filters="type=google.cloud.firestore.document.v1.written" \
+            --trigger-event-filters="database=(default)" \
+            --trigger-event-filters-path-pattern="document=prayers/{docId}" \
+            --trigger-location=nam5 \
+            --set-env-vars GOOGLE_CLOUD_PROJECT=osl-dailyoffice
