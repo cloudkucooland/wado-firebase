@@ -18,15 +18,23 @@
 /* Base accessibility classes */
 :root {
 	--wado-font-scale: 1.2rem;
+	--wado-font-family: var(--font-wado-serif);
+	background-color: white;
+	color: black;
+}
+
+:root.dark {
+	background-color: #0f172a; /* slate-900 */
+	color: #f1f5f9; /* slate-100 */
 }
 
 .high-legibility {
-	font-family: var(--font-wado-sans) !important;
+	--wado-font-family: var(--font-wado-sans) !important;
 }
 
 /* This replaces your @mixin typography */
 @utility typography {
-	font-family: var(--font-wado-serif);
+	font-family: var(--wado-font-family);
 	font-size: var(--wado-font-scale);
 	margin-bottom: var(--margin-wado-bottom);
 	line-height: var(--line-height-wado);

@@ -145,7 +145,7 @@
 
 <header class="w-full justify-start p-0">
 	<Navbar
-		class="bg-primary-50 dark:bg-primary-700 sticky top-0 bg-white/80 p-0 backdrop-blur-md sm:px-0"
+		class="sticky top-0 z-50 p-0 backdrop-blur-md sm:px-0 bg-white/90 dark:bg-slate-900/90 border-b border-gray-200 dark:border-slate-800"
 		aria-label="Main Navigation"
 	>
 		<NavBrand href="/wado/#/" class="p-0" aria-label="WADO Home">
@@ -183,15 +183,15 @@
 		</NavUl>
 	</Navbar>
 </header>
-<main>
+<main class="min-h-screen transition-colors duration-300">
 	<ToastContainer let:data>
 		<FlatToast {data} />
 	</ToastContainer>
 	<Router {routes} />
 </main>
 
-<Footer>
-	<div>
+<Footer class="p-4 bg-gray-50 text-gray-600 dark:bg-slate-900 dark:text-slate-400 border-t border-gray-200 dark:border-slate-800">
+	<div class="w-full">
 		<FooterCopyright
 			href="https://saint-luke.net/"
 			by="The Order of St. Luke ®"
