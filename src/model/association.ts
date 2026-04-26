@@ -1,6 +1,6 @@
 import season from './season';
 import type proper from './proper';
-import { doc } from 'firebase/firestore';
+import { doc, type DocumentReference } from 'firebase/firestore';
 import { db } from '../firebase';
 import type { associationFromFirestore } from './types';
 
@@ -13,7 +13,7 @@ export default class association {
 	public Weekday: number;
 	public Weight: number;
 	public Year: string;
-	public Reference: any;
+	public Reference: DocumentReference;
 	private _dirty: boolean;
 	private _season: season;
 	public _PrayerName?: string | null;
@@ -30,8 +30,8 @@ export default class association {
 		}
 
 		// triggers a delete in the location editor -- probably not the best thing here
-		this.Reference = d.Reference ? d.Reference : 'FIXME';
-		if (this.Reference === 'FIXME') {
+		this.Reference = d.Reference;
+		if (!this.Reference || this.Reference.path === 'ex/nihilo') {
 			console.error('missing reference');
 			this._dirty = true;
 		}
@@ -49,13 +49,15 @@ export default class association {
 		}
 
 		this.Season = d.Season ? d.Season : 'Any';
-		if (!season.LUT.has(this.Season)) {
+		const seasonInfo = season.LUT.get(this.Season);
+		if (!seasonInfo) {
 			console.error('invalid season detected', d.Season);
 			this._dirty = true;
 			this.Season = 'Any';
+			this._season = season.LUT.get('Any')!;
+		} else {
+			this._season = seasonInfo;
 		}
-		// @ts-ignore
-		this._season = season.LUT.get(this.Season);
 
 		this.Proper = d.Proper ? d.Proper : -1; // Any;
 		if (this.Proper < -1) {
@@ -137,8 +139,7 @@ export default class association {
 			[5, 'Friday'],
 			[6, 'Saturday']
 		]);
-		// @ts-ignore
-		return days.get(this.Weekday);
+		return days.get(this.Weekday) || 'Any';
 	}
 
 	public get ProperDisplay(): number | string {
@@ -175,8 +176,7 @@ export default class association {
 		// instead of doing each value by hand, just turn it into an easily sortable string and do that
 		// like, follow and subscribe for more kludgey life-hacks
 		const astr =
-			// @ts-ignore
-			String(season.LUT.get(A.Season).churchPos).padStart(3, '0') +
+			String(season.LUT.get(A.Season)?.churchPos || 256).padStart(3, '0') +
 			' ' +
 			anyLastNumber(A.Proper) +
 			' ' +
@@ -186,8 +186,7 @@ export default class association {
 			' ' +
 			A.Weight;
 		const bstr =
-			// @ts-ignore
-			String(season.LUT.get(B.Season).churchPos).padStart(3, '0') +
+			String(season.LUT.get(B.Season)?.churchPos || 256).padStart(3, '0') +
 			' ' +
 			anyLastNumber(B.Proper) +
 			' ' +

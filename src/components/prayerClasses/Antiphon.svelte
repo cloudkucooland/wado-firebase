@@ -39,6 +39,7 @@
 				onclick={() => push('#/edit/' + id)}
 				class="hover:text-blue-500"
 				title="Edit Antiphon"
+				aria-label="Edit Antiphon"
 			>
 				<EditSolid size="xs" />
 			</button>

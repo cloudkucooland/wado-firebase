@@ -37,7 +37,7 @@
 		<div
 			class="mb-2 flex items-center gap-2 rounded bg-gray-100 p-1 text-xs text-gray-400 dark:bg-gray-800"
 		>
-			<button onclick={() => push('#/edit/' + id)} class="hover:text-blue-500" title="Edit Prayer">
+			<button onclick={() => push('#/edit/' + id)} class="hover:text-blue-500" title="Edit Prayer" aria-label="Edit Prayer">
 				<EditSolid size="xs" />
 			</button>
 		</div>

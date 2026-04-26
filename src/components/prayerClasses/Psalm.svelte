@@ -57,6 +57,7 @@
 				onclick={() => push('#/edit/' + id)}
 				class="rounded bg-gray-100 p-1 text-gray-400 hover:text-blue-500 dark:bg-gray-800"
 				title="Edit Psalm"
+				aria-label="Edit Psalm"
 			>
 				<EditSolid size="xs" />
 			</button>

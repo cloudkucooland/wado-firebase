@@ -2,11 +2,12 @@
 	import { Spinner } from 'flowbite-svelte';
 	import Subheading from './Subheading.svelte';
 	import { getContext } from 'svelte';
+	import type { prayerRequest } from '../model/types';
 
 	const dateContext = getContext<{ value: string }>('officeDate');
 	let currentOffsetDate = $derived(dateContext.value);
 
-	async function loaddata(od: string): Promise<Array<any>> {
+	async function loaddata(od: { value: string }): Promise<Array<prayerRequest>> {
 		const d = od.value.split('-');
 		const month = d[1];
 		const day = d[2];

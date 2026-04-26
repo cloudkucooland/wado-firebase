@@ -180,8 +180,9 @@ export default class proper {
 
 	// day of year for a feast
 	private _fdoy(n: string): number {
-		// @ts-ignore
-		return this.getDayOfYear(this._feasts.get(n));
+		const f = this._feasts.get(n);
+		if (!f) return 0;
+		return this.getDayOfYear(f);
 	}
 
 	private _getSeason(forday: Date): void {
@@ -189,8 +190,7 @@ export default class proper {
 		const nextday = 86400000;
 		const f = (n: string): number => {
 			// shortcut for getting a feast's getTime()
-			// @ts-ignore
-			return this._feasts.get(n).getTime();
+			return this._feasts.get(n)?.getTime() || 0;
 		};
 		const t = forday.getTime();
 
@@ -457,8 +457,7 @@ export default class proper {
 		if (!lut.has(card)) {
 			return card + 'th';
 		}
-		// @ts-ignore
-		return lut.get(card);
+		return lut.get(card) || card + 'th';
 	}
 
 	// return a map with every possible proper keyed by the proper's friendly name

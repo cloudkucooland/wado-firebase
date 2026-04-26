@@ -7,14 +7,27 @@
 @theme {
 	--font-wado-serif:
 		Charter, Bitter, 'EB Garamond', Georgia, Times, 'Times New Roman', Merriweather, serif;
-	--line-height-wado: 1.25em;
-	--margin-wado-bottom: 0.25rem;
+	--font-wado-sans:
+		Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
+		Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	--line-height-wado: 1.5em;
+	--margin-wado-bottom: 0.5rem;
 	--margin-wado-top: 0rem;
+}
+
+/* Base accessibility classes */
+:root {
+	--wado-font-scale: 1.2rem;
+}
+
+.high-legibility {
+	font-family: var(--font-wado-sans) !important;
 }
 
 /* This replaces your @mixin typography */
 @utility typography {
 	font-family: var(--font-wado-serif);
+	font-size: var(--wado-font-scale);
 	margin-bottom: var(--margin-wado-bottom);
 	line-height: var(--line-height-wado);
 	margin-top: var(--margin-wado-top);

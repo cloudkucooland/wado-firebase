@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { collection, query, where, limit, orderBy } from 'firebase/firestore';
+	import { collection, query, where, limit, orderBy, type Query } from 'firebase/firestore';
 	import { db, getDocCacheFirst, getDocsCacheFirst } from '../firebase';
 	import { prefs } from '../model/preferences.svelte';
 	import { getContext } from 'svelte';
@@ -57,7 +57,7 @@
 		const m: Map<string, prayerFromFirestore> = new Map();
 		const currentLimit = realMax;
 
-		const doQuery = async (q: any) => {
+		const doQuery = async (q: Query) => {
 			try {
 				const res = await getDocsCacheFirst(q);
 				for (const a of res.docs) {
@@ -74,25 +74,25 @@
 			}
 		};
 
-		const makeQuery = (overrides: any) => {
+		const makeQuery = (overrides: Partial<associationFromFirestore>) => {
 			const base = {
-				location: name,
-				calendarDate: 'Any',
-				season: 'Any',
-				proper: -1,
-				weekday: -1,
-				year: 'Any'
+				Location: name,
+				CalendarDate: 'Any',
+				Season: 'Any',
+				Proper: -1,
+				Weekday: -1,
+				Year: 'Any'
 			};
 			const qa = { ...base, ...overrides };
 
 			return query(
 				collection(db, 'associations'),
-				where('Location', '==', qa.location),
-				where('CalendarDate', '==', qa.calendarDate),
-				where('Season', '==', qa.season),
-				where('Proper', '==', qa.proper),
-				where('Weekday', '==', qa.weekday),
-				where('Year', '==', qa.year),
+				where('Location', '==', qa.Location),
+				where('CalendarDate', '==', qa.CalendarDate),
+				where('Season', '==', qa.Season),
+				where('Proper', '==', qa.Proper),
+				where('Weekday', '==', qa.Weekday),
+				where('Year', '==', qa.Year),
 				orderBy('Weight'),
 				limit(currentLimit - m.size)
 			);
@@ -153,6 +153,7 @@
 				onclick={() => push('#/editlocation/' + name)}
 				class="hover:text-blue-500"
 				title="Edit Location"
+				aria-label="Edit Location: {name}"
 			>
 				<CalendarEditSolid size="xs" />
 			</button>

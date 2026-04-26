@@ -19,6 +19,7 @@
 	import association from '../model/association';
 	import { doc, setDoc, addDoc, collection } from 'firebase/firestore';
 	import { prefs } from '../model/preferences.svelte';
+	import { fade } from 'svelte/transition';
 
 	const now: Date = new Date();
 	const nowString: string = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate();
@@ -126,8 +127,10 @@
 
 	<div class="max-w-200">
 		<FBHeading tag="h3" class="text-center">{officeName}: {forProper.propername}</FBHeading>
-		<div class="main">
-			<OfficeComp />
-		</div>
+		{#key officeName + params.officeDate}
+			<div class="main" in:fade={{ duration: 300, delay: 300 }} out:fade={{ duration: 300 }}>
+				<OfficeComp />
+			</div>
+		{/key}
 	</div>
 </div>

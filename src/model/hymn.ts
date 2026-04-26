@@ -7,26 +7,14 @@ export default class hymn extends prayer {
 
 	public constructor(obj: prayerFromFirestore) {
 		super(obj);
-		this.hymntune = null;
-		this.hymnmeter = null;
-		if (obj['Hymn Tune']) this.hymntune = obj['Hymn Tune'];
-		if (obj['Hymn Meter']) this.hymnmeter = obj['Hymn Meter'];
-		if (obj.Class) this.class = obj.Class;
+		this.hymntune = obj['Hymn Tune'] || null;
+		this.hymnmeter = obj['Hymn Meter'] || null;
 	}
 
-	public toFirebase(): any {
-		return {
-			Name: this.name,
-			Body: this.body,
-			Reviewed: this.reviewed,
-			License: this.license,
-			Author: this.author,
-			'Last Editor': this.lastEditor,
-			'Last Edited': this.lastEdited,
-			'Hymn Meter': this.hymnmeter,
-			'Hymn Tune': this.hymntune,
-			Media: this.media,
-			Class: this.class
-		};
+	public override toFirebase(): prayerFromFirestore {
+		const out = super.toFirebase();
+		if (this.hymnmeter) out['Hymn Meter'] = this.hymnmeter;
+		if (this.hymntune) out['Hymn Tune'] = this.hymntune;
+		return out;
 	}
 }

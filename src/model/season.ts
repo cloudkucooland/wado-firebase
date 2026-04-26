@@ -1,3 +1,5 @@
+import type { seasonObj } from './types';
+
 export default class season {
 	public name: string;
 	public churchPos: number;
@@ -8,7 +10,7 @@ export default class season {
 	public desc: string;
 	public properName: string;
 
-	public constructor(obj: any) {
+	public constructor(obj: seasonObj) {
 		this.name = obj.name;
 		this.churchPos = obj.churchPos;
 		this.maxProper = obj.maxProper;

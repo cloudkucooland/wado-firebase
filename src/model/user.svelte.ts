@@ -10,6 +10,7 @@ import {
 	getDocs,
 	Timestamp
 } from 'firebase/firestore';
+import type { userFromFirestore } from './types';
 
 export default class user {
 	// Use $state for reactive fields
@@ -24,7 +25,7 @@ export default class user {
 	private _isMediaManager = $state(false);
 	private _loggedIn = $state(false);
 
-	constructor(obj: any) {
+	constructor(obj: userFromFirestore) {
 		this.displayName = obj.displayName ?? 'Anon';
 		this.longestStreak = Number(obj.longestStreak ?? 0);
 		this.consecutiveDays = Number(obj.consecutiveDays ?? 0);
@@ -32,9 +33,12 @@ export default class user {
 
 		if (obj.lastActivity instanceof Timestamp) {
 			this.lastActivity = obj.lastActivity.toDate();
+		} else if (typeof obj.lastActivity === 'string') {
+			this.lastActivity = new Date(obj.lastActivity);
+		} else if (obj.lastActivity instanceof Date) {
+			this.lastActivity = obj.lastActivity;
 		} else {
-			const la = obj.lastActivity ?? '2023-01-01';
-			this.lastActivity = new Date(la);
+			this.lastActivity = new Date('2023-01-01');
 		}
 	}
 
@@ -62,7 +66,7 @@ export default class user {
 		return this.displayName;
 	}
 
-	public toJSON(): any {
+	public toJSON(): userFromFirestore {
 		return {
 			displayName: this.displayName,
 			longestStreak: this.longestStreak,
@@ -86,10 +90,10 @@ export default class user {
 
 			let u: user;
 			if (loaded.exists()) {
-				u = new user(loaded.data());
+				u = new user(loaded.data() as userFromFirestore);
 			} else {
 				// New user setup
-				u = new user({ displayName: currentUser.displayName });
+				u = new user({ displayName: currentUser.displayName || 'Anon' });
 				await setDoc(ref, u.toJSON(), { merge: true });
 			}
 

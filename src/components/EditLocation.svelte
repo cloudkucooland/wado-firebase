@@ -21,7 +21,9 @@
 		getDocs,
 		deleteDoc,
 		setDoc,
-		addDoc
+		addDoc,
+		type QuerySnapshot,
+		type DocumentData
 	} from 'firebase/firestore';
 	import { db, recordEvent, screenView, getDocCacheFirst } from '../firebase';
 	import { push } from 'svelte-spa-router';
@@ -31,7 +33,7 @@
 	import { toasts } from 'svelte-toasts';
 	import EditAssoc from './EditAssoc.svelte';
 	import AddAssoc from './AddAssoc.svelte';
-	import type { prayerFromFirestore } from '../model/types';
+	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
 
 	let { params } = $props<{ params: { id?: string } }>();
 	
@@ -98,7 +100,7 @@
 			const rp = await getDocCacheFirst(assocEditResult.Reference);
 			const tp = rp.data() as prayerFromFirestore;
 			const pp = new prayer(tp);
-			// @ts-ignore
+			
 			assocEditResult._PrayerName = pp.name;
 			
 			associations.set(targetModalId, assocEditResult);
@@ -146,9 +148,9 @@
 			const res = await getDocs(q);
 
 			for (const a of res.docs) {
-				const n = new association(a.id, a.data() as any);
+				const n = new association(a.id, a.data() as associationFromFirestore);
 
-				if (!n.Reference || n.Reference === 'FIXME' || n.Reference.path === 'ex/nihilo') {
+				if (!n.Reference || n.Reference.path === 'ex/nihilo') {
 					console.error('bad reference, deleting association', a, n);
 					toasts.info('Deleting Invalid Association', n.id);
 					deleteDoc(doc(db, 'associations', n.id));
@@ -166,7 +168,6 @@
 				try {
 					const tp = rp.data() as prayerFromFirestore;
 					const pp = new prayer(tp);
-					// @ts-ignore
 					n._PrayerName = pp.name;
 					newAssn.set(a.id, n);
 				} catch (err: any) {

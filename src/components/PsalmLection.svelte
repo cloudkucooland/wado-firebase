@@ -6,6 +6,7 @@
 	import { toasts } from 'svelte-toasts';
 	import { getContext } from 'svelte';
 	import type Proper from '../model/proper';
+	import type { lectionFromFirestore, prayerFromFirestore } from '../model/types';
 	import { Spinner } from 'flowbite-svelte';
 
 	// 1. Svelte 5 Props
@@ -17,18 +18,18 @@
 	// Inline class for data handling (kept for logic consistency)
 	class plClass {
 		id: string;
-		morningpsalm?: string;
-		eveningpsalm?: string;
-		_morningpsalmref?: string;
-		_eveningpsalmref?: string;
-		_resolved?: any;
+		morningpsalm: string;
+		eveningpsalm: string;
+		_morningpsalmref: string | null;
+		_eveningpsalmref: string | null;
+		_resolved?: prayerFromFirestore;
 
-		constructor(obj: any) {
+		constructor(obj: lectionFromFirestore & { id?: string }) {
 			this.id = obj.id || 'unknown';
-			this.morningpsalm = obj.morningpsalm;
-			this.eveningpsalm = obj.eveningpsalm;
-			this._morningpsalmref = obj._morningpsalmref;
-			this._eveningpsalmref = obj._eveningpsalmref;
+			this.morningpsalm = obj.morningpsalm || '';
+			this.eveningpsalm = obj.eveningpsalm || '';
+			this._morningpsalmref = obj._morningpsalmref || null;
+			this._eveningpsalmref = obj._eveningpsalmref || null;
 		}
 	}
 
@@ -51,7 +52,7 @@
 			});
 		}
 
-		const d = new plClass(res.docs[0].data());
+		const d = new plClass(res.docs[0].data() as lectionFromFirestore);
 		const isLauds = office === 'LAUDS';
 		const ref = isLauds ? d._morningpsalmref : d._eveningpsalmref;
 
@@ -60,7 +61,7 @@
 			try {
 				const ps = doc(db, 'prayers', ref);
 				const psalmDoc = await getDocCacheFirst(ps);
-				d._resolved = psalmDoc.data();
+				d._resolved = psalmDoc.data() as prayerFromFirestore;
 				d.id = ref;
 			} catch (err: any) {
 				console.error(err);

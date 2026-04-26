@@ -20,6 +20,7 @@
 	import { link } from 'svelte-spa-router';
 	import lection from '../model/lection';
 	import type { user } from '../model/user';
+	import type { lectionFromFirestore } from '../model/types';
 
 	// 1. Props & Context
 	let { params = { y: 'A' } } = $props();
@@ -47,7 +48,7 @@
 		_morningpsalmref = $state('');
 		_eveningpsalmref = $state('');
 
-		constructor(obj: any) {
+		constructor(obj: lectionFromFirestore & { key?: string; path?: string }) {
 			this.morning = obj.morning || '';
 			this.evening = obj.evening || '';
 			this.morningtitle = obj.morningtitle || '';
@@ -92,7 +93,7 @@
 				const res = await getDocsCacheFirst(q);
 
 				if (!res.empty) {
-					const n = res.docs[0].data();
+					const n = res.docs[0].data() as lectionFromFirestore;
 					const newLection = new lection(n);
 					newLection.path = res.docs[0].ref.path;
 					out.set(k, [v, newLection]);
@@ -134,7 +135,7 @@
 					season: p.season,
 					proper: p.proper,
 					weekday: p.weekday,
-					path: l.path,
+					path: l.path || '',
 					key
 				});
 			}
@@ -145,7 +146,7 @@
 		recordEvent('edit_lection', { key: modalData.key });
 		lectionModalOpen = false;
 
-		const data: any = {
+		const data: lectionFromFirestore = {
 			morning: modalData.morning.trim(),
 			morningpsalm: modalData.morningpsalm.trim(),
 			morningtitle: modalData.morningtitle.trim(),

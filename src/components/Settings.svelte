@@ -20,6 +20,41 @@
 	<Listgroup class="w-full">
 		<ListgroupItem class="flex items-center justify-between">
 			<div class="pr-4">
+				<p><strong>Dark Mode</strong></p>
+				<p class="text-sm text-gray-500">Toggle dark mode display.</p>
+			</div>
+			<Checkbox bind:checked={prefs.darkMode} />
+		</ListgroupItem>
+
+		<ListgroupItem class="flex flex-col items-start gap-2">
+			<div class="w-full">
+				<p><strong>Text Size</strong></p>
+				<p class="text-sm text-gray-500">Scale the size of liturgical text.</p>
+			</div>
+			<div class="flex w-full items-center gap-4">
+				<span class="text-sm">A</span>
+				<Input
+					type="range"
+					min="1"
+					max="5"
+					step="1"
+					bind:value={prefs.fontSize}
+					class="cursor-pointer"
+				/>
+				<span class="text-xl">A</span>
+			</div>
+		</ListgroupItem>
+
+		<ListgroupItem class="flex items-center justify-between">
+			<div class="pr-4">
+				<p><strong>High Legibility Font</strong></p>
+				<p class="text-sm text-gray-500">Use a sans-serif font for clearer reading.</p>
+			</div>
+			<Checkbox bind:checked={prefs.highLegibility} />
+		</ListgroupItem>
+
+		<ListgroupItem class="flex items-center justify-between">
+			<div class="pr-4">
 				<p><strong>Show Media</strong></p>
 				<p class="text-sm text-gray-500">Show controls for playing media files (when available).</p>
 			</div>

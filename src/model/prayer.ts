@@ -14,27 +14,18 @@ export default class prayer {
 
 	public constructor(obj: prayerFromFirestore) {
 		this._id = '';
-		this.name = '• New Prayer';
-		if (obj.Name) this.name = obj.Name;
-		this.body = ' -- nothing -- ';
-		if (obj.Body) this.body = obj.Body;
-		this.author = '';
-		if (obj.Author) this.author = obj.Author;
-		this.reviewed = false;
-		if (obj.Reviewed) this.reviewed = obj.Reviewed;
-		this.license = false;
-		if (obj.License) this.license = obj.License;
-		this.lastEditor = 'unknown';
-		if (obj['Last Editor']) this.lastEditor = obj['Last Editor'];
-		this.lastEdited = '2010-01-01T00:00:00.000Z';
-		if (obj['Last Edited']) this.lastEdited = obj['Last Edited'];
-		this.media = '';
-		if (obj.Media) this.media = obj.Media;
-		this.class = 'Prayer';
-		if (obj.Class) this.class = obj.Class;
+		this.name = obj.Name || '• New Prayer';
+		this.body = obj.Body || ' -- nothing -- ';
+		this.author = obj.Author || '';
+		this.reviewed = obj.Reviewed || false;
+		this.license = obj.License || false;
+		this.lastEditor = obj['Last Editor'] || 'unknown';
+		this.lastEdited = obj['Last Edited'] || '2010-01-01T00:00:00.000Z';
+		this.media = obj.Media || '';
+		this.class = obj.Class || 'Prayer';
 	}
 
-	public toFirebase(): any {
+	public toFirebase(): prayerFromFirestore {
 		return {
 			Name: this.name,
 			Body: this.body,
