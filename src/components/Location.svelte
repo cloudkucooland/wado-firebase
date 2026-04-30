@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { collection, query, where, limit, orderBy, type Query } from 'firebase/firestore';
+	import { collection, query, where, limit, orderBy } from 'firebase/firestore';
 	import { db, getDocCacheFirst, getDocsCacheFirst } from '../firebase';
 	import { prefs } from '../model/preferences.svelte';
 	import { getContext } from 'svelte';
@@ -41,7 +41,8 @@
 		prayer: Prayer,
 		psalm: Psalm,
 		antiphon: Antiphon,
-		commemoration: Commemoration
+		commemoration: Commemoration,
+		lection: Prayer
 	};
 
 	let realMax = $derived.by(() => {
@@ -57,15 +58,18 @@
 		const m: Map<string, prayerFromFirestore> = new Map();
 		const currentLimit = realMax;
 
-		const doQuery = async (q: Query) => {
+		const doQuery = async (q: any) => {
 			try {
 				const res = await getDocsCacheFirst(q);
+				if (!res) return;
 				for (const a of res.docs) {
 					if (m.size >= currentLimit) break;
 					const ad = a.data() as associationFromFirestore;
+					if (!ad || !ad.Reference) continue;
 					const d = await getDocCacheFirst(ad.Reference);
+					if (!d || !d.exists()) continue;
 					const dd = d.data() as prayerFromFirestore;
-					// Filter for licensed content
+					// Filter for licensed content: anything not explicitly false is accepted
 					if (dd && dd.License !== false) m.set(d.id, dd);
 				}
 			} catch (err: any) {
@@ -75,7 +79,7 @@
 		};
 
 		const makeQuery = (overrides: Partial<associationFromFirestore>) => {
-			const base = {
+			const base: any = {
 				Location: name,
 				CalendarDate: 'Any',
 				Season: 'Any',
@@ -153,7 +157,6 @@
 				onclick={() => push('#/editlocation/' + name)}
 				class="hover:text-blue-500"
 				title="Edit Location"
-				aria-label="Edit Location: {name}"
 			>
 				<CalendarEditSolid size="xs" />
 			</button>
