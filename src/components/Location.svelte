@@ -66,7 +66,7 @@
 					const d = await getDocCacheFirst(ad.Reference);
 					const dd = d.data() as prayerFromFirestore;
 					// Filter for licensed content
-					if (dd.License) m.set(d.id, dd);
+					if (dd && dd.License !== false) m.set(d.id, dd);
 				}
 			} catch (err: any) {
 				console.error(err);
@@ -112,24 +112,24 @@
 
 		// 2. Specific Proper/Year
 		await doQuery(
-			makeQuery({ season: p.season, proper: p.proper, weekday: p.weekday, year: p.year })
+			makeQuery({ Season: p.season, Proper: p.proper, Weekday: p.weekday, Year: p.year })
 		);
 		if (m.size >= currentLimit) return m;
 
 		// 3. Specific Proper, Any Year
-		await doQuery(makeQuery({ season: p.season, proper: p.proper, weekday: p.weekday }));
+		await doQuery(makeQuery({ Season: p.season, Proper: p.proper, Weekday: p.weekday }));
 		if (m.size >= currentLimit) return m;
 
 		// 4. Any Day of that Proper
-		await doQuery(makeQuery({ season: p.season, proper: p.proper }));
+		await doQuery(makeQuery({ Season: p.season, Proper: p.proper }));
 		if (m.size >= currentLimit) return m;
 
 		// 5. Any Proper of that Season/Weekday
-		await doQuery(makeQuery({ season: p.season, weekday: p.weekday }));
+		await doQuery(makeQuery({ Season: p.season, Weekday: p.weekday }));
 		if (m.size >= currentLimit) return m;
 
 		// 6. Any Day of that Season
-		await doQuery(makeQuery({ season: p.season }));
+		await doQuery(makeQuery({ Season: p.season }));
 		if (m.size >= currentLimit) return m;
 
 		// 7.Location Default
