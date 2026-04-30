@@ -10,7 +10,8 @@
 		"lint": "eslint",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"format": "prettier --write .",
-		"deploy": "firebase deploy --only hosting"
+		"deploy": "firebase deploy --only hosting",
+		"postinstall": "patch-package"
 	},
 	"repository": {
 		"type": "git",
@@ -40,6 +41,8 @@
 		"flowbite-svelte-icons": "^3.0.0",
 		"globals": "^17.5.0",
 		"meilisearch": "^0.57.0",
+		"patch-package": "^8.0.1",
+		"postinstall-postinstall": "^2.1.0",
 		"prettier": "^3.5.3",
 		"prettier-plugin-svelte": "^3.4.0",
 		"prettier-plugin-tailwindcss": "^0.8.0",
