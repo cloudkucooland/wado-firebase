@@ -56,7 +56,7 @@
 <Rubric>Prayers of Supplicaion and Intercession</Rubric>
 <Location name="GENERAL-WITHYOU" />
 
-<Location name="VIGIL-SUPPLICATION" />
+<Location name="VIGIL-SUPPLICATION" maxAlt={3} />
 
 <Heading>The Lord's Prayer</Heading>
 <Location name="VIGIL-LORDS" max={2} />
