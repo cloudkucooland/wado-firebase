@@ -1,0 +1,35 @@
+diff --git a/node_modules/@flowbite-svelte-plugins/texteditor/dist/package.json b/node_modules/@flowbite-svelte-plugins/texteditor/dist/package.json
+index 3313606..53ccf9d 100644
+--- a/node_modules/@flowbite-svelte-plugins/texteditor/dist/package.json
++++ b/node_modules/@flowbite-svelte-plugins/texteditor/dist/package.json
+@@ -2,7 +2,7 @@
+   "name": "@flowbite-svelte-plugins/texteditor",
+   "version": "0.25.6",
+   "description": "Text editor component for Flowbite Svelte",
+-  "main": "dist/index.js",
++  "main": "index.js",
+   "author": {
+     "name": "Shinichi Okada",
+     "url": "https://blog.codewithshin.com"
+@@ -39,8 +39,8 @@
+   "sideEffects": [
+     "**/*.css"
+   ],
+-  "svelte": "./dist/index.js",
+-  "types": "./dist/index.d.ts",
++  "svelte": "./index.js",
++  "types": "./index.d.ts",
+   "type": "module",
+   "peerDependencies": {
+     "svelte": "^5.0.0",
+@@ -162,8 +162,8 @@
+   },
+   "exports": {
+     ".": {
+-      "types": "./dist/index.d.ts",
+-      "svelte": "./dist/index.js"
++      "types": "./index.d.ts",
++      "svelte": "./index.js"
+     },
+     "./types": {
+       "types": "./dist/types.d.ts",

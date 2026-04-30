@@ -1,0 +1,15 @@
+diff --git a/node_modules/@tiptap/extension-drag-handle/dist/index.js b/node_modules/@tiptap/extension-drag-handle/dist/index.js
+index 2fdae1d..e0806ef 100644
+--- a/node_modules/@tiptap/extension-drag-handle/dist/index.js
++++ b/node_modules/@tiptap/extension-drag-handle/dist/index.js
+@@ -1,8 +1,8 @@
++const isChangeOrigin = () => false; const absolutePositionToRelativePosition = () => null; const relativePositionToAbsolutePosition = () => null; const ySyncPluginKey = null;
+ import { Extension } from '@tiptap/core';
+-import { isChangeOrigin } from '@tiptap/extension-collaboration';
++
+ import { PluginKey, Plugin } from '@tiptap/pm/state';
+ import tippy from 'tippy.js';
+-import { ySyncPluginKey, absolutePositionToRelativePosition, relativePositionToAbsolutePosition } from 'y-prosemirror';
+ import { getSelectionRanges, NodeRangeSelection } from '@tiptap/extension-node-range';
+ 
+ function getCSSText(element) {

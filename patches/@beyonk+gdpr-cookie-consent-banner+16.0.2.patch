@@ -1,0 +1,13 @@
+diff --git a/node_modules/@beyonk/gdpr-cookie-consent-banner/src/lib/banner.css b/node_modules/@beyonk/gdpr-cookie-consent-banner/src/lib/banner.css
+index b5d30d5..9f7d4c0 100644
+--- a/node_modules/@beyonk/gdpr-cookie-consent-banner/src/lib/banner.css
++++ b/node_modules/@beyonk/gdpr-cookie-consent-banner/src/lib/banner.css
+@@ -121,7 +121,7 @@ cookie-consent-banner::part(operations--list-item--disabled),
+   color: #999;
+ }
+ 
+-cookie-consent-banner::part(operations--list-item--disabled)
++cookie-consent-banner::part(operations--list-item--disabled),
+ cookie-consent-banner::part(operations--list-item-label)::after,
+ .cookieConsentOperations__Item.disabled label::after {
+   opacity: 0.3;
