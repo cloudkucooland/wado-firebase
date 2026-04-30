@@ -149,7 +149,7 @@
 		aria-label="Main Navigation"
 	>
 		<NavBrand href="/wado/#/" class="p-0" aria-label="WADO Home">
-			<img src="ox.svg" height="72" width="72" alt="Order of Saint Luke Logo" class="me-3" />
+			<img src="ox.svg" height="72" width="72" alt="The Winged and Docile Ox" class="me-3" />
 			<span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white"
 				>Web-Amplified Daily Office</span
 			>
