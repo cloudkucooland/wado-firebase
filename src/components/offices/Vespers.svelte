@@ -7,7 +7,7 @@
 	import Heading from '../Heading.svelte';
 	import Subheading from '../Subheading.svelte';
 	import OSLCommemorations from '../OSLCommemorations.svelte';
-	import OSLPrayerRequests  from '../OSLPrayerRequests.svelte';
+	import OSLPrayerRequests from '../OSLPrayerRequests.svelte';
 	import { Heading as FBHeading } from 'flowbite-svelte';
 </script>
 

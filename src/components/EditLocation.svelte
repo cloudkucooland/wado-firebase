@@ -36,7 +36,7 @@
 	import type { prayerFromFirestore, associationFromFirestore } from '../model/types';
 
 	let { params } = $props<{ params: { id?: string } }>();
-	
+
 	let id = $derived(params.id || 'Any');
 	let associations = $state(new Map<string, association>());
 	let modalId = $state('exnihilo');
@@ -100,14 +100,14 @@
 			const rp = await getDocCacheFirst(assocEditResult.Reference);
 			const tp = rp.data() as prayerFromFirestore;
 			const pp = new prayer(tp);
-			
+
 			assocEditResult._PrayerName = pp.name;
-			
+
 			associations.set(targetModalId, assocEditResult);
 			// Sort the map (Svelte 5 Map reactivity works)
 			const sorted = new Map([...associations].sort(association.sort));
 			associations = sorted;
-			
+
 			toasts.success('Saved Association', targetModalId);
 		} catch (error: any) {
 			console.log(error);
@@ -141,7 +141,7 @@
 	async function loadLocation(targetId: string): Promise<void> {
 		console.log('loadLocation', targetId);
 		const progressBar = toasts.success('Loading Data', targetId, { duration: 0 });
-		
+
 		const newAssn = new Map<string, association>();
 		try {
 			const q = query(collection(db, 'associations'), where('Location', '==', targetId));

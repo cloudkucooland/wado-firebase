@@ -25,10 +25,7 @@
 			referrerPolicy: rp
 		};
 
-		const response = await fetch(
-			`https://saint-luke.net:8443/api/v1/prayers`,
-			request
-		);
+		const response = await fetch(`https://saint-luke.net:8443/api/v1/prayers`, request);
 		const payload = await response.json();
 		if (response.status != 200) {
 			console.log('server returned ', response.status);

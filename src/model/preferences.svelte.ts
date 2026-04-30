@@ -28,7 +28,10 @@ class Preferences {
 			});
 			$effect(() => {
 				localStorage.setItem('fontSize', String(this.fontSize));
-				document.documentElement.style.setProperty('--wado-font-scale', `${0.8 + this.fontSize * 0.2}rem`);
+				document.documentElement.style.setProperty(
+					'--wado-font-scale',
+					`${0.8 + this.fontSize * 0.2}rem`
+				);
 			});
 			$effect(() => {
 				localStorage.setItem('highLegibility', String(this.highLegibility));

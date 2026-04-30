@@ -22,11 +22,11 @@ export default [
 			}
 		},
 		rules: {
-			'indent': ['error', 2],
+			indent: ['error', 2],
 			'linebreak-style': ['error', 'unix'],
-			'quotes': ['error', 'single'],
-			'semi': ['error', 'always'],
-			'curly': ['error', 'all'],
+			quotes: ['error', 'single'],
+			semi: ['error', 'always'],
+			curly: ['error', 'all'],
 			'no-console': 'off',
 			'no-unused-vars': 'off'
 		}
@@ -42,10 +42,10 @@ export default [
 			}
 		},
 		rules: {
-			'indent': ['error', 2],
+			indent: ['error', 2],
 			'linebreak-style': ['error', 'unix'],
-			'quotes': ['error', 'single'],
-			'semi': ['error', 'always'],
+			quotes: ['error', 'single'],
+			semi: ['error', 'always'],
 			'no-unused-vars': 'off'
 		}
 	}

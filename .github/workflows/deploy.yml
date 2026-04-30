@@ -2,7 +2,7 @@ name: Deploy WADO
 
 on:
   push:
-    branches: [ main, gemini-refactor ] # Adjust to your main branch name
+    branches: [main, gemini-refactor] # Adjust to your main branch name
 
 jobs:
   deploy:
