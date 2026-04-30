@@ -31,7 +31,8 @@ export const storage = getStorage(fbapp);
 export const db = initializeFirestore(fbapp, {
 	localCache: persistentLocalCache({
 		tabManager: persistentMultipleTabManager()
-	})
+	}),
+	experimentalForceLongPolling: true
 });
 
 let analytics: Analytics | undefined;
